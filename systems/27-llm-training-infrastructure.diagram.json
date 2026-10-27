@@ -1,0 +1,362 @@
+{
+  "id": "27-llm-training-infrastructure",
+  "title": "LLM Training Infrastructure",
+  "kind": "real-system",
+  "nodes": [
+    {
+      "id": "researcher",
+      "label": "Researcher / ML engineer",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Configures and submits the training job, watches loss and throughput, and intervenes on rare manual cases (Llama 3 needed manual intervention only three times in 54 days).",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783"
+      ]
+    },
+    {
+      "id": "dataset",
+      "label": "Training data",
+      "kind": "datastore",
+      "c4": "external-system",
+      "summary": "Tokenized training corpus read by the job. Data curation is outside the sections we read.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783"
+      ]
+    },
+    {
+      "id": "sched",
+      "label": "Job scheduler (MAST)",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Meta's global-scale training scheduler. Placement is aware of network topology to minimise cross-pod traffic.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783"
+      ],
+      "technology": "MAST"
+    },
+    {
+      "id": "cluster",
+      "label": "GPU cluster",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Up to 16K H100 GPUs for Llama 3 405B (24K in the RoCE cluster), eight per server, 400 Gbps interconnects.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783",
+        "https://arxiv.org/pdf/2402.15627"
+      ],
+      "group": "GPU cluster"
+    },
+    {
+      "id": "gpus",
+      "label": "GPU servers",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Grand Teton servers with eight H100 GPUs (80 GB HBM3, 700 W) and two CPUs; GPUs in a server connected by NVLink.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783"
+      ],
+      "parent": "cluster",
+      "group": "GPU cluster"
+    },
+    {
+      "id": "fabric",
+      "label": "Network fabric (RoCE / InfiniBand)",
+      "kind": "edge",
+      "c4": "component",
+      "summary": "RoCE for the 405B model on a three-layer Clos network: 16 GPUs per rack, 3,072-GPU pods with full bisection bandwidth, eight pods with 1:7 oversubscription at the top. Deep-buffer spine switches and E-ECMP with 16 flows per GPU pair.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783"
+      ],
+      "parent": "cluster",
+      "group": "GPU cluster"
+    },
+    {
+      "id": "nccl",
+      "label": "Collective library (NCCLX)",
+      "kind": "service",
+      "c4": "component",
+      "summary": "A fork of NCCL tuned for high-latency networks; carries FSDP all-gather and reduce-scatter and pipeline point-to-point traffic. Includes tracing and a flight recorder for hangs.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783"
+      ],
+      "parent": "cluster",
+      "group": "GPU cluster"
+    },
+    {
+      "id": "job",
+      "label": "Training job",
+      "kind": "service",
+      "c4": "container",
+      "summary": "One synchronous job spread over thousands of GPUs: a single GPU failure may require a restart of the whole job.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783"
+      ],
+      "group": "Training job"
+    },
+    {
+      "id": "parallel",
+      "label": "4D parallelism (TP, CP, PP, FSDP)",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Tensor, context, pipeline and fully sharded data parallelism, ordered by network demand from innermost to outermost. ZeRO-style sharding of optimizer state and gradients reduces memory per GPU.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783",
+        "https://arxiv.org/pdf/1910.02054"
+      ],
+      "parent": "job",
+      "group": "Training job"
+    },
+    {
+      "id": "ckpt",
+      "label": "Checkpointing",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Saves each GPU's state (1 MB to 4 GB) for recovery. MegaScale copies state to host memory in seconds, then writes to the file system in the background; on restore one worker per data-parallel group reads the shared partition.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783",
+        "https://arxiv.org/pdf/2402.15627"
+      ],
+      "parent": "job",
+      "group": "Training job"
+    },
+    {
+      "id": "storage",
+      "label": "Distributed file system (Tectonic)",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "240 PB across 7,500 SSD servers, 2 TB/s sustained and 7 TB/s peak throughput. Bursty checkpoint writes saturate it for short periods.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783"
+      ],
+      "technology": "Tectonic"
+    },
+    {
+      "id": "monitor",
+      "label": "Fault detection and diagnostics",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Heartbeats from every node's daemon, watchdog timeouts, NCCL flight recorder and straggler hunting tools.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783",
+        "https://arxiv.org/pdf/2402.15627"
+      ]
+    },
+    {
+      "id": "recovery",
+      "label": "Automated recovery",
+      "kind": "service",
+      "c4": "container",
+      "summary": "On a fault, suspends training, runs self-check diagnostics, evicts bad nodes, requests healthy replacements and resumes from the latest checkpoint. MegaScale fixed over 90% of faults automatically.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2402.15627"
+      ]
+    },
+    {
+      "id": "tools",
+      "label": "Alternative: topology-aware job placement only",
+      "kind": "service",
+      "c4": "note",
+      "summary": "Without topology-aware parallelism and scheduling, high-traffic dimensions cross pods and utilisation drops. Llama 3's parallelism plan and scheduler are both aware of the network.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "res-sched",
+      "from": "researcher",
+      "to": "sched",
+      "label": "submit job",
+      "mode": "sync"
+    },
+    {
+      "id": "sched-gpus",
+      "from": "sched",
+      "to": "gpus",
+      "label": "allocate nodes by topology",
+      "mode": "sync"
+    },
+    {
+      "id": "data-parallel",
+      "from": "dataset",
+      "to": "parallel",
+      "label": "batches of tokens",
+      "mode": "async"
+    },
+    {
+      "id": "parallel-gpus",
+      "from": "parallel",
+      "to": "gpus",
+      "label": "run sharded model on GPUs",
+      "mode": "sync"
+    },
+    {
+      "id": "parallel-nccl",
+      "from": "parallel",
+      "to": "nccl",
+      "label": "all-gather, reduce-scatter, point-to-point",
+      "mode": "sync"
+    },
+    {
+      "id": "nccl-fabric",
+      "from": "nccl",
+      "to": "fabric",
+      "label": "collective traffic",
+      "mode": "sync"
+    },
+    {
+      "id": "ckpt-storage",
+      "from": "ckpt",
+      "to": "storage",
+      "label": "write checkpoints",
+      "mode": "async"
+    },
+    {
+      "id": "storage-ckpt",
+      "from": "storage",
+      "to": "ckpt",
+      "label": "read latest checkpoint",
+      "mode": "sync"
+    },
+    {
+      "id": "job-monitor",
+      "from": "parallel",
+      "to": "monitor",
+      "label": "heartbeats, traces",
+      "mode": "async"
+    },
+    {
+      "id": "monitor-recovery",
+      "from": "monitor",
+      "to": "recovery",
+      "label": "fault detected",
+      "mode": "sync"
+    },
+    {
+      "id": "recovery-sched",
+      "from": "recovery",
+      "to": "sched",
+      "label": "evict node, request replacement",
+      "mode": "sync"
+    },
+    {
+      "id": "recovery-ckpt",
+      "from": "recovery",
+      "to": "ckpt",
+      "label": "resume from latest checkpoint",
+      "mode": "sync"
+    },
+    {
+      "id": "monitor-res",
+      "from": "monitor",
+      "to": "researcher",
+      "label": "alerts and dashboards",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "train",
+      "name": "A training run",
+      "steps": [
+        {
+          "edge": "res-sched",
+          "caption": "The researcher submits the job; the scheduler picks nodes by network topology."
+        },
+        {
+          "edge": "sched-gpus",
+          "caption": "GPU servers are allocated."
+        },
+        {
+          "edge": "data-parallel",
+          "caption": "Batches of tokens stream into the parallel model."
+        },
+        {
+          "edge": "parallel-gpus",
+          "caption": "Tensor, context, pipeline and fully sharded data parallel work runs across the GPUs."
+        },
+        {
+          "edge": "parallel-nccl",
+          "caption": "Each step exchanges activations, gradients and weights through the collective library."
+        },
+        {
+          "edge": "nccl-fabric",
+          "caption": "Traffic crosses the RoCE fabric, with the highest-volume dimensions kept inside servers."
+        },
+        {
+          "edge": "ckpt-storage",
+          "caption": "Periodically each GPU's state is checkpointed to the file system."
+        }
+      ]
+    },
+    {
+      "id": "node-failure",
+      "name": "A GPU fails mid-run (failure)",
+      "steps": [
+        {
+          "edge": "job-monitor",
+          "caption": "A node's heartbeat stops or reports an anomaly."
+        },
+        {
+          "edge": "monitor-recovery",
+          "caption": "The driver declares a fault and suspends training on all nodes."
+        },
+        {
+          "edge": "recovery-sched",
+          "caption": "Diagnostics find the bad node; it is evicted and a healthy replacement is requested."
+        },
+        {
+          "edge": "recovery-ckpt",
+          "caption": "Training resumes from the latest checkpoint."
+        },
+        {
+          "edge": "storage-ckpt",
+          "caption": "Workers read their state; one worker per data-parallel group reads the shared partition, to avoid overloading storage."
+        }
+      ]
+    },
+    {
+      "id": "straggler",
+      "name": "A slow GPU drags the whole job (failure mode)",
+      "steps": [
+        {
+          "edge": "job-monitor",
+          "caption": "Throughput drops but nothing has failed."
+        },
+        {
+          "edge": "monitor-res",
+          "caption": "Tools rank the most suspicious communications so engineers (or automation) can find the slow hardware; a single straggler can slow thousands of GPUs."
+        }
+      ]
+    },
+    {
+      "id": "ckpt-burst",
+      "name": "Checkpoint burst saturates storage",
+      "steps": [
+        {
+          "edge": "ckpt-storage",
+          "caption": "Thousands of GPUs write at once; the storage fabric saturates briefly."
+        },
+        {
+          "edge": "storage-ckpt",
+          "caption": "Two-stage saves (host memory first, then background write) keep GPU pause time short; the aim is a higher checkpoint frequency so less work is lost per recovery."
+        }
+      ]
+    }
+  ]
+}

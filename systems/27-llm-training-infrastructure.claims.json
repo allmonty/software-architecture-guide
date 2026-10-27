@@ -1,0 +1,32 @@
+[
+  {
+    "quote": "does not reduce memory per device",
+    "url": "https://arxiv.org/pdf/1910.02054",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "The complexity and potential failure scenarios of 16K GPU training surpass those of much larger CPU clusters",
+    "url": "https://arxiv.org/pdf/2407.21783",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a single GPU failure may require a restart of the entire job",
+    "url": "https://arxiv.org/pdf/2407.21783",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "higher than 90% effective training time",
+    "url": "https://arxiv.org/pdf/2407.21783",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "even a single straggler can slow down thousands of other GPUs",
+    "url": "https://arxiv.org/pdf/2407.21783",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]
