@@ -56,4 +56,7 @@ button:disabled { opacity: .4; cursor: default; }
 .react-flow__edge.edge-current .react-flow__edge-path { stroke: var(--accent); stroke-width: 3; }
 .react-flow__edge-text { fill: var(--fg); font-size: 11px; }
 .react-flow__edge-textbg { fill: var(--card); }
+.react-flow__controls-button { background: var(--card); color: var(--fg); border-color: var(--line); }
+.react-flow__controls-button svg { fill: currentColor; }
+.react-flow__attribution { background: transparent; }
 @media (max-width: 860px) { .diagram { grid-template-columns: 1fr; } .canvas { height: 60vh; } .panel { max-height: none; } }

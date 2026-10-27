@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Background, Controls, MarkerType, ReactFlow, type Edge, type Node } from "@xyflow/react";
+import { Background, Controls, MarkerType, Position, ReactFlow, type Edge, type Node } from "@xyflow/react";
 import ReactMarkdown from "react-markdown";
 import type { Diagram } from "../../schema/diagram.schema.ts";
 import { layout, NODE_H, NODE_W } from "./layout.ts";
@@ -33,6 +33,8 @@ export function DiagramView({ diagram }: { diagram: Diagram }) {
     position: pos[n.id],
     width: NODE_W,
     height: NODE_H,
+    sourcePosition: Position.Right,
+    targetPosition: Position.Left,
     data: { label: n.label },
     className: `kind-${n.kind} conf-${n.confidence.replace(" ", "-")} ${litNodes.has(n.id) ? "lit" : ""} ${selected === n.id ? "sel" : ""}`,
   }));
@@ -46,6 +48,7 @@ export function DiagramView({ diagram }: { diagram: Diagram }) {
       target: e.to,
       label: e.label,
       animated: isCurrent || e.mode === "async",
+      type: "smoothstep",
       markerEnd: { type: MarkerType.ArrowClosed },
       className: `${isCurrent ? "edge-current" : ""} ${dim ? "edge-dim" : ""}`,
       style: e.mode === "async" && !isCurrent ? { strokeDasharray: "5 4" } : undefined,
