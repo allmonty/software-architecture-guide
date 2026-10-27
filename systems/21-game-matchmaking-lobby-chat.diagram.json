@@ -393,6 +393,20 @@
           "caption": "The result is sent to the rating service, which updates each player's skill distribution from the team outcome. This runs asynchronously."
         }
       ]
+    },
+    {
+      "id": "no-server",
+      "name": "No Ready game server is available",
+      "steps": [
+        {
+          "edge": "dir-alloc",
+          "caption": "The Director asks the allocation system for a server."
+        },
+        {
+          "edge": "alloc-fleet",
+          "caption": "The warm fleet has none Ready, so the allocation fails. The matchmaker should treat this as back-pressure and keep tickets queued while the fleet scales (our design reasoning)."
+        }
+      ]
     }
   ]
 }

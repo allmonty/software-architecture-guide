@@ -304,6 +304,28 @@
           "caption": "B fetches only the blocks it lacks. With streaming sync it can start before the uploader's final commit."
         }
       ]
+    },
+    {
+      "id": "interrupted",
+      "name": "Upload interrupted",
+      "steps": [
+        {
+          "edge": "a-meta",
+          "caption": "The client commits the blocklist."
+        },
+        {
+          "edge": "meta-a",
+          "caption": "The server answers \"need blocks\" listing only the blocks it lacks, even after a dropped upload."
+        },
+        {
+          "edge": "a-block",
+          "caption": "The client uploads just the missing blocks. Blocks already stored are not sent again."
+        },
+        {
+          "edge": "a-meta",
+          "caption": "It commits again and the file is recorded."
+        }
+      ]
     }
   ]
 }

@@ -233,6 +233,28 @@
           "caption": "Cursors and selections are broadcast and transformed against concurrent edits too."
         }
       ]
+    },
+    {
+      "id": "reconnect",
+      "name": "Alice loses her connection and returns",
+      "steps": [
+        {
+          "edge": "a-gw",
+          "caption": "Alice reconnects with the last revision she saw (standard client behaviour)."
+        },
+        {
+          "edge": "gw-srv",
+          "caption": "The gateway hands her to the document's server."
+        },
+        {
+          "edge": "log-srv",
+          "caption": "The server reads the revision log after her last revision."
+        },
+        {
+          "edge": "srv-gw",
+          "caption": "It sends the missing operations, which her client transforms against any local edits."
+        }
+      ]
     }
   ]
 }

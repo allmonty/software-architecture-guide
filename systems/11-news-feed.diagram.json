@@ -257,6 +257,32 @@
           "caption": "Post IDs are hydrated into full posts and authors from cache, applying deletes and blocks at read time."
         }
       ]
+    },
+    {
+      "id": "celebrity",
+      "name": "An account with millions of followers posts",
+      "steps": [
+        {
+          "edge": "c-post",
+          "caption": "The post arrives."
+        },
+        {
+          "edge": "post-q",
+          "caption": "A fan-out job is enqueued."
+        },
+        {
+          "edge": "fan-graph",
+          "caption": "For ordinary accounts the worker looks up followers. For very large accounts the hybrid design skips fan-out (the threshold is a tuning choice we do not know for Twitter)."
+        },
+        {
+          "edge": "c-feed",
+          "caption": "When a follower opens their feed..."
+        },
+        {
+          "edge": "tl-store",
+          "caption": "...recent posts from the large accounts they follow are pulled and merged in at read time."
+        }
+      ]
     }
   ]
 }

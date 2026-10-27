@@ -321,6 +321,28 @@
           "caption": "Bob's device downloads the blob, verifies the hash and MAC, and decrypts it."
         }
       ]
+    },
+    {
+      "id": "server-crash",
+      "name": "A chat server crashes",
+      "steps": [
+        {
+          "edge": "a-lb",
+          "caption": "The client notices the dropped connection and reconnects (standard client behaviour)."
+        },
+        {
+          "edge": "lb-chat",
+          "caption": "The load balancer routes it to a healthy chat server."
+        },
+        {
+          "edge": "chat-reg",
+          "caption": "The new server registers the connection so messages are routed to it again."
+        },
+        {
+          "edge": "bob-inbox",
+          "caption": "Messages stored in the inbox while the device was disconnected are drained, so none are lost."
+        }
+      ]
     }
   ]
 }

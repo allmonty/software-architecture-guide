@@ -265,6 +265,24 @@
           "caption": "Supply and demand are counted per H3 hexagon. Uber says it calculates surge by measuring them in hexagons in each city."
         }
       ]
+    },
+    {
+      "id": "hot-cell",
+      "name": "A very dense area (hot cell)",
+      "steps": [
+        {
+          "edge": "match-h3",
+          "caption": "A burst of requests maps to the same few cells."
+        },
+        {
+          "edge": "match-geo",
+          "caption": "Those cell shards take the most reads. Finer H3 resolutions and splitting hot shards spread the load (our design reasoning)."
+        },
+        {
+          "edge": "match-eta",
+          "caption": "Candidates are still ranked by arrival time before an offer is made."
+        }
+      ]
     }
   ]
 }

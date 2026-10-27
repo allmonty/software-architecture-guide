@@ -258,6 +258,28 @@
           "caption": "The search index is updated shortly after."
         }
       ]
+    },
+    {
+      "id": "release-day",
+      "name": "Release day: a CDN miss storm",
+      "steps": [
+        {
+          "edge": "c-api",
+          "caption": "Millions of listeners request a new release."
+        },
+        {
+          "edge": "api-c",
+          "caption": "The API returns signed URLs without touching audio bytes."
+        },
+        {
+          "edge": "c-cdn",
+          "caption": "Requests hit the CDN, which should be pre-warmed for known releases (standard practice)."
+        },
+        {
+          "edge": "cdn-blob",
+          "caption": "Only cache misses reach blob storage, ideally collapsed into one origin fetch per object."
+        }
+      ]
     }
   ]
 }

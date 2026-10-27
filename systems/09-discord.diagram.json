@@ -328,6 +328,28 @@
           "caption": "The client opens a second WebSocket to that server for signaling and sends audio over UDP. The SFU forwards it to others in the channel."
         }
       ]
+    },
+    {
+      "id": "large-guild",
+      "name": "A very large guild falls behind",
+      "steps": [
+        {
+          "edge": "api-guild",
+          "caption": "An event is published to a guild process. In 2017, a large guild could take 0.9–2.1 s per publish."
+        },
+        {
+          "edge": "guild-manifold",
+          "caption": "Manifold groups recipient sessions by node and sends one message per node."
+        },
+        {
+          "edge": "manifold-session",
+          "caption": "Each node fans out locally across cores."
+        },
+        {
+          "edge": "session-c",
+          "caption": "Sessions push the event to their users. This is how Discord reduced the cost of fan-out."
+        }
+      ]
     }
   ]
 }

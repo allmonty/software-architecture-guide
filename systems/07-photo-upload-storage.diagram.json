@@ -376,6 +376,20 @@
           "caption": "Newly created BLOBs stay in hot storage until request and delete rates fall (about three months for Photos). Then their volume is locked and migrated to f4, cutting the effective replication factor from 3.6 toward 2.1."
         }
       ]
+    },
+    {
+      "id": "warm-failure",
+      "name": "A warm-storage block is unavailable",
+      "steps": [
+        {
+          "edge": "cdn-router",
+          "caption": "A request for an old photo reaches the router tier."
+        },
+        {
+          "edge": "router-f4",
+          "caption": "The read goes to an f4 cell. If a data block is unavailable, backoff nodes reconstruct the requested bytes from companion and parity blocks (Reed-Solomon 10,4), at lower read throughput."
+        }
+      ]
     }
   ]
 }

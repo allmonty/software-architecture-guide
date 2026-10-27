@@ -283,6 +283,28 @@
           "caption": "Joined per playback, a stream from a site below the first proximity rank counts as a cache miss: a content miss if files were absent, a health miss if the local site was saturated."
         }
       ]
+    },
+    {
+      "id": "saturated-site",
+      "name": "The nearest site is saturated (health miss)",
+      "steps": [
+        {
+          "edge": "c-play",
+          "caption": "A member presses play."
+        },
+        {
+          "edge": "steer-ccs",
+          "caption": "The Steering Service consults what OCAs reported, including health. Each OCA monitors its own CPU and disk."
+        },
+        {
+          "edge": "steer-c",
+          "caption": "The ranked URL list skips saturated OCAs, so clients are directed to other OCAs with capacity. Netflix calls this a health miss."
+        },
+        {
+          "edge": "c-ix",
+          "caption": "The client streams from the next site in the rank."
+        }
+      ]
     }
   ]
 }

@@ -346,6 +346,50 @@
           "caption": "The mapping is written to the URL store (and the inverted index when 1:1 is on)."
         }
       ]
+    },
+    {
+      "id": "hot-link",
+      "name": "A link goes viral (hot key)",
+      "steps": [
+        {
+          "edge": "c-cdn",
+          "caption": "A flood of requests for one short link arrives. The CDN answers repeats from the edge."
+        },
+        {
+          "edge": "cdn-lb",
+          "caption": "Concurrent misses are collapsed into a single origin request (request coalescing, a standard technique)."
+        },
+        {
+          "edge": "redirect-cache",
+          "caption": "The origin looks the key up in the cache."
+        },
+        {
+          "edge": "cache-store",
+          "caption": "At most one read reaches the URL store."
+        },
+        {
+          "edge": "redirect-kafka",
+          "caption": "Click events go to a stream asynchronously, so analytics never slow the redirect."
+        }
+      ]
+    },
+    {
+      "id": "kgs-crash",
+      "name": "Key generator crashes",
+      "steps": [
+        {
+          "edge": "shorten-kgs",
+          "caption": "A key generator serves keys from an in-memory range it leased earlier."
+        },
+        {
+          "edge": "kgs-ranges",
+          "caption": "After a crash, a replacement leases a new non-overlapping range. The unused part of the old range is wasted, which is acceptable out of 3.5 trillion keys."
+        },
+        {
+          "edge": "shorten-store",
+          "caption": "Writes continue with no collision, because ranges never overlap."
+        }
+      ]
     }
   ]
 }

@@ -399,6 +399,20 @@
           "caption": "Text matches are combined with PageRank and anchor text to rank the results."
         }
       ]
+    },
+    {
+      "id": "robots-down",
+      "name": "robots.txt is unreachable",
+      "steps": [
+        {
+          "edge": "fr-fetch",
+          "caption": "The frontier hands a URL to a fetcher."
+        },
+        {
+          "edge": "fetch-robots",
+          "caption": "The fetcher cannot reach robots.txt. A 5xx or network error means assume complete disallow. A 4xx means the crawler MAY access anything (RFC 9309)."
+        }
+      ]
     }
   ]
 }

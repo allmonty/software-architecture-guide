@@ -301,6 +301,28 @@
           "caption": "View events are streamed and aggregated in windows instead of updating a counter on every view."
         }
       ]
+    },
+    {
+      "id": "failed-chunk",
+      "name": "A transcoding chunk fails",
+      "steps": [
+        {
+          "edge": "q-orch",
+          "caption": "The orchestrator schedules encodes per chunk and rendition."
+        },
+        {
+          "edge": "orch-vcu",
+          "caption": "A worker fails on one chunk. Tasks are idempotent, so only that chunk is retried, not the whole video."
+        },
+        {
+          "edge": "vcu-seg",
+          "caption": "The retried chunk writes its segment."
+        },
+        {
+          "edge": "orch-meta",
+          "caption": "The video is marked READY only when the whole pipeline completes."
+        }
+      ]
     }
   ]
 }
