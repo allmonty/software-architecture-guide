@@ -19,8 +19,8 @@
       "label": "ID service",
       "kind": "service",
       "c4": "container",
-      "summary": "Generates 64-bit ids from time, machine id and sequence with no per-id coordination. Can run as a small service or be embedded in each application.",
-      "confidence": "CONFIRMED",
+      "summary": "Generates 64-bit ids from time, machine id and sequence with no per-id coordination. Snowflake was a Thrift server written in Scala; whether to run it as a service or embed it in each application is our design choice.",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://blog.twitter.com/engineering/en_us/a/2010/announcing-snowflake",
         "https://raw.githubusercontent.com/twitter-archive/snowflake/snowflake-2010/README.mkd"
@@ -82,7 +82,7 @@
       "label": "UUIDv7 library",
       "kind": "service",
       "c4": "container",
-      "summary": "Generates 128-bit ids client-side: 48-bit Unix millisecond timestamp plus random bits or a counter. RFC 9562 says new systems should prefer UUIDv7 over v1.",
+      "summary": "UUIDv7 ids created client-side: RFC 9562 defines the format (48-bit Unix millisecond timestamp plus random bits or a counter) and says new systems should prefer it over v1; libraries are ours to choose.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://www.rfc-editor.org/rfc/rfc9562.txt"
@@ -188,11 +188,11 @@
       "steps": [
         {
           "edge": "svc-ticket",
-          "caption": "One ticket server does not respond."
+          "caption": "One of the two ticket servers does not respond (the diagram shows them as one node)."
         },
         {
           "edge": "svc-ticket",
-          "caption": "The client uses the other server; ids from it keep their parity, so uniqueness holds although the two sides drift out of step."
+          "caption": "The client uses the other server; ids from it keep their parity (odd or even), so uniqueness holds although the two sides drift out of step."
         }
       ]
     },

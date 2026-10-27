@@ -79,8 +79,8 @@
       "label": "Leaderboard store (sorted sets)",
       "kind": "datastore",
       "c4": "container",
-      "summary": "Ordered sets of member and score: O(log N) update and rank; sharded by score range or member hash at scale.",
-      "confidence": "CONFIRMED",
+      "summary": "Ordered sets of member and score: O(log N) update and rank in Redis sorted sets (documented). Sharding by score range or member hash at scale is our design, and scores should also be persisted in a database (not drawn).",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://redis.io/docs/latest/develop/data-types/sorted-sets/"
       ],

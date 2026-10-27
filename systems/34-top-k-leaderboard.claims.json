@@ -1,5 +1,10 @@
 [
   {
+    "quote": "top in the last hour",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
+  },
+  {
     "quote": "a skip list and a hash table",
     "url": "https://redis.io/docs/latest/develop/data-types/sorted-sets/",
     "via": "direct",

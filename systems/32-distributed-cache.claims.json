@@ -1,5 +1,11 @@
 [
   {
+    "quote": "Scaling Memcache",
+    "url": "https://github.com/donnemartin/system-design-primer",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "use[s] memcache as a demand-filled look-aside cache",
     "url": "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf",
     "via": "direct",

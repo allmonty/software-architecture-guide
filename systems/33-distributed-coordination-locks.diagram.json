@@ -88,7 +88,7 @@
       "kind": "service",
       "c4": "container",
       "summary": "A storage or job server that checks the sequencer or fencing token of each request and rejects stale ones. The checking is our design; Chubby describes the mechanism.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf"
       ]
@@ -154,6 +154,13 @@
       "to": "app",
       "label": "events, watch notifications",
       "mode": "async"
+    },
+    {
+      "id": "app2-locks",
+      "from": "app",
+      "to": "locks",
+      "label": "another client acquires the lock",
+      "mode": "sync"
     }
   ],
   "flows": [
@@ -193,11 +200,11 @@
       "steps": [
         {
           "edge": "app-sessions",
-          "caption": "The holder stops sending KeepAlives; its session expires and the lock is released."
+          "caption": "The holder stops sending KeepAlives (for example it is paused); its session expires and the lock is released. If the lock was released because the holder failed or became inaccessible, a lock-delay can keep others from claiming it for a short time, for servers that cannot check sequencers."
         },
         {
-          "edge": "app-locks",
-          "caption": "Another client acquires the lock with a higher generation."
+          "edge": "app2-locks",
+          "caption": "After any lock-delay, another client acquires the lock with a higher generation number."
         },
         {
           "edge": "app-resource",

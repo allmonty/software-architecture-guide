@@ -20,7 +20,7 @@
 | Leases (64-bit tokens) | Prevent stale sets and throttle herds | More protocol and client logic |
 | Gutter pool for failed servers | Avoid rehashing hot keys onto live servers and avoid a database surge | Slightly stale data from quickly expiring entries |
 | Regional pool for rarely used keys | Avoids over-replicating cold data in every cluster | Higher latency for those keys |
-| Invalidate from the database commit log | Reliable and ordered with the writes | Extra pipeline to run |
+| Invalidate from the database commit log | Invalidations are embedded in the statements the database commits, so lost ones can be replayed from reliable logs | Extra pipeline to run |
 
 **Common mistakes**
 - Updating the cache on write instead of deleting, which makes ordering races worse.
@@ -85,7 +85,7 @@ Replacing failed servers takes up to a few minutes, long enough for cascading fa
 
 - **Replication within pools:** the paper replicates a category of keys within a pool when the application routinely fetches many keys at once, the whole data set fits in one or two memcached servers, and the request rate is much higher than one server can manage; it favours replication over further dividing the key space in that case.
 - **Invalidation pipeline:** SQL statements that modify state are amended with the memcache keys to invalidate after commit; an invalidation daemon (**mcsqueal**) runs on every database, reads the committed statements, extracts the deletes and broadcasts them to memcache in every frontend cluster in the region, batching them into fewer packets through dedicated servers. Only 4% of deletes issued actually invalidate cached data.
-- **Regional pools:** over-replicating data in every frontend cluster is memory-inefficient, especially for large, rarely accessed items, so several frontend clusters can share a regional pool; crossing cluster boundaries costs latency and the paper notes 40% less average bandwidth across cluster boundaries than within one.
+- **Regional pools:** over-replicating data in every frontend cluster is memory-inefficient, especially for large, rarely accessed items, so several frontend clusters can share a regional pool; crossing cluster boundaries costs latency and the paper says its networks have 40% less average available bandwidth over cluster boundaries than within a single cluster.
 - **Geographic regions:** clusters are grouped into regions, with a master region providing a data stream to keep non-master regions up to date.
 
 ---

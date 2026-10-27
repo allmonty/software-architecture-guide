@@ -8,7 +8,7 @@
 
 **Key numbers** (as published)
 - Redis sorted set operations are mostly O(log n); a ZADD on an existing member updates its score and position in O(log n), and `ZRANGE` is O(log n + m) for m results returned `[CONFIRMED]`.
-- Space-Saving monitors only a fixed number m of elements and, for realistic Zipfian data, needs far less space as the skew grows `[CONFIRMED]`; it was motivated by Internet advertising click streams `[CONFIRMED]`.
+- Space-Saving monitors only a fixed number m of elements, and for realistic Zipfian data the space needed for the frequent-elements problem decreases dramatically as the skew grows `[CONFIRMED]`; it was motivated by Internet advertising click streams `[CONFIRMED]`.
 
 **Decisions and trade-offs**
 
@@ -64,9 +64,9 @@ Redis sorted sets hold unique members with a numeric score and keep them ordered
 
 ## 3. Approximate heavy hitters: Space-Saving `[CONFIRMED]` (Metwally, Agrawal, El Abbadi, ICDT 2005)
 
-The paper addresses finding the most popular k elements and the frequent elements in a data stream. It states the technique is efficient and exact if the alphabet is small, and for the practical large-alphabet case is space-efficient and "reports both top-k and frequent elements with tight guarantees on errors". The idea: monitor only **m** elements at a time, maintain counters so as to accurately estimate the frequencies of the significant elements, and use a lightweight structure (Stream-Summary) that keeps the elements sorted by estimated frequency. For general distributions its top-k answer can be a set of k' ≈ k elements guaranteed to be the top-k'; for realistic Zipfian data the space needed drops dramatically as the skew increases, and top-k queries return only the top-k elements in the correct order. The authors were motivated by Internet advertising commissioners, who see streams of ad renderings, clicks, sales and leads, and who need summaries of such streams quickly; see [31 Ad click aggregation](31-ad-click-aggregation.md).
+The paper addresses finding the most popular k elements and the frequent elements in a data stream. It states the technique is efficient and exact if the alphabet is small, and for the practical large-alphabet case is space-efficient and "reports both top-k and frequent elements with tight guarantees on errors". The idea: monitor only **m** elements at a time, maintain counters so as to accurately estimate the frequencies of the significant elements, and use a lightweight structure (Stream-Summary) that keeps the elements sorted by estimated frequency. For general distributions its top-k answer can be a set of k' ≈ k elements guaranteed to be the top-k'; for realistic Zipfian data the space requirement of the frequent-elements problem decreases dramatically with the skew, and for top-k queries it ensures that only the top-k elements are reported, in the correct order. The authors were motivated by Internet advertising commissioners, who see streams of ad renderings, clicks, sales and leads, and who need summaries of such streams quickly; see [31 Ad click aggregation](31-ad-click-aggregation.md).
 
-**How it works (the standard description; not quoted):** keep m (item, count) pairs. If an arriving item is monitored, increment its count. If not, replace the item with the smallest count by the new item, set its count to that minimum plus one, and remember the minimum as the possible over-count. Counts are therefore upper bounds, and the recorded error tells how far off each is.
+**How it works (the paper's algorithm, paraphrased):** keep m (item, count) pairs. If an arriving item is monitored, increment its count. If not, replace the item with the smallest count by the new item, set its count to that minimum plus one, and remember the minimum as the possible over-count. Counts are therefore upper bounds, and the recorded error tells how far off each is.
 
 The Count-Min Sketch (Cormode and Muthukrishnan) is another widely used structure for approximate frequencies; we could not retrieve its paper and make no claims about it.
 
@@ -113,7 +113,7 @@ leaderboard: score updates ─► sharded sorted sets ─► top-N via merge, ra
 
 ## ⚠️ Reviewer notes
 
-1. **The Space-Saving description of the algorithm in section 3** ("how it works") is the standard textbook description; the paper's PDF text lost its word spacing when extracted, so we quote only its abstract-level claims.
+1. **The Space-Saving description of the algorithm in section 3** ("how it works") paraphrases the algorithm given in the paper (replace the element with the minimum count, count = minimum + 1, error = the minimum); the paper's PDF text lost its word spacing when extracted, so we quote only its abstract-level claims.
 2. **Redis documentation describes Redis,** not leaderboards in general; sharding strategies are ours.
 3. **Count-Min Sketch is not covered:** we could not retrieve its paper.
 4. **Not read:** Redis Cluster documentation, the Frequent/Lossy Counting papers, time-decay literature, and production leaderboard postmortems.
@@ -201,5 +201,6 @@ With score-range shards, rank is the number of members in higher ranges plus the
 *Fact-check, 2026-10-27, by reading each source. Quotations are confirmed by `npm run verify`.*
 - Verified in the Redis page: skip list plus hash table, O(log N) adds and score updates, pre-sorted retrieval, leaderboard use case and rank commands, ZRANGE complexity, the sliding-window rate limiter mention.
 - Verified in the Space-Saving paper (abstract and introduction): exactness for small alphabets, space efficiency and error guarantees for large alphabets, monitoring of m elements, the k' ≈ k property, Zipfian space reduction, the advertising motivation.
-- Not sourced (our reasoning): the algorithm walkthrough, the reference design, sharding strategies and capacity arithmetic.
+- Verified in the paper's algorithm figure: replacement of the minimum counter with count = minimum + 1 and error = the minimum (paraphrased).
+- Not sourced (our reasoning): the reference design, sharding strategies and capacity arithmetic.
 - Not claimed: behaviour of Redis Cluster or any production leaderboard.

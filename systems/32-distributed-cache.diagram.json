@@ -120,7 +120,7 @@
       ]
     },
     {
-      "id": "warm",
+      "id": "altwrite",
       "label": "Alternative: write-through or write-behind",
       "kind": "service",
       "c4": "note",

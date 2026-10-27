@@ -104,7 +104,7 @@ workers ─► coordination cluster (3 or 5 replicas, majority quorum) ◄─ cl
 
 - **A lock holder pauses and loses its session.** Another client acquires the lock; when the first resumes, the resource server rejects its old sequencer `[CONFIRMED]` (Chubby).
 - **The master of the coordination cluster fails.** The replicas elect a new master after the lease expires, typically in a few seconds; clients retry `[CONFIRMED]`.
-- **A network partition.** The side with a majority continues; the minority cannot elect a leader or accept writes `[CONFIRMED]` in principle (majority quorum); behaviour for clients on the minority side is a design choice `[INDUSTRY PATTERN]`.
+- **A network partition.** The side with a majority continues; the minority cannot elect a leader or accept writes, because writes need acknowledgement from a majority `[CONFIRMED]` (Chubby: writes are acknowledged when they reach a majority of replicas); what clients on the minority side do is a design choice `[INDUSTRY PATTERN]`.
 - **Herd on lock release.** The sequential-znode recipe wakes only the next waiter `[CONFIRMED]`.
 - **Clock or timing assumptions fail.** Protect resources with tokens rather than relying only on timeouts `[INDUSTRY PATTERN]`.
 
