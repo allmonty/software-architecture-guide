@@ -99,6 +99,17 @@ These are the authors' measurements on their data; the system is described for t
 
 ---
 
+## 3b. Offline, nearline and online computation: Netflix `[CONFIRMED]` (Amatriain and Basilico, March 2013)
+
+A third source, Netflix's TechBlog post "System Architectures for Personalization and Recommendation", gives the cleanest vocabulary for where recommendation work runs. Its three modes of computation:
+- **Online:** responds to recent events and the current context (for example assembling a gallery of action movies sorted for the member right now), but is "subject to an availability and response time Service Level Agreements (SLA)", which limits algorithm cost, so "it is always important to think of a fast fallback mechanism such as reverting to a precomputed result". Online components also need their data sources available online.
+- **Offline:** batch jobs with relaxed latency, complex algorithms and large data (for example aggregating popularity statistics from millions of play events); easy to deploy and experiment with, since a slower experimental algorithm can simply get more instances. The cost is staleness: it "will not react quickly to changes in context or new data".
+- **Nearline:** a compromise: computation is performed as in the online case, but results are stored rather than served immediately, triggered by user events, for example updating recommendations right after a member starts watching a movie. It is also "a natural setting for applying incremental learning algorithms".
+
+The authors stress these are not either/or: "All approaches can and should be combined", for example precomputing part of a result offline and leaving cheaper, context-sensitive parts to online computation; and model training can be split into heavy global training offline and lighter per-user updates online (matrix factorization is their example). The post also separates three kinds of algorithm input: **models** (small files of parameters trained offline), **data** (processed information in a database) and **signals** (fresh information from live services such as what the member watched recently or the device and time), and distinguishes **events** (small time-sensitive units processed with minimal latency) from **data** (dense units where quality matters more than latency). Netflix's near-real-time event flow ran on an internal system it called Manhattan.
+
+This maps onto the platform in section 4: the ranker and retrieval are the online part, the event log and joiner feed nearline updates, and full retraining is offline. It is a 2013 description from one company; the post is not about today's system.
+
 ## 4. The platform around the models `[INDUSTRY PATTERN]`
 
 ```
@@ -143,9 +154,9 @@ user ─► recommendation API ─► candidate generation ─► ranking ─►
 
 1. **The YouTube paper is from 2016.** The architecture has surely evolved; it remains the best-documented two-stage example. We do not claim it describes YouTube today.
 2. **Monolith's AUC figures** come from a public dataset simulation and one live ads A/B test; Table 3 reports large relative improvements, and the paper does not define the percentage precisely in the text we read. Treat it as indicative.
-3. **Netflix, TikTok and Spotify production recommenders are not described here;** we cite only the two papers we read.
+3. **Netflix's description is from 2013, and TikTok's and Spotify's production recommenders are not described here;** we cite only the papers and post we read.
 4. **Cold start, feedback loops, re-ranking and the feature store are industry practice,** not sourced claims.
-5. **Not read:** the Netflix recommendation engineering posts, two-tower retrieval papers, multi-task ranking papers, bandit/exploration literature, and feature store product documentation.
+5. **Not read:** Netflix's later recommendation engineering posts, two-tower retrieval papers, multi-task ranking papers, bandit/exploration literature, and feature store product documentation.
 
 ---
 
@@ -220,9 +231,9 @@ Trust the live test, then investigate the gap: training/serving skew, a mismatch
 ## Sources and provenance
 
 > **Kind:** real system (YouTube 2016, ByteDance Monolith 2022) with a reference design for the surrounding platform `[INDUSTRY PATTERN]`.
-> **Sources read on 2026-10-27 (PDF text extracted locally):** Covington, Adams and Sargin, [*Deep Neural Networks for YouTube Recommendations*](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf) (RecSys 2016) · Liu et al., [*Monolith: Real Time Recommendation System With Collisionless Embedding Table*](https://arxiv.org/pdf/2209.07663) (ByteDance, ORSUM at RecSys 2022).
+> **Sources read on 2026-10-27 (PDF text extracted locally):** Covington, Adams and Sargin, [*Deep Neural Networks for YouTube Recommendations*](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf) (RecSys 2016) · Liu et al., [*Monolith: Real Time Recommendation System With Collisionless Embedding Table*](https://arxiv.org/pdf/2209.07663) (ByteDance, ORSUM at RecSys 2022) · Amatriain and Basilico, [*System Architectures for Personalization and Recommendation*](https://netflixtechblog.com/system-architectures-for-personalization-and-recommendation-e081aa94b5d8) (Netflix TechBlog, 27 March 2013; read through an Internet Archive copy).
 > **Dated material:** 2016 and 2022 papers.
-> **Not read:** Netflix recommendation posts, two-tower and multi-task ranking papers, bandit literature, feature store documentation.
+> **Not read:** later Netflix recommendation posts, two-tower and multi-task ranking papers, bandit literature, feature store documentation.
 > **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible or illustrative.
 
 ---
@@ -231,5 +242,6 @@ Trust the live test, then investigate the gap: training/serving skew, a mismatch
 *Fact-check, 2026-10-27, by extracting each paper's text and checking numbers and quotations. Quotations are confirmed by `npm run verify`.*
 - Verified in the YouTube paper: two-stage structure, scale figures (one billion parameters, hundreds of billions of examples), millions to hundreds to dozens funnel, extreme multiclass formulation, sampled negatives and the 100 times speedup, nearest-neighbour serving and insensitivity to the algorithm, example-age feature, ranking with logistic regression and expected watch time, click-through critique, impression features for churn, offline versus A/B statement, the exploration/exploitation remark.
 - Verified in the Monolith paper: abstract claims, cuckoo hashmap, ID filtering and expiry, batch and online stages, Kafka and Flink streaming engine and online joiner, log-odds correction, minute-level sparse sync and daily dense sync, the 400 MB per minute example, daily snapshots, Criteo AUC table, Table 3 improvements, the reliability-for-realtime conclusion.
-- Labelled industry pattern, not sourced: multiple candidate sources beyond the paper, feature store, re-ranking policy, cold-start tactics, feedback-loop mitigations, latency budget, experiment guardrails, capacity arithmetic.
+- Verified in the Netflix post: the online, offline and nearline definitions and their trade-offs, the fallback-to-precomputed advice, hybrid combination and hybrid modelling examples, models/data/signals and events/data distinctions, the Manhattan event flow.
+- Labelled industry pattern, not sourced: multiple candidate sources beyond the papers, feature store, re-ranking policy, cold-start tactics, feedback-loop mitigations, latency budget, experiment guardrails, capacity arithmetic.
 - Not claimed: how any current production recommender (YouTube, TikTok, Netflix, Spotify) works today.
