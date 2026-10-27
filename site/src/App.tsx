@@ -31,7 +31,7 @@ export function App() {
       </header>
       {page ? (
         <main className="notes toolkit">
-          <p><a href="#">← All systems</a></p>
+          <p><a href="#">← All systems</a> · <a href="#toolkit/README">Toolkit index</a></p>
           <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={components}>{page.markdown}</ReactMarkdown>
         </main>
       ) : system ? (
@@ -111,7 +111,7 @@ function Home() {
       <section>
         <h2>Toolkit: casebook, primers and workbook</h2>
         <ul className="cards">
-          {toolkitPages.map((p) => (
+          {toolkitPages.filter((p) => p.id !== "README").map((p) => (
             <li key={p.id}>
               <a href={`#toolkit/${p.id}`}>
                 <span className="num">{p.id.slice(0, 3)}</span>

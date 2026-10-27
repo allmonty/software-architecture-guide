@@ -32,5 +32,4 @@ export const toolkitPages: ToolkitPage[] = Object.entries(toolkit)
     const title = (md as string).split("\n")[0].replace(/^#\s*/, "");
     return { id, title, markdown: md as string };
   })
-  .filter((p) => p.id !== "README")
   .sort((a, b) => a.id.localeCompare(b.id));

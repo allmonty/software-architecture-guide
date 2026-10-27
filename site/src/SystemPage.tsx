@@ -15,6 +15,7 @@ export const components: Components = {
     const m = href.match(/(?:^|\/)(\d\d-[a-z0-9-]+)\.md/);
     const hit = m && systems.find((s) => s.id === m[1]);
     if (hit) return <a href={`#${hit.id}`}>{children}</a>;
+    if (/^README\.md/.test(href)) return <a href="#toolkit/README">{children}</a>;
     const tk = href.match(/(?:^|\/)([PCW]\d\d-[a-z0-9-]+)\.md/);
     const tkHit = tk && toolkitPages.find((p) => p.id === tk[1]);
     if (tkHit) return <a href={`#toolkit/${tkHit.id}`}>{children}</a>;
