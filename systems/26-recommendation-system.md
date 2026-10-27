@@ -93,7 +93,7 @@ Monolith argues that general-purpose deep learning frameworks fall short for rec
 - **Negative sampling** would change the output distribution, so a **log-odds correction** is applied at serving time.
 - **Parameter synchronisation.** Production models are usually several terabytes in size, so full replacement is infeasible. Sparse parameters dominate model size, and only a small subset of IDs changes in a short window, so Monolith tracks touched keys and pushes only those at a **minute-level** interval; dense parameters change more slowly and sync about daily, at low-traffic times. The paper's example: 100,000 updated IDs per minute at 1,024 dimensions is about 400 MB per minute.
 - **Fault tolerance.** The training servers are **snapshotted daily**; a failed server loses up to a day of updates, and the authors found the quality loss tolerable. They conclude that "system reliability could be traded-off for real-time learning".
-- **Results.** On the Criteo ads dataset, a shorter sync interval gave better online AUC (5 hours 79.66, 1 hour 79.78, 30 minutes 79.80, against about 79.4 for batch). In a live A/B test on an ads model, online training improved AUC over batch training on each of seven days (the paper's Table 3 lists improvements of about 14% to 18%).
+- **Results.** On the Criteo ads dataset, a shorter sync interval gave better online AUC (5 hours 79.66, 1 hour 79.78, 30 minutes 79.80, against about 79.4 for batch). In a live A/B test on an ads model, online training improved AUC over batch training on each of seven days (the paper's Table 3 reports an "AUC improvement" for each day; it does not define the unit in the text we read, so we quote no percentage).
 
 These are the authors' measurements on their data; the system is described for their BytePlus Recommend product.
 
@@ -153,7 +153,7 @@ user ─► recommendation API ─► candidate generation ─► ranking ─►
 ## ⚠️ Reviewer notes
 
 1. **The YouTube paper is from 2016.** The architecture has surely evolved; it remains the best-documented two-stage example. We do not claim it describes YouTube today.
-2. **Monolith's AUC figures** come from a public dataset simulation and one live ads A/B test; Table 3 reports large relative improvements, and the paper does not define the percentage precisely in the text we read. Treat it as indicative.
+2. **Monolith's AUC figures** come from a public dataset simulation and one live ads A/B test; Table 3 reports a daily "AUC improvement" whose unit the paper does not define in the text we read, so we do not quote the numbers. Treat the result as indicative.
 3. **Netflix's description is from 2013, and TikTok's and Spotify's production recommenders are not described here;** we cite only the papers and post we read.
 4. **Cold start, feedback loops, re-ranking and the feature store are industry practice,** not sourced claims.
 5. **Not read:** Netflix's later recommendation engineering posts, two-tower retrieval papers, multi-task ranking papers, bandit/exploration literature, and feature store product documentation.
