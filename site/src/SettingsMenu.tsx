@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { THEMES } from "./settings-core.ts";
+import { FONTS, THEMES } from "./settings-core.ts";
 import { resetSettings, updateSettings, useSettings } from "./settings.ts";
 
 const THEME_LABEL = { system: "System", light: "Light", warm: "Warm", dark: "Dark" } as const;
+const FONT_LABEL = { system: "System default", atkinson: "Atkinson Hyperlegible", lexend: "Lexend", literata: "Literata" } as const;
 
 export function SettingsMenu() {
   const s = useSettings();
@@ -31,6 +32,17 @@ export function SettingsMenu() {
                 <label key={t} className={`choice swatch-${t}`}>
                   <input type="radio" name="theme" checked={s.theme === t} onChange={() => updateSettings({ theme: t })} />
                   <span>{THEME_LABEL[t]}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Font</legend>
+            <div className="choices fonts">
+              {FONTS.map((f) => (
+                <label key={f} className={`choice font-${f}`}>
+                  <input type="radio" name="font" checked={s.font === f} onChange={() => updateSettings({ font: f })} />
+                  <span>{FONT_LABEL[f]}</span>
                 </label>
               ))}
             </div>
