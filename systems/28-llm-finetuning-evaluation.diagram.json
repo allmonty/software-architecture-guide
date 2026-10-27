@@ -1,0 +1,515 @@
+{
+  "id": "28-llm-finetuning-evaluation",
+  "title": "LLM Fine-tuning, Evaluation and Deployment Pipeline",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "eng",
+      "label": "ML engineer",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Defines the target behaviour, curates data, reviews evaluation results and approves releases.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783"
+      ]
+    },
+    {
+      "id": "annot",
+      "label": "Annotators",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Write demonstrations and rank model outputs. InstructGPT used a team of 40 contractors; Llama 3 collected human preference annotations over multi-turn dialogues.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2203.02155",
+        "https://arxiv.org/pdf/2407.21783"
+      ]
+    },
+    {
+      "id": "users",
+      "label": "End users",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Use the deployed model; their feedback and failures feed the next round.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2203.02155"
+      ]
+    },
+    {
+      "id": "base",
+      "label": "Pretrained base model",
+      "kind": "external",
+      "c4": "external-system",
+      "summary": "The starting checkpoint that is fine-tuned or adapted.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2106.09685",
+        "https://arxiv.org/pdf/2407.21783"
+      ]
+    },
+    {
+      "id": "data",
+      "label": "Data pipeline",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Curates and versions training data: rule-based cleaning, model-based pruning, topic, quality and difficulty scoring, semantic deduplication; keeps evaluation data separate.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783"
+      ]
+    },
+    {
+      "id": "trainer",
+      "label": "Training jobs",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Runs fine-tuning on a GPU cluster: supervised fine-tuning, LoRA adapters, preference tuning and rejection sampling.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2106.09685",
+        "https://arxiv.org/pdf/2203.02155",
+        "https://arxiv.org/pdf/2305.18290",
+        "https://arxiv.org/pdf/2407.21783"
+      ],
+      "group": "Training jobs"
+    },
+    {
+      "id": "sft",
+      "label": "Supervised fine-tuning",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Fine-tunes on demonstrations of the desired behaviour; in Llama 3 every post-training round starts with SFT.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2203.02155",
+        "https://arxiv.org/pdf/2407.21783"
+      ],
+      "parent": "trainer",
+      "group": "Training jobs"
+    },
+    {
+      "id": "lora",
+      "label": "LoRA adapter training",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Freezes the base weights and trains small low-rank matrices: 10,000 times fewer trainable parameters and 3 times less GPU memory than full fine-tuning on GPT-3 175B in the paper.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2106.09685"
+      ],
+      "parent": "trainer",
+      "group": "Training jobs"
+    },
+    {
+      "id": "pref",
+      "label": "Preference tuning (DPO or RLHF)",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Aligns the model to human preferences. InstructGPT used a reward model and PPO; DPO solves the problem with a simple classification loss and Llama 3 found it cheaper and better than PPO.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2203.02155",
+        "https://arxiv.org/pdf/2305.18290",
+        "https://arxiv.org/pdf/2407.21783"
+      ],
+      "parent": "trainer",
+      "group": "Training jobs"
+    },
+    {
+      "id": "rs",
+      "label": "Rejection sampling",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Samples K outputs per prompt (typically 10 to 30) from the latest model and keeps the best by reward model, producing new training data.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783"
+      ],
+      "parent": "trainer",
+      "group": "Training jobs"
+    },
+    {
+      "id": "registry",
+      "label": "Model and adapter registry",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Every model and adapter with its data version, config, metrics and approval state. Industry practice.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2106.09685",
+        "https://arxiv.org/pdf/2407.21783"
+      ]
+    },
+    {
+      "id": "evalsvc",
+      "label": "Evaluation gate",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Runs the suites on each candidate and decides whether it may ship: benchmarks, regression tests, judge-based quality, safety and cost.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2306.05685",
+        "https://arxiv.org/pdf/2407.21783",
+        "https://arxiv.org/pdf/2203.02155"
+      ],
+      "group": "Evaluation gate"
+    },
+    {
+      "id": "bench",
+      "label": "Benchmarks and regression suite",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Target-task tests plus fixed tests of what the model did well before, compared with the production model. InstructGPT saw regressions on public datasets (alignment tax); contamination of test data is checked as in Llama 3.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2203.02155",
+        "https://arxiv.org/pdf/2407.21783"
+      ],
+      "parent": "evalsvc",
+      "group": "Evaluation gate"
+    },
+    {
+      "id": "judge",
+      "label": "LLM judge",
+      "kind": "service",
+      "c4": "component",
+      "summary": "A strong model scores open-ended answers. Over 80% agreement with human preferences in MT-Bench tests, but position, verbosity and self-enhancement biases.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2306.05685"
+      ],
+      "parent": "evalsvc",
+      "group": "Evaluation gate"
+    },
+    {
+      "id": "safety",
+      "label": "Safety evaluation",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Measures violation rate on adversarial prompts and false refusal rate on borderline prompts; Llama 3 optimises both.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783"
+      ],
+      "parent": "evalsvc",
+      "group": "Evaluation gate"
+    },
+    {
+      "id": "gate",
+      "label": "Release gate",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Passes a candidate only if protected metrics do not regress against the production model beyond a threshold. Industry practice.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783"
+      ],
+      "parent": "evalsvc",
+      "group": "Evaluation gate"
+    },
+    {
+      "id": "router",
+      "label": "Canary router",
+      "kind": "edge",
+      "c4": "container",
+      "summary": "Sends a small share of traffic (after shadow testing) to the candidate, ramps up, and rolls back automatically on bad signals. Industry practice.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2311.03285"
+      ]
+    },
+    {
+      "id": "serving",
+      "label": "Serving (base + adapters)",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Shared base model with many LoRA adapters; S-LoRA keeps adapters in main memory, fetches those needed to the GPU, and batches requests across adapters with Unified Paging. See note 22.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2311.03285",
+        "https://arxiv.org/pdf/2106.09685"
+      ]
+    },
+    {
+      "id": "monitor",
+      "label": "Monitoring and feedback",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Tracks quality proxies, latency, cost, safety and drift; samples failures into the next round's data.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2407.21783"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "eng-data",
+      "from": "eng",
+      "to": "data",
+      "label": "curate and version data",
+      "mode": "sync"
+    },
+    {
+      "id": "annot-data",
+      "from": "annot",
+      "to": "data",
+      "label": "demonstrations and preference pairs",
+      "mode": "sync"
+    },
+    {
+      "id": "data-sft",
+      "from": "data",
+      "to": "sft",
+      "label": "curated demonstrations",
+      "mode": "sync"
+    },
+    {
+      "id": "data-pref",
+      "from": "data",
+      "to": "pref",
+      "label": "preference pairs",
+      "mode": "sync"
+    },
+    {
+      "id": "base-sft",
+      "from": "base",
+      "to": "sft",
+      "label": "pretrained weights",
+      "mode": "sync"
+    },
+    {
+      "id": "base-lora",
+      "from": "base",
+      "to": "lora",
+      "label": "frozen weights",
+      "mode": "sync"
+    },
+    {
+      "id": "sft-pref",
+      "from": "sft",
+      "to": "pref",
+      "label": "SFT checkpoint",
+      "mode": "sync"
+    },
+    {
+      "id": "rs-data",
+      "from": "rs",
+      "to": "data",
+      "label": "new selected training data",
+      "mode": "async"
+    },
+    {
+      "id": "pref-rs",
+      "from": "pref",
+      "to": "rs",
+      "label": "latest model samples outputs",
+      "mode": "sync"
+    },
+    {
+      "id": "pref-reg",
+      "from": "pref",
+      "to": "registry",
+      "label": "candidate model",
+      "mode": "sync"
+    },
+    {
+      "id": "lora-reg",
+      "from": "lora",
+      "to": "registry",
+      "label": "candidate adapter",
+      "mode": "sync"
+    },
+    {
+      "id": "reg-bench",
+      "from": "registry",
+      "to": "bench",
+      "label": "candidate under test",
+      "mode": "sync"
+    },
+    {
+      "id": "bench-judge",
+      "from": "bench",
+      "to": "judge",
+      "label": "open-ended answers to score",
+      "mode": "sync"
+    },
+    {
+      "id": "bench-safety",
+      "from": "bench",
+      "to": "safety",
+      "label": "adversarial and borderline prompts",
+      "mode": "sync"
+    },
+    {
+      "id": "bench-gate",
+      "from": "bench",
+      "to": "gate",
+      "label": "metric results",
+      "mode": "sync"
+    },
+    {
+      "id": "judge-gate",
+      "from": "judge",
+      "to": "gate",
+      "label": "judge scores",
+      "mode": "sync"
+    },
+    {
+      "id": "safety-gate",
+      "from": "safety",
+      "to": "gate",
+      "label": "violation and false refusal rates",
+      "mode": "sync"
+    },
+    {
+      "id": "gate-reg",
+      "from": "gate",
+      "to": "registry",
+      "label": "approve or block",
+      "mode": "sync"
+    },
+    {
+      "id": "reg-serving",
+      "from": "registry",
+      "to": "serving",
+      "label": "load approved model and adapters",
+      "mode": "sync"
+    },
+    {
+      "id": "users-router",
+      "from": "users",
+      "to": "router",
+      "label": "requests",
+      "mode": "sync"
+    },
+    {
+      "id": "router-serving",
+      "from": "router",
+      "to": "serving",
+      "label": "canary share to candidate",
+      "mode": "sync"
+    },
+    {
+      "id": "serving-monitor",
+      "from": "serving",
+      "to": "monitor",
+      "label": "latency, cost, outputs",
+      "mode": "async"
+    },
+    {
+      "id": "monitor-router",
+      "from": "monitor",
+      "to": "router",
+      "label": "rollback signal",
+      "mode": "sync"
+    },
+    {
+      "id": "monitor-data",
+      "from": "monitor",
+      "to": "data",
+      "label": "failures and feedback",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "release",
+      "name": "From data to a released model",
+      "steps": [
+        {
+          "edge": "annot-data",
+          "caption": "Annotators write demonstrations and rank outputs; the data pipeline cleans, scores and versions it."
+        },
+        {
+          "edge": "data-sft",
+          "caption": "Curated demonstrations feed supervised fine-tuning."
+        },
+        {
+          "edge": "sft-pref",
+          "caption": "The SFT checkpoint is tuned further on preference pairs."
+        },
+        {
+          "edge": "pref-reg",
+          "caption": "The candidate model is registered with its data version and config."
+        },
+        {
+          "edge": "reg-bench",
+          "caption": "The evaluation gate runs the target, regression, judge and safety suites on the candidate."
+        },
+        {
+          "edge": "gate-reg",
+          "caption": "The gate approves it only if protected metrics do not regress."
+        },
+        {
+          "edge": "reg-serving",
+          "caption": "Serving loads the approved model."
+        },
+        {
+          "edge": "router-serving",
+          "caption": "A small canary share of traffic reaches it first."
+        }
+      ]
+    },
+    {
+      "id": "regression-blocked",
+      "name": "A candidate improves the target but regresses elsewhere (failure)",
+      "steps": [
+        {
+          "edge": "reg-bench",
+          "caption": "The candidate is better on the target task."
+        },
+        {
+          "edge": "bench-gate",
+          "caption": "The regression suite shows it is worse on previously fixed cases or formats."
+        },
+        {
+          "edge": "gate-reg",
+          "caption": "The gate blocks the release; the candidate stays unapproved and the data or training mix is revised."
+        }
+      ]
+    },
+    {
+      "id": "canary-rollback",
+      "name": "The canary degrades in production (failure)",
+      "steps": [
+        {
+          "edge": "users-router",
+          "caption": "A small share of users reaches the candidate."
+        },
+        {
+          "edge": "serving-monitor",
+          "caption": "Monitoring sees higher errors, latency or bad feedback on the candidate."
+        },
+        {
+          "edge": "monitor-router",
+          "caption": "A rollback signal returns all traffic to the previous version."
+        },
+        {
+          "edge": "monitor-data",
+          "caption": "The failing cases are sampled into the next round's data."
+        }
+      ]
+    },
+    {
+      "id": "adapters",
+      "name": "Serving many customer adapters",
+      "steps": [
+        {
+          "edge": "lora-reg",
+          "caption": "Each customer's adapter is registered after passing its own evaluation."
+        },
+        {
+          "edge": "reg-serving",
+          "caption": "Adapters are stored in main memory on the serving fleet."
+        },
+        {
+          "edge": "router-serving",
+          "caption": "A request names its adapter; only the adapters used by running queries are fetched to GPU memory and batched together."
+        }
+      ]
+    }
+  ]
+}
