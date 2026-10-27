@@ -182,7 +182,7 @@ search (eventually consistent) ─► choose ─► HOLD (insert row status=HELD
                                   release: status = CANCELLED (frees the range)
 ```
 
-- **The hold is a real row** inside the exclusion constraint's `WHERE`, so it blocks others. A **sweeper job** (or a check on read) marks expired holds `CANCELLED` `[INDUSTRY PATTERN]`. Treat `hold_expires < now()` as free at query time too, so a slow sweeper does not hide inventory.
+- **The hold is a real row** inside the exclusion constraint's `WHERE`, so it blocks others. A **sweeper job** (or a check on read) marks expired holds `CANCELLED` `[INDUSTRY PATTERN]`. Treat `hold_expires < now()` as free at query time too, so a slow sweeper does not hide inventory. But the constraint cannot see the clock: an expired `HELD` row that has not been swept still satisfies the `WHERE (status IN ('HELD','CONFIRMED'))` predicate, so a new insert for the same range would fail until the sweeper runs. The booking transaction should therefore first cancel any expired holds on that unit and range (`UPDATE booking SET status = 'CANCELLED' WHERE space_id = $1 AND during && $2 AND status = 'HELD' AND hold_expires < now()`) and then insert, in the same transaction `[INDUSTRY PATTERN]` (our reasoning: a constraint predicate cannot call `now()`).
 - **Pay with an idempotency key.** Stripe `[CONFIRMED]`: the client generates the key (up to 255 characters, V4 UUIDs suggested). For API v1, Stripe saves the status code and body of the first request after execution begins, and retries with the same key return the saved response, "including `500` errors". Keys can be pruned after at least 24 hours. A reused key with **different parameters errors**. Validation failures and concurrent-request conflicts are not saved, so they can be retried. All `POST` requests accept keys, `GET` and `DELETE` do not need them.
 - **Consequence for design:** derive the key from `(booking_id, attempt number)`, not a bare `booking_id`. A retry with a different card changes the parameters, which would error under the same key `[INDUSTRY PATTERN]`, inferred from the documented behaviour.
 - **Saga, not a distributed transaction:** reserve → pay → confirm, with compensation (cancel the hold, refund) on failure. Use a **transactional outbox** so "booking confirmed" events (email, access code) are not lost if the process dies after commit `[INDUSTRY PATTERN]` (see [04 Message queue](04-message-queue-kafka.md) and [10 Notification system](10-notification-system.md)).
@@ -272,7 +272,7 @@ Both insert a HELD booking with overlapping ranges. The exclusion constraint let
 
 <details><summary>Design the hold.</summary>
 
-A HELD row with an expiry inside the constraint, a payment step with an idempotency key, a sweeper that cancels expired holds, and a confirm that rechecks the hold is still valid.
+A HELD row with an expiry inside the constraint, a payment step with an idempotency key, a sweeper that cancels expired holds (plus cancelling expired holds inside the booking transaction, since the constraint cannot see the clock), and a confirm that rechecks the hold is still valid.
 
 </details>
 
@@ -308,3 +308,4 @@ Room types are counted inventory per night. Numbered spaces use a range per unit
 - Not read in this session: the `CREATE TABLE ... EXCLUDE` reference (so the `WHERE (status IN ...)` partial form is marked for testing), the `btree_gist` page, Redis `SET NX PX` semantics, any hotel or parking operator documentation.
 - Labelled as industry pattern, not sourced: overbooking practice, hold and sweeper design, search/booking split, parking extension, overstay and no-show behaviour, dynamic pricing, time-zone handling.
 - Derived by us from documented behaviour: the "idempotency key = booking id + attempt number" advice follows from Stripe's rule that a changed-parameter retry on the same key errors.
+- Added (independent review, 2026-10-27): an expired hold that the sweeper has not yet cancelled still blocks the exclusion constraint, because the constraint's predicate cannot depend on the current time; the note now says to cancel expired holds in the booking transaction. This is our reasoning, not a quoted source.
