@@ -38,16 +38,12 @@ export function DiagramView({
   initialStep = 0,
   initialLevel = "container",
   initialFocus = null,
-  big = false,
-  onToggleBig,
 }: {
   diagram: Diagram;
   initialFlow?: string | null;
   initialStep?: number;
   initialLevel?: Level;
   initialFocus?: string | null;
-  big?: boolean;
-  onToggleBig?: () => void;
 }) {
   const focusable = useMemo(() => containersWithComponents(diagram), [diagram]);
   const startFocus = focusable.find((n) => n.id === initialFocus)?.id ?? focusable[0]?.id ?? null;
@@ -88,6 +84,8 @@ export function DiagramView({
   // Keep the URL in sync so the current view and step can be copied.
   useEffect(() => {
     const q = new URLSearchParams();
+    const view = new URLSearchParams(location.hash.split("?")[1] ?? "").get("view");
+    if (view) q.set("view", view);
     q.set("level", level);
     if (level === "component" && focus) q.set("focus", focus);
     if (flowId) { q.set("flow", flowId); q.set("step", String(step + 1)); }
@@ -182,9 +180,6 @@ export function DiagramView({
           <Background />
           <Controls showInteractive={false} />
         </ReactFlow>
-        {onToggleBig && (
-          <button className="enlarge" onClick={onToggleBig} aria-pressed={big}>{big ? "Shrink graph" : "Enlarge graph"}</button>
-        )}
         {Object.keys(mv).length > 0 && (
           <button className="reset" onClick={() => setMoved((m) => ({ ...m, [viewKey]: {} }))}>Reset layout</button>
         )}

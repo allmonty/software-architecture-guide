@@ -75,7 +75,6 @@ html, body { overflow-x: hidden; }
   .split { grid-template-columns: minmax(0, 1fr); height: auto; }
   .split > .left, .split > .right { overflow: visible; }
   .canvas { height: 55vh; }
-  .enlarge { display: none; }
   .panel { grid-template-columns: minmax(0, 1fr); }
   .panel section + section { border-left: none; padding-left: 0; border-top: 1px solid var(--line); padding-top: 12px; }
   .home, .system { padding: 12px 16px; }
@@ -135,7 +134,13 @@ html, body { overflow-x: hidden; }
 
 .react-flow__edge-text { font-size: 12px; }
 
-.enlarge { position: absolute; bottom: 10px; right: 10px; z-index: 5; }
-.reset { right: 8px; top: 8px; }
-.split.big { grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); }
-.split.big .canvas { height: 66vh; }
+
+.modes { display: flex; gap: 0; }
+.modes button { border-radius: 0; }
+.modes button:first-child { border-radius: 6px 0 0 6px; } .modes button:last-child { border-radius: 0 6px 6px 0; }
+.split.mode-graph { grid-template-columns: minmax(0, 1fr); }
+.split.mode-graph .canvas { height: 62vh; }
+.split.mode-text { grid-template-columns: minmax(0, 1fr); }
+.split.mode-text .notes { max-width: 960px; margin: 0 auto; }
+.notes.hidden { display: none; }
+.legend[hidden] { display: none; }
