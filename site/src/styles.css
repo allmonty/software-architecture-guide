@@ -309,3 +309,30 @@ button.study { margin-left: auto; }
 .stepper.failure .step-list li.now::marker { color: var(--c-spec); }
 .step-list button.linkish { text-align: left; text-decoration: none; color: inherit; font: inherit; }
 .step-list button.linkish:hover { text-decoration: underline; }
+
+/* ---- Reading comfort ---- */
+.notes { line-height: 1.65; }
+.notes p, .notes li, .notes blockquote { max-width: 76ch; }
+.notes table, .notes pre, .notes details, .tablewrap { max-width: 100%; }
+.notes h2 { margin-top: 1.8em; } .notes h3 { margin-top: 1.4em; }
+.notes blockquote { margin-left: 0; padding-left: 14px; border-left: 3px solid var(--line); color: var(--muted); }
+.reading-tools { display: inline-flex; gap: 6px; }
+.reading-tools button { font-size: .85rem; padding: 2px 8px; }
+.focus .top, .focus .legend, .focus .trust { display: none; }
+
+/* ---- Print: the note only, in black on white, with every answer open ---- */
+@media print {
+  :root, :root[data-theme] { --bg: #fff; --fg: #000; --muted: #444; --card: #fff; --line: #bbb; --accent: #1d4ed8; }
+  .top, .crumbs, .bar, .legend, .diagram-col, .outline-select, .side-outline, .settings, .anchor, .backdrop, .tools, .levels, .reset { display: none !important; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  .system, .toolkit { padding: 0; max-width: none; }
+  .split { display: block !important; height: auto !important; }
+  .split > .left, .split > .right { overflow: visible !important; }
+  .notes.hidden { display: block !important; }
+  .notes p, .notes li { max-width: none; }
+  .notes details > summary { list-style: none; }
+  .notes pre, .notes table, .trust, .notes details { break-inside: avoid; }
+  .notes h2, .notes h3 { break-after: avoid; }
+  a { color: inherit; text-decoration: none; }
+  .notes a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .8em; color: #444; word-break: break-all; }
+}

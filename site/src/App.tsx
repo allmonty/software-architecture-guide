@@ -8,6 +8,7 @@ import { TrackPage } from "./TrackPage.tsx";
 import { StudyToggle } from "./StudyToggle.tsx";
 import { SystemPage, components } from "./SystemPage.tsx";
 import { Outline, scrollToSection, useHeadingComponents } from "./sections.tsx";
+import { ReadingTools } from "./ReadingTools.tsx";
 import { TrustCard } from "./TrustCard.tsx";
 import { SettingsMenu } from "./SettingsMenu.tsx";
 
@@ -63,7 +64,7 @@ function ToolkitView({ page, section }: { page: ToolkitPage; section: string | n
   useEffect(() => { if (section) scrollToSection(section, false); }, [section]);
   return (
     <main className="notes toolkit">
-      <p className="crumbs"><a href="#">← Home</a> · <a href="#toolkit/README">Toolkit index</a>{page.id !== "README" && <StudyToggle refId={page.id.slice(0, 3)} />}</p>
+      <p className="crumbs"><a href="#">← Home</a> · <a href="#toolkit/README">Toolkit index</a><ReadingTools />{page.id !== "README" && <StudyToggle refId={page.id.slice(0, 3)} />}</p>
       <Outline markdown={page.markdown} variant="select" />
       {page.id !== "README" && !page.id.startsWith("W") && <TrustCard title={page.title} markdown={page.markdown} claims={page.claims} />}
       <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={{ ...components, ...headings }}>{page.markdown}</ReactMarkdown>

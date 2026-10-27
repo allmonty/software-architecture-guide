@@ -6,6 +6,7 @@ import type { System } from "./data.ts";
 import { DiagramView } from "./DiagramView.tsx";
 import { StudyToggle } from "./StudyToggle.tsx";
 import { rehypeNodeRefs } from "./nodeRefs.ts";
+import { ReadingTools } from "./ReadingTools.tsx";
 import { TrustCard } from "./TrustCard.tsx";
 import { Outline, scrollToSection, useHeadingComponents } from "./sections.tsx";
 import { systems, toolkitPages } from "./data.ts";
@@ -81,7 +82,7 @@ export function SystemPage({
   const liveStep = Number(live.get("step"));
   return (
     <main className="system">
-      <p className="crumbs"><a href="#">← Home</a><StudyToggle refId={system.id.slice(0, 2)} /></p>
+      <p className="crumbs"><a href="#">← Home</a><ReadingTools /><StudyToggle refId={system.id.slice(0, 2)} /></p>
       <div className="bar">
         <h1>
           {system.diagram.title}{" "}
