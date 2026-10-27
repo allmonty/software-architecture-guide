@@ -288,6 +288,7 @@
     },
     {
       "id": "scale-out",
+      "failure": true,
       "name": "Load spike and scale-out",
       "steps": [
         {
