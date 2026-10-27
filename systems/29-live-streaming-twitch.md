@@ -104,6 +104,16 @@ We did not read Twitch's own description of its low-latency HLS beyond the inter
 
 ---
 
+## 5b. A documented cousin of Twitch's stack: Amazon IVS, and the Clips API `[CONFIRMED]` with limits
+
+**Amazon IVS.** AWS's July 2020 launch announcement says Amazon IVS "ingests the video, then automatically transcodes and optimizes it, making live video streams available within seconds" using "the same video technology Twitch uses for its live streaming service". Because AWS documents IVS publicly, its user guide is the closest primary description of what such a stack exposes to a broadcaster (it does not tell us Twitch's own settings):
+- **Ingest:** H.264 video and AAC (LC) audio over RTMPS (RTMP over TLS 1.2 or later), RTMP, or SRT, a newer open-source protocol "designed to improve streaming over unreliable networks and protect against jitter, packet loss, and network bandwidth fluctuations".
+- **Latency:** "Amazon IVS channels can deliver video with latency under 5 seconds"; a separate real-time tier (stages) is under 300 ms; and "for a traditional Over-The-Top (OTT) stream, latency may be as high as 30 seconds". For the lowest latency the IVS player must be used because third-party HLS players are not supported.
+- **Keyframe interval trade-off:** the guide tells broadcasters to set the encoder's IDR/keyframe interval to 2 seconds (or 1 second for even lower latency). With 2 seconds, stream-start latency is approximately 6 to 7 seconds; with 1 second, 3 to 4 seconds. The 1-second setting can make the player's adaptive bitrate switch resolution more often and raise buffering. Intervals above 5 seconds are discouraged because segments may not begin with a keyframe, risking decode errors when viewers start playback or change quality. This shows concretely why segmenting and keyframe alignment (section 7) drive delay.
+- **Restreaming:** the guide advises streaming directly to IVS because third-party restreaming services add latency.
+
+**Clips (documented behaviour only).** Twitch's Create Clip API documentation says the call "captures up to 90 seconds of the broadcaster's stream", spanning the point from when the API was called (about 35 seconds before to 5 seconds after in its example); by default Twitch publishes up to the last 30 seconds, and the clip can be edited to 5 to 60 seconds through a URL valid for up to 24 hours. Creation is **asynchronous**: the API returns 202 Accepted, the client checks Get Clips, and if Get Clips has not returned the clip after 15 seconds the client should "assume it failed". It requires the broadcaster to be live and fails with 403 if the broadcaster restricted clipping to followers or subscribers or disabled it. This describes the interface, not the implementation: it is consistent with cutting a clip from a recent-segment buffer of the live stream, but no source we read says how it is built.
+
 ## 6. Chat `[CONFIRMED]` (2015 and 2023 posts, developer docs)
 
 **Components.** Chat "is a highly scalable real-time distributed system written in Go" (2015). The 2015 post names four parts:
@@ -134,7 +144,7 @@ broadcaster ─RTMP─► PoP media proxy ─► ingest router (capacity-aware) 
 - **Adaptive bitrate:** the player measures throughput and chooses a quality per segment.
 - **Hot channels:** coalesce requests at each tree level so one origin fetch serves many viewers; pre-warm capacity when a large event is scheduled.
 - **Chat fan-out:** shard rooms across edge nodes; for very large rooms, sample or aggregate for display and apply slow mode, because every viewer cannot read every message. This is the same family of problem as [09 Discord](09-discord.md) and [08 WhatsApp](08-chat-whatsapp.md).
-- **Clips:** keep a rolling window of recent segments so a clip can be cut from the live buffer. Twitch's posts we read do not describe how clips work, so this is our design.
+- **Clips:** keep a rolling window of recent segments so a clip can be cut from the live buffer. Twitch documents the clip interface (section 5b: asynchronous, a 90-second capture window, 5 to 60 seconds published) but no source we read describes the implementation, so the buffer design is ours.
 - **Delay versus resilience:** a bigger player buffer survives bad networks; a smaller one lowers delay. Offer a latency mode and fall back automatically.
 
 For video distribution mechanics and caches see [12 YouTube](12-youtube.md) and [13 Netflix](13-netflix.md).
@@ -165,7 +175,7 @@ For video distribution mechanics and caches see [12 YouTube](12-youtube.md) and 
 3. **The 2021 interview contains a claim of "more than 1.5 million people" streaming at any moment,** which conflicts with its own "hundreds of thousands of live channels". We did not use it.
 4. **Posts are from 2015 to 2023.** The architecture may have changed since; the posts do not say.
 5. **Low-latency HLS is described from the specification draft,** not from Twitch's implementation.
-6. **Not read:** Amazon IVS documentation, WebRTC, SRT, CMAF, Twitch's Clips documentation, and any talk on the replication tree.
+6. **IVS is a related product,** and AWS's statement that it uses the same technology as Twitch (2020) does not mean Twitch uses the same settings or has not changed since. **Not read:** WebRTC details, CMAF, and any talk on the replication tree.
 
 ---
 
@@ -241,6 +251,7 @@ Accept messages at edge servers, check rules once, publish to a topic for the ch
 
 > **Kind:** real system, partly reference design. The posts below describe real Twitch components. The transcoder internals, the bitrate ladder, clips, chat fan-out detail and current message rates are **not** published in what we read, so section 7 is a reference design `[INDUSTRY PATTERN]`.
 > **Sources read on 2026-10-27:** Twitch Engineering, [*Twitch Engineering: An Introduction and Overview*](https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de) (Dec 2015) · Twitch, [*Ingesting Live Video Streams at Global Scale*](https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/) (Apr 2022) · Twitch, [*Low Latency, High Reach: Creating an Unparalleled Live Video Streaming Network at Twitch*](https://blog.twitch.tv/en/2021/10/25/low-latency-high-reach-creating-an-unparalleled-live-video-streaming-network-at-twitch/) (Oct 2021, an interview) · Twitch, [*Twitch State of Engineering 2023*](https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/) (Sep 2023) · [Twitch developer documentation, Chat](https://dev.twitch.tv/docs/chat/) · Pantos and May, [RFC 8216, HTTP Live Streaming](https://www.rfc-editor.org/rfc/rfc8216) (2017) · Pantos, [HTTP Live Streaming 2nd Edition, draft-pantos-hls-rfc8216bis-17](https://www.ietf.org/archive/id/draft-pantos-hls-rfc8216bis-17.txt) (Feb 2025).
+> **Also read on 2026-10-27:** Amazon IVS Low-Latency Streaming [user guide](https://docs.aws.amazon.com/ivs/latest/LowLatencyUserGuide/what-is.html) and [Reducing Latency](https://docs.aws.amazon.com/ivs/latest/LowLatencyUserGuide/streaming-config.html) pages · AWS, [Introducing Amazon Interactive Video Service](https://aws.amazon.com/about-aws/whats-new/2020/07/introducing-amazon-ivs/) (15 July 2020) · Twitch developer documentation, [Create Clip](https://dev.twitch.tv/docs/api/reference/#create-clip).
 > **Dated material:** posts range from 2015 to 2023. The Twitch pages are rendered by scripts, so we read them through an Internet Archive copy.
 > **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible or illustrative.
 
@@ -255,4 +266,5 @@ Accept messages at edge servers, check rules once, publish to a topic for the ch
 - Verified in the chat documentation: send limits and the PING/PONG rule.
 - Verified in RFC 8216 and the 2nd-edition draft: reload and playlist rules, partial segments, blocking reload, preload hints, `PART-HOLD-BACK`.
 - Labelled industry pattern or speculative: stream key authentication, segmenting alignment, adaptive bitrate, request coalescing, chat sharding and sampling, clips, failure recovery for streams already on a failed origin, PoP loss.
-- Not read: Amazon IVS documentation, WebRTC, SRT, CMAF, Twitch Clips, replication-tree talks, the chat documentation's join limits beyond the sending limits.
+- Verified in the Amazon IVS pages and the Create Clip documentation: the quoted ingest, latency and keyframe-interval statements, the 2020 announcement wording, and the clip window, publish length, asynchronous flow and error conditions. The IVS settings are not claimed for Twitch itself.
+- Not read: WebRTC details, CMAF, replication-tree talks, the chat documentation's join limits beyond the sending limits.

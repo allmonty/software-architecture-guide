@@ -204,6 +204,42 @@
     "status": "confirmed"
   },
   {
+    "quote": "ingests the video, then automatically transcodes and optimizes it, making live video streams available within seconds",
+    "url": "https://aws.amazon.com/about-aws/whats-new/2020/07/introducing-amazon-ivs/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the same video technology Twitch uses for its live streaming service",
+    "url": "https://aws.amazon.com/about-aws/whats-new/2020/07/introducing-amazon-ivs/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "designed to improve streaming over unreliable networks and protect against jitter, packet loss, and network bandwidth fluctuations",
+    "url": "https://docs.aws.amazon.com/ivs/latest/LowLatencyUserGuide/what-is.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Amazon IVS channels can deliver video with latency under 5 seconds",
+    "url": "https://docs.aws.amazon.com/ivs/latest/LowLatencyUserGuide/what-is.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "for a traditional Over-The-Top (OTT) stream, latency may be as high as 30 seconds",
+    "url": "https://docs.aws.amazon.com/ivs/latest/LowLatencyUserGuide/what-is.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "captures up to 90 seconds of the broadcaster's stream",
+    "url": "https://dev.twitch.tv/docs/api/reference/#create-clip",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "is a highly scalable real-time distributed system written in Go",
     "url": "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
     "via": "archive",
