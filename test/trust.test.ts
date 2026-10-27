@@ -15,6 +15,12 @@ test("Medium is primary only for a company engineering blog we name", () => {
   assert.equal(classifySource("https://medium.com/@someone/post"), "secondary");
 });
 
+test("GitHub is primary for a company's own repository and secondary for study guides", () => {
+  assert.equal(classifySource("https://github.com/twitter-archive/snowflake"), "primary");
+  assert.equal(classifySource("https://github.com/donnemartin/system-design-primer"), "secondary");
+  assert.equal(classifySource("https://www.questdb.com/glossary/x"), "secondary");
+});
+
 test("an unparseable URL is not trusted", () => assert.equal(classifySource("not a url"), "secondary"));
 
 test("the newest read date in a note is found", () => {

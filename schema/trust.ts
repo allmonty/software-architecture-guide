@@ -7,7 +7,11 @@ const SECONDARY = [
   "wikipedia.org", "systemdesign.one", "highscalability.com", "substack.com", "2minutestreaming.com", "awsinsider.net",
   "techcrunch.com", "streaminglearningcenter.com", "datacenterdynamics.com", "dev.to", "geeksforgeeks.org", "educative.io",
   "bytebytego.com", "hellointerview.com",
+  // Tutorials, glossaries and vendor marketing pages we cite as leads.
+  "codecommit.com", "questdb.com", "onixs.biz", "investor.gov", "aiven.io",
 ];
+// GitHub hosts primary sources (a company's own repository) and study guides. List the guides by path.
+const SECONDARY_PATHS = ["github.com/donnemartin/", "github.com/mehdihadeli/", "github.com/yuvadm/"];
 // Company engineering blogs hosted on Medium are primary; any other Medium page is not.
 const MEDIUM_PRIMARY = ["twitch-engineering"];
 
@@ -17,6 +21,7 @@ export function classifySource(url: string): SourceClass {
   let u: URL;
   try { u = new URL(url); } catch { return "secondary"; }
   const host = u.hostname.replace(/^www\./, "");
+  if (SECONDARY_PATHS.some((p) => `${host}${u.pathname}`.toLowerCase().startsWith(p))) return "secondary";
   if (host === "medium.com") return MEDIUM_PRIMARY.includes(u.pathname.split("/")[1]) ? "primary" : "secondary";
   return SECONDARY.some((d) => host === d || host.endsWith("." + d)) ? "secondary" : "primary";
 }
