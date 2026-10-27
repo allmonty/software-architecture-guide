@@ -6,7 +6,10 @@
     "validate": "tsx scripts/validate.ts",
     "test": "tsx --test test/*.test.ts",
     "dev": "npm --prefix site run dev",
-    "build": "npm --prefix site run build"
+    "build": "npm --prefix site run build",
+    "verify": "tsx scripts/verify-quotes.ts",
+    "links": "tsx scripts/check-links.ts",
+    "freshness": "tsx scripts/freshness.ts"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

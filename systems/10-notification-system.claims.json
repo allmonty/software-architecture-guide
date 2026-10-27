@@ -1,0 +1,95 @@
+[
+  {
+    "quote": "ensure at-least-once message delivery",
+    "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "more than one copy of a message might be delivered",
+    "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "based on power considerations on the user's device",
+    "url": "https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "might get grouped and delivered in bursts",
+    "url": "https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "APNs stores only one notification per bundle ID",
+    "url": "https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "in most cases, the latest notification is stored",
+    "url": "https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "no need to send further pushes to the same device token, unless your application retrieves the same device token",
+    "url": "https://developer.apple.com/documentation/usernotifications/handling-notification-responses-from-apns",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "too many requests were made consecutively to the same device token",
+    "url": "https://developer.apple.com/documentation/usernotifications/handling-notification-responses-from-apns",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "After 15 minutes, you can retry JSON payloads that receive response status codes that begin with 5XX",
+    "url": "https://developer.apple.com/documentation/usernotifications/handling-notification-responses-from-apns",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a duration from 0 to 2,419,200 seconds (28 days)",
+    "url": "https://firebase.google.com/docs/cloud-messaging/customize-messages/setting-message-lifespan",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the old message is discarded and then new message takes its place.",
+    "url": "https://firebase.google.com/docs/cloud-messaging/customize-messages/setting-message-lifespan",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "delivered immediately when the device is not sleeping",
+    "status": "manual",
+    "note": "Read on the Firebase message-priority page via WebFetch, 2026-10-27."
+  },
+  {
+    "quote": "time sensitive, user visible content",
+    "status": "manual",
+    "note": "Same page, same date."
+  },
+  {
+    "quote": "should result in user interaction",
+    "status": "manual",
+    "note": "Same page, same date."
+  },
+  {
+    "quote": "hasn't connected for a month",
+    "url": "https://firebase.google.com/docs/cloud-messaging/manage-tokens",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "redundantly stores the message in multiple availability zones",
+    "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]

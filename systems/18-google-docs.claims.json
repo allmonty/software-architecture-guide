@@ -1,0 +1,108 @@
+[
+  {
+    "quote": "a symmetrical algorithm employing an unending cycle of background difference (diff) and patch operations",
+    "url": "https://neil.fraser.name/writing/sync/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "The enabling feature is that the patch algorithm is fuzzy, meaning patches may be applied even if the document has changed.",
+    "url": "https://neil.fraser.name/writing/sync/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "will automatically show up negatively in the following diff and will be patched out of the Client Text",
+    "url": "https://neil.fraser.name/writing/sync/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "retransmitted to the remote party on every sync",
+    "url": "https://neil.fraser.name/writing/sync/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Algorithms based on Operation Transformation are currently popular for implementing edit-based collaborative systems",
+    "url": "https://neil.fraser.name/writing/sync/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "all user actions must be captured",
+    "url": "https://neil.fraser.name/writing/sync/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "OTs were unnecessarily complex for our problem space",
+    "url": "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Figma isn't a text editor",
+    "url": "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "inspired by something called CRDTs",
+    "url": "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Figma isn't using true CRDTs though",
+    "url": "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Our server is the central authority",
+    "url": "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a last-writer-wins register",
+    "url": "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a separate process for each multiplayer document",
+    "url": "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "in collaborative text editors: concurrently inserted text with a well-defined order",
+    "status": "ignored",
+    "note": "Quote-pairing artifact."
+  },
+  {
+    "quote": "several published algorithms",
+    "url": "https://martin.kleppmann.com/2019/03/25/papoc-interleaving-anomalies.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "cannot be guaranteed by any algorithm",
+    "url": "https://martin.kleppmann.com/2019/03/25/papoc-interleaving-anomalies.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "does not guarantee convergence",
+    "url": "https://martin.kleppmann.com/2019/03/25/papoc-interleaving-anomalies.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "never send[s] more than one pending change at a time",
+    "status": "manual",
+    "note": "Confirmed on Google's 2010 post by the independent reviewer, 2026-10-27."
+  }
+]

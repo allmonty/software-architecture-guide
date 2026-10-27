@@ -1,0 +1,68 @@
+[
+  {
+    "quote": "over 260 billion images, which translates to over 20 petabytes of data",
+    "url": "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "one billion new photos (~60 terabytes) each week",
+    "url": "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "As of February 2014, Facebook stored over 400 billion photos",
+    "url": "https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "over 65PBs of logical BLOBs",
+    "url": "https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "time-limited access to objects",
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "allows an upload without requiring another party to have AWS security credentials",
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "one (or typically more) to translate the filename to an inode number, another to read the inode from disk, and a final one to read the file itself",
+    "url": "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a very large file (100 GB)",
+    "url": "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "The request rate for week-old BLOBs is an order of magnitude lower than for less-than-a-day old content for eight of nine examined types",
+    "url": "https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "results in over provisioning from a throughput perspective",
+    "url": "https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "increased rebuild and recovery times under failure and lower maximum read throughput",
+    "url": "https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]

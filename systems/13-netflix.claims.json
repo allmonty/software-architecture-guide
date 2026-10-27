@@ -1,0 +1,98 @@
+[
+  {
+    "quote": "a significant portion of overall traffic",
+    "url": "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "in a direct and collaborative way",
+    "url": "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a proactive, directed caching solution that is much more efficient than the standard demand-driven CDN solution, reducing the overall demand on upstream network capacity by several orders of magnitude",
+    "url": "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "as close as possible to our members, limiting the network and geographical distances that our video bits must travel during playback",
+    "url": "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Because we can predict with high accuracy what our members will watch and what time of day they will watch it, we make use of non-peak bandwidth to download the vast majority of content updates to the OCAs ... during these configurable time windows.",
+    "url": "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "temporarily store encoded video/image files and make these files available via HTTP/HTTPS",
+    "url": "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the sole responsibility of storing playable bits",
+    "url": "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "ISPs directly control which of their customers are routed to their embedded OCAs.",
+    "url": "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "ordered by network proximity alone",
+    "url": "https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c",
+    "via": "archive",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the longest, most specific matching prefix",
+    "url": "https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c",
+    "via": "archive",
+    "status": "confirmed"
+  },
+  {
+    "quote": "control fill behavior (adding new files to OCAs nightly), compute optimal behavior for such things as file storage/hashing, and handle the storage and interpretation of relevant telemetry about the playback experience.",
+    "url": "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "is optimized dynamically by each client device based on its specific needs and the current network conditions",
+    "url": "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "we find as many owners as we need replicas",
+    "url": "https://netflixtechblog.com/distributing-content-to-open-connect-3e3e391d4dc9",
+    "via": "archive",
+    "status": "confirmed"
+  },
+  {
+    "quote": "drops about 1/5th of content from the 250th to 500th TB mark",
+    "url": "https://netflixtechblog.com/distributing-content-to-open-connect-3e3e391d4dc9",
+    "via": "archive",
+    "status": "confirmed"
+  },
+  {
+    "quote": "content holes substantially reduced and significant improvements in load balance",
+    "url": "https://netflixtechblog.com/distributing-content-to-open-connect-3e3e391d4dc9",
+    "via": "archive",
+    "status": "confirmed"
+  },
+  {
+    "quote": "not served from the best available OCA for a given Netflix client, independent of OCA state",
+    "url": "https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c",
+    "via": "archive",
+    "status": "confirmed"
+  }
+]

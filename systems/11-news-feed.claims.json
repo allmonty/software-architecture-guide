@@ -1,0 +1,67 @@
+[
+  {
+    "quote": "~3% of our infrastructure",
+    "url": "https://blog.x.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale",
+    "via": "archive",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the primary cache for Tweet timelines and is backed by a customized version of Redis (implementing the HybridList). Haplo is read-only from Timeline Service and written to by Timeline Service and Fanout Service.",
+    "url": "https://blog.x.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale",
+    "via": "archive",
+    "status": "confirmed"
+  },
+  {
+    "quote": "protects our backing stores from heavy read traffic and allows for storing objects which have heavy hydration costs",
+    "url": "https://blog.x.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale",
+    "via": "archive",
+    "status": "confirmed"
+  },
+  {
+    "quote": "peaks over tens of million QPS",
+    "url": "https://blog.x.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale",
+    "via": "archive",
+    "status": "confirmed"
+  },
+  {
+    "quote": "hundreds of billions objects",
+    "url": "https://blog.x.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale",
+    "via": "archive",
+    "status": "confirmed"
+  },
+  {
+    "quote": "DDoS-esque connect attacks",
+    "url": "https://blog.x.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale",
+    "via": "archive",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the main service used to construct and serve Twitter's Home Timelines",
+    "url": "https://github.com/twitter/the-algorithm/tree/main/home-mixer",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "best Tweets from people you follow + recommended out-of-network content",
+    "url": "https://github.com/twitter/the-algorithm/tree/main/home-mixer",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Find and rank In-Network posts. ~50% of posts come from this candidate source",
+    "url": "https://github.com/twitter/the-algorithm",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a list of followees' posts",
+    "status": "ignored",
+    "note": "Describes a common claim, not a source quotation."
+  },
+  {
+    "quote": "several thousand 'logical' shards that are mapped in code to far fewer physical shards",
+    "url": "https://instagram-engineering.com/sharding-ids-at-instagram-1cf5a71e5a5c",
+    "via": "archive",
+    "status": "confirmed"
+  }
+]

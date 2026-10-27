@@ -1,0 +1,150 @@
+[
+  {
+    "quote": "a set of warm GameServers that are available to be allocated from",
+    "url": "https://agones.dev/site/docs/reference/fleet/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "can be viewed as a generalisation of the Elo system",
+    "url": "https://www.microsoft.com/en-us/research/publication/trueskilltm-a-bayesian-skill-rating-system/",
+    "via": "archive",
+    "status": "confirmed"
+  },
+  {
+    "quote": "an open-source game matchmaking framework that simplifies building a scalable and extensible Matchmaker",
+    "url": "https://open-match.dev/site/docs/overview/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "full control over how to make matches",
+    "url": "https://open-match.dev/site/docs/overview/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "The core matchmaking logic is implemented as a Match Function service.",
+    "url": "https://open-match.dev/site/docs/guides/matchmaker/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Receives the matchmaking request from the game client",
+    "url": "https://open-match.dev/site/docs/guides/matchmaker/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Open Match creates a Ticket and indexes its SearchFields.",
+    "url": "https://open-match.dev/site/docs/guides/matchmaker/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Understands the types of matches (MatchProfiles) that can be served.",
+    "url": "https://open-match.dev/site/docs/guides/matchmaker/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "deduplicate[s] Match proposals before returning results",
+    "url": "https://open-match.dev/site/docs/guides/matchmaker/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "It appeared in *Advances in Neural Information Processing Systems 20*. The abstract says it was used",
+    "status": "ignored",
+    "note": "Quote-pairing artifact."
+  },
+  {
+    "quote": "ready to accept connections",
+    "url": "https://agones.dev/site/docs/getting-started/create-gameserver/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "on the way to being deleted",
+    "url": "https://agones.dev/site/docs/getting-started/create-gameserver/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the number of GameServers to keep Ready or Allocated",
+    "url": "https://agones.dev/site/docs/reference/fleet/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "terminates all non-allocated GameServers",
+    "url": "https://agones.dev/site/docs/reference/fleet/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "atomically allocate[s] a GameServer out of a set of GameServers",
+    "url": "https://agones.dev/site/docs/reference/gameserverallocation/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "active and should not be removed until SDK.Shutdown() is called or it is manually deleted",
+    "status": "manual",
+    "note": "Read on the Agones GameServerAllocation page via WebFetch, 2026-10-27."
+  },
+  {
+    "quote": "If the first selector is not matched, the selection attempts the second selector, and so on.",
+    "url": "https://agones.dev/site/docs/reference/gameserverallocation/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "aimed at dynamic Kubernetes clusters",
+    "url": "https://agones.dev/site/docs/reference/gameserverallocation/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "aimed at static Kubernetes clusters",
+    "url": "https://agones.dev/site/docs/reference/gameserverallocation/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "We deploy chat services on a per-region basis (we call them 'shards')",
+    "url": "https://technology.riotgames.com/news/chat-service-architecture-servers",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "fully autonomous and replaceable",
+    "url": "https://technology.riotgames.com/news/chat-service-architecture-servers",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "only a few internal key-value tables that are fully replicated in-memory",
+    "url": "https://technology.riotgames.com/news/chat-service-architecture-servers",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "specifically designed to handle service to client messaging",
+    "url": "https://technology.riotgames.com/news/riot-messaging-service",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "similar to a mobile push notification service",
+    "url": "https://technology.riotgames.com/news/riot-messaging-service",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "10 million player connections on a single box",
+    "url": "https://technology.riotgames.com/news/riot-messaging-service",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]

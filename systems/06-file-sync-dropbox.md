@@ -100,7 +100,7 @@ Sync is complete when all three match. The **planner** takes the three trees and
 
 ### Design and testing
 - Written in **Rust**, so the type system can encode invariants. Most code runs on a single **Control thread** scheduling futures, with network, hashing and file I/O offloaded to other threads.
-- The Control thread is **deterministic** given fixed inputs and scheduling, so it is fuzzed with pseudorandom simulation, and "a seed reproduces any failing scenario". Dropbox says it runs "millions of scenarios every day".
+- The Control thread is **deterministic** given fixed inputs and scheduling, so it is fuzzed with pseudorandom simulation, and if a sync correctness check fails, "we can always reproduce the bug from the original seed". Dropbox says it runs "millions of scenarios every day".
 - **CanopyCheck** tests the planner (generate one tree, perturb it into the other two, run the planner without real I/O, check termination, no panics and correctness, then shrink failures). **Trinity** tests the engine's concurrency, such as a remote deletion clobbering a concurrent local edit.
 - Protocol guarantees (*Rewriting the heart…*): server and client agree on the remote filesystem's state before considering a mutation. Shared folders and files have **globally unique identifiers**. Moves are **atomic** regardless of subtree size.
 

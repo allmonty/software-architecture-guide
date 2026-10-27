@@ -1,0 +1,134 @@
+[
+  {
+    "quote": "gives exponentially small probabilistic bounds on the likelihood of a collision",
+    "url": "https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "keep all threads busy and ... the rate of complaints to a bare minimum",
+    "url": "https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "The URL frontier soon outgrows the available memory of even the largest machines",
+    "url": "https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "polite, dynamic, prioritizing",
+    "url": "https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "saturated our 160 Mbit/sec Internet connection",
+    "url": "https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Web crawling (downloading of web pages) is done by several distributed crawlers.",
+    "url": "https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "A single URLserver serves lists of URLs to a number of crawlers (we typically ran about 3).",
+    "url": "https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a major performance stress",
+    "url": "https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "is the most fragile application since it involves interacting with hundreds of thousands of web servers and various name servers which are all beyond the control of the system",
+    "url": "https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "roughly 9 days to download the 26 million pages (including errors)",
+    "url": "https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "just over 4 million pages per day or 48.5 pages per second",
+    "url": "https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "MAY access any resources on the server",
+    "url": "https://www.rfc-editor.org/rfc/rfc9309",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the crawler MUST assume complete disallow",
+    "url": "https://www.rfc-editor.org/rfc/rfc9309",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "SHOULD follow at least five consecutive redirects, even across authorities",
+    "url": "https://www.rfc-editor.org/rfc/rfc9309",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "The most specific match found MUST be used",
+    "url": "https://www.rfc-editor.org/rfc/rfc9309",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "not a form of access authorization",
+    "url": "https://www.rfc-editor.org/rfc/rfc9309",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "creating a partially sorted forward index",
+    "url": "https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a probability distribution over web pages",
+    "url": "https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a PageRank for 26 million web pages can be computed in a few hours on a medium size workstation",
+    "url": "https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a segment is similar to an inverted index",
+    "url": "https://www.elastic.co/docs/manage-data/data-store/near-real-time-search",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "in near real-time -- within 1 second",
+    "url": "https://www.elastic.co/docs/manage-data/data-store/near-real-time-search",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "makes all operations performed on an index since the last refresh available for search",
+    "url": "https://www.elastic.co/docs/manage-data/data-store/near-real-time-search",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]

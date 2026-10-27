@@ -104,7 +104,7 @@ Each photo was a separate file on NAS appliances over NFS. Reading one needed se
 
 ## 5. Serving photos `[INDUSTRY PATTERN]` unless marked
 
-- **Immutable URLs:** include a content hash or version so CDN caching is safe forever, and a replaced photo gets a new URL. (Haystack's append-only "new needle with the same key" is the storage analogue.)
+- **Immutable URLs:** include a content hash or version so CDN caching is safe forever, and a replaced photo gets a new URL. (Haystack's append-only rule, where a changed photo is a new needle with the same key, is the storage analogue.)
 - **Sizes:** generate a fixed set of derivatives (Haystack used four) rather than resizing on every request. Alternatively resize on demand and cache. The trade is storage vs CPU and latency.
 - **CDN in front:** serves the popular head. The origin only sees misses, so provision it for the long tail `[CONFIRMED]` (Haystack's motivation).
 - **Metadata** (owner, privacy, album) lives in a separate store from the bytes. In f4's description, the web tier stores a BLOB **handle** in the graph store (Tao) alongside the other relationships, and builds URLs from it at read time `[CONFIRMED]`.

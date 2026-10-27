@@ -84,7 +84,7 @@ Design points:
 - **Storage:** "APNs stores only one notification per bundle ID" for an offline device, and "in most cases, the latest notification is stored", though that is not guaranteed.
 - **`apns-collapse-id`:** merges multiple notifications into one for the user. Max 64 bytes.
 - **`apns-id`:** a UUID. APNs echoes it back in error reports, and creates one if you omit it.
-- **Errors and retries:** `410 Unregistered` ("no need to send further pushes to the same device token, unless your application retrieves the same device token") and `410 ExpiredToken`. `429 TooManyRequests` ("too many requests were made consecutively to the same device token"). `503 Shutdown`, after which "you can retry after 15 minutes". Retry 5xx with back-off. **Do not retry** `BadDeviceToken`, `DeviceTokenNotForTopic`, `Forbidden`, `ExpiredToken`, `Unregistered` or `PayloadTooLarge`. You may retry `TooManyRequests` after a delay.
+- **Errors and retries:** `410 Unregistered` ("no need to send further pushes to the same device token, unless your application retrieves the same device token") and `410 ExpiredToken`. `429 TooManyRequests` ("too many requests were made consecutively to the same device token"). `503 Shutdown`, after which, per Apple, "After 15 minutes, you can retry JSON payloads that receive response status codes that begin with 5XX". Retry 5xx with back-off. **Do not retry** `BadDeviceToken`, `DeviceTokenNotForTopic`, `Forbidden`, `ExpiredToken`, `Unregistered` or `PayloadTooLarge`. You may retry `TooManyRequests` after a delay.
 - **Auth tokens:** if you use token-based auth, do not refresh more often than once every 20 minutes (a too-frequent refresh returns an error).
 
 ### FCM (Google/Firebase) `[CONFIRMED]`

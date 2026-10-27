@@ -1,0 +1,85 @@
+[
+  {
+    "quote": "can handle 6 million orders per second on a single thread",
+    "url": "https://martinfowler.com/articles/lmax.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "operates entirely in-memory, there is no database or other persistent store",
+    "url": "https://martinfowler.com/articles/lmax.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "doing all the business logic for their platform",
+    "url": "https://martinfowler.com/articles/lmax.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "they can [be] done in any order",
+    "url": "https://martinfowler.com/articles/lmax.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "switch between processors in a matter of micro-seconds",
+    "url": "https://martinfowler.com/articles/lmax.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "3 orders of magnitude lower",
+    "url": "https://lmax-exchange.github.io/disruptor/disruptor.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "approximately 8 times more throughput",
+    "url": "https://lmax-exchange.github.io/disruptor/disruptor.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a pre-allocated bounded data structure in the form of a ring-buffer",
+    "url": "https://lmax-exchange.github.io/disruptor/disruptor.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "any data should be owned by only one thread for write access",
+    "url": "https://lmax-exchange.github.io/disruptor/disruptor.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "over 25 million messages per second",
+    "url": "https://lmax-exchange.github.io/disruptor/disruptor.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "in a matter of micro-seconds",
+    "url": "https://martinfowler.com/articles/lmax.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "crosses orders at a single price",
+    "status": "manual",
+    "note": "Verified in the earlier neokim-post pass, not re-read."
+  },
+  {
+    "quote": "Order Entry Specification",
+    "url": "https://www.nasdaqtrader.com/content/technicalsupport/specifications/TradingProducts/Ouch5.0.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "must not be unfairly discriminatory",
+    "url": "https://www.sec.gov/rules/concept/2010/34-61358.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]

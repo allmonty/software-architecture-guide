@@ -1,0 +1,42 @@
+[
+  {
+    "quote": "in encrypted form on our servers for up to 30 days",
+    "url": "https://www.whatsapp.com/legal/privacy-policy",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "once your messages are delivered, they are deleted from our servers",
+    "url": "https://www.whatsapp.com/legal/privacy-policy",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "about 32 engineers at the 2014 acquisition",
+    "status": "ignored",
+    "note": "Secondary-source figure, labelled unverified in the note."
+  },
+  {
+    "quote": "all healthy chat-server instances",
+    "url": "https://newsletter.systemdesign.one/p/whatsapp-system-design",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "up to four other nonphone devices",
+    "url": "https://engineering.fb.com/2021/07/14/security/whatsapp-multi-device/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "each message is encrypted for each device with the corresponding pairwise session",
+    "url": "https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "server doesn't keep messages",
+    "status": "ignored",
+    "note": "A requirement phrase, not a quotation."
+  }
+]
