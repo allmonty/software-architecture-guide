@@ -73,7 +73,7 @@
       "id": "shedder",
       "label": "Load shedders",
       "kind": "service",
-      "summary": "Stripe's fleet-usage and worker-utilisation shedders: reject non-critical traffic (503) when the fleet is busy, test-mode first.",
+      "summary": "Stripe's fleet-usage and worker-utilisation shedders: reject non-critical traffic when the fleet is busy (the fleet-usage shedder returns 503), test-mode first.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://stripe.com/blog/rate-limiters"

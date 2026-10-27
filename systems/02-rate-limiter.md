@@ -119,7 +119,7 @@ Cloudflare avoided compare-and-swap because "during attacks, we will have a lot 
 
 ## 5. Responding to the client
 
-- **429 Too Many Requests** is the usual status (RFC 6585). Envoy returns 429 when a descriptor is over limit, configurable with `rate_limited_status`, and sets `x-envoy-ratelimited` unless disabled `[CONFIRMED]`. Stripe uses 429 or 503 depending on the limiter `[CONFIRMED]`.
+- **429 Too Many Requests** is the usual status (RFC 6585). Envoy returns 429 when a descriptor is over limit, configurable with `rate_limited_status`, and sets `x-envoy-ratelimited` unless disabled `[CONFIRMED]`. Stripe advises choosing 429 or 503 by the situation, and its fleet-usage load shedder rejects with 503 `[CONFIRMED]`.
 - **Back-off hints:** the IETF draft `draft-ietf-httpapi-ratelimit-headers` (version 11, an **active Internet-Draft**, expires 2026-11-24, no intended RFC status set as of the page read) defines `RateLimit-Policy` (the quota policy) and `RateLimit` (the current limit). If a response also has `Retry-After`, `Retry-After` takes precedence `[CONFIRMED]`. Because it is a draft, header names may change, and many services still ship vendor-specific `X-RateLimit-*` headers `[INDUSTRY PATTERN]`.
 
 ---
@@ -240,3 +240,4 @@ Fail open with an alert and a kill switch, as Stripe does. State the consequence
 - Softened: "single-digit milliseconds" latency target is labelled `[SPECULATIVE]`.
 - Not sourced (marked `[INDUSTRY PATTERN]`): sliding window log, leaky bucket, fixed-window 2× burst bound.
 - Caveat: the Stripe post is from 2017 and the figures it quotes ("this month") are from then. We use it for design, not for current numbers.
+- Corrected (independent review, 2026-10-27): Stripe ties the 503 status explicitly to the fleet-usage load shedder; for other cases it only advises deciding between 429 and 503, so the note no longer says it uses 429 or 503 per limiter.
