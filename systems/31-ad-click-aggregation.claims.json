@@ -52,5 +52,35 @@
     "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/stateful-stream-processing/",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "to guarantee end-to-end exactly-once record delivery (in addition to exactly-once state semantics), the data sink needs to take part in the checkpointing mechanism",
+    "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/connectors/datastream/guarantees/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "exactly once with transactional producers (v 0.11+)",
+    "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/connectors/datastream/guarantees/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a highly scalable analytic data warehousing system that stores critical measurement data related to Google's Internet advertising business",
+    "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42851.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "typically at a frequency of every few minutes",
+    "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42851.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "users can never see any effects from a partially incorporated update",
+    "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42851.pdf",
+    "via": "direct",
+    "status": "confirmed"
   }
 ]

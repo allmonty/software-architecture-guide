@@ -91,6 +91,23 @@ The paper argues that for unbounded, unordered data we must "stop trying to groo
 
 ---
 
+**Which sinks give end-to-end exactly-once (Flink documentation).** Exactly-once state updates alone are not enough: "to guarantee end-to-end exactly-once record delivery (in addition to exactly-once state semantics), the data sink needs to take part in the checkpointing mechanism". The bundled-sink table lists, for example, the Kafka producer as at least once or exactly once ("exactly once with transactional producers (v 0.11+)"), the Cassandra sink as exactly once only for idempotent updates, and Elasticsearch, DynamoDB and Redis sinks as at least once. For sources, Kafka is exactly once because it can rewind, while Google Pub/Sub is listed as at least once. The practical reading: choose a sink that is transactional or make writes idempotent, as this note's aggregate store does.
+
+---
+
+## 4b. The aggregate store for ads data: Mesa `[CONFIRMED]` (Gupta et al., VLDB 2014)
+
+Photon produces clean joined clicks; Mesa is Google's published answer for storing and querying the aggregates. The paper describes "a highly scalable analytic data warehousing system that stores critical measurement data related to Google's Internet advertising business", handling petabytes, millions of row updates per second, and billions of queries fetching trillions of rows per day, geo-replicated and returning consistent, repeatable query answers even when an entire datacenter fails. Its main ideas:
+- **Atomic, versioned batch updates.** Updates arrive in batches produced by an upstream system "typically at a frequency of every few minutes" (smaller batches mean lower latency but more resource use). Each update has a version number assigned sequentially; Mesa applies updates strictly in version order and incorporates each entirely before the next, so "users can never see any effects from a partially incorporated update". Queries name a version and see a consistent view.
+- **Aggregation by key with associative functions.** Tables have key and value columns with a schema-defined aggregation function (such as SUM) that must be associative; each update holds at most one aggregated value per key.
+- **Deltas.** To avoid storing every version or aggregating every version at query time, Mesa pre-aggregates versions into **deltas** covering version ranges [V1, V2], incorporating each update as a singleton delta and merging deltas in the background (compaction).
+- **Corrections as negative facts.** Strict ordering lets an incorrect fact be offset by an inverse action: fraudulent clicks identified by online fraud detection are offset by negative clicks and costs in a later version, and the strict ordering guarantees that a negative fact can never be incorporated before its positive counterpart.
+- **Consistency across datacenters** uses a Paxos-based protocol for metadata and update commits.
+
+Contrast with this note's reference design: Mesa gets idempotency and correctness from **versioned, ordered, additive batches and negative corrections**, where our aggregate store upserts by (ad, window). Both achieve the property that applying the same input twice does not double count, by different means; the Mesa approach also keeps an audit trail of corrections, which matters for billing.
+
+---
+
 ## 5. Reference design for ad click aggregation `[INDUSTRY PATTERN]`
 
 ```
@@ -110,7 +127,7 @@ ad server / browser ─► click collector (assign unique click id, validate) �
 - **Aggregation:** tumbling event-time windows (for example one minute) per ad, with a watermark and an allowed lateness; updated results are emitted when late data arrives within the lateness, and later data goes to a **late-data stream** for batch correction.
 - **Storage for queries:** an OLAP or time-series store keyed by ad and window, upserting by (ad, window) so a re-emitted window replaces the old value rather than adding to it, which makes writes idempotent.
 - **Reconciliation:** a batch job recomputes totals from the raw log (periodically or nightly), compares with the stream results and corrects them; billing uses the reconciled figures. This is often called a Lambda-style design; a design that uses only the replayable log and the stream engine is called Kappa-style. Which to use depends on how much you trust replay and how different the batch and stream logic are.
-- **Fraud and quality:** filter bots and invalid clicks before billing, with rules and models; keep the filtering rules versioned so reprocessing is reproducible.
+- **Fraud and quality:** filter bots and invalid clicks before billing, with rules and models; keep the filtering rules versioned so reprocessing is reproducible. Mesa shows a documented alternative for clicks found invalid after the fact: write negative facts that offset them (section 4b).
 - **Observability:** watch input lag, watermark delay, checkpoint duration, dedup hit rate and the stream-versus-batch difference.
 
 ---
@@ -142,7 +159,7 @@ ad server / browser ─► click collector (assign unique click id, validate) �
 2. **"Exactly-once" means different things.** Photon's guarantee is at-most-once always and exactly-once eventually; Flink's is exactly-once for state under replay; Kafka's transactions give exactly-once between Kafka topics. None gives exactly-once to an arbitrary external side effect without idempotent or transactional output.
 3. **The Lambda and Kappa labels are industry terms,** not from the sources we read, and the Dataflow paper's arguments about unified models are not summarised here beyond the four questions.
 4. **Kafka documentation was read from the Apache Kafka source repository's design document** because the website page requires scripts; it reflects the trunk branch at that time.
-5. **Not read:** Google's Mesa paper (aggregation storage), Flink's Kafka sink two-phase-commit documentation, fraud detection research, and ad-tech specifications.
+5. **Not read:** Flink's Kafka sink two-phase-commit implementation details, fraud detection research, and ad-tech specifications. Mesa is covered from the paper only; we did not read later papers on Google's ads data infrastructure.
 
 ---
 
@@ -217,9 +234,9 @@ Kafka: an idempotent producer prevents duplicate log entries on retry, and trans
 ## Sources and provenance
 
 > **Kind:** reference design with real parts. Photon describes a real production system at Google; the Dataflow Model, Flink and Kafka documents describe published models and systems. The end-to-end click aggregation pipeline in section 5 is the standard design `[INDUSTRY PATTERN]`.
-> **Sources read on 2026-10-27 (PDF text extracted locally):** Ananthanarayanan et al., [*Photon: Fault-tolerant and Scalable Joining of Continuous Data Streams*](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf) (SIGMOD 2013) · Akidau et al., [*The Dataflow Model*](https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf) (VLDB 2015) · Apache Flink documentation: [Stateful Stream Processing](https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/stateful-stream-processing/), [Timely Stream Processing](https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/) and [Checkpointing](https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/fault-tolerance/checkpointing/) · Apache Kafka [design documentation](https://raw.githubusercontent.com/apache/kafka/trunk/docs/design/design.md) (Message Delivery Semantics).
+> **Sources read on 2026-10-27 (PDF text extracted locally):** Ananthanarayanan et al., [*Photon: Fault-tolerant and Scalable Joining of Continuous Data Streams*](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf) (SIGMOD 2013) · Akidau et al., [*The Dataflow Model*](https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf) (VLDB 2015) · Apache Flink documentation: [Stateful Stream Processing](https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/stateful-stream-processing/), [Timely Stream Processing](https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/) and [Checkpointing](https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/fault-tolerance/checkpointing/) · Gupta et al., [*Mesa: Geo-Replicated, Near Real-Time, Scalable Data Warehousing*](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42851.pdf) (VLDB 2014) · Apache Flink [Fault Tolerance Guarantees of Data Sources and Sinks](https://nightlies.apache.org/flink/flink-docs-stable/docs/connectors/datastream/guarantees/) · Apache Kafka [design documentation](https://raw.githubusercontent.com/apache/kafka/trunk/docs/design/design.md) (Message Delivery Semantics).
 > **Dated material:** Photon 2013, Dataflow 2015; Flink and Kafka documentation as of this date.
-> **Not read:** Mesa, Flink's Kafka sink and two-phase-commit connector documentation, fraud-detection literature, ad-tech standards.
+> **Not read:** Flink's Kafka sink two-phase-commit implementation, fraud-detection literature, ad-tech standards.
 > **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible or illustrative.
 
 ---
@@ -230,5 +247,7 @@ Kafka: an idempotent producer prevents duplicate log entries on retry, and trans
 - Verified in the Dataflow Model paper: the quoted claims about unbounded data, the four questions, the tension among correctness, latency and cost, heuristic watermarks.
 - Verified in the Flink documentation: checkpoint and replay description, source rewindability, barrier behaviour, checkpoint interval trade-off, exactly-once versus at-least-once guidance, event time, processing time and `Watermark(t)` definition.
 - Verified in the Kafka design document: the three semantics, the misleading-claims warning, idempotent producer (version 0.11), transactions, offset committed with output, `read_committed`, the external-system recommendation.
+- Verified in the Mesa paper: the abstract's scale and consistency claims, batched versioned updates every few minutes, strict version ordering and atomic incorporation, associative aggregation functions, deltas and singletons, negative facts for fraud corrections.
+- Verified in the Flink guarantees page: the end-to-end exactly-once requirement for sinks and the source and sink table entries cited.
 - Labelled industry pattern, not sourced: the click collector, partitioning, aggregate store, upsert by window, reconciliation, Lambda and Kappa labels, fraud filtering, observability and capacity arithmetic.
 - Not claimed: how any current ad platform counts clicks.

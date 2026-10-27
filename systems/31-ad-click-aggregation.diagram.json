@@ -201,9 +201,10 @@
       "label": "Aggregate store",
       "kind": "datastore",
       "c4": "container",
-      "summary": "Stores totals by ad and window, written as upserts by (ad, window) so re-emitted windows replace rather than add. Industry practice.",
+      "summary": "Stores totals by ad and window. Mesa (Google's ads aggregate store) uses versioned, strictly ordered batch updates with associative aggregation and negative facts for corrections; our reference design writes upserts by (ad, window) so re-emitted windows replace rather than add. Either way, applying the same input twice must not double count.",
       "confidence": "INDUSTRY PATTERN",
       "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42851.pdf",
         "https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf"
       ]
     },
