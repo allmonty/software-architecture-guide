@@ -31,7 +31,7 @@ export const components: Components = {
   pre({ children }) {
     const child = (Array.isArray(children) ? children[0] : children) as { props?: { className?: string; children?: unknown } } | undefined;
     if (child?.props?.className?.includes("language-mermaid")) {
-      return <details><summary>Mermaid source (see the Diagram tab)</summary><pre>{child.props.children as string}</pre></details>;
+      return <details><summary>Mermaid source (the interactive diagram replaces it)</summary><pre>{child.props.children as string}</pre></details>;
     }
     return <pre>{children}</pre>;
   },

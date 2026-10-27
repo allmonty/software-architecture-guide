@@ -19,6 +19,10 @@
           "why": "A warm-up with caching, key generation and the 301 versus 302 trade-off."
         },
         {
+          "ref": "35",
+          "why": "Unique ID generation: the Snowflake layout, ticket servers, UUIDv7 and what happens when a clock moves backwards. Key generation comes up inside many designs."
+        },
+        {
           "ref": "02",
           "why": "Rate limiting, and the fail-open versus fail-closed choice (Stripe fails open; Envoy lets you choose)."
         },
@@ -41,6 +45,10 @@
         {
           "ref": "10",
           "why": "Queues, priorities, retries and deduplication."
+        },
+        {
+          "ref": "04",
+          "why": "The message log in depth: partitions, replication, consumer groups and leader failover (Kafka), the engine under many queue answers."
         },
         {
           "ref": "12",
@@ -76,7 +84,7 @@
         },
         {
           "ref": "W05",
-          "why": "Daily flashcards for the facts interviewers ask about."
+          "why": "Flashcards for the AI systems (22 to 31), the primers and the incident casebook. They add facts beyond the systems above rather than repeating them."
         },
         {
           "ref": "W04",

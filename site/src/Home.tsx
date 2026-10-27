@@ -38,7 +38,7 @@ export function ItemRow({ item, why, index, next }: { item: Item; why?: string; 
           {index !== undefined && <span className="num">{index}</span>}
           <strong>{item.title}</strong>
           <span className={`pill type-${item.type.toLowerCase()}`}>{item.type}</span>
-          <span className="muted">~{item.minutes} min</span>
+          <span className="muted">{item.minutes > 0 ? `~${item.minutes} min` : "practice"}</span>
           {next && <span className="pill up-next">Up next</span>}
         </span>
         {why && <span className="why">{why}</span>}
@@ -74,10 +74,10 @@ export function Home() {
       <Backdrop />
       <section className="hero">
         <div className="hero-text">
-          <h1>Learn system design by walking through <span className="grad">real architectures</span></h1>
+          <h1>Learn system design by walking through <span className="grad">worked architectures</span></h1>
           <p className="lede">
             {systems.length} case studies with interactive diagrams, a casebook of real outages, ten primers on the topics
-            that cut across them, and a practice workbook. Every claim names its source and says how well it is supported.
+            that cut across them, and a practice workbook. Every factual claim is tagged by how well it is supported, and sourced claims link to their source.
           </p>
           <div className="hero-actions">
             <a className="button primary" href="#track/interview">Start the interview track</a>
@@ -211,7 +211,7 @@ function Card({ item }: { item: Item }) {
         <strong>{item.title}</strong>
         <small className="foot">
           {item.kind && <span className={`kind ${item.kind}`}>{item.kind === "reference-design" ? "Reference design" : "Real system"}</span>}
-          <span className="muted">~{item.minutes} min</span>
+          <span className="muted">{item.minutes > 0 ? `~${item.minutes} min` : "practice"}</span>
         </small>
       </a>
     </li>

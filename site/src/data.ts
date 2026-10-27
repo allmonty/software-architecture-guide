@@ -63,7 +63,8 @@ export function resolveRef(ref: string): Item | undefined {
   const p = toolkitPages.find((x) => x.id.startsWith(ref + "-"));
   if (!p) return undefined;
   const type: ItemType = ref[0] === "P" ? "Primer" : ref[0] === "C" ? "Incident" : "Exercise";
-  return { ref, type, title: p.title.replace(/^[PCW]\d\d — /, ""), href: `#toolkit/${p.id}`, minutes: minutes(p.markdown) };
+  // Workbook pages are practice, not reading: their length says nothing about how long a session takes.
+  return { ref, type, title: p.title.replace(/^[PCW]\d\d — /, ""), href: `#toolkit/${p.id}`, minutes: type === "Exercise" ? 0 : minutes(p.markdown) };
 }
 
 // ---- Trust summary ------------------------------------------------------------------------------------------
