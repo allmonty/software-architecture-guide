@@ -12,7 +12,7 @@ Each system has a deep note (`systems/NN-*.md`) and a structured diagram (`syste
 |---|---|
 | **An interview in a couple of weeks** | Follow the *Interview in two weeks* track on the site's home page: the mock-interview protocol, estimation, then 01, 35, 02, 03, 32, 08, 11, 10, 04, 12, 15, 17, 16 with the primers and drills between. |
 | **Time to build foundations** | Read the [learning path](#suggested-learning-path) top to bottom, and the [estimation primer](toolkit/P01-estimation.md) first. |
-| **An architect role in view** | Read the [toolkit](toolkit/README.md): the [incident casebook](toolkit/README.md#casebook-learning-from-real-incidents-c) (what went wrong, and the questions a design review could have asked) and the primers on decisions, security, SLOs, cost and migrations. |
+| **An architect role in view** | Read the [toolkit](toolkit/README.md): the [incident casebook](toolkit/README.md#casebook-learning-from-real-incidents-c) (what went wrong, and the questions a design review could have asked) and the primers on decisions, security, SLOs, cost, migrations, deployment shape, event sourcing, disaster recovery and multi-tenancy. |
 | **One topic** | Use the [concept matrix](#concept--systems-matrix) to find every system that covers it, or search the site. |
 
 ## What is inside
@@ -20,7 +20,7 @@ Each system has a deep note (`systems/NN-*.md`) and a structured diagram (`syste
 | Path | What it holds |
 |---|---|
 | [`systems/`](systems/) | The 35 notes, one diagram (`.diagram.json`) and one quote ledger (`.claims.json`) each |
-| [`toolkit/`](toolkit/README.md) | Casebook of 6 real incidents (`C`), 10 cross-cutting primers (`P`), a workbook of 5 practice pages (`W`) |
+| [`toolkit/`](toolkit/README.md) | Casebook of 6 real incidents (`C`), 14 cross-cutting primers (`P`), a workbook of 5 practice pages (`W`) |
 | [`site/`](site/) | The React + React Flow site: home page study tracks, diagrams, search, reading settings |
 | [`.github/workflows/`](.github/workflows/pages.yml) | The workflow that builds and deploys the site |
 | [`schema/`](schema/), [`scripts/`](scripts/), [`test/`](test/) | The diagram schema, the validator, the quote verifier, the freshness and link checks, and their tests |

@@ -152,7 +152,7 @@
       "id": "architect",
       "title": "Senior engineer to architect",
       "audience": "You design well already and want the decision-making, risk and communication side.",
-      "summary": "Records of decisions, real failures, migrations, security, reliability and cost, then exercises that ask for a justified decision.",
+      "summary": "Records of decisions, deployment shape, real failures, migrations, disaster recovery, multi-tenancy, security, reliability and cost, then exercises that ask for a justified decision.",
       "steps": [
         {
           "ref": "P09",
@@ -175,6 +175,10 @@
           "why": "Replacing parts of a running system safely."
         },
         {
+          "ref": "P11",
+          "why": "Monolith or microservices: the premium Fowler describes, Shopify's modular monolith, Prime Video's consolidation of one service, and Conway's law."
+        },
+        {
           "ref": "P06",
           "why": "Threat modeling and zero trust at design time."
         },
@@ -183,12 +187,20 @@
           "why": "What drives cost and how to talk about it."
         },
         {
+          "ref": "P14",
+          "why": "Multi-tenancy: isolation is not authentication, silo versus pool, and the noisy-neighbour mitigations. Cost and limits per tenant follow from the cost primer."
+        },
+        {
           "ref": "13",
           "why": "A control plane and data plane at scale, with steering."
         },
         {
           "ref": "17",
           "why": "A design where correctness dominates everything else."
+        },
+        {
+          "ref": "P12",
+          "why": "Event sourcing and CQRS: when a history of changes is worth the cost, what it does to consistency, and the lighter alternatives. Compare with how payments get correctness from idempotency."
         },
         {
           "ref": "33",
@@ -201,6 +213,10 @@
         {
           "ref": "C04",
           "why": "Recovery tools that depend on the thing that failed."
+        },
+        {
+          "ref": "P13",
+          "why": "RTO, RPO and the four disaster-recovery strategies, and why recovery that depends on the failing system, or is never rehearsed, does not work."
         },
         {
           "ref": "C05",

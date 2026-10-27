@@ -66,7 +66,7 @@ export function Home() {
         <div className="hero-text">
           <h1>Learn system design by walking through <span className="grad">worked architectures</span></h1>
           <p className="lede">
-            {systems.length} case studies with interactive diagrams, a casebook of real outages, ten primers on the topics
+            {systems.length} case studies with interactive diagrams, a casebook of real outages, fourteen primers on the topics
             that cut across them, and a practice workbook. Every factual claim is tagged by how well it is supported, and sourced claims link to their source.
           </p>
           <div className="hero-actions">

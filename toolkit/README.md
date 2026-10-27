@@ -31,6 +31,10 @@ Short sourced explainers for topics that recur across the atlas. Each ends with 
 | P08 | [Cost as a design input](P08-cost-as-a-design-input.md) | AWS Well-Architected, FinOps Foundation |
 | P09 | [Decisions: ADRs, design docs, boring technology](P09-decisions-and-design-docs.md) | Nygard, AWS, Google design docs, McKinley |
 | P10 | [Changing systems safely](P10-changing-systems-safely.md) | Fowler, Azure Architecture Center |
+| P11 | [Monolith or microservices](P11-monolith-vs-microservices.md) | Fowler and Lewis, Fowler, Shopify Engineering, Prime Video, Conway |
+| P12 | [Event sourcing and CQRS](P12-event-sourcing-cqrs.md) | Fowler, Azure Architecture Center, Young |
+| P13 | [Disaster recovery and multi-region design](P13-multi-region-disaster-recovery.md) | AWS, Google Cloud, Azure Well-Architected |
+| P14 | [Multi-tenancy](P14-multi-tenancy.md) | AWS, Azure Architecture Center, Salesforce |
 
 ## Workbook: practice with feedback (`W`)
 
