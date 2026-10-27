@@ -8,17 +8,17 @@ import type { Diagram } from "../../schema/diagram.schema.ts";
 import { layout, NODE_H, NODE_W } from "./layout.ts";
 import { buildView, containersWithComponents, SYSTEM_ID, typeLine, type Element, type Level } from "./c4.ts";
 
-type C4Data = { el: Element; lit: boolean };
+type C4Data = { el: Element; lit: boolean; dir: "LR" | "TB" };
 
 function C4Node({ data }: NodeProps<Node<C4Data>>) {
   const { el } = data;
   return (
     <div className={`c4-body k-${el.kind}`}>
-      <Handle type="target" position={Position.Left} />
+      <Handle type="target" position={data.dir === "TB" ? Position.Top : Position.Left} />
       <strong>{el.label}</strong>
       <em>{typeLine(el)}</em>
       <span>{el.summary.length > 96 ? el.summary.slice(0, 93) + "…" : el.summary}</span>
-      <Handle type="source" position={Position.Right} />
+      <Handle type="source" position={data.dir === "TB" ? Position.Bottom : Position.Right} />
     </div>
   );
 }
@@ -57,13 +57,14 @@ export function DiagramView({
 
   const view = useMemo(() => buildView(diagram, level, focus ?? undefined), [diagram, level, focus]);
   const viewKey = `${level}:${level === "component" ? focus : ""}`;
-  const auto = useMemo(
+  const arranged = useMemo(
     () => layout(view.elements.map((e) => e.id), view.rels.map((r) => [r.from, r.to]), view.boundary?.members ?? []),
     [view],
   );
   // Positions the reader dragged, per view. They override the automatic layout until reset.
   const [moved, setMoved] = useState<Record<string, Record<string, { x: number; y: number }>>>({});
   const mv = moved[viewKey] ?? {};
+  const auto = arranged.pos;
   const pos = (id: string) => mv[id] ?? auto[id];
   const onNodesChange = (changes: NodeChange[]) => {
     for (const c of changes) {
@@ -107,8 +108,8 @@ export function DiagramView({
     position: pos(el.id),
     width: NODE_W,
     height: NODE_H,
-    data: { el, lit: lit.has(el.id) },
-    className: `c4-${el.role} conf-${el.confidence.replace(" ", "-")} ${lit.has(el.id) ? "lit" : ""} ${sel?.kind === "el" && sel.id === el.id ? "sel" : ""}`,
+    data: { el, lit: lit.has(el.id), dir: arranged.dir },
+    className: `c4-${el.role} k-${el.kind} conf-${el.confidence.replace(" ", "-")} ${lit.has(el.id) ? "lit" : ""} ${sel?.kind === "el" && sel.id === el.id ? "sel" : ""}`,
   }));
   if (view.boundary && view.boundary.members.length > 0) {
     const ps = view.boundary.members.map((id) => pos(id));

@@ -58,10 +58,14 @@ export function SystemPage({
       </div>
       {tab === "diagram" && (
         <p className="legend muted">
-          C4:
-          {(["person", "external-system", "container", "component"] as const).map((k) => (
-            <span key={k} className={`chip c4-${k}`}>{k === "external-system" ? "external system" : k}</span>
-          ))}
+          <span className="chip sw-person">person</span>
+          <span className="chip sw-external">external system</span>
+          <span className="chip sw-service">service</span>
+          <span className="chip sw-data">data store</span>
+          <span className="chip sw-queue">queue / log</span>
+          <span className="chip sw-edge">edge / CDN</span>
+          <span className="chip sw-client">client</span>
+          <span className="chip tint">lighter = component</span>
           · Border: solid = confirmed, dashed = industry pattern, dotted = speculative · Lines: dashed = async
         </p>
       )}
