@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { REQUIRED_SECTIONS, validateDir, validateToolkit } from "../scripts/validate.ts";
+import { REQUIRED_SECTIONS, validateDir, validateToolkit, validateTracks } from "../scripts/validate.ts";
 
 const md = `# 99 — Toy System\n\n${REQUIRED_SECTIONS.map((s) => `## ${s}\n`).join("\n")}`;
 const good = () => ({
@@ -77,3 +77,14 @@ test("valid toolkit page passes", () => assert.deepEqual(toolkit("P99-toy.md", t
 test("toolkit page needs provenance sections", () => assert.match(toolkit("P99-toy.md", "# P99 — Toy\n").join("\n"), /missing section "Verification log"/));
 test("toolkit file names are checked", () => assert.match(toolkit("toy.md", tkGood).join("\n"), /file name must look like/));
 test("toolkit broken relative link fails", () => assert.match(toolkit("P99-toy.md", tkGood + "[x](nope.md)\n").join("\n"), /broken relative link/));
+
+function tracks(json: unknown) {
+  const dir = mkdtempSync(join(tmpdir(), "tr-"));
+  writeFileSync(join(dir, "tracks.json"), JSON.stringify(json));
+  writeFileSync(join(dir, "01-toy.md"), "# x");
+  writeFileSync(join(dir, "P01-toy.md"), "# x");
+  return validateTracks(join(dir, "tracks.json"), dir, dir);
+}
+test("valid tracks pass", () => assert.deepEqual(tracks({ tracks: [{ id: "a", title: "A", steps: [{ ref: "01" }, { ref: "P01" }] }] }), []));
+test("a track step with no page fails", () => assert.match(tracks({ tracks: [{ id: "a", title: "A", steps: [{ ref: "02" }] }] }).join("\n"), /matches no system or toolkit page/));
+test("a track listing a step twice fails", () => assert.match(tracks({ tracks: [{ id: "a", title: "A", steps: [{ ref: "01" }, { ref: "01" }] }] }).join("\n"), /lists 01 twice/));

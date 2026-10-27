@@ -121,10 +121,28 @@ export function validateToolkit(dir: string): string[] {
   return errors;
 }
 
+// Every step of every study track on the home page must point at a real system or toolkit page.
+export function validateTracks(file: string, systemsDir: string, toolkitDir: string): string[] {
+  const errors: string[] = [];
+  if (!existsSync(file)) return errors;
+  const data = JSON.parse(readFileSync(file, "utf8")) as { tracks: { id: string; title: string; steps: { ref: string }[] }[] };
+  const names = [...(existsSync(systemsDir) ? readdirSync(systemsDir) : []), ...(existsSync(toolkitDir) ? readdirSync(toolkitDir) : [])];
+  const ids = data.tracks.map((t) => t.id);
+  for (const x of dupes(ids)) errors.push(`tracks: duplicate track id ${x}`);
+  for (const t of data.tracks) {
+    if (!t.title || t.steps.length === 0) errors.push(`tracks: ${t.id} needs a title and steps`);
+    for (const x of dupes(t.steps.map((s) => s.ref))) errors.push(`tracks: ${t.id} lists ${x} twice`);
+    for (const s of t.steps) {
+      if (!names.some((n) => n.startsWith(s.ref + "-") && n.endsWith(".md"))) errors.push(`tracks: ${t.id} step ${s.ref} matches no system or toolkit page`);
+    }
+  }
+  return errors;
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const here = resolve(fileURLToPath(import.meta.url), "../..");
   const dir = join(here, "systems");
-  const errors = [...validateDir(dir), ...validateToolkit(join(here, "toolkit"))];
+  const errors = [...validateDir(dir), ...validateToolkit(join(here, "toolkit")), ...validateTracks(join(here, "site/src/tracks.json"), dir, join(here, "toolkit"))];
   if (errors.length) {
     console.error(errors.map((e) => `✗ ${e}`).join("\n"));
     process.exit(1);

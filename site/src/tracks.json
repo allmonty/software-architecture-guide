@@ -1,0 +1,377 @@
+{
+  "tracks": [
+    {
+      "id": "interview",
+      "title": "Interview in two weeks",
+      "audience": "You have an interview soon and want the highest-yield route.",
+      "summary": "Learn the method first, then the most-asked designs, then drill. The time shown counts reading only; add practice sessions.",
+      "steps": [
+        {
+          "ref": "W01",
+          "why": "Learn the 45-minute script and the scoring rubric before you read any design. You will return to it at the end for three timed mock sessions."
+        },
+        {
+          "ref": "P01",
+          "why": "Estimation is step 2 of every answer. Learn the latency numbers and the method."
+        },
+        {
+          "ref": "01",
+          "why": "A warm-up with caching, key generation and the 301 versus 302 trade-off."
+        },
+        {
+          "ref": "02",
+          "why": "Rate limiting, and why failing open is usually right."
+        },
+        {
+          "ref": "03",
+          "why": "Replication, quorums and consistent hashing, which recur everywhere."
+        },
+        {
+          "ref": "32",
+          "why": "Caching in depth: stale sets, stampedes and what happens when a cache server dies."
+        },
+        {
+          "ref": "08",
+          "why": "Real-time messaging, delivery guarantees and fan-out."
+        },
+        {
+          "ref": "11",
+          "why": "Fan-out on write versus read, the classic feed question."
+        },
+        {
+          "ref": "10",
+          "why": "Queues, priorities, retries and deduplication."
+        },
+        {
+          "ref": "12",
+          "why": "Upload, transcoding and delivery of video."
+        },
+        {
+          "ref": "15",
+          "why": "Geospatial indexing and matching."
+        },
+        {
+          "ref": "17",
+          "why": "Idempotency and correctness with money."
+        },
+        {
+          "ref": "16",
+          "why": "Contention and double-booking."
+        },
+        {
+          "ref": "P03",
+          "why": "Sagas and the outbox: the standard answer to cross-service consistency."
+        },
+        {
+          "ref": "P07",
+          "why": "SLOs, error budgets and how to stop a cascading failure."
+        },
+        {
+          "ref": "W03",
+          "why": "Estimation drills with worked solutions, so the arithmetic is automatic."
+        },
+        {
+          "ref": "W02",
+          "why": "Practise spotting flaws in plausible designs."
+        },
+        {
+          "ref": "W05",
+          "why": "Daily flashcards for the facts interviewers ask about."
+        },
+        {
+          "ref": "W04",
+          "why": "Open scenarios that practise stating a decision and its trade-offs. Finish by running three timed mock sessions from the first step."
+        }
+      ]
+    },
+    {
+      "id": "foundations",
+      "title": "Building blocks first",
+      "audience": "You are earlier in your career, or want solid foundations before full designs.",
+      "summary": "The small pieces that appear inside every large design: IDs, caches, locks, counters, storage engines, load balancers and APIs.",
+      "steps": [
+        {
+          "ref": "P01",
+          "why": "Start with how to estimate, so every later design has numbers."
+        },
+        {
+          "ref": "35",
+          "why": "The simplest building block: unique IDs, and what happens when clocks go wrong."
+        },
+        {
+          "ref": "01",
+          "why": "Your first complete design, built from IDs and caches."
+        },
+        {
+          "ref": "02",
+          "why": "Counters, windows and failure modes in a small system."
+        },
+        {
+          "ref": "03",
+          "why": "How data is partitioned and replicated across machines."
+        },
+        {
+          "ref": "P02",
+          "why": "B-trees, LSM trees and how to choose a database."
+        },
+        {
+          "ref": "32",
+          "why": "Caching at large scale."
+        },
+        {
+          "ref": "33",
+          "why": "Leader election, locks and fencing."
+        },
+        {
+          "ref": "34",
+          "why": "Top-K, approximate counting and leaderboards."
+        },
+        {
+          "ref": "P04",
+          "why": "How traffic is spread across servers."
+        },
+        {
+          "ref": "P05",
+          "why": "Pagination, idempotency and evolving APIs."
+        },
+        {
+          "ref": "P03",
+          "why": "Consistency across services."
+        }
+      ]
+    },
+    {
+      "id": "architect",
+      "title": "Senior engineer to architect",
+      "audience": "You design well already and want the decision-making, risk and communication side.",
+      "summary": "Records of decisions, real failures, migrations, security, reliability and cost, then exercises that ask for a justified decision.",
+      "steps": [
+        {
+          "ref": "P09",
+          "why": "How architects decide, record and defend decisions: ADRs, design docs and boring technology."
+        },
+        {
+          "ref": "C02",
+          "why": "A deployment process that bypassed staging: read the incident, then write your own safeguards."
+        },
+        {
+          "ref": "C03",
+          "why": "Automated failover meeting split writes: availability versus integrity."
+        },
+        {
+          "ref": "P07",
+          "why": "Reliability as a design input: SLOs, error budgets and postmortems."
+        },
+        {
+          "ref": "P10",
+          "why": "Replacing parts of a running system safely."
+        },
+        {
+          "ref": "P06",
+          "why": "Threat modeling and zero trust at design time."
+        },
+        {
+          "ref": "P08",
+          "why": "What drives cost and how to talk about it."
+        },
+        {
+          "ref": "13",
+          "why": "A control plane and data plane at scale, with steering."
+        },
+        {
+          "ref": "17",
+          "why": "A design where correctness dominates everything else."
+        },
+        {
+          "ref": "33",
+          "why": "The shared coordination service many systems depend on, and its risks."
+        },
+        {
+          "ref": "C01",
+          "why": "A routine operation with too much blast radius."
+        },
+        {
+          "ref": "C04",
+          "why": "Recovery tools that depend on the thing that failed."
+        },
+        {
+          "ref": "C05",
+          "why": "Deployment verification, dead code and kill switches."
+        },
+        {
+          "ref": "C06",
+          "why": "Hidden resource limits and dependency cascades."
+        },
+        {
+          "ref": "W04",
+          "why": "Six open scenarios: write the decision record, then compare with what a strong answer covers."
+        },
+        {
+          "ref": "W02",
+          "why": "Review flawed designs the way a design review would."
+        }
+      ]
+    },
+    {
+      "id": "ai",
+      "title": "AI systems engineer",
+      "audience": "You build or operate LLM-based products and want to design them well.",
+      "summary": "Serving, retrieval, agents, improving models and training, followed by the security and cost questions every AI feature raises.",
+      "steps": [
+        {
+          "ref": "22",
+          "why": "How LLMs are served: KV cache, batching and the prefill/decode split."
+        },
+        {
+          "ref": "24",
+          "why": "Vector search: the indexes behind retrieval."
+        },
+        {
+          "ref": "23",
+          "why": "Retrieval-augmented generation as a system: chunking, hybrid search, permissions."
+        },
+        {
+          "ref": "25",
+          "why": "Agents: workflows versus loops, tools, sandboxes and budgets."
+        },
+        {
+          "ref": "28",
+          "why": "Improving a model: adapters, preference tuning, evaluation gates and rollout."
+        },
+        {
+          "ref": "26",
+          "why": "Two-stage recommendation and learning from feedback."
+        },
+        {
+          "ref": "27",
+          "why": "Training at scale: parallelism, checkpoints and failure."
+        },
+        {
+          "ref": "P06",
+          "why": "Threat modeling, which matters most for tools and retrieved text."
+        },
+        {
+          "ref": "P08",
+          "why": "Tokens and GPU hours as the cost drivers."
+        },
+        {
+          "ref": "W04",
+          "why": "Scenario 6 asks for an AI feature design with safety and evaluation."
+        }
+      ]
+    },
+    {
+      "id": "atlas",
+      "title": "The whole atlas in learning order",
+      "audience": "You want to study systematically over several weeks.",
+      "summary": "All 35 systems, from foundations to AI, in the order the stages build on each other.",
+      "steps": [
+        {
+          "ref": "01"
+        },
+        {
+          "ref": "02"
+        },
+        {
+          "ref": "03"
+        },
+        {
+          "ref": "35"
+        },
+        {
+          "ref": "32"
+        },
+        {
+          "ref": "33"
+        },
+        {
+          "ref": "34"
+        },
+        {
+          "ref": "05"
+        },
+        {
+          "ref": "04"
+        },
+        {
+          "ref": "07"
+        },
+        {
+          "ref": "06"
+        },
+        {
+          "ref": "08"
+        },
+        {
+          "ref": "09"
+        },
+        {
+          "ref": "18"
+        },
+        {
+          "ref": "21"
+        },
+        {
+          "ref": "14"
+        },
+        {
+          "ref": "12"
+        },
+        {
+          "ref": "13"
+        },
+        {
+          "ref": "29"
+        },
+        {
+          "ref": "11"
+        },
+        {
+          "ref": "10"
+        },
+        {
+          "ref": "16"
+        },
+        {
+          "ref": "17"
+        },
+        {
+          "ref": "19"
+        },
+        {
+          "ref": "15"
+        },
+        {
+          "ref": "20"
+        },
+        {
+          "ref": "30"
+        },
+        {
+          "ref": "31"
+        },
+        {
+          "ref": "22"
+        },
+        {
+          "ref": "24"
+        },
+        {
+          "ref": "23"
+        },
+        {
+          "ref": "25"
+        },
+        {
+          "ref": "28"
+        },
+        {
+          "ref": "26"
+        },
+        {
+          "ref": "27"
+        }
+      ]
+    }
+  ]
+}
