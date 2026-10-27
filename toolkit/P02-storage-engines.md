@@ -4,7 +4,7 @@
 
 ## At a glance
 
-Most databases store data in one of two ways. A **B-tree** keeps data in sorted pages that are updated in place, which makes point reads and range scans on sorted data efficient. An **LSM tree** (log-structured merge tree) buffers writes in memory and a log, writes them as sorted immutable files, and merges files in the background (compaction). The choice is a trade between **write, read and space amplification** `[CONFIRMED]`. Pick the engine from the workload, not from fashion.
+Most databases store data in one of two ways. A **B-tree** keeps data in sorted pages that are updated in place, which makes point reads and range scans on sorted data efficient `[INDUSTRY PATTERN]`. An **LSM tree** (log-structured merge tree) buffers writes in memory and a log, writes them as sorted immutable files, and merges files in the background (compaction). The engines are compared by **write, read and space amplification**: RocksDB's tuning guide uses these three ratios and says compaction changes the trade-off among them `[CONFIRMED]` (for the LSM side); applying the same lens to B-trees is standard practice `[INDUSTRY PATTERN]`. Pick the engine from the workload, not from fashion.
 
 **In 60 seconds:** B-tree for read-heavy and mixed OLTP with range queries and strong transactional semantics; LSM for sustained write-heavy ingestion where background compaction cost is acceptable; and never answer "which database?" before stating the access pattern, consistency need and scale.
 

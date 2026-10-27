@@ -19,7 +19,7 @@ Architects are expected to know what a design costs and what drives that cost. T
 - **Stop spending money on undifferentiated heavy lifting:** use managed services for work like data-center operations and operating-system management so teams can focus on customers.
 - **Analyze and attribute expenditure:** attribute costs to workloads, owners and revenue streams to measure return on investment.
 
-The pillar is organised around practising cloud financial management, expenditure and usage awareness, cost-effective resources, managing demand and supply, and optimizing over time. It is a framework: the whitepaper says it "does not provide implementation details or architectural patterns".
+The paper says adopting its practices helps an organization achieve these goals: practice cloud financial management, expenditure and usage awareness, cost-effective resources, managing demand and supply, and optimizing over time. It is a framework: the whitepaper says it "does not provide implementation details or architectural patterns".
 
 **FinOps Foundation principles.** Teams need to collaborate (finance, technology, product and business work together in near real time); decisions are driven by the business value of cloud ("unit economic and value-based metrics demonstrate business impact better than aggregate spend", and teams "make conscious trade-off decisions among cost, quality, and speed"); everyone takes ownership of their cloud usage, with engineers owning cost "from architecture design to ongoing operations"; FinOps data should be accessible and timely; and a centralized team drives FinOps as an enabler, "much like security". The Foundation defines FinOps as "an operational framework and cultural practice which maximizes the business value of cloud".
 
@@ -28,7 +28,7 @@ The pillar is organised around practising cloud financial management, expenditur
 | System type | Usually dominant cost | Levers (and what they give up) | Atlas evidence |
 |---|---|---|---|
 | Blob and media storage | Storage plus egress | Tiering and cooling (slower access), erasure coding (CPU, repair traffic), CDN offload | [05 S3](../systems/05-object-storage-s3.md), [07 Photos](../systems/07-photo-upload-storage.md), [13 Netflix](../systems/13-netflix.md) |
-| Live video | Transcoding compute and bandwidth | Transcode only popular channels, hardware encoders (a Twitch engineer said in a 2021 interview that its hardware transcoder work was expanding capacity 10 times at only two times the cost) | [29 Live streaming](../systems/29-live-streaming-twitch.md) |
+| Live video | Transcoding compute and bandwidth | Transcode only popular channels, hardware encoders (a Twitch engineer said in a 2021 interview that its hardware transcoder aims at 10 times the capacity for two times the cost) | [29 Live streaming](../systems/29-live-streaming-twitch.md) |
 | Time-series / observability | Memory | Compression (Gorilla's 12 times reduction), shorter hot window, rollups | [30 Monitoring](../systems/30-metrics-monitoring-alerting.md) |
 | Search and vector indexes | RAM | Compressed vectors, SSD-resident indexes (DiskANN: a billion points on a 64 GB machine) | [24 Vector search](../systems/24-vector-semantic-search.md) |
 | LLM serving | GPU hours | Batching, paged KV cache, smaller models for easy requests, caching | [22 LLM serving](../systems/22-llm-inference-serving.md) |

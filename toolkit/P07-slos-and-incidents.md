@@ -6,7 +6,7 @@
 
 Reliability is a design input with a price, not a goal to maximise. The vocabulary architects need: an **SLI** (a measurement of service level, such as the fraction of successful requests), an **SLO** (the target for that measurement), an **SLA** (a business agreement with consequences if missed) and an **error budget** (how much unreliability the SLO permits, spent on releases and risk). Failure handling adds two more ideas: stop **cascading failure** with load shedding, bounded retries and degradation, and learn from every incident through a **blameless postmortem**.
 
-**In 60 seconds:** pick SLIs from what users care about, set SLOs a little below what users would notice, treat the gap to 100% as a budget that funds change, protect services from overload before they fall over, and write postmortems that fix systems instead of blaming people.
+**In 60 seconds:** pick SLIs from what users care about, set SLOs no tighter than users would notice, treat the gap to 100% as a budget that funds change, protect services from overload before they fall over, and write postmortems that fix systems instead of blaming people.
 
 ---
 
