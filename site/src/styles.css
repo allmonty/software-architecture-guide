@@ -231,3 +231,5 @@ button.study { margin-left: auto; }
 .size-row input[type="range"] { flex: 1; min-width: 0; accent-color: var(--accent); }
 .size-row output { min-width: 3.2em; text-align: right; font-variant-numeric: tabular-nums; }
 .settings-pop .small { font-size: 12px; margin: 6px 0 0; }
+/* Steps and progress sit at the bottom of every track card, so they line up across cards of different height. */
+.card-foot { margin-top: auto; padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }

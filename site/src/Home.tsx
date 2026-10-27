@@ -98,9 +98,11 @@ export function Home() {
                 <a href={`#track/${t.id}`}>
                   <strong>{t.title}</strong>
                   <span className="muted">{t.audience}</span>
-                  <span className="meta">{items.length} steps · about {Math.round(mins / 60)} h of reading</span>
-                  <span className="bar-track" aria-label={`${n} of ${items.length} done`}><span style={{ width: `${(100 * n) / items.length}%` }} /></span>
-                  <span className="meta">{n} of {items.length} done</span>
+                  <span className="card-foot">
+                    <span className="meta">{items.length} steps · about {Math.round(mins / 60)} h of reading</span>
+                    <span className="bar-track" aria-label={`${n} of ${items.length} done`}><span style={{ width: `${(100 * n) / items.length}%` }} /></span>
+                    <span className="meta">{n} of {items.length} done</span>
+                  </span>
                 </a>
               </li>
             );
