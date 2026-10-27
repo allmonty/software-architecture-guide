@@ -1,0 +1,205 @@
+[
+  {
+    "quote": "Disaster Recovery of Workloads on AWS",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-workloads-on-aws.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Recovery Time Objective (RTO) is the maximum acceptable delay between the interruption of service and restoration of service.",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/business-continuity-plan-bcp.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Recovery Point Objective (RPO) is the maximum acceptable amount of time since the last data recovery point.",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/business-continuity-plan-bcp.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the maximum acceptable length of time that your application can be offline",
+    "url": "https://cloud.google.com/architecture/dr-scenarios-planning-guide",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the maximum acceptable length of time during which data might be lost from your application due to a major incident",
+    "url": "https://cloud.google.com/architecture/dr-scenarios-planning-guide",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Typically, the smaller your RTO and RPO values are (that is, the faster your application must recover from an interruption), the more your application will cost to run.",
+    "url": "https://cloud.google.com/architecture/dr-scenarios-planning-guide",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "recovery objectives should not be made in isolation",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/business-continuity-plan-bcp.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "If the cost of the recovery strategy is higher than the cost of the failure or loss, the recovery option should not be put in place unless there is a secondary driver such as regulatory requirements.",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/business-continuity-plan-bcp.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "For less critical workloads, a valid strategy may be not to have any disaster recovery in place at all",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/business-continuity-plan-bcp.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a multi-AZ architecture within an AWS Region may already meet much of your risk mitigation needs",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/business-continuity-plan-bcp.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Disaster recovery strategies available to you within AWS can be broadly categorized into four approaches, ranging from the low cost and low complexity of making backups to more complex strategies using multiple active Regions.",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a suitable approach for mitigating against data loss or corruption",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "you should always deploy using infrastructure as code (IaC)",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Resources required to support data replication and backup, such as databases and object storage, are always on",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a scaled down, but fully functional, copy of your production environment in another Region",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "(at reduced capacity levels) immediately",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the most complex and costly approach",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "can reduce your recovery time to near zero for most disasters",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "cannot process requests without additional action taken first",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "but may not protect against disaster events such as data corruption or malicious attack",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "For maximum resiliency, you should use only data plane operations as part of your failover operation",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Store disaster recovery documentation, scripts, and recovery components in highly available, secure locations so they remain accessible even during regional outages",
+    "url": "https://learn.microsoft.com/en-us/azure/well-architected/reliability/disaster-recovery",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Predeploy CI/CD pipelines in every region so they're ready to run immediately when needed.",
+    "url": "https://learn.microsoft.com/en-us/azure/well-architected/reliability/disaster-recovery",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "A pattern to avoid is developing recovery paths that are rarely executed",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/testing-disaster-recovery.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Our experience has shown that the only error recovery that works is the path you test frequently.",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/testing-disaster-recovery.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Manage configuration drift at the DR Region",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/testing-disaster-recovery.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "After you create a DR plan, test it regularly",
+    "url": "https://cloud.google.com/architecture/dr-scenarios-planning-guide",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Even with automation, trained operators must oversee recovery processes and intervene if issues arise",
+    "url": "https://learn.microsoft.com/en-us/azure/well-architected/reliability/disaster-recovery",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "adjust failover thresholds to reduce the risk of false positives",
+    "url": "https://learn.microsoft.com/en-us/azure/well-architected/reliability/disaster-recovery",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  }
+]
