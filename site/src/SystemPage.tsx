@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import type { System } from "./data.ts";
 import { DiagramView } from "./DiagramView.tsx";
 import { StudyToggle } from "./StudyToggle.tsx";
+import { rehypeNodeRefs } from "./nodeRefs.ts";
 import { TrustCard } from "./TrustCard.tsx";
 import { Outline, scrollToSection, useHeadingComponents } from "./sections.tsx";
 import { systems, toolkitPages } from "./data.ts";
@@ -54,6 +55,15 @@ export function SystemPage({
   initialSection: string | null;
 }) {
   const headings = useHeadingComponents(system.markdown);
+  const [request, setRequest] = useState<{ id: string; n: number } | null>(null);
+  const ask = (id: string) => setRequest((r) => ({ id, n: (r?.n ?? 0) + 1 }));
+  const refSpan: Components["span"] = ({ className, children, ...rest }) => {
+    const id = (rest as { "data-node"?: string })["data-node"];
+    return className === "node-ref" && id
+      ? <span className="node-ref" role="button" tabIndex={0} title="Show in the diagram" onClick={() => ask(id)} onKeyDown={(e) => { if (e.key === "Enter") ask(id); }}>{children}</span>
+      : <span className={className}>{children}</span>;
+  };
+  const refPlugin = useMemo(() => rehypeNodeRefs(system.diagram), [system.diagram]);
   // A shared link can point at a section; wait for the note to render, then scroll.
   useEffect(() => { if (initialSection) scrollToSection(initialSection, false); }, [initialSection]);
   const [mode, setModeState] = useState<Mode>(initialMode);
@@ -107,6 +117,7 @@ export function SystemPage({
               diagram={system.diagram}
               claims={system.claims}
               markdown={system.markdown}
+              selectRequest={request}
               initialFlow={live.get("flow") ?? initialFlow}
               initialStep={Number.isFinite(liveStep) && live.get("step") ? liveStep - 1 : initialStep}
               initialLevel={liveLevel}
@@ -118,7 +129,14 @@ export function SystemPage({
         <article className={`notes right${mode === "graph" ? " hidden" : ""}`}>
           <Outline markdown={system.markdown} variant="select" remount={mode} />
           <TrustCard title={system.diagram.title} markdown={system.markdown} claims={system.claims} diagram={system.diagram} />
-          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={{ ...components, ...headings }}>{system.markdown}</ReactMarkdown>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={mode === "split" ? [rehypeRaw, refPlugin] : [rehypeRaw]}
+            components={{
+              ...components, ...headings,
+              span: refSpan,
+            }}
+          >{system.markdown}</ReactMarkdown>
         </article>
       </div>
     </main>

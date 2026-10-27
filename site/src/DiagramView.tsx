@@ -42,7 +42,10 @@ export function DiagramView({
   initialFocus = null,
   claims = [],
   markdown = "",
+  selectRequest = null,
 }: {
+  // Asks the diagram to open an element (clicked in the note). n makes repeated requests for the same id count.
+  selectRequest?: { id: string; n: number } | null;
   diagram: Diagram;
   claims?: LedgerEntry[];
   markdown?: string;
@@ -80,6 +83,16 @@ export function DiagramView({
       }
     }
   };
+
+  // A reference clicked in the note opens that element at the level where it is drawn.
+  useEffect(() => {
+    const node = selectRequest && diagram.nodes.find((n) => n.id === selectRequest.id);
+    if (!node) return;
+    if (node.c4 === "component" && node.parent && focusable.some((f) => f.id === node.parent)) { setFocus(node.parent); setLevel("component"); }
+    else setLevel((l) => (l === "context" ? "container" : l === "component" ? "container" : l));
+    setSel({ kind: "el", id: node.id });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectRequest?.n]);
 
   const current = flow?.steps[step];
   const here = current ? view.liftEdge(current.edge) : null;
