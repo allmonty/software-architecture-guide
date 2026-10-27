@@ -1,0 +1,70 @@
+/* ==========================================================================================================
+   DESIGN SYSTEM. The one place that decides how the site looks. Page rules in styles.css use these tokens and
+   never raw values (test/design.test.ts fails the build if padding, margin, gap or border-radius use raw px).
+
+   SPACE     --s-1 4 · --s-2 8 · --s-3 12 · --s-4 16 · --s-5 24 · --s-6 32 · --s-7 48 (px, on a 4px grid)
+             inside a control: s-1/s-2 · inside a card: s-4 · between cards: s-4 · between sections: s-6
+   RADIUS    --r-sm 6 (buttons, inputs) · --r-md 10 (small panels, popovers) · --r-lg 14 (cards) · --r-pill
+   TYPE      --t-xs .75rem (labels, pills) · --t-sm .85rem (secondary text) · --t-md 1rem (body) · --t-lg 1.15rem
+             (section titles) · --t-xl 1.5rem (page titles) · --t-2xl 2.3rem (home headline). Sizes are rem, so
+             the reader's size setting scales them. Diagram node text is fixed px on purpose.
+   SURFACE   --surface (cards, translucent) · --card (solid: menus, inputs) · --bg (page) · --line (borders)
+   ELEVATION --shadow-1 (card at rest) · --shadow-2 (hovered) · --shadow-pop (menus). Layers: --z-sticky, --z-tools, --z-pop
+   COLOUR    text --fg / --muted · action --accent (text on it: --on-accent) · status --c-confirmed, --c-pattern,
+             --c-spec · diagram palette --p-* (hue = kind of element, shade = C4 level)
+   RULES     one border (1px --line), one card look (.surface selectors below), one hover (border to --accent, lift
+             2px), one focus ring (2px --accent). New component? Reuse a token before inventing a value.
+   ========================================================================================================== */
+
+:root {
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px;
+  --r-sm: 6px; --r-md: 10px; --r-lg: 14px; --r-pill: 999px;
+  --t-xs: .75rem; --t-sm: .85rem; --t-md: 1rem; --t-lg: 1.15rem; --t-xl: 1.5rem; --t-2xl: 2.3rem;
+  --shadow-1: 0 1px 2px rgb(0 0 0 / .06), 0 10px 24px -14px rgb(0 0 0 / .3);
+  --shadow-2: 0 1px 2px rgb(0 0 0 / .06), 0 16px 30px -14px rgb(0 0 0 / .4);
+  --shadow-pop: 0 10px 30px rgb(0 0 0 / .18);
+  --z-sticky: 4; --z-tools: 5; --z-pop: 20;
+  --page-max: 1100px; --prose-max: 76ch; --page-pad: clamp(var(--s-3), 3vw, var(--s-5));
+  --ease: .15s ease;
+  --surface: color-mix(in srgb, var(--card) 80%, transparent);
+}
+
+/* ---- Themes: System (follows the OS), Light, Warm, Dark ---- */
+:root {
+  --bg: #fafafa; --fg: #1c1c1e; --muted: #6b6b70; --card: #fff; --line: #d8d8de; --accent: #2563eb; --on-accent: #fff;
+  --c-confirmed: #15803d; --c-pattern: #b45309; --c-spec: #b91c1c;
+  --k-client: #e0f2fe; --k-edge: #ede9fe; --k-service: #dcfce7; --k-datastore: #fef3c7; --k-queue: #fce7f3; --k-external: #e5e7eb;
+}
+:root[data-theme="dark"] {
+  --bg: #111114; --fg: #ececf0; --muted: #9a9aa3; --card: #1b1b20; --line: #33333b; --accent: #60a5fa; --on-accent: #0b1220;
+  --c-confirmed: #4ade80; --c-pattern: #fbbf24; --c-spec: #f87171;
+  --k-client: #0c4a6e; --k-edge: #3b2a6b; --k-service: #14532d; --k-datastore: #5b3f08; --k-queue: #6b1d44; --k-external: #3a3a42;
+}
+:root[data-theme="warm"] {
+  --bg: #f4ecd8; --fg: #3b3226; --muted: #6b5f4f; --card: #fbf6e9; --line: #dccfb4; --accent: #1f5f8b; --on-accent: #fff;
+  --c-confirmed: #3d6b27; --c-pattern: #94560a; --c-spec: #a32d2d;
+  --k-client: #d9e8ee; --k-edge: #e4dcef; --k-service: #dce9cf; --k-datastore: #f1dfb3; --k-queue: #f0d8de; --k-external: #e4dece;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #111114; --fg: #ececf0; --muted: #9a9aa3; --card: #1b1b20; --line: #33333b; --accent: #60a5fa; --on-accent: #0b1220;
+    --c-confirmed: #4ade80; --c-pattern: #fbbf24; --c-spec: #f87171;
+    --k-client: #0c4a6e; --k-edge: #3b2a6b; --k-service: #14532d; --k-datastore: #5b3f08; --k-queue: #6b1d44; --k-external: #3a3a42;
+  }
+}
+:root { --font-body: system-ui, sans-serif; }
+:root[data-font="atkinson"] { --font-body: "Atkinson Hyperlegible", system-ui, sans-serif; }
+:root[data-font="lexend"] { --font-body: "Lexend Variable", system-ui, sans-serif; }
+:root[data-font="literata"] { --font-body: "Literata Variable", Georgia, serif; }
+
+/* ---- Diagram palette ---- */
+/* Hue = kind of element, shade = C4 level (saturated container, light tint component).
+   White text on the saturated fills and dark text on the tints both meet 4.5:1 contrast. */
+:root {
+  --p-service: #1d4ed8; --p-service-t: #bfdbfe;
+  --p-data: #b45309; --p-data-t: #fde68a;
+  --p-queue: #be185d; --p-queue-t: #fbcfe8;
+  --p-edge: #0f766e; --p-edge-t: #99f6e4;
+  --p-client: #7c3aed; --p-client-t: #ddd6fe;
+  --p-person: #4c1d95; --p-system: #0f172a; --p-external: #475569; --p-external-t: #e2e8f0; --p-note: #6b7280;
+}

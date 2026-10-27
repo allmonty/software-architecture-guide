@@ -9,6 +9,7 @@ import "@fontsource/atkinson-hyperlegible/latin-700-italic.css";
 import "@fontsource-variable/lexend/wght.css";
 import "@fontsource-variable/literata/wght.css";
 import "@fontsource-variable/literata/wght-italic.css";
+import "./design.css";
 import "./styles.css";
 import { App } from "./App.tsx";
 

@@ -1,33 +1,7 @@
-:root {
-  --bg: #fafafa; --fg: #1c1c1e; --muted: #6b6b70; --card: #fff; --line: #d8d8de; --accent: #2563eb; --on-accent: #fff;
-  --c-confirmed: #15803d; --c-pattern: #b45309; --c-spec: #b91c1c;
-  --k-client: #e0f2fe; --k-edge: #ede9fe; --k-service: #dcfce7; --k-datastore: #fef3c7; --k-queue: #fce7f3; --k-external: #e5e7eb;
-}
-:root[data-theme="dark"] {
-  --bg: #111114; --fg: #ececf0; --muted: #9a9aa3; --card: #1b1b20; --line: #33333b; --accent: #60a5fa; --on-accent: #0b1220;
-  --c-confirmed: #4ade80; --c-pattern: #fbbf24; --c-spec: #f87171;
-  --k-client: #0c4a6e; --k-edge: #3b2a6b; --k-service: #14532d; --k-datastore: #5b3f08; --k-queue: #6b1d44; --k-external: #3a3a42;
-}
-:root[data-theme="warm"] {
-  --bg: #f4ecd8; --fg: #3b3226; --muted: #6b5f4f; --card: #fbf6e9; --line: #dccfb4; --accent: #1f5f8b; --on-accent: #fff;
-  --c-confirmed: #3d6b27; --c-pattern: #94560a; --c-spec: #a32d2d;
-  --k-client: #d9e8ee; --k-edge: #e4dcef; --k-service: #dce9cf; --k-datastore: #f1dfb3; --k-queue: #f0d8de; --k-external: #e4dece;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --bg: #111114; --fg: #ececf0; --muted: #9a9aa3; --card: #1b1b20; --line: #33333b; --accent: #60a5fa; --on-accent: #0b1220;
-    --c-confirmed: #4ade80; --c-pattern: #fbbf24; --c-spec: #f87171;
-    --k-client: #0c4a6e; --k-edge: #3b2a6b; --k-service: #14532d; --k-datastore: #5b3f08; --k-queue: #6b1d44; --k-external: #3a3a42;
-  }
-}
 * { box-sizing: border-box; }
 /* --fs is the reading size chosen in the settings menu; text sized in rem or em follows it. */
 html { font-size: var(--fs, 15px); }
 body { margin: 0; background: var(--bg); color: var(--fg); font: 1rem/1.5 var(--font-body); }
-:root { --font-body: system-ui, sans-serif; }
-:root[data-font="atkinson"] { --font-body: "Atkinson Hyperlegible", system-ui, sans-serif; }
-:root[data-font="lexend"] { --font-body: "Lexend Variable", system-ui, sans-serif; }
-:root[data-font="literata"] { --font-body: "Literata Variable", Georgia, serif; }
 /* Diagram nodes have fixed sizes, so they keep the system font. */
 .react-flow { font-family: system-ui, sans-serif; }
 a { color: var(--accent); }
@@ -106,16 +80,6 @@ html, body { overflow-x: hidden; }
 .deadlink { border-bottom: 1px dotted var(--muted); cursor: help; }
 .notes pre { overflow: auto; }
 
-/* C4 elements. Hue = kind of element, shade = C4 level (saturated container, light tint component).
-   White text on the saturated fills and dark text on the tints both meet 4.5:1 contrast. */
-:root {
-  --p-service: #1d4ed8; --p-service-t: #bfdbfe;
-  --p-data: #b45309; --p-data-t: #fde68a;
-  --p-queue: #be185d; --p-queue-t: #fbcfe8;
-  --p-edge: #0f766e; --p-edge-t: #99f6e4;
-  --p-client: #7c3aed; --p-client-t: #ddd6fe;
-  --p-person: #4c1d95; --p-system: #0f172a; --p-external: #475569; --p-external-t: #e2e8f0; --p-note: #6b7280;
-}
 .react-flow__node-c4 { padding: 0; color: #fff; border-color: rgba(255,255,255,.55); }
 .react-flow__node.c4-container, .react-flow__node.c4-component { background: var(--p-service); }
 .react-flow__node.c4-container.k-datastore { background: var(--p-data); }
