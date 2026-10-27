@@ -1,0 +1,462 @@
+{
+  "id": "23-rag-knowledge-assistant",
+  "title": "RAG Knowledge Assistant",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "user",
+      "label": "Employee",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Asks a question in natural language and expects an answer that cites documents they are allowed to read.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.anthropic.com/news/contextual-retrieval"
+      ]
+    },
+    {
+      "id": "sources",
+      "label": "Source systems",
+      "kind": "external",
+      "c4": "external-system",
+      "summary": "Wikis, file stores, ticket systems and similar. They own the documents and their permissions.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.anthropic.com/news/contextual-retrieval"
+      ]
+    },
+    {
+      "id": "llm",
+      "label": "LLM service",
+      "kind": "external",
+      "c4": "external-system",
+      "summary": "Generates chunk context at ingestion and the final answer at query time. For serving internals see note 22.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2005.11401",
+        "https://www.anthropic.com/news/contextual-retrieval"
+      ]
+    },
+    {
+      "id": "ingest",
+      "label": "Ingestion pipeline",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Turns documents into searchable chunks: change detection, chunking, optional context generation, embedding and indexing.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2005.11401",
+        "https://www.anthropic.com/news/contextual-retrieval"
+      ],
+      "group": "Ingestion pipeline"
+    },
+    {
+      "id": "sync",
+      "label": "Sync and change detection",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Pulls new, changed and deleted documents and permission changes from the sources. Industry practice; neither source describes it.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.anthropic.com/news/contextual-retrieval"
+      ],
+      "parent": "ingest",
+      "group": "Ingestion pipeline"
+    },
+    {
+      "id": "chunk",
+      "label": "Parser and chunker",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Extracts text and splits it into chunks. The RAG paper used disjoint 100-word chunks; Anthropic says chunks are usually no more than a few hundred tokens and that chunk size, boundaries and overlap affect retrieval.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2005.11401",
+        "https://www.anthropic.com/news/contextual-retrieval"
+      ],
+      "parent": "ingest",
+      "group": "Ingestion pipeline"
+    },
+    {
+      "id": "ctxgen",
+      "label": "Contextualizer",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Asks a model for a short (usually 50-100 tokens) explanation of how the chunk fits its document, prepended before embedding and keyword indexing.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.anthropic.com/news/contextual-retrieval"
+      ],
+      "parent": "ingest",
+      "group": "Ingestion pipeline"
+    },
+    {
+      "id": "embed",
+      "label": "Embedder",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Computes a dense vector per chunk with a document encoder (the RAG paper used a BERT-base bi-encoder).",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2005.11401"
+      ],
+      "parent": "ingest",
+      "group": "Ingestion pipeline"
+    },
+    {
+      "id": "vec",
+      "label": "Vector index",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Approximate nearest-neighbour index over chunk vectors. The RAG paper used FAISS with a Hierarchical Navigable Small World index over 21M chunks.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2005.11401"
+      ]
+    },
+    {
+      "id": "kw",
+      "label": "Keyword index (BM25)",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Lexical index over the contextualized chunks; finds exact identifiers and technical terms that embeddings can miss.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.anthropic.com/news/contextual-retrieval"
+      ]
+    },
+    {
+      "id": "store",
+      "label": "Chunk store",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Chunk text, source link, version and the access list. Needed to cite sources and filter by permission.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.anthropic.com/news/contextual-retrieval"
+      ]
+    },
+    {
+      "id": "query",
+      "label": "Query service",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Answers a question: applies the user's permission scope, retrieves from both indexes, reranks, builds the prompt and returns an answer with citations.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2005.11401",
+        "https://www.anthropic.com/news/contextual-retrieval"
+      ],
+      "group": "Query service"
+    },
+    {
+      "id": "auth",
+      "label": "Permission scope",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Resolves who the user is and which documents they may read, and applies that as a filter inside retrieval. Industry practice.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.anthropic.com/news/contextual-retrieval"
+      ],
+      "parent": "query",
+      "group": "Query service"
+    },
+    {
+      "id": "retr",
+      "label": "Hybrid retriever",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Searches the vector index and the keyword index and merges the results into a candidate list (Anthropic used the top 150).",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.anthropic.com/news/contextual-retrieval"
+      ],
+      "parent": "query",
+      "group": "Query service"
+    },
+    {
+      "id": "rerank",
+      "label": "Reranker",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Scores each candidate against the question and keeps the top K (Anthropic used 20), improving results at the price of added latency and cost.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.anthropic.com/news/contextual-retrieval"
+      ],
+      "parent": "query",
+      "group": "Query service"
+    },
+    {
+      "id": "answer",
+      "label": "Prompt builder and citations",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Puts the chosen chunks in the prompt, instructs the model to answer from them and cite them, and returns the streamed answer.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2005.11401",
+        "https://www.anthropic.com/news/contextual-retrieval"
+      ],
+      "parent": "query",
+      "group": "Query service"
+    },
+    {
+      "id": "evalsvc",
+      "label": "Evaluation and feedback",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Logs question, retrieved chunks, answer and user feedback; runs labelled retrieval and answer tests before changes ship. Industry practice; Anthropic advises always running evals.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.anthropic.com/news/contextual-retrieval"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "sync-src",
+      "from": "sync",
+      "to": "sources",
+      "label": "fetch changed documents and permissions",
+      "mode": "sync"
+    },
+    {
+      "id": "sync-chunk",
+      "from": "sync",
+      "to": "chunk",
+      "label": "changed document",
+      "mode": "sync"
+    },
+    {
+      "id": "chunk-ctx",
+      "from": "chunk",
+      "to": "ctxgen",
+      "label": "chunks",
+      "mode": "sync"
+    },
+    {
+      "id": "ctx-llm",
+      "from": "ctxgen",
+      "to": "llm",
+      "label": "document + chunk, ask for context",
+      "mode": "sync"
+    },
+    {
+      "id": "ctx-embed",
+      "from": "ctxgen",
+      "to": "embed",
+      "label": "contextualized chunk",
+      "mode": "sync"
+    },
+    {
+      "id": "embed-vec",
+      "from": "embed",
+      "to": "vec",
+      "label": "write vector",
+      "mode": "sync"
+    },
+    {
+      "id": "ctx-kw",
+      "from": "ctxgen",
+      "to": "kw",
+      "label": "index contextualized chunk",
+      "mode": "sync"
+    },
+    {
+      "id": "chunk-store",
+      "from": "chunk",
+      "to": "store",
+      "label": "text, source, access list",
+      "mode": "sync"
+    },
+    {
+      "id": "sync-store",
+      "from": "sync",
+      "to": "store",
+      "label": "permission change or deletion",
+      "mode": "sync"
+    },
+    {
+      "id": "user-auth",
+      "from": "user",
+      "to": "auth",
+      "label": "question",
+      "mode": "sync"
+    },
+    {
+      "id": "auth-retr",
+      "from": "auth",
+      "to": "retr",
+      "label": "question + allowed scope",
+      "mode": "sync"
+    },
+    {
+      "id": "retr-vec",
+      "from": "retr",
+      "to": "vec",
+      "label": "nearest neighbours",
+      "mode": "sync"
+    },
+    {
+      "id": "retr-kw",
+      "from": "retr",
+      "to": "kw",
+      "label": "exact-match search",
+      "mode": "sync"
+    },
+    {
+      "id": "retr-store",
+      "from": "retr",
+      "to": "store",
+      "label": "fetch text, check permissions",
+      "mode": "sync"
+    },
+    {
+      "id": "retr-rerank",
+      "from": "retr",
+      "to": "rerank",
+      "label": "candidate chunks",
+      "mode": "sync"
+    },
+    {
+      "id": "rerank-answer",
+      "from": "rerank",
+      "to": "answer",
+      "label": "top chunks",
+      "mode": "sync"
+    },
+    {
+      "id": "answer-llm",
+      "from": "answer",
+      "to": "llm",
+      "label": "prompt with chunks",
+      "mode": "sync"
+    },
+    {
+      "id": "answer-user",
+      "from": "answer",
+      "to": "user",
+      "label": "answer with citations",
+      "mode": "async"
+    },
+    {
+      "id": "answer-eval",
+      "from": "answer",
+      "to": "evalsvc",
+      "label": "log question, chunks, answer",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "ask",
+      "name": "Ask a question",
+      "steps": [
+        {
+          "edge": "user-auth",
+          "caption": "The question arrives with the user's identity; the service resolves which documents they may read."
+        },
+        {
+          "edge": "auth-retr",
+          "caption": "The retriever receives the question together with the allowed scope."
+        },
+        {
+          "edge": "retr-vec",
+          "caption": "It searches the vector index for chunks close in meaning."
+        },
+        {
+          "edge": "retr-kw",
+          "caption": "It also searches the keyword index for exact terms."
+        },
+        {
+          "edge": "retr-rerank",
+          "caption": "The merged candidates (a wide list) go to the reranker."
+        },
+        {
+          "edge": "rerank-answer",
+          "caption": "The reranker keeps the top chunks."
+        },
+        {
+          "edge": "answer-llm",
+          "caption": "The prompt contains the chunks and instructions to answer from them and cite them."
+        },
+        {
+          "edge": "answer-user",
+          "caption": "The answer is streamed back with citations."
+        },
+        {
+          "edge": "answer-eval",
+          "caption": "The exchange is logged for evaluation and feedback."
+        }
+      ]
+    },
+    {
+      "id": "ingest",
+      "name": "A document is added or changed",
+      "steps": [
+        {
+          "edge": "sync-src",
+          "caption": "Sync detects a new or changed document."
+        },
+        {
+          "edge": "sync-chunk",
+          "caption": "It is parsed and split into chunks."
+        },
+        {
+          "edge": "chunk-ctx",
+          "caption": "Each chunk goes to the contextualizer."
+        },
+        {
+          "edge": "ctx-llm",
+          "caption": "A model writes a short context for the chunk from the whole document."
+        },
+        {
+          "edge": "ctx-embed",
+          "caption": "The contextualized chunk is embedded."
+        },
+        {
+          "edge": "embed-vec",
+          "caption": "The vector is written to the vector index."
+        },
+        {
+          "edge": "ctx-kw",
+          "caption": "The same text is added to the keyword index."
+        }
+      ]
+    },
+    {
+      "id": "permission-revoked",
+      "name": "A user's access is revoked (security failure to prevent)",
+      "steps": [
+        {
+          "edge": "sync-src",
+          "caption": "Sync sees that a document is now restricted or deleted at the source."
+        },
+        {
+          "edge": "sync-store",
+          "caption": "The chunk store's access list is updated or the chunks are removed. Until this lands, queries could still return the chunks, so the delay is a leak window to keep small (our design reasoning)."
+        },
+        {
+          "edge": "retr-store",
+          "caption": "At query time the retriever checks permissions against the store, so revoked chunks are no longer returned."
+        }
+      ]
+    },
+    {
+      "id": "exact-id",
+      "name": "Embeddings miss an exact identifier",
+      "steps": [
+        {
+          "edge": "retr-vec",
+          "caption": "A query for a specific error code returns semantically similar but wrong chunks."
+        },
+        {
+          "edge": "retr-kw",
+          "caption": "The keyword index matches the exact code and returns the right chunk, which the reranker can then promote."
+        }
+      ]
+    }
+  ]
+}

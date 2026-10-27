@@ -1,0 +1,68 @@
+[
+  {
+    "quote": "which combine pre-trained parametric and non-parametric memory for language generation",
+    "url": "https://arxiv.org/pdf/2005.11401",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a dense vector index of Wikipedia",
+    "url": "https://arxiv.org/pdf/2005.11401",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "can be approximately solved in sub-linear time",
+    "url": "https://arxiv.org/pdf/2005.11401",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "disjoint 100-word chunks, to make a total of 21M documents",
+    "url": "https://arxiv.org/pdf/2005.11401",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "may produce hallucinations",
+    "url": "https://arxiv.org/pdf/2005.11401",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "RAG models hallucinate less and generate factually correct text more often than BART",
+    "url": "https://arxiv.org/pdf/2005.11401",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "we can update RAG's world knowledge by simply replacing its non-parametric memory.",
+    "url": "https://arxiv.org/pdf/2005.11401",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "usually no more than a few hundred tokens",
+    "url": "https://www.anthropic.com/news/contextual-retrieval",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "can miss crucial exact matches",
+    "url": "https://www.anthropic.com/news/contextual-retrieval",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "particularly effective for queries that include unique identifiers or technical terms",
+    "url": "https://www.anthropic.com/news/contextual-retrieval",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "can affect retrieval performance",
+    "url": "https://www.anthropic.com/news/contextual-retrieval",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]
