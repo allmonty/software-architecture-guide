@@ -1,0 +1,355 @@
+{
+  "id": "20-web-crawler-search",
+  "title": "Web Crawler + Search",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "seeds",
+      "label": "Seed URLs",
+      "kind": "client",
+      "summary": "The starting list. The crawl follows links outward from here.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf"
+      ],
+      "group": "crawler"
+    },
+    {
+      "id": "frontier",
+      "label": "URL frontier",
+      "kind": "queue",
+      "summary": "Hands out URLs by priority and per-host politeness. It outgrows memory, so most of it lives on disk. Mercator waits 10× the last download time before contacting a host again.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf"
+      ],
+      "details": "Best implementation: priority-level FIFO queues feeding back-end FIFO queues (many more than worker threads), with a priority queue deciding when each host is next eligible.",
+      "group": "crawler"
+    },
+    {
+      "id": "fetch",
+      "label": "Fetchers (async)",
+      "kind": "service",
+      "summary": "Download pages with thousands of concurrent connections. Google's 1998 crawlers kept about 300 connections each and used asynchronous I/O with queues between states. Each keeps its own DNS cache.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "http://infolab.stanford.edu/~backrub/google.html",
+        "https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf"
+      ],
+      "details": "1998: over 100 pages per second at peak with four crawlers. Mercator: ~50 million documents per day on four Alpha servers over 17 days.",
+      "group": "crawler"
+    },
+    {
+      "id": "robots",
+      "label": "robots.txt cache",
+      "kind": "datastore",
+      "summary": "Fetched before any content. Cached up to 24 hours (RFC 9309). 4xx means unavailable so access is allowed. 5xx or network errors mean assume complete disallow. Mercator's cache: 2^18 entries, LRU.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.rfc-editor.org/rfc/rfc9309",
+        "https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf"
+      ],
+      "group": "crawler"
+    },
+    {
+      "id": "extract",
+      "label": "Link extractor",
+      "kind": "service",
+      "summary": "Parses the page, derelativizes links into absolute URLs and passes them to the duplicate eliminator.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf"
+      ],
+      "group": "crawler"
+    },
+    {
+      "id": "due",
+      "label": "URL-seen test (DUE)",
+      "kind": "datastore",
+      "summary": "Skips URLs already encountered. Mercator stores 8-byte Rabin fingerprints instead of URLs in a hash table, with a disk-backed variant. A Bloom filter is a common alternative, which is not in the cited paper.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf"
+      ],
+      "group": "crawler"
+    },
+    {
+      "id": "content",
+      "label": "Content-seen test",
+      "kind": "datastore",
+      "summary": "Detects documents with the same content under a different URL using stored document fingerprints, and drops them.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf"
+      ],
+      "group": "crawler"
+    },
+    {
+      "id": "repo",
+      "label": "Repository",
+      "kind": "datastore",
+      "summary": "Compressed copies of fetched pages, each with a docID.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "http://infolab.stanford.edu/~backrub/google.html"
+      ],
+      "group": "indexing"
+    },
+    {
+      "id": "indexer",
+      "label": "Indexer",
+      "kind": "service",
+      "summary": "Reads the repository and records hits (word, position, font size, capitalisation). Distributes them into barrels, extracts links and anchor text.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "http://infolab.stanford.edu/~backrub/google.html"
+      ],
+      "group": "indexing"
+    },
+    {
+      "id": "sorter",
+      "label": "Sorter → inverted index",
+      "kind": "service",
+      "summary": "Re-sorts barrels from docID order to wordID order, producing the inverted index in place, plus a lexicon for the searcher.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "http://infolab.stanford.edu/~backrub/google.html"
+      ],
+      "group": "indexing"
+    },
+    {
+      "id": "pagerank",
+      "label": "Link graph + PageRank",
+      "kind": "service",
+      "summary": "The links database (docID pairs) feeds an iterative PageRank computation, a probability distribution over pages.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "http://infolab.stanford.edu/~backrub/google.html"
+      ],
+      "details": "1998: PageRank for 26 million pages computed in a few hours on a medium workstation.",
+      "group": "indexing"
+    },
+    {
+      "id": "shards",
+      "label": "Index shards",
+      "kind": "datastore",
+      "summary": "Each shard holds an inverted index for a slice of documents. Queries fan out to all shards and the top-K are merged. Elasticsearch makes new documents searchable within about a second via refresh.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.elastic.co/docs/manage-data/data-store/near-real-time-search",
+        "http://infolab.stanford.edu/~backrub/google.html"
+      ],
+      "details": "The near-real-time refresh behaviour is documented by Elastic. Sharding by document and fan-out is the standard design.",
+      "group": "serving"
+    },
+    {
+      "id": "search",
+      "label": "Search front end",
+      "kind": "service",
+      "summary": "Parses the query, looks up terms, scores with text hits plus PageRank and anchor text, and returns the top results.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "http://infolab.stanford.edu/~backrub/google.html"
+      ],
+      "group": "serving"
+    },
+    {
+      "id": "user",
+      "label": "Searcher",
+      "kind": "client",
+      "summary": "Sends a keyword query and expects ranked results in milliseconds.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "http://infolab.stanford.edu/~backrub/google.html"
+      ],
+      "group": "serving"
+    }
+  ],
+  "edges": [
+    {
+      "id": "seed-fr",
+      "from": "seeds",
+      "to": "frontier",
+      "label": "initial URLs",
+      "mode": "sync"
+    },
+    {
+      "id": "fr-fetch",
+      "from": "frontier",
+      "to": "fetch",
+      "label": "next polite URL",
+      "mode": "sync"
+    },
+    {
+      "id": "fetch-robots",
+      "from": "fetch",
+      "to": "robots",
+      "label": "may I fetch?",
+      "mode": "sync"
+    },
+    {
+      "id": "fetch-content",
+      "from": "fetch",
+      "to": "content",
+      "label": "downloaded page",
+      "mode": "sync"
+    },
+    {
+      "id": "content-repo",
+      "from": "content",
+      "to": "repo",
+      "label": "store if new",
+      "mode": "sync"
+    },
+    {
+      "id": "content-ext",
+      "from": "content",
+      "to": "extract",
+      "label": "parse links",
+      "mode": "sync"
+    },
+    {
+      "id": "ext-due",
+      "from": "extract",
+      "to": "due",
+      "label": "new link?",
+      "mode": "sync"
+    },
+    {
+      "id": "due-fr",
+      "from": "due",
+      "to": "frontier",
+      "label": "unseen URLs only",
+      "mode": "sync"
+    },
+    {
+      "id": "repo-idx",
+      "from": "repo",
+      "to": "indexer",
+      "label": "read pages",
+      "mode": "sync"
+    },
+    {
+      "id": "idx-sort",
+      "from": "indexer",
+      "to": "sorter",
+      "label": "barrels",
+      "mode": "sync"
+    },
+    {
+      "id": "idx-pr",
+      "from": "indexer",
+      "to": "pagerank",
+      "label": "links database",
+      "mode": "sync"
+    },
+    {
+      "id": "sort-shards",
+      "from": "sorter",
+      "to": "shards",
+      "label": "inverted index",
+      "mode": "sync"
+    },
+    {
+      "id": "pr-search",
+      "from": "pagerank",
+      "to": "search",
+      "label": "authority scores",
+      "mode": "async"
+    },
+    {
+      "id": "u-search",
+      "from": "user",
+      "to": "search",
+      "label": "query",
+      "mode": "sync"
+    },
+    {
+      "id": "search-shards",
+      "from": "search",
+      "to": "shards",
+      "label": "fan out, merge top-K",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "crawl",
+      "name": "Crawl loop",
+      "steps": [
+        {
+          "edge": "seed-fr",
+          "caption": "The crawl starts from seed URLs."
+        },
+        {
+          "edge": "fr-fetch",
+          "caption": "The frontier hands out a URL whose host is ready, waiting about 10× the last download time between hits to one host."
+        },
+        {
+          "edge": "fetch-robots",
+          "caption": "The fetcher consults the cached robots.txt. A 4xx means allowed, and a 5xx or network error means assume complete disallow."
+        },
+        {
+          "edge": "fetch-content",
+          "caption": "The page is downloaded asynchronously, with DNS answered from the crawler's own cache."
+        },
+        {
+          "edge": "content-repo",
+          "caption": "The content-seen test drops duplicates and stores new pages in the repository."
+        },
+        {
+          "edge": "content-ext",
+          "caption": "Links are extracted and made absolute."
+        },
+        {
+          "edge": "ext-due",
+          "caption": "The URL-seen test skips URLs already encountered, using compact fingerprints."
+        },
+        {
+          "edge": "due-fr",
+          "caption": "Only unseen URLs go back to the frontier, so the loop continues."
+        }
+      ]
+    },
+    {
+      "id": "index",
+      "name": "Build the index",
+      "steps": [
+        {
+          "edge": "repo-idx",
+          "caption": "The indexer reads compressed pages and records hits for every word."
+        },
+        {
+          "edge": "idx-sort",
+          "caption": "Hits go into barrels, a partially sorted forward index. The sorter re-sorts them by word to make the inverted index."
+        },
+        {
+          "edge": "sort-shards",
+          "caption": "The inverted index is split across shards."
+        },
+        {
+          "edge": "idx-pr",
+          "caption": "Links and anchor text feed the links database, which PageRank turns into authority scores."
+        }
+      ]
+    },
+    {
+      "id": "query",
+      "name": "Answer a query",
+      "steps": [
+        {
+          "edge": "u-search",
+          "caption": "A user submits a keyword query."
+        },
+        {
+          "edge": "search-shards",
+          "caption": "The front end fans the query out to every shard, each looks up posting lists for the terms, and the top results are merged."
+        },
+        {
+          "edge": "pr-search",
+          "caption": "Text matches are combined with PageRank and anchor text to rank the results."
+        }
+      ]
+    }
+  ]
+}
