@@ -43,7 +43,7 @@ The interesting questions are all about the clicker:
 - **Rate limiting is not one thing.** Stripe runs four mechanisms with different jobs: a per-user request rate limiter, a concurrent-requests limiter, and two load shedders that protect the fleet `[CONFIRMED]` (Stripe).
 - **Token bucket** is Stripe's request limiter. It allows short bursts above the steady rate `[CONFIRMED]`. **Sliding-window counter** is Cloudflare's approach: weight the previous window's count by how much of it still overlaps `[CONFIRMED]`.
 - **State is in a shared fast store** (Redis for Stripe `[CONFIRMED]`, memcached-protocol for Cloudflare `[CONFIRMED]`) and the operations need to be **atomic**. Redis documents the INCR+EXPIRE race and the Lua fix `[CONFIRMED]`.
-- **Fail open** is the norm: Stripe catches errors so the API stays up `[CONFIRMED]`. Envoy's filter can be configured either way (`failure_mode_deny`) `[CONFIRMED]`.
+- **Fail open** is a common default, not a rule: Stripe catches errors so the API stays up `[CONFIRMED]`, and the usual advice is to fail open with an alert `[INDUSTRY PATTERN]`. Envoy's filter can be configured either way (`failure_mode_deny`) `[CONFIRMED]`.
 - **Dark launch** each limiter and keep a kill switch before enforcing `[CONFIRMED]` (Stripe).
 - **Tell the client**: return `429` (RFC 6585) and a back-off hint. The IETF `RateLimit` header draft is still an active Internet-Draft, not a standard `[CONFIRMED]`.
 

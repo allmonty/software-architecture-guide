@@ -20,7 +20,7 @@
         },
         {
           "ref": "02",
-          "why": "Rate limiting, and why failing open is usually right."
+          "why": "Rate limiting, and the fail-open versus fail-closed choice (Stripe fails open; Envoy lets you choose)."
         },
         {
           "ref": "03",
