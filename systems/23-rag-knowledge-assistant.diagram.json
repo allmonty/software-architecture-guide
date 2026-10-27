@@ -296,21 +296,21 @@
       "id": "retr-vec",
       "from": "retr",
       "to": "vec",
-      "label": "nearest neighbours",
+      "label": "nearest neighbours (filtered by scope)",
       "mode": "sync"
     },
     {
       "id": "retr-kw",
       "from": "retr",
       "to": "kw",
-      "label": "exact-match search",
+      "label": "exact-match search (filtered by scope)",
       "mode": "sync"
     },
     {
       "id": "retr-store",
       "from": "retr",
       "to": "store",
-      "label": "fetch text, check permissions",
+      "label": "fetch text and re-check permissions",
       "mode": "sync"
     },
     {

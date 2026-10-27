@@ -68,7 +68,7 @@
       "kind": "service",
       "c4": "container",
       "summary": "Runs the agent loop for each run: ask the model, call tools, observe, repeat until done or stopped. Persists each step so another worker can resume.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.anthropic.com/engineering/building-effective-agents",
         "https://arxiv.org/pdf/2210.03629"
@@ -144,7 +144,7 @@
       "kind": "service",
       "c4": "container",
       "summary": "Holds a pending risky action until a human approves or denies it. Anthropic notes agents can pause for human feedback at checkpoints.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.anthropic.com/engineering/building-effective-agents",
         "https://modelcontextprotocol.io/specification/2025-06-18/server/tools"

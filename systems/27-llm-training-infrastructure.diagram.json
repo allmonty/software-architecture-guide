@@ -353,8 +353,8 @@
           "caption": "Thousands of GPUs write at once; the storage fabric saturates briefly."
         },
         {
-          "edge": "storage-ckpt",
-          "caption": "Two-stage saves (host memory first, then background write) keep GPU pause time short; the aim is a higher checkpoint frequency so less work is lost per recovery."
+          "edge": "ckpt-storage",
+          "caption": "Two-stage saves (GPU state to host memory first, then a background write) keep GPU pause time short; the aim is a higher checkpoint frequency so less work is lost per recovery."
         }
       ]
     }

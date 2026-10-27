@@ -42,7 +42,7 @@
       "kind": "service",
       "c4": "container",
       "summary": "Fans each query out to the shards (or a chosen subset), applies timeouts and replica retries, merges the per-shard top-K lists and returns the result. The Taobao example in the DiskANN paper routes queries to all shards and aggregates.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf"
       ]
@@ -53,7 +53,7 @@
       "kind": "service",
       "c4": "container",
       "summary": "Holds one partition of the vectors with an ANN index and answers top-K queries for it. Replicated for availability and throughput (replication is our design).",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://arxiv.org/pdf/1603.09320",
         "https://arxiv.org/pdf/2401.08281",
@@ -132,7 +132,7 @@
       "kind": "service",
       "c4": "container",
       "summary": "Batch job that builds index segments from the vectors, for example clustering the data, building graphs per cluster and merging them as DiskANN does.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf"
       ]

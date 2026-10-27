@@ -43,7 +43,7 @@
       "kind": "service",
       "c4": "container",
       "summary": "One engine process per GPU group: a centralized scheduler with a KV cache manager coordinates GPU workers that run the model.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://arxiv.org/pdf/2309.06180",
         "https://www.usenix.org/system/files/osdi22-yu.pdf"

@@ -148,7 +148,7 @@
       "kind": "service",
       "c4": "container",
       "summary": "Runs the suites on each candidate and decides whether it may ship: benchmarks, regression tests, judge-based quality, safety and cost.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://arxiv.org/pdf/2306.05685",
         "https://arxiv.org/pdf/2407.21783",

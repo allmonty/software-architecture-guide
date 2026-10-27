@@ -298,6 +298,13 @@
       "to": "usermodel",
       "label": "load parameters",
       "mode": "sync"
+    },
+    {
+      "id": "api-sources",
+      "from": "api",
+      "to": "sources",
+      "label": "ask other candidate sources",
+      "mode": "sync"
     }
   ],
   "flows": [
@@ -393,7 +400,7 @@
         },
         {
           "edge": "trainer-model",
-          "caption": "The failed server is restored from the daily snapshot, losing up to a day of updates, which Monolith found tolerable for quality."
+          "caption": "After the failed server is restored from the daily snapshot (losing up to a day of updates, which Monolith found tolerable for quality), parameter synchronisation to serving resumes."
         }
       ]
     },
@@ -406,8 +413,12 @@
           "caption": "The API cannot get embedding candidates."
         },
         {
+          "edge": "api-sources",
+          "caption": "It asks other candidate sources such as popular items so the page is not empty (our design reasoning)."
+        },
+        {
           "edge": "sources-ranker",
-          "caption": "It falls back to other candidate sources such as popular items so the page is not empty (our design reasoning)."
+          "caption": "The fallback candidates are ranked as usual."
         }
       ]
     }

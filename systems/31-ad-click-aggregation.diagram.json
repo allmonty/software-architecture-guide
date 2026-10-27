@@ -147,7 +147,7 @@
       "kind": "service",
       "c4": "container",
       "summary": "Counts clicks per ad per event-time window with a watermark, and checkpoints state with source offsets. Flink and Dataflow describe these mechanisms; the ad-specific job is our design.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf",
         "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/stateful-stream-processing/",
@@ -214,7 +214,7 @@
       "kind": "service",
       "c4": "container",
       "summary": "Recomputes totals from the raw log, compares them with the stream results and corrects them before billing. Photon likewise runs a verification system that finds clicks present in the registry but missing from the output.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf"
       ]
@@ -458,12 +458,26 @@
           "caption": "The latest checkpoint holds operator state and the positions in the sources."
         },
         {
-          "edge": "clicklog-dispatcher",
-          "caption": "After restart the job restores the state and the sources replay from the saved positions, so no click is lost or double counted in state."
+          "edge": "joined-window",
+          "caption": "After restart the job restores the state and its sources (the joined clicks log) replay from the saved positions, so no click is lost or double counted in state."
         },
         {
           "edge": "window-olap",
           "caption": "Re-emitted windows overwrite the stored totals (upsert), so replayed output does not add twice."
+        }
+      ]
+    },
+    {
+      "id": "dc-outage",
+      "name": "A datacenter is lost (failure)",
+      "steps": [
+        {
+          "edge": "clicklog-dispatcher",
+          "caption": "The dispatcher in the failed datacenter stalls; the pipeline in the other datacenter keeps reading the same clicks."
+        },
+        {
+          "edge": "disp-idreg",
+          "caption": "Both pipelines share the IdRegistry, so the surviving one joins each click once. When the failed datacenter recovers, its dispatcher works through the backlog and skips clicks whose ids are already registered."
         }
       ]
     }

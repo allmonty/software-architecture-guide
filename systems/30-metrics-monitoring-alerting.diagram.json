@@ -43,7 +43,7 @@
       "kind": "edge",
       "c4": "container",
       "summary": "Scrape targets over HTTP (Prometheus pull model, with a push gateway for short-lived jobs) or receive pushed data (Monarch ingestion routers), enforce label rules and route each series to its shard.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://prometheus.io/docs/introduction/overview/",
         "https://www.vldb.org/pvldb/vol13/p3181-adams.pdf"
@@ -55,7 +55,7 @@
       "kind": "datastore",
       "c4": "container",
       "summary": "In-memory recent window with a log, periodic compressed blocks and an index, sharded across hosts. Gorilla holds 26 hours; Prometheus keeps two-hour blocks.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf",
         "https://prometheus.io/docs/prometheus/latest/storage/"
@@ -144,8 +144,8 @@
       "label": "Long-term store (rollups)",
       "kind": "datastore",
       "c4": "container",
-      "summary": "Persistent store for history; Gorilla fronts HBase as a write-through cache. Downsampled rollups for long retention are industry practice.",
-      "confidence": "CONFIRMED",
+      "summary": "Persistent store for history. In Gorilla the in-memory database is a write-through cache of an HBase store; with Thanos, immutable blocks are uploaded to object storage and the compactor downsamples and applies retention. Combining them is our design.",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf"
       ]
@@ -156,7 +156,7 @@
       "kind": "service",
       "c4": "container",
       "summary": "Periodically run alerting and recording rules (standing queries in Monarch); an alert is pending until its condition has held for the configured time, then firing. Run in the same zone as the data.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/",
         "https://www.vldb.org/pvldb/vol13/p3181-adams.pdf"
@@ -252,7 +252,7 @@
       "id": "blocks-longterm",
       "from": "blocks",
       "to": "longterm",
-      "label": "persist history",
+      "label": "persist history (write-through in Gorilla, block upload in Thanos)",
       "mode": "async"
     },
     {
