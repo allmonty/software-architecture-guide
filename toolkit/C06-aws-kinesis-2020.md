@@ -11,7 +11,7 @@
 - Front-end servers could be added only at a few hundred per hour during recovery `[CONFIRMED]`.
 - The status dashboard could not be updated normally because the tool used Cognito `[CONFIRMED]`.
 
-**Why it matters for architects.** A scaling operation exposed a hidden quadratic resource (threads grow with fleet size), the recovery was slow by design, and the blast radius spread through hidden dependencies.
+**Why it matters for architects.** (Our reading.) A scaling operation exposed a resource that grows with fleet size (threads per server are proportional to the number of servers), the recovery was slow by design, and the blast radius spread through hidden dependencies.
 
 ---
 

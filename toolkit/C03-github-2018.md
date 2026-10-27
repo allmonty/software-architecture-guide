@@ -11,7 +11,7 @@
 - Total degradation: 24 hours and 11 minutes; no user data was lost, though reconciliation of a few seconds of writes continued `[CONFIRMED]`.
 - One of the busiest clusters had 954 writes in the affected window that had not replicated to the other site `[CONFIRMED]`.
 
-**Why it matters for architects.** Automated failover, backups and the application's tolerance for latency each made reasonable local choices; together they produced a topology the application could not live with and a recovery that took a day.
+**Why it matters for architects.** (Our reading.) Automated failover, backups and the application's tolerance for latency each looked reasonable on its own; together they produced a topology the application could not live with and a recovery that took a day.
 
 ---
 
@@ -23,7 +23,7 @@ GitHub runs MySQL clusters with functional sharding and uses Orchestrator, built
 
 - Orchestrator behaved as configured, but the application tier could not support cross-region primaries; the partition was larger than any seen before.
 - Unreplicated writes existed on both sides after the failover.
-- Recovery relied on restoring from remote backups because delayed replicas were not enough in this case.
+- GitHub had previously been able to rely on strategies such as delayed replicas, but until this incident it had never needed to fully rebuild an entire cluster from backup, which is what recovery required.
 - The status page offered only green, yellow and red.
 
 ## What the company changed `[CONFIRMED]`

@@ -9,7 +9,7 @@
 **Key facts** (as published)
 - 212 small retail orders turned into millions of child orders, over 4 million executions in 154 stocks and more than 397 million shares in about 45 minutes `[CONFIRMED]`.
 - Net positions of about $3.5 billion long in 80 stocks and about $3.15 billion short in 74; the loss was over $460 million `[CONFIRMED]`.
-- 97 automated e-mails with the error "Power Peg disabled" were sent before the market opened and were not acted upon `[CONFIRMED]`.
+- 97 automated e-mails with the error "Power Peg disabled" were sent before the market opened; Knight personnel generally did not review them, and they were not acted upon before the market opened `[CONFIRMED]`.
 
 **Why it matters for architects.** The failure combines a manual, unreviewed deployment, dead code left in production, flag reuse, missing runtime controls and alerts that nobody read. It is the standard case for deployment verification and kill switches.
 
@@ -23,13 +23,13 @@ According to the SEC's order, Knight developed new code for its order router, SM
 
 - Dead code left in the production system and a repurposed flag.
 - A manual deployment to eight servers with no second reviewer and no written procedure requiring one.
-- No verification that all servers ran the same version.
+- Nobody checked the deployment: no second technician reviewed it, and no one realised the eighth server had not been updated.
 - No runtime controls on SMARS output, no automatic halt, and exposure limits not tied to automated order blocks.
 - Warning e-mails were sent but were not treated as alerts.
 
 ## What the company changed `[CONFIRMED]`
 
-- The SEC order concerns Knight's violation of the market-access rule (Rule 15c3-5), which requires risk controls and supervisory procedures; the order describes the missing controls rather than a list of fixes.
+- The SEC order finds that Knight violated the market-access rule (Rule 15c3-5), which requires risk controls and supervisory procedures, and it describes the missing controls rather than a list of fixes. Its sanctions and undertakings: a cease-and-desist order, censure, and a $12,000,000 civil money penalty; and Knight undertook to retain at its own expense independent consultants to review its software development lifecycle processes and its risk management controls (including deployment of new code, order routers, firm-wide capital thresholds linked to automated pre-trade checks, and incident response protocols) and to report with recommendations.
 
 ---
 

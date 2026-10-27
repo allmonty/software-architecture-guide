@@ -11,17 +11,17 @@
 - DNS servers withdraw BGP advertisements when they cannot reach the data centers, so the whole backbone loss made DNS unreachable `[CONFIRMED]`.
 - Data centers reported power dips on the order of tens of megawatts, so services were restored carefully `[CONFIRMED]`.
 
-**Why it matters for architects.** A health-check rule that is correct for one failure (a single facility isolated) turned a total outage into an invisible one when it applied to every facility at once, and the recovery tools depended on the thing that was down.
+**Why it matters for architects.** (Our reading.) A health-check rule that is correct for one failure (a single facility isolated) turned a total outage into an invisible one when it applied to every facility at once, and the recovery tools depended on the thing that was down.
 
 ---
 
 ## What happened `[CONFIRMED]`
 
-The post, by Meta's infrastructure engineering lead, says the outage was triggered by the system that manages global backbone capacity. During maintenance, "a command was issued with the intention to assess the availability of global backbone capacity, which unintentionally took down all the connections in our backbone network". Facebook's systems audit such commands, but a bug in that audit tool prevented it from properly stopping the command. Smaller facilities answer DNS queries, with authoritative name servers whose addresses are advertised through BGP. To keep unhealthy locations from attracting traffic, DNS servers disable their BGP advertisements if they cannot speak to the data centers. With the entire backbone gone, every location declared itself unhealthy and withdrew its advertisements, so the rest of the internet could not find Facebook's servers even though they were still operating. Engineers faced two obstacles: the normal access path was down, and the loss of DNS broke many internal tools. The out-of-band network was also down, so people were sent to the data centers, where physical and system security made access and changes slow. Once the backbone returned, services were brought back gradually because a sudden return of load could cause new failures; long-running storm drills, which simulate taking a service, data center or region offline, helped.
+The post, by Santosh Janardhan of Meta's engineering team, says the outage was triggered by the system that manages global backbone capacity. During maintenance, "a command was issued with the intention to assess the availability of global backbone capacity, which unintentionally took down all the connections in our backbone network". Facebook's systems audit such commands, but a bug in that audit tool prevented it from properly stopping the command. Smaller facilities answer DNS queries, with authoritative name servers whose addresses are advertised through BGP. To keep unhealthy locations from attracting traffic, DNS servers disable their BGP advertisements if they cannot speak to the data centers. With the entire backbone gone, every location declared itself unhealthy and withdrew its advertisements, so the rest of the internet could not find Facebook's servers even though they were still operating. Engineers faced two obstacles: the normal access path was down, and the loss of DNS broke many internal tools. The out-of-band network was also down, so people were sent to the data centers, where physical and system security made access and changes slow. Once the backbone returned, services were brought back gradually because a sudden return of load could cause new failures; long-running storm drills, which simulate taking a service, data center or region offline, helped.
 
 ## Contributing factors `[CONFIRMED]`
 
-- No limit or working audit stopped a command that affected the whole backbone.
+- The audit tool that should have stopped the command had a bug and did not.
 - A DNS health rule withdrew BGP routes network-wide when connectivity to the data centers was lost.
 - Internal tools, remote access and the out-of-band network were affected, and physical access was deliberately hard.
 
