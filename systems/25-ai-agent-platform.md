@@ -89,7 +89,7 @@ ReAct has the model generate "reasoning traces and task-specific actions in an i
 
 **Where it is weaker.** The authors found ReAct slightly behind chain-of-thought on HotpotQA (27.4 versus 29.4) and ahead on Fever (60.9 versus 56.3). In a manual study of 50 HotpotQA trajectories each, hallucination was CoT's main failure mode (56% of failures) and zero for ReAct, while ReAct's main failure was reasoning errors (47%), "including failing to recover from repetitive steps". They describe a frequent ReAct-specific pattern in which "the model repetitively generates the previous thoughts and actions". Search that returns nothing useful caused 23% of ReAct's failures.
 
-**Design consequence.** The authors back off from ReAct to another method after a fixed number of steps (7 on HotpotQA, 5 on Fever), because more steps did not help. This is the origin of the practical rule to cap iterations and detect repetition.
+**Design consequence.** The authors back off from ReAct to another method after a fixed number of steps (7 on HotpotQA, 5 on Fever), because more steps did not help. Our inference, not the paper's: this is the same reason to cap iterations and detect repetition in a production loop.
 
 ---
 
@@ -146,7 +146,7 @@ user/API ─► session API ─► orchestrator ◄─► LLM gateway (see 22)
 - **Orchestrator:** runs the loop; each step is persisted before the next starts, so a crashed worker's run is resumed by another worker from the last checkpoint. Make tool calls idempotent or record their results so a retry does not repeat a side effect.
 - **LLM gateway:** a shared, rate-limited route to model serving; see [22 LLM inference serving](22-llm-inference-serving.md). Route easy steps to smaller models.
 - **Tool gateway:** one place to authenticate tools, apply per-user permissions (use the end user's delegated credentials, not a platform superuser), enforce schemas, rate limits and timeouts, and log calls.
-- **Sandbox:** model-written code runs in an isolated container or lightweight VM with no network or an allow-list, resource limits, an ephemeral filesystem and no platform secrets. Reuse warm sandboxes to cut cold starts.
+- **Sandbox:** model-written code runs in an isolated container or lightweight VM with no network or an allow-list, resource limits, an ephemeral filesystem and no platform secrets. Cut cold starts with a pool of pre-warmed, unused sandboxes; destroy a sandbox after one run (or reset it fully) and never hand one to a different tenant after use.
 - **State and memory:** keep the conversation and tool results; summarise or trim when the context window fills; store long-term memory separately and treat it as data, not instructions.
 - **Budgets:** hard caps on steps, tokens, wall-clock time and money per run, with a clear message when hit. Detect repeated identical actions, as ReAct's failure analysis suggests.
 - **Approvals:** classify tools by risk (read, reversible write, irreversible or costly) and require human approval for the last class.
@@ -230,7 +230,7 @@ These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from
 6. Failure and scale: worker crash, loops, slow tools, injection, cost; scaling sandboxes.
 
 **If it grows 10×**
-- Sandbox capacity and cold starts: warm pools and snapshots.
+- Sandbox capacity and cold starts: pools of pre-warmed unused sandboxes and snapshots of a clean base image, never of a used sandbox.
 - Model cost: route steps to smaller models, cache prefixes, trim context.
 - Observability volume: sample traces, store full detail for failures.
 
