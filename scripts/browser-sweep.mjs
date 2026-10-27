@@ -1,5 +1,5 @@
 // Browser sweep: opens every page of the built site at 1280px and 500px in three themes and reports console errors,
-// sideways scroll, clipped cards, empty pages, a missing trust card or diagram, and text below WCAG AA contrast.
+// sideways scroll, clipped cards, text overflowing a diagram node, empty pages, a missing trust card or diagram, and text below WCAG AA contrast.
 //
 //   cd site && npm run build && npx vite preview --port 5188 &
 //   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --remote-debugging-port=9333 about:blank &
@@ -42,6 +42,7 @@ const CHECK = `(() => {
   out.h1 = document.querySelectorAll('h1').length;
   out.trust = !!document.querySelector('.trust');
   out.nodes = document.querySelectorAll('.react-flow__node').length;
+  out.nodeOverflow = [...document.querySelectorAll('.c4-body')].filter((b) => b.scrollHeight > b.clientHeight + 1 || b.scrollWidth > b.clientWidth + 1).length;
   out.emptyMain = (document.querySelector('main')?.innerText.trim().length ?? 0) < 200;
   // text contrast: composite translucent backgrounds, skip diagram nodes, decorative art and disabled controls
   const parse = (c) => { const m = c.match(/-?[\\d.]+(?:e-?\\d+)?/g)?.map(Number) ?? [0,0,0,0]; const k = c.startsWith('color(') ? 255 : 1; return { r: m[0] * k, g: m[1] * k, b: m[2] * k, a: m[3] ?? 1 }; };
@@ -84,8 +85,8 @@ for (const w of widths) {
   }
 }
 writeFileSync(`${SP}/sweep.json`, JSON.stringify({ results, errors }, null, 1));
-const bad = results.filter((r) => r.crash || r.overflowX || r.cardOverflow || r.emptyMain || (r.route.startsWith("sys-") && !r.route.endsWith("-text") && !r.nodes) || (r.route.startsWith("sys-") && !r.trust) || r.h1 !== 1 || r.lowCount);
-const fails = bad.filter((r) => !(r.theme === "dark" && r.lowContrast?.every((l) => l.startsWith("span.chip tint")) && !r.crash && !r.overflowX && !r.cardOverflow && !r.emptyMain && r.h1 === 1));
+const bad = results.filter((r) => r.crash || r.overflowX || r.cardOverflow || r.nodeOverflow || r.emptyMain || (r.route.startsWith("sys-") && !r.route.endsWith("-text") && !r.nodes) || (r.route.startsWith("sys-") && !r.trust) || r.h1 !== 1 || r.lowCount);
+const fails = bad.filter((r) => !(r.theme === "dark" && r.lowContrast?.every((l) => l.startsWith("span.chip tint")) && !r.crash && !r.overflowX && !r.cardOverflow && !r.nodeOverflow && !r.emptyMain && r.h1 === 1));
 console.log(`${results.length} checks, ${errors.length} console errors, ${fails.length} failing, ${Math.round((Date.now() - t0) / 1000)} s`);
 for (const r of fails.slice(0, 20)) console.log(" ", r.route, r.width, r.theme, JSON.stringify(r).slice(0, 200));
 for (const e of errors.slice(0, 10)) console.log("  error:", e.join(" | "));

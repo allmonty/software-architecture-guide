@@ -6,7 +6,8 @@ import {
 import ReactMarkdown from "react-markdown";
 import type { Diagram } from "../../schema/diagram.schema.ts";
 import { classifySource, type LedgerEntry } from "../../schema/trust.ts";
-import { layout, NODE_H, NODE_W } from "./layout.ts";
+import { layout, NODE_W } from "./layout.ts";
+import { nodeHeight, shortSummary } from "./nodeSize.ts";
 import { mentionsOf, scrollToSection } from "./sections.tsx";
 import { buildSvg, downloadPng, downloadSvg } from "./export.ts";
 import { buildView, containersWithComponents, SYSTEM_ID, typeLine, type Element, type Level } from "./c4.ts";
@@ -20,7 +21,7 @@ function C4Node({ data }: NodeProps<Node<C4Data>>) {
       <Handle type="target" position={data.dir === "TB" ? Position.Top : Position.Left} />
       <strong>{el.label}</strong>
       <em>{typeLine(el)}</em>
-      <span>{el.summary.length > 80 ? el.summary.slice(0, 77) + "…" : el.summary}</span>
+      <span>{shortSummary(el.summary)}</span>
       <Handle type="source" position={data.dir === "TB" ? Position.Bottom : Position.Right} />
     </div>
   );
@@ -68,9 +69,11 @@ export function DiagramView({
 
   const view = useMemo(() => buildView(diagram, level, focus ?? undefined), [diagram, level, focus]);
   const viewKey = `${level}:${level === "component" ? focus : ""}`;
+  // Each node is as tall as its text needs.
+  const heights = useMemo(() => Object.fromEntries(view.elements.map((e) => [e.id, nodeHeight(e.label, typeLine(e), e.summary, e.role === "system" ? 3 : 2)])), [view]);
   const arranged = useMemo(
-    () => layout(view.elements.map((e) => e.id), view.rels.map((r) => [r.from, r.to]), view.boundary?.members ?? []),
-    [view],
+    () => layout(view.elements.map((e) => e.id), view.rels.map((r) => [r.from, r.to]), heights, view.boundary?.members ?? []),
+    [view, heights],
   );
   // Positions the reader dragged, per view. They override the automatic layout until reset.
   const [moved, setMoved] = useState<Record<string, Record<string, { x: number; y: number }>>>({});
@@ -133,14 +136,14 @@ export function DiagramView({
     type: "c4",
     position: pos(el.id),
     width: NODE_W,
-    height: NODE_H,
+    height: heights[el.id],
     data: { el, lit: lit.has(el.id), dir: arranged.dir },
     className: `c4-${el.role} k-${el.kind} conf-${el.confidence.replace(" ", "-")} ${lit.has(el.id) ? "lit" : ""} ${sel?.kind === "el" && sel.id === el.id ? "sel" : ""}`,
   }));
   if (view.boundary && view.boundary.members.length > 0) {
     const ps = view.boundary.members.map((id) => pos(id));
     const x0 = Math.min(...ps.map((p) => p.x)) - PAD, y0 = Math.min(...ps.map((p) => p.y)) - PAD - 14;
-    const x1 = Math.max(...ps.map((p) => p.x)) + NODE_W + PAD, y1 = Math.max(...ps.map((p) => p.y)) + NODE_H + PAD;
+    const x1 = Math.max(...ps.map((p) => p.x)) + NODE_W + PAD, y1 = Math.max(...view.boundary.members.map((id) => pos(id).y + heights[id])) + PAD;
     nodes.unshift({
       id: "__boundary__", type: "boundary", position: { x: x0, y: y0 }, width: x1 - x0, height: y1 - y0,
       data: { label: view.boundary.label }, draggable: false, selectable: false, focusable: false, zIndex: -1,
@@ -164,7 +167,7 @@ export function DiagramView({
   const exportData = () => {
     const levelName = LEVELS.find((l) => l.id === level)!.name.replace(/^\d · /, "");
     const where = level === "component" && focus ? ` · ${levelName}: ${label(focus)}` : ` · ${levelName}`;
-    const built = buildSvg({ title: `${diagram.title}${where}`, elements: view.elements, rels: view.rels, pos, boundary: view.boundary, showLabels: labels });
+    const built = buildSvg({ title: `${diagram.title}${where}`, elements: view.elements, rels: view.rels, pos, heights, boundary: view.boundary, showLabels: labels });
     return { ...built, name: `${diagram.id}-${level}${level === "component" && focus ? `-${focus}` : ""}` };
   };
 
