@@ -1,0 +1,388 @@
+{
+  "id": "29-live-streaming-twitch",
+  "title": "Live Streaming (Twitch)",
+  "kind": "real-system",
+  "nodes": [
+    {
+      "id": "streamer",
+      "label": "Streamer",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Broadcasts from encoder software; the video arrives as RTMP at a nearby point of presence.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
+        "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/"
+      ]
+    },
+    {
+      "id": "viewer",
+      "label": "Viewer",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Watches the stream by fetching HLS playlists and segments over HTTP, and chats over an IRC-compatible connection.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
+        "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/"
+      ]
+    },
+    {
+      "id": "pop",
+      "label": "PoP media proxy (Intelligest)",
+      "kind": "edge",
+      "c4": "container",
+      "summary": "Runs in every point of presence (nearly a hundred). Terminates the broadcaster's stream, asks IRS where to send it, and forwards it over the private backbone. Can terminate several transport protocols such as RTMP or WebRTC.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/"
+      ],
+      "technology": "Intelligest media proxy"
+    },
+    {
+      "id": "irs",
+      "label": "Intelligest Routing Service (IRS)",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Stateful controller in AWS that decides which origin processes each stream. Uses a randomized greedy algorithm over live capacity data and can pin channels to an origin. Does not control Layer 3 routing.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/"
+      ]
+    },
+    {
+      "id": "capacitor",
+      "label": "Capacitor",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Monitors the compute resources in every origin, including capacity that goes offline for maintenance.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/"
+      ]
+    },
+    {
+      "id": "well",
+      "label": "The Well",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Monitors the backbone network: link utilization and availability.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/"
+      ]
+    },
+    {
+      "id": "origin",
+      "label": "Origin transcoding system",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Origin data centers host hundreds to thousands of servers that transcode the incoming RTMP stream into an HLS-compliant stream with several resolutions and bitrates. ASIC-based transcoding was prototyped for over 10x the scale.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
+        "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/",
+        "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/"
+      ]
+    },
+    {
+      "id": "tree",
+      "label": "Replication Tree (video distribution)",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Data centers organised as a directed graph hierarchy. A viewer's request goes to the nearest data center and is forwarded up the tree to the origin.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/"
+      ],
+      "details": "Caching behaviour and tree shape are not described in the posts we read."
+    },
+    {
+      "id": "vod",
+      "label": "VOD store (Amazon S3)",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "If recording is enabled, a copy of all generated segments, thumbnails and playlists is stored in S3; streamers can cut highlights from it.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/"
+      ]
+    },
+    {
+      "id": "chat",
+      "label": "Chat system",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Real-time distributed system in Go that accepts, checks and fans out chat messages. Supports IRC so developers can build bots.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
+        "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/"
+      ]
+    },
+    {
+      "id": "chatedge",
+      "label": "Chat Edge",
+      "kind": "edge",
+      "c4": "component",
+      "summary": "Accepts messages from clients and delivers messages to them. Speaks the IRC protocol over raw TCP and WebSockets.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
+        "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/",
+        "https://dev.twitch.tv/docs/chat/"
+      ],
+      "parent": "chat",
+      "group": "Chat system",
+      "details": "Developer docs: the server sends PING and the client must answer PONG; chatbots are rate limited (20 messages per 30 seconds for a regular account, 1 per second per channel)."
+    },
+    {
+      "id": "clue",
+      "label": "Clue (and Zuma)",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Evaluates a message against the channel's rules (automod settings, bans, subscriber status) and decides whether it is delivered or rejected.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
+        "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/"
+      ],
+      "parent": "chat",
+      "group": "Chat system"
+    },
+    {
+      "id": "pubsub",
+      "label": "Pubsub",
+      "kind": "queue",
+      "c4": "component",
+      "summary": "Distributes messages internally across Edge nodes; with Edge forms a hierarchical message distribution system that executes massive fanout.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
+        "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/"
+      ],
+      "parent": "chat",
+      "group": "Chat system"
+    },
+    {
+      "id": "room",
+      "label": "Room",
+      "kind": "datastore",
+      "c4": "component",
+      "summary": "Aggregates, stores and queries membership data across all edges to produce the viewer list of each chat room.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de"
+      ],
+      "parent": "chat",
+      "group": "Chat system"
+    },
+    {
+      "id": "ll",
+      "label": "Alternative: low-latency HLS",
+      "kind": "service",
+      "c4": "note",
+      "summary": "Partial segments, blocking playlist reload and preload hints let a player learn of new media at once instead of polling every target duration. Twitch says it cut delay from about 10 s to about 3 s with low-latency HLS; the exact mechanism in use is not described, so this is from the specification.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.ietf.org/archive/id/draft-pantos-hls-rfc8216bis-17.txt",
+        "https://www.rfc-editor.org/rfc/rfc8216",
+        "https://blog.twitch.tv/en/2021/10/25/low-latency-high-reach-creating-an-unparalleled-live-video-streaming-network-at-twitch/"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "s-pop",
+      "from": "streamer",
+      "to": "pop",
+      "label": "live video",
+      "mode": "sync",
+      "protocol": "RTMP"
+    },
+    {
+      "id": "pop-irs",
+      "from": "pop",
+      "to": "irs",
+      "label": "where should this stream go?",
+      "mode": "sync"
+    },
+    {
+      "id": "irs-cap",
+      "from": "irs",
+      "to": "capacitor",
+      "label": "query origin capacity",
+      "mode": "sync"
+    },
+    {
+      "id": "irs-well",
+      "from": "irs",
+      "to": "well",
+      "label": "query backbone status",
+      "mode": "sync"
+    },
+    {
+      "id": "pop-origin",
+      "from": "pop",
+      "to": "origin",
+      "label": "stream over private backbone",
+      "mode": "sync"
+    },
+    {
+      "id": "origin-tree",
+      "from": "origin",
+      "to": "tree",
+      "label": "HLS segments and playlists",
+      "mode": "sync"
+    },
+    {
+      "id": "v-tree",
+      "from": "viewer",
+      "to": "tree",
+      "label": "request playlist and segments",
+      "mode": "sync",
+      "protocol": "HTTP (HLS)"
+    },
+    {
+      "id": "origin-vod",
+      "from": "origin",
+      "to": "vod",
+      "label": "archive segments, playlists, thumbnails",
+      "mode": "async"
+    },
+    {
+      "id": "v-chat",
+      "from": "viewer",
+      "to": "chatedge",
+      "label": "send chat message",
+      "mode": "sync",
+      "protocol": "IRC / WebSocket"
+    },
+    {
+      "id": "edge-clue",
+      "from": "chatedge",
+      "to": "clue",
+      "label": "check message against rules",
+      "mode": "sync"
+    },
+    {
+      "id": "clue-pubsub",
+      "from": "clue",
+      "to": "pubsub",
+      "label": "publish accepted message",
+      "mode": "async"
+    },
+    {
+      "id": "pubsub-edge",
+      "from": "pubsub",
+      "to": "chatedge",
+      "label": "fan out to edges with subscribers",
+      "mode": "async"
+    },
+    {
+      "id": "edge-viewer",
+      "from": "chatedge",
+      "to": "viewer",
+      "label": "deliver message",
+      "mode": "async",
+      "protocol": "IRC / WebSocket"
+    },
+    {
+      "id": "edge-room",
+      "from": "chatedge",
+      "to": "room",
+      "label": "report who is connected",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "go-live",
+      "name": "A stream goes live and is watched",
+      "steps": [
+        {
+          "edge": "s-pop",
+          "caption": "The streamer's encoder sends RTMP video to the nearest point of presence."
+        },
+        {
+          "edge": "pop-irs",
+          "caption": "The media proxy extracts the stream's properties and asks IRS which origin should process it."
+        },
+        {
+          "edge": "irs-cap",
+          "caption": "IRS uses live compute capacity from Capacitor (and backbone status from The Well) to decide."
+        },
+        {
+          "edge": "pop-origin",
+          "caption": "The proxy forwards the stream to the chosen origin over the private backbone."
+        },
+        {
+          "edge": "origin-tree",
+          "caption": "The origin transcodes it into several qualities as HLS and sends it into the replication tree."
+        },
+        {
+          "edge": "v-tree",
+          "caption": "A viewer's player requests the playlist and segments from the nearest data center; a miss goes up the tree to the origin."
+        }
+      ]
+    },
+    {
+      "id": "origin-loss",
+      "name": "An origin loses capacity (failure)",
+      "steps": [
+        {
+          "edge": "irs-cap",
+          "caption": "Capacitor reflects lost compute in an origin, for example servers offline."
+        },
+        {
+          "edge": "pop-irs",
+          "caption": "A new stream arrives at a PoP and the proxy asks IRS where to send it."
+        },
+        {
+          "edge": "pop-origin",
+          "caption": "IRS directs the new stream to an unaffected origin. The posts do not say how streams already on the failed origin recover."
+        }
+      ]
+    },
+    {
+      "id": "chat-message",
+      "name": "A chat message",
+      "steps": [
+        {
+          "edge": "v-chat",
+          "caption": "The viewer's client sends a message to a chat edge."
+        },
+        {
+          "edge": "edge-clue",
+          "caption": "The edge forwards it to Clue, which checks the channel's rules."
+        },
+        {
+          "edge": "clue-pubsub",
+          "caption": "If accepted, the message is published to Pubsub."
+        },
+        {
+          "edge": "pubsub-edge",
+          "caption": "Pubsub fans it out to every edge with subscribers for that channel."
+        },
+        {
+          "edge": "edge-viewer",
+          "caption": "Each edge delivers it to its connected clients."
+        }
+      ]
+    },
+    {
+      "id": "chat-rejected",
+      "name": "A message the rules reject (failure path)",
+      "steps": [
+        {
+          "edge": "v-chat",
+          "caption": "The viewer sends a message."
+        },
+        {
+          "edge": "edge-clue",
+          "caption": "Clue evaluates it against the channel's automod settings and the sender's status, and rejects it. It is never published, so no other viewer sees it."
+        }
+      ]
+    }
+  ]
+}
