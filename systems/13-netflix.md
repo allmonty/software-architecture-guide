@@ -70,7 +70,7 @@ The playback process (Overview and cache-miss post):
 
 **Goals:** put the most popular content on each cluster to maximise traffic served locally, balance popular content across servers in the cluster, keep allocation stable day to day and when servers are added or removed, and keep compute reasonable.
 
-**Uniform consistent hashing:** servers and content IDs are hashed onto the same ring, with each server hashed **1000 times** for even distribution, and the owners of each content item are found "as many as we need replicas". Content added or removed from the catalogue affects only the server that must download or delete it. Adding a server takes roughly equal slices from the others.
+**Uniform consistent hashing:** servers and content IDs are hashed onto the same ring, with each server hashed **1000 times** for even distribution, and for each content item the post says "we find as many owners as we need replicas". Content added or removed from the catalogue affects only the server that must download or delete it. Adding a server takes roughly equal slices from the others.
 
 **Why it was not enough:** a heterogeneous fleet breaks uniformity.
 - *Differing storage:* in a cluster of four 100 TB servers and one 50 TB server, uniform hashing "drops about 1/5th of content from the 250th to 500th TB mark", creating a **"content hole"** that can make content unavailable.
@@ -112,7 +112,7 @@ Interview points: separate **control plane** (small, stateful, in a cloud region
 
 1. **"Netflix runs on AWS" is only half the story.** The documents we read place the **control plane** (playback apps, steering, cache control) in AWS. The **video bytes come from Open Connect appliances in ISPs and IXPs**, not from AWS. The interview-friendly split is control plane vs data plane.
 2. **Third-party write-ups claim details we could not verify**: that OCAs "stop serving" if they lose connectivity to AWS, or that clients fail over at segment boundaries. A search result attributed the first to Netflix's deployment-requirements page, but we could not read that page (HTTP 403), so we do not state it.
-3. **The Overview says "typically referred to as a CDN" but with differences.** Netflix emphasises the proactive, directed model. Do not describe Open Connect as a generic pull-through cache.
+3. **The Overview calls this kind of network a CDN ("Content Delivery Network") but stresses the differences.** Netflix emphasises the proactive, directed model. Do not describe Open Connect as a generic pull-through cache.
 4. **Old numbers.** The 100 Gbps and 18 TB figures describe 2016–2017 hardware. The Open Connect home page says "60+ data centers" now. Neither tells you today's appliance specs.
 5. **We did not cover encoding.** Per-title and per-shot encoding, codecs and the packaging pipeline are real Netflix topics, but we read no Netflix source on them for this note, so we make no claims.
 
@@ -157,3 +157,4 @@ Interview points: separate **control plane** (small, stateful, in a cloud region
 - Dropped: "OCAs stop serving if AWS is unreachable" and "clients fail over at segment boundaries" (not in the pages we read), anything about encoding and the wider Netflix service architecture.
 - Softened: the cache-miss post says three categories, and only two were visible in the copy we read, so we name only those two.
 - Method note: the TechBlog posts were read through the Internet Archive because direct requests returned 403. We did not compare them to the live pages, and the cache-miss post is the more recent of the two.
+- Quote audit (2026-10-27): the consistent-hashing quote now reads "we find as many owners as we need replicas" as in the post, and a paraphrase that had been put in quotation marks ("typically referred to as a CDN") was reworded.

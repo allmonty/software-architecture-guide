@@ -41,11 +41,11 @@ Stripe's docs describe the lifecycle of a PaymentIntent. Using it as the referen
 
 | State | Meaning (from the docs) |
 |---|---|
-| `requires_payment_method` | Created, awaiting a payment method. Stripe advises creating the intent "as soon as you know the amount to charge so that Stripe can record all the payment attempts". **A failed attempt returns the intent to this state** so it can be retried |
+| `requires_payment_method` | Created, awaiting a payment method. Stripe advises creating the intent as soon as the amount to charge is known, so that Stripe can record all payment attempts (paraphrased from the Portuguese-locale page). **A failed attempt returns the intent to this state** so it can be retried |
 | `requires_confirmation` | Payment info provided, ready to confirm. Most integrations skip this by sending the method when confirming |
 | `requires_action` | Extra step needed, such as 3D Secure |
-| `processing` | After actions, for **asynchronous** methods like bank debits, which "can take up to several days" to confirm and cannot be guaranteed meanwhile. With separate authorise-and-capture it can pass through `requires_capture` first |
-| `succeeded` | The flow completed. "Funds are already in your account" and it is safe to fulfil the order. Refunds use the Refunds API |
+| `processing` | After actions, for **asynchronous** methods like bank debits, which can take up to several days to confirm and cannot be guaranteed meanwhile. With separate authorise-and-capture it can pass through `requires_capture` first |
+| `succeeded` | The flow completed. Per the docs the funds are already in your account and it is safe to fulfil the order. Refunds use the Refunds API |
 | `canceled` | Possible before `processing` or `succeeded`. It invalidates the intent, releases any held funds and **cannot be undone** |
 
 **Design lessons:**
@@ -76,10 +76,10 @@ Stripe's docs describe the lifecycle of a PaymentIntent. Using it as the referen
 
 ## 4. Webhooks: late, duplicate, unordered `[CONFIRMED]` (Stripe docs)
 
-- **Delivery:** live mode retries "for up to three days with exponential back-off". Sandbox events retry three times over a few hours. A disabled or deleted destination stops further retries. Manual resend is available for 15 days in the Dashboard (30 days via CLI).
-- **Duplicates:** endpoints "may receive the same event more than once", so "log the event IDs you have processed and do not process events already logged". Occasionally two Event objects are generated, so match on `data.object` ID plus `event.type`.
-- **Ordering:** "Stripe does not guarantee delivery of events in the order in which they are generated." Do not use `created` (second resolution) to order events. If `invoice.paid` arrives before its related objects, fetch them from the API.
-- **Respond fast:** return `2xx` "before any complex logic that could cause a timeout". Process via an **asynchronous queue**, since spikes (for example at the start of a billing month) can overwhelm synchronous handlers.
+- **Delivery:** live mode retries for up to three days with exponential back-off (paraphrase). Sandbox events retry three times over a few hours. A disabled or deleted destination stops further retries. Manual resend is available for 15 days in the Dashboard (30 days via CLI).
+- **Duplicates:** endpoints may receive the same event more than once, so record the IDs of events you have processed and skip any already recorded (paraphrase). Occasionally two Event objects are generated, so match on `data.object` ID plus `event.type`.
+- **Ordering:** Stripe does not guarantee that events are delivered in the order they were generated (paraphrase). Do not use `created` (second resolution) to order events. If `invoice.paid` arrives before its related objects, fetch them from the API.
+- **Respond fast:** return `2xx` before any complex logic that could cause a timeout (paraphrase). Process via an **asynchronous queue**, since spikes (for example at the start of a billing month) can overwhelm synchronous handlers.
 - **Verify authenticity:** check the `Stripe-Signature` header (timestamp `t=` plus `v1=` HMAC-SHA256 of `timestamp.payload`) using the endpoint's signing secret and the **raw request body**. Default tolerance is **five minutes** to limit replay attacks, and a tolerance of `0` disables the freshness check. Use constant-time comparison, ignore schemes other than `v1`, and keep clocks in sync with NTP. Also allow-list Stripe's IP addresses.
 - **Subscribe only to event types you need**, and exempt the webhook route from CSRF protection.
 
@@ -199,3 +199,4 @@ Checkout (browser/app) ──► Order service ──► Payment service ──�
 - Not read: Airbnb's idempotency post (member-only, only the introduction came back), PCI DSS, card-network rules, settlement file formats, any PSP's internals.
 - Labelled industry pattern, not sourced: the reference architecture, the "persist the key before calling" advice, minor-unit integers, reconciliation practice, fulfil-on-webhook advice, the failure-case table.
 - Method note: the Stripe pages came back in Portuguese because of locale. The facts above are our translation of the returned text, so quotes are paraphrased rather than verbatim.
+- Quote audit (2026-10-27): Stripe sentences from the webhook and PaymentIntent pages were read in Portuguese, so they are now paraphrases without quotation marks (the idempotency page was read in English and its quotes are unchanged).

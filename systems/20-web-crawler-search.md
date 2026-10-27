@@ -1,7 +1,7 @@
 # 20 — Web Crawler + Search
 
 > **Kind:** real-system for the *design ideas*, with 1990s and early-2000s evidence. The two foundational public descriptions are Google's original paper (Brin & Page, 1998) and the Mercator crawler report (Najork & Heydon, 2001). Neither describes today's Google or Bing. The robots.txt behaviour is from the current IETF standard (RFC 9309). Search-index specifics for a modern engine come from Elasticsearch's docs (only a small part was readable). So this note explains *how a crawler and a search index fit together*, with dated numbers, and it does not claim how any current search engine works.
-> **Sources read on 2026-10-27:** Brin & Page, [*The Anatomy of a Large-Scale Hypertextual Web Search Engine*](http://infolab.stanford.edu/~backrub/google.html) (WWW7, 1998; read from an Internet Archive copy of the web version, plus the paper PDF extracted locally) · Najork & Heydon, [*High-Performance Web Crawling*](https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf) (Compaq SRC Research Report 173, 2001-09-26; PDF extracted locally) · IETF [RFC 9309: Robots Exclusion Protocol](https://www.rfc-editor.org/rfc/rfc9309) (text) · Elastic docs: [Near real-time search](https://www.elastic.co/docs/manage-data/data-store/near-real-time-search).
+> **Sources read on 2026-10-27:** Brin & Page, [*The Anatomy of a Large-Scale Hypertextual Web Search Engine*](https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf) (WWW7, 1998; read from an Internet Archive copy of the web version, plus the paper PDF extracted locally) · Najork & Heydon, [*High-Performance Web Crawling*](https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf) (Compaq SRC Research Report 173, 2001-09-26; PDF extracted locally) · IETF [RFC 9309: Robots Exclusion Protocol](https://www.rfc-editor.org/rfc/rfc9309) (text) · Elastic docs: [Near real-time search](https://www.elastic.co/docs/manage-data/data-store/near-real-time-search).
 > **Not read:** current Google/Bing documentation, Lucene's file-format docs, Common Crawl, Scrapy, or any crawl-budget guidance. We make no claims about those.
 > **Tags:** `[CONFIRMED]` stated by a primary source read now · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible, or an illustrative estimate.
 
@@ -83,7 +83,7 @@ Characteristics the authors list: **distributed** (symmetric across machines), *
 2. It distributes hits into a set of **barrels**, "creating a partially sorted forward index" keyed by docID. It also extracts **links** and anchor text, turns relative URLs into docIDs, and writes the anchor text into the index associated with the docID it points to. It generates a **links database** (pairs of docIDs) used to compute **PageRank**.
 3. The **sorter** takes the barrels (sorted by docID) and re-sorts them **by wordID** to generate the **inverted index**, in place so little temporary space is needed. A program, **DumpLexicon**, combines the sorter's list with the lexicon to produce a new lexicon for the searcher.
 4. The **searcher** runs as a web server and uses the lexicon, the inverted index and the PageRanks to answer queries.
-- **PageRank** is "a probability distribution over web pages" (ranks sum to one), computed by a simple iterative algorithm over the link graph, with a damping factor. The paper says it computed it "for 26 million web pages in a few hours on a medium size workstation".
+- **PageRank** is "a probability distribution over web pages" (ranks sum to one), computed by a simple iterative algorithm over the link graph, with a damping factor. The paper says "a PageRank for 26 million web pages can be computed in a few hours on a medium size workstation".
 - **Scale in 1998:** 24 million pages in the demonstration index. The indexer ran at roughly 54 pages per second, and sorting on four machines took about 24 hours.
 
 ### A modern search tier `[INDUSTRY PATTERN]` plus one documented fact
@@ -152,7 +152,7 @@ Query ─► front end ─► fan-out to shards ─► merge + rank ─► resul
 
 ## 📚 Further reading
 
-- The four sources listed at the top. Also Brin & Page's [PDF](https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf).
+- The four sources listed at the top. The original 1998 web version is at infolab.stanford.edu/~backrub/google.html (unreachable from our network, so we read an Internet Archive copy).
 - [System Design Primer: Design a web crawler](https://github.com/donnemartin/system-design-primer) (secondary; interview framing).
 - Related in this repo: [11 News feed](11-news-feed.md) (caches and fan-out), [03 Distributed KV store](03-distributed-kv-store.md) (partitioning), [02 Rate limiter](02-rate-limiter.md) (per-host politeness is a rate limit), [01 URL shortener](01-url-shortener.md) (Bloom filters).
 
@@ -167,3 +167,4 @@ Query ─► front end ─► fan-out to shards ─► merge + rank ─► resul
 - Not covered by the sources we read, so not stated: segment immutability and merging, the translog, BM25 as a default, any claim about how current search engines rank or crawl.
 - Labelled industry pattern: partitioning by host, spider-trap caps, recrawl policy, near-duplicate detection, Bloom-filter alternative, the modern sharded query path, and the estimation arithmetic (checked by hand: 1e9/2.592e6 ≈ 386/s; 386 × 100 KB ≈ 38.6 MB/s ≈ 3.3 TB/day).
 - Method note: the Brin & Page web version and PDF were both read. Mercator is the 2001 SRC report, not the 1999 Mercator paper, and dates and figures are from that report.
+- Quote audit (2026-10-27): the PageRank sentence is now quoted in full ("a PageRank for 26 million web pages can be computed in a few hours on a medium size workstation") instead of an elided version.

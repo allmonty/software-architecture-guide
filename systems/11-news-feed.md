@@ -92,7 +92,7 @@ Details worth saying in an interview `[INDUSTRY PATTERN]`:
 
 Instagram sharded Postgres and needed IDs that are **sortable by time**, **64 bits**, and cheap to generate with few moving parts. It considered Twitter's Snowflake and judged it "came the closest", but chose to avoid running a separate ID service.
 
-- **Logical shards:** "several thousand 'logical' shards mapped in code to far fewer physical shards", each logical shard a **Postgres schema**. Moving a set of logical shards to another database needs **no re-bucketing**.
+- **Logical shards:** "several thousand 'logical' shards that are mapped in code to far fewer physical shards", each logical shard a **Postgres schema**. Moving a set of logical shards to another database needs **no re-bucketing**.
 - **ID layout:** **41 bits** time in milliseconds (41 years from a custom epoch) + **13 bits** logical shard ID + **10 bits** per-table auto-increment sequence mod 1024 (so up to **1024 IDs per shard per millisecond**).
 - **Generated in Postgres** with a PL/pgSQL function per schema, using the table's own sequence.
 - **Example in the post:** sharding by user ID with 2000 logical shards, user 31341 → shard 31341 % 2000 = 1341.
@@ -164,3 +164,4 @@ Choices to state: **cursor pagination** (not offset) since new posts arrive cons
 - Removed: Twitter's follower threshold for hybrid fan-out, the claim that Instagram's feed uses a particular fan-out strategy, and the Thundering Herds post's contents. None was available from a source we could read.
 - Scoped: the estimation figures are illustrative (`[SPECULATIVE]`), and the reference architecture and fan-out table rows other than Twitter's Fanout Service are `[INDUSTRY PATTERN]`.
 - Method note: the Twitter and Instagram posts were read through the Internet Archive (the originals were blocked from this environment). We did not compare them against the originals.
+- Quote audit (2026-10-27): the Instagram "logical shards" quote now matches the post verbatim ("that are mapped in code").

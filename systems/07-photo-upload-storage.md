@@ -62,7 +62,7 @@ This contrasts with the modern pattern above: Haystack's design predates presign
 ## 3. Haystack: why the obvious design was slow, and the fix
 
 ### The NFS design and its problem `[CONFIRMED]`
-Each photo was a separate file on NAS appliances over NFS. Reading one needed several disk operations just for metadata ("one to translate the filename to an inode number, another to read the inode from disk, and a final one to read the file itself"). Putting thousands of files per directory was inefficient. Hundreds per directory still needed about three operations per image. A CDN alone did not fix it because the long tail of less-popular photos typically misses the CDN, and caching all of them is not cost-effective.
+Each photo was a separate file on NAS appliances over NFS. Reading one needed several disk operations just for metadata ("one (or typically more) to translate the filename to an inode number, another to read the inode from disk, and a final one to read the file itself"). Putting thousands of files per directory was inefficient. Hundreds per directory still needed about three operations per image. A CDN alone did not fix it because the long tail of less-popular photos typically misses the CDN, and caching all of them is not cost-effective.
 
 ### The Haystack design `[CONFIRMED]`
 - **Store:** machines with physical volumes, each "a very large file (100 GB)", grouped across machines into **logical volumes**. A write to a logical volume goes to all its physical volumes, which protects against drive failures, controller bugs and so on.
@@ -162,3 +162,4 @@ Each photo was a separate file on NAS appliances over NFS. Reading one needed se
 - Scoped: "Haystack uploads go through a web server" describes the 2010 paper. We do not claim it for any current system.
 - Scoped: the modern upload pipeline and image-serving advice are `[INDUSTRY PATTERN]`, not tied to a company.
 - Not verified: Facebook's current architecture, and what became of the "proactively push new photos into the Cache" optimization the Haystack paper says it planned.
+- Quote audit (2026-10-27): restored an omitted phrase in the Haystack inode quote ("one (or typically more) …").
