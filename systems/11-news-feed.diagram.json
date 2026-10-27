@@ -1,0 +1,250 @@
+{
+  "id": "11-news-feed",
+  "title": "News Feed (Twitter / Instagram)",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "client",
+      "label": "Client app",
+      "kind": "client",
+      "summary": "Posts, and reads the home feed with cursor pagination.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://github.com/twitter/the-algorithm/tree/main/home-mixer"
+      ]
+    },
+    {
+      "id": "postapi",
+      "label": "Post API",
+      "kind": "service",
+      "summary": "Assigns a time-sortable ID (Instagram: 41-bit time + 13-bit shard + 10-bit sequence), writes the post, and enqueues fan-out.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://web.archive.org/web/2023/https://instagram-engineering.com/sharding-ids-at-instagram-1cf5a71e5a5c"
+      ],
+      "details": "Instagram generates IDs inside Postgres with a PL/pgSQL function per logical shard (a Postgres schema). Thousands of logical shards map to far fewer physical servers."
+    },
+    {
+      "id": "poststore",
+      "label": "Post store (sharded)",
+      "kind": "datastore",
+      "summary": "Posts and metadata, partitioned by logical shards. Twitter's real-time store for Tweets is Manhattan.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://web.archive.org/web/2023/https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale",
+        "https://web.archive.org/web/2023/https://instagram-engineering.com/sharding-ids-at-instagram-1cf5a71e5a5c"
+      ]
+    },
+    {
+      "id": "graph",
+      "label": "Follow graph",
+      "kind": "datastore",
+      "summary": "Who follows whom. Twitter's social graph, Flock, ran on Gizzard/MySQL with peaks of tens of millions of QPS.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://web.archive.org/web/2023/https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale"
+      ]
+    },
+    {
+      "id": "queue",
+      "label": "Fan-out queue",
+      "kind": "queue",
+      "summary": "Decouples posting from delivery so the post call returns quickly. The sources we read do not describe Twitter's queueing, so this box is the standard design.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://web.archive.org/web/2023/https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale"
+      ]
+    },
+    {
+      "id": "fanout",
+      "label": "Fanout Service",
+      "kind": "service",
+      "summary": "Looks up followers and writes the new post's ID into their timeline caches. Idempotent so retries do not duplicate. Very-high-follower accounts are typically skipped and merged at read time.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://web.archive.org/web/2023/https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale"
+      ],
+      "details": "Twitter's 2017 post names a Fanout Service that writes to the Haplo timeline cache. The hybrid skip rule is a general design and its threshold is not in the sources we read."
+    },
+    {
+      "id": "haplo",
+      "label": "Timeline cache (Haplo / Redis)",
+      "kind": "datastore",
+      "summary": "Per-user timelines of post IDs in a customised Redis (HybridList). Read by the Timeline Service, written by the Timeline Service and the Fanout Service.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://web.archive.org/web/2023/https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale"
+      ],
+      "details": "At the time: aggregate 40M–100M commands per second and ~800K service requests per second. Caches protect backing stores from heavy read traffic."
+    },
+    {
+      "id": "timeline",
+      "label": "Timeline / Home Mixer",
+      "kind": "service",
+      "summary": "Builds the feed: candidate generation, feature hydration (~6,000 features), ML scoring, filters and heuristics, mixing with ads and modules, then serving.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://github.com/twitter/the-algorithm/tree/main/home-mixer",
+        "https://github.com/twitter/the-algorithm"
+      ],
+      "details": "Candidate sources named: Earlybird search index (~50% of posts, in-network), Tweet-mixer / Cr Mixer (out-of-network), UTEG interaction graph, Follow Recommendation Service."
+    },
+    {
+      "id": "postcache",
+      "label": "Post + user cache",
+      "kind": "datastore",
+      "summary": "Hydrates post IDs into full posts and authors at read time, so edits and deletes need no fan-out.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://web.archive.org/web/2023/https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale"
+      ]
+    },
+    {
+      "id": "ranker",
+      "label": "Rankers",
+      "kind": "service",
+      "summary": "Light Ranker (inside the search index) and Heavy Ranker (neural network) score candidate posts.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://github.com/twitter/the-algorithm"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "c-post",
+      "from": "client",
+      "to": "postapi",
+      "label": "POST /post",
+      "mode": "sync"
+    },
+    {
+      "id": "post-store",
+      "from": "postapi",
+      "to": "poststore",
+      "label": "write",
+      "mode": "sync"
+    },
+    {
+      "id": "post-q",
+      "from": "postapi",
+      "to": "queue",
+      "label": "fan-out job",
+      "mode": "async"
+    },
+    {
+      "id": "q-fan",
+      "from": "queue",
+      "to": "fanout",
+      "label": "dequeue",
+      "mode": "async"
+    },
+    {
+      "id": "fan-graph",
+      "from": "fanout",
+      "to": "graph",
+      "label": "followers of author?",
+      "mode": "sync"
+    },
+    {
+      "id": "fan-haplo",
+      "from": "fanout",
+      "to": "haplo",
+      "label": "insert post ID per follower",
+      "mode": "sync"
+    },
+    {
+      "id": "c-feed",
+      "from": "client",
+      "to": "timeline",
+      "label": "GET /home",
+      "mode": "sync"
+    },
+    {
+      "id": "tl-haplo",
+      "from": "timeline",
+      "to": "haplo",
+      "label": "read timeline",
+      "mode": "sync"
+    },
+    {
+      "id": "tl-cache",
+      "from": "timeline",
+      "to": "postcache",
+      "label": "hydrate IDs",
+      "mode": "sync"
+    },
+    {
+      "id": "tl-rank",
+      "from": "timeline",
+      "to": "ranker",
+      "label": "score candidates",
+      "mode": "sync"
+    },
+    {
+      "id": "tl-store",
+      "from": "timeline",
+      "to": "poststore",
+      "label": "pull-path posts (high-follower accounts)",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "post",
+      "name": "Publish a post (fan-out on write)",
+      "steps": [
+        {
+          "edge": "c-post",
+          "caption": "The client publishes a post."
+        },
+        {
+          "edge": "post-store",
+          "caption": "The API assigns a time-sortable ID and stores the post in its shard."
+        },
+        {
+          "edge": "post-q",
+          "caption": "It enqueues a fan-out job and returns. Delivery is asynchronous."
+        },
+        {
+          "edge": "q-fan",
+          "caption": "A fan-out worker picks up the job."
+        },
+        {
+          "edge": "fan-graph",
+          "caption": "It looks up the author's followers in the follow graph."
+        },
+        {
+          "edge": "fan-haplo",
+          "caption": "It inserts the post ID into each follower's timeline in the cache. For accounts with very many followers, the hybrid design skips this step and merges at read time."
+        }
+      ]
+    },
+    {
+      "id": "read",
+      "name": "Open the home feed",
+      "steps": [
+        {
+          "edge": "c-feed",
+          "caption": "The client asks for the first page of the feed."
+        },
+        {
+          "edge": "tl-haplo",
+          "caption": "The timeline service reads the user's precomputed list of post IDs."
+        },
+        {
+          "edge": "tl-store",
+          "caption": "Posts from very-high-follower accounts the user follows are pulled and merged in (the read side of the hybrid)."
+        },
+        {
+          "edge": "tl-rank",
+          "caption": "Candidates, including out-of-network ones, are scored by the light and heavy rankers."
+        },
+        {
+          "edge": "tl-cache",
+          "caption": "Post IDs are hydrated into full posts and authors from cache, applying deletes and blocks at read time."
+        }
+      ]
+    }
+  ]
+}
