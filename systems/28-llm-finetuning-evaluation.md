@@ -134,7 +134,7 @@ production feedback ─► data pipeline (filter, dedup, quality score, version)
 ```
 
 - **Data pipeline:** versioned datasets with lineage, permission and PII checks, deduplication, and a quality score; held-out evaluation data kept separate.
-- **Training jobs:** reproducible configs, checkpointing, and the infrastructure covered in 27 (LLM training infrastructure).
+- **Training jobs:** reproducible configs, checkpointing, and the infrastructure covered in [27 LLM training infrastructure](27-llm-training-infrastructure.md).
 - **Registry:** every model and adapter with its data version, config, metrics and approval state.
 - **Evaluation gate:** automatic; blocks release if any protected metric regresses beyond a threshold or safety worsens.
 - **Rollout:** shadow traffic (candidate runs, answer not shown), then a small canary percentage, then ramp; automatic rollback on error rate, latency, user-feedback or safety signal.
@@ -242,7 +242,7 @@ Register the model, pass the gate, run in shadow, then a small canary, ramp whil
 - The papers and report listed under Sources and provenance.
 - [`neokim-post/01` How LLMs work](../../neokim-post/01-how-llms-work.md) for the basics of training and tokens.
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary).
-- Related in this repo: [22 LLM inference serving](22-llm-inference-serving.md), [23 RAG knowledge assistant](23-rag-knowledge-assistant.md), [25 AI agent platform](25-ai-agent-platform.md), and 27 (LLM training infrastructure) once written.
+- Related in this repo: [22 LLM inference serving](22-llm-inference-serving.md), [23 RAG knowledge assistant](23-rag-knowledge-assistant.md), [25 AI agent platform](25-ai-agent-platform.md), and [27 LLM training infrastructure](27-llm-training-infrastructure.md).
 
 ## Sources and provenance
 

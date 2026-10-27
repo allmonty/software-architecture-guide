@@ -60,7 +60,7 @@ Imagine a **new employee with a great memory for general knowledge but who has n
 
 The RAG paper (Lewis et al., arXiv 2005.11401) describes models "which combine pre-trained parametric and non-parametric memory for language generation". The parametric memory is a pre-trained seq2seq model (BART-large, 400 million parameters). The non-parametric memory is "a dense vector index of Wikipedia", accessed with a pre-trained neural retriever.
 
-**Retriever.** A bi-encoder (two BERT-base encoders, one for documents and one for queries) scores document and query vectors. Finding the top-k documents is a Maximum Inner Product Search problem, which "can be approximately solved in sub-linear time". The authors used FAISS with a Hierarchical Navigable Small World index. Vector indexes are covered in 24 (vector search at scale).
+**Retriever.** A bi-encoder (two BERT-base encoders, one for documents and one for queries) scores document and query vectors. Finding the top-k documents is a Maximum Inner Product Search problem, which "can be approximately solved in sub-linear time". The authors used FAISS with a Hierarchical Navigable Small World index. Vector indexes are covered in [24 Vector / semantic search at scale](24-vector-semantic-search.md).
 
 **Corpus setup.** The December 2018 Wikipedia dump was split into "disjoint 100-word chunks, to make a total of 21M documents". During training they retrieved the top k documents, with k in 5 or 10.
 
@@ -187,7 +187,7 @@ These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from
 6. Failure and scale: stale or deleted documents, permission changes, missed retrievals, prompt injection, cost.
 
 **If it grows 10×**
-- Index size and latency: shard the indexes (see vector search at scale in 24) and filter early.
+- Index size and latency: shard the indexes (see [24 Vector / semantic search at scale](24-vector-semantic-search.md)) and filter early.
 - Ingestion throughput: parallelise parsing and embedding, process changes incrementally.
 - Cost: cache, rerank fewer candidates, route easy questions to a smaller model.
 
@@ -216,7 +216,7 @@ Build a labelled question set. Measure retrieval recall in the top k first, then
 - The two sources listed under Sources and provenance.
 - [`neokim-post/01` How LLMs work](../../neokim-post/01-how-llms-work.md) for embeddings and retrieval basics.
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary).
-- Related in this repo: [20 Web crawler and search](20-web-crawler-search.md), [22 LLM inference serving](22-llm-inference-serving.md), and 24 (vector search at scale), 25 (AI agent platform) and 28 (fine-tuning and evaluation) once written.
+- Related in this repo: [20 Web crawler and search](20-web-crawler-search.md), [22 LLM inference serving](22-llm-inference-serving.md), [24 Vector / semantic search at scale](24-vector-semantic-search.md), [25 AI agent platform](25-ai-agent-platform.md) and [28 LLM fine-tuning, evaluation and deployment](28-llm-finetuning-evaluation.md).
 
 ## Sources and provenance
 

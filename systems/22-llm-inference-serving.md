@@ -143,7 +143,7 @@ model weights store ──► replicas (slow cold start)
 1. **The papers' speedups are relative to specific baselines and workloads.** The 2–4×, 36.9× and 7.4× figures compare against particular systems (FasterTransformer, Orca, vLLM) on particular models and datasets. They are not general speedups.
 2. **"Continuous batching" is a name, not a paper term.** Orca's term is iteration-level scheduling. Use the name your interviewer uses and be ready to explain the mechanism.
 3. **Disaggregation is not free.** Moving KV cache between GPUs needs a fast interconnect, and it is not a clear win for all workloads. We did not verify when it loses.
-4. **This note covers inference serving.** Training is in 27 (LLM training infrastructure) and improving a model is in 28 (LLM fine-tuning and evaluation pipeline).
+4. **This note covers inference serving.** Training is in [27 LLM training infrastructure](27-llm-training-infrastructure.md) and improving a model is in [28 LLM fine-tuning, evaluation and deployment](28-llm-finetuning-evaluation.md).
 5. **We did not read** vendor documentation for specific commercial APIs, speculative decoding papers or quantization papers, so those techniques are only named in the interview material and not claimed.
 
 ---
@@ -214,7 +214,7 @@ Chat needs a low time to first token so the reply starts quickly and a steady to
 - The three papers listed under Sources and provenance.
 - [`neokim-post/01` How LLMs work](../../neokim-post/01-how-llms-work.md) for tokens, embeddings and the product-level serving design.
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary).
-- Related in this repo: [02 Rate limiter](02-rate-limiter.md), 23 (RAG), 25 (AI agent platform), 28 (LLM fine-tuning and evaluation).
+- Related in this repo: [02 Rate limiter](02-rate-limiter.md), [23 RAG knowledge assistant](23-rag-knowledge-assistant.md), [25 AI agent platform](25-ai-agent-platform.md), [28 LLM fine-tuning, evaluation and deployment](28-llm-finetuning-evaluation.md).
 
 ## Sources and provenance
 
