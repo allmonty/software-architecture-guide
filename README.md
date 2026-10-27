@@ -1,6 +1,6 @@
-# System Design Atlas: 21 systems, explained and drawn
+# System Design Atlas: 31 systems, explained and drawn
 
-Twenty-one systems chosen to teach system design for **interviews and beyond**. Each has a deep note (`systems/NN-*.md`) and an **interactive diagram** (`systems/NN-*.diagram.json`) that the site in [`site/`](site/) renders: click a component for details and sources, and step through request flows.
+Thirty-one systems chosen to teach system design for **interviews and beyond**, including ten on AI systems, live streaming, observability and stream processing. Each has a deep note (`systems/NN-*.md`) and an **interactive diagram** (`systems/NN-*.diagram.json`) that the site in [`site/`](site/) renders: click a component for details and sources, and step through request flows.
 
 **Trust first.** Every note says what is a **verified fact from a primary source** (company engineering post, paper, standard or official docs), what is a **standard design pattern**, and what is our own reasoning. Each ends with a **Verification log** listing what was checked and what was **not**.
 
@@ -44,6 +44,16 @@ Twenty-one systems chosen to teach system design for **interviews and beyond**. 
 | 19 | [Stock exchange](systems/19-stock-exchange.md) | reference | sequencer, deterministic matching, event sourcing, multicast | LMAX (Fowler, Disruptor paper), MoldUDP64 |
 | 20 | [Web crawler + search](systems/20-web-crawler-search.md) | real (dated) | frontier, politeness, dedup, inverted index, PageRank | Brin & Page (1998), Mercator (2001), RFC 9309 |
 | 21 | [Online game matchmaking + lobby chat](systems/21-game-matchmaking-lobby-chat.md) | reference | tickets and match functions, server fleets, rating, chat shards | Open Match, Agones, TrueSkill abstract, Riot posts |
+| 22 | [LLM inference serving](systems/22-llm-inference-serving.md) | reference + real parts | KV cache paging, continuous batching, prefill/decode split, token-based limits | vLLM/PagedAttention (SOSP 2023), Orca (OSDI 2022), DistServe (OSDI 2024) |
+| 23 | [RAG knowledge assistant](systems/23-rag-knowledge-assistant.md) | reference | chunking, hybrid search, reranking, permissions, evaluation | RAG paper (2020), Anthropic Contextual Retrieval (2024) |
+| 24 | [Vector / semantic search](systems/24-vector-semantic-search.md) | reference + real parts | HNSW, IVF + PQ, SSD-resident graphs, filtering, re-indexing | HNSW, Faiss and DiskANN papers |
+| 25 | [AI agent platform](systems/25-ai-agent-platform.md) | reference + real parts | workflows vs agents, tool use, MCP, sandboxing, budgets, approvals | Anthropic "Building effective agents", MCP spec (2025-06-18), ReAct (ICLR 2023) |
+| 26 | [Recommendation system](systems/26-recommendation-system.md) | real + pattern | two-stage retrieval and ranking, watch-time objective, online learning, cold start | YouTube DNN (RecSys 2016), ByteDance Monolith (2022) |
+| 27 | [LLM training infrastructure](systems/27-llm-training-infrastructure.md) | real | 4D parallelism, ZeRO, topology, checkpointing, failures at 16K GPUs | Llama 3 report (2024), MegaScale (2024), ZeRO (2020) |
+| 28 | [LLM fine-tuning, evaluation and deployment](systems/28-llm-finetuning-evaluation.md) | reference + real parts | LoRA, preference tuning, data quality, eval gates, canary, adapter serving | LoRA, InstructGPT, DPO, S-LoRA, MT-Bench, Llama 3 post-training |
+| 29 | [Live streaming (Twitch)](systems/29-live-streaming-twitch.md) | real + pattern | ingest and origin routing, transcoding cost, HLS and low-latency HLS, chat fan-out | Four Twitch engineering posts, chat docs, RFC 8216, HLS 2nd-edition draft |
+| 30 | [Metrics monitoring and alerting](systems/30-metrics-monitoring-alerting.md) | reference + real parts | time series compression, availability over consistency, cardinality, alert pipeline | Gorilla (2015), Monarch (2020), Prometheus docs |
+| 31 | [Ad click aggregation](systems/31-ad-click-aggregation.md) | reference + real parts | dedup by id, event time and watermarks, checkpoints, exactly-once meanings, reconciliation | Photon (2013), Dataflow Model (2015), Flink and Kafka docs |
 
 ## How to answer a system-design question
 
@@ -63,10 +73,12 @@ The answer outlines in each note are our own reasoning and are labelled as such.
 1. **Foundations:** 01 URL shortener → 02 Rate limiter → 03 Key-value store.
 2. **Storage and data infrastructure:** 05 Object storage → 04 Message queue → 07 Photo storage → 06 File sync.
 3. **Real-time communication:** 08 Chat → 09 Discord → 18 Google Docs → 21 Game matchmaking + chat.
-4. **Media delivery:** 14 Spotify → 12 YouTube → 13 Netflix.
+4. **Media delivery:** 14 Spotify → 12 YouTube → 13 Netflix → 29 Live streaming.
 5. **Feeds, notifications and ranking:** 11 News feed → 10 Notification system.
 6. **Correctness under contention:** 16 Reservations → 17 Payments → 19 Stock exchange.
 7. **Location and discovery:** 15 Uber → 20 Web crawler + search.
+8. **Data pipelines and observability:** 30 Metrics monitoring → 31 Ad click aggregation.
+9. **AI systems:** 22 LLM inference serving → 24 Vector search → 23 RAG assistant → 25 AI agents → 28 Fine-tuning and evaluation → 26 Recommendations → 27 Training infrastructure.
 
 For interviews, practise each note's **Interview questions**, and walk the **flows** in the diagram out loud.
 
@@ -74,26 +86,37 @@ For interviews, practise each note's **Interview questions**, and walk the **flo
 
 | Concept | Where to study it |
 |---|---|
-| Caching and request coalescing | 01, 09, 11, 12, 13, 14 |
-| CDN and edge delivery | 07, 12, 13, 14 |
+| Caching and request coalescing | 01, 09, 11, 12, 13, 14, 29 |
+| CDN and edge delivery | 07, 12, 13, 14, 29 |
 | Sharding / partitioning / consistent hashing | 01, 03, 09, 11, 13, 16, 20 |
-| Replication, quorums, erasure coding | 03, 05, 06, 07 |
+| Replication, quorums, erasure coding | 03, 05, 06, 07, 30, 31 |
 | Consistency models and trade-offs | 03, 05, 06, 16, 18 |
-| Queues, logs and event-driven design | 04, 08, 10, 17, 19 |
-| Idempotency and retries | 01, 10, 16, 17 |
+| Queues, logs and event-driven design | 04, 08, 10, 17, 19, 31 |
+| Idempotency and retries | 01, 10, 16, 17, 25, 31 |
 | Event sourcing and immutable logs | 04, 17, 19 |
 | Concurrency control (constraints, locks, OT, single writer) | 16, 18, 19 |
-| Real-time push and WebSockets | 08, 09, 18, 21 |
-| Rate limiting and back-pressure | 02, 10, 17, 20 |
-| Fail-open and failure handling | 02, 10, 17, 19 |
+| Real-time push and WebSockets | 08, 09, 18, 21, 29 |
+| Rate limiting and back-pressure | 02, 10, 17, 20, 22, 25 |
+| Fail-open and failure handling | 02, 10, 17, 19, 27, 30 |
 | Pre-signed URLs and blob storage | 05, 06, 07, 12, 14 |
 | Control plane vs data plane, steering | 13, 09, 21 |
 | ID generation | 01, 11 |
 | Geospatial and time-range indexing | 15, 16 |
-| Search and inverted indexes | 20 |
-| Ranking and recommendation pipelines | 11, 20, 21 |
+| Search and inverted indexes | 20, 23, 24 |
+| Ranking and recommendation pipelines | 11, 20, 21, 23, 26 |
 | End-to-end encryption and privacy | 08 |
-| Matching and scheduling | 15, 16, 19, 21 |
+| Matching and scheduling | 15, 16, 19, 21, 27 |
+| LLM serving: KV cache, continuous batching, prefill/decode | 22, 28 |
+| Retrieval and reranking, hybrid search | 23, 24, 26 |
+| Approximate nearest-neighbour indexes | 24, 23, 26 |
+| Tool use, sandboxing and agent safety | 25 |
+| Two-stage ranking, feature freshness, online learning | 26 |
+| Training parallelism, checkpointing, fault recovery at scale | 27 |
+| Fine-tuning, adapters, evaluation gates, canary rollout | 28 |
+| Low-latency live delivery (HLS, LL-HLS) | 29 |
+| Time series storage, compression and alerting | 30 |
+| Stream processing, event time, exactly-once | 31, 04 |
+| Evaluation, safety and cost control for AI systems | 22, 23, 25, 28 |
 
 ## The site
 
@@ -120,7 +143,7 @@ npm run freshness  # notes by the age of their last source read
 
 ## References and relationship to other folders
 
-- **Related:** [`../neokim-post/`](../neokim-post/README.md) is the earlier set of 15 case studies this one upgrades (systems 01, 04, 05, 08, 12, 14, 15, 16, 18, 19) and extends. It also holds the shared glossary [`00-fundamentals.md`](../neokim-post/00-fundamentals.md). The architecture-lens sections use vocabulary from [`../fundamentals-of-software-architecture/`](../fundamentals-of-software-architecture/summaries/README.md).
+- **Related:** [`../neokim-post/`](../neokim-post/README.md) is the earlier set of 15 case studies this one upgrades (systems 01, 04, 05, 08, 12, 14, 15, 16, 18, 19) and extends. Systems 22 to 31 are new to this folder. It also holds the shared glossary [`00-fundamentals.md`](../neokim-post/00-fundamentals.md). The architecture-lens sections use vocabulary from [`../fundamentals-of-software-architecture/`](../fundamentals-of-software-architecture/summaries/README.md).
 - **Study resources used as leads (never as proof):** [System Design Primer](https://github.com/donnemartin/system-design-primer) (the interview-questions list was used as a coverage cross-check: Pastebin/Bit.ly, Twitter timeline, web crawler and key-value store are all covered here) and [awesome-software-architecture](https://github.com/mehdihadeli/awesome-software-architecture) (its case-study list confirmed the choice of systems and pointed to primary sources such as Discord's and Instagram's engineering posts).
 - **Sourcing rules and conventions:** see [`CLAUDE.md`](CLAUDE.md).
 
