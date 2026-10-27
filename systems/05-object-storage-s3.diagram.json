@@ -1,0 +1,218 @@
+{
+  "id": "05-object-storage-s3",
+  "title": "Object Storage (Amazon S3)",
+  "kind": "real-system",
+  "nodes": [
+    {
+      "id": "client",
+      "label": "Client / app",
+      "kind": "client",
+      "summary": "Uses a REST API: PUT/GET/DELETE on bucket + key, LIST by prefix, multipart upload.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html"
+      ],
+      "details": "Objects are addressed by bucket + key (+ version). Updates to one key are atomic. There are no atomic multi-key updates."
+    },
+    {
+      "id": "front",
+      "label": "Front-end fleet",
+      "kind": "service",
+      "summary": "Stateless API tier: authenticates, routes to metadata and storage.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.allthingsdistributed.com/2023/07/building-and-operating-a-pretty-big-storage-system.html"
+      ],
+      "details": "AWS says S3 is made of hundreds of microservices. The exact front-end layout is not public, so this box is a generic stand-in."
+    },
+    {
+      "id": "index",
+      "label": "Metadata / index",
+      "kind": "datastore",
+      "summary": "Maps bucket + key + version to the object's shard locations. Cached for availability. Object becomes visible only when its metadata exists.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.allthingsdistributed.com/2021/04/s3-strong-consistency.html"
+      ],
+      "details": "Vogels describes a metadata cache and a persistence tier. 'Commit metadata last' is the standard design, not a published S3 detail."
+    },
+    {
+      "id": "witness",
+      "label": "Cache coherence witness",
+      "kind": "service",
+      "summary": "Notified on every object change. Acts as a read barrier so a cache can tell whether its copy is stale. This gave strong read-after-write consistency without lowering availability.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.allthingsdistributed.com/2021/04/s3-strong-consistency.html"
+      ],
+      "details": "Dec 2020: strong read-after-write consistency for all requests, at no extra charge and with no performance impact (AWS announcement)."
+    },
+    {
+      "id": "nodes",
+      "label": "Storage nodes (ShardStore)",
+      "kind": "datastore",
+      "summary": "HDD nodes running ShardStore, written in Rust (>40,000 lines). Per-node LSM tree maps shard IDs to chunks held in extents, with shard data stored outside the tree.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://jamesbornholt.com/papers/shardstore-sosp21.pdf",
+        "https://www.allthingsdistributed.com/2023/07/building-and-operating-a-pretty-big-storage-system.html"
+      ],
+      "details": "Writes within an extent are sequential. Validated with executable reference models (about 1% of the code) and property-based tests."
+    },
+    {
+      "id": "ec",
+      "label": "Erasure coding",
+      "kind": "service",
+      "summary": "Splits an object into k data shards plus m parity shards. Any k of the k+m shards reconstruct it. Exact k and m for S3 are not public.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.allthingsdistributed.com/2023/07/building-and-operating-a-pretty-big-storage-system.html"
+      ],
+      "details": "Warfield names Reed-Solomon as an example and gives no k or m values. Any numbers in this atlas's examples are illustrative."
+    },
+    {
+      "id": "az",
+      "label": "Spread across ≥3 AZs",
+      "kind": "edge",
+      "summary": "Standard classes store across at least three AZs and are designed to survive the loss of one. One Zone-IA uses a single AZ.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/DataDurability.html"
+      ]
+    },
+    {
+      "id": "scrub",
+      "label": "Scrubber / repair",
+      "kind": "service",
+      "summary": "Background processes verify checksums and quickly repair lost redundancy. Durability depends on repair speed versus drive failure rate.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/DataDurability.html"
+      ],
+      "details": "AWS: designed to handle concurrent device failures by quickly detecting and repairing any lost redundancy, and regularly verifying integrity with checksums. The exact scrubber implementation is not described."
+    }
+  ],
+  "edges": [
+    {
+      "id": "c-f",
+      "from": "client",
+      "to": "front",
+      "label": "PUT / GET",
+      "mode": "sync",
+      "protocol": "HTTPS"
+    },
+    {
+      "id": "f-ec",
+      "from": "front",
+      "to": "ec",
+      "label": "encode / decode",
+      "mode": "sync"
+    },
+    {
+      "id": "ec-n",
+      "from": "ec",
+      "to": "nodes",
+      "label": "shards in parallel",
+      "mode": "sync"
+    },
+    {
+      "id": "nodes-az",
+      "from": "nodes",
+      "to": "az",
+      "label": "placed across AZs",
+      "mode": "sync"
+    },
+    {
+      "id": "f-i",
+      "from": "front",
+      "to": "index",
+      "label": "commit / lookup",
+      "mode": "sync"
+    },
+    {
+      "id": "w-i",
+      "from": "witness",
+      "to": "index",
+      "label": "invalidate stale cache",
+      "mode": "async"
+    },
+    {
+      "id": "f-w",
+      "from": "front",
+      "to": "witness",
+      "label": "read barrier check",
+      "mode": "sync"
+    },
+    {
+      "id": "s-n",
+      "from": "scrub",
+      "to": "nodes",
+      "label": "verify + repair",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "put",
+      "name": "PUT an object",
+      "steps": [
+        {
+          "edge": "c-f",
+          "caption": "The client sends the object with PUT. Large objects use multipart upload (parts of 5 MiB to 5 GiB)."
+        },
+        {
+          "edge": "f-ec",
+          "caption": "The data is erasure coded into k data shards plus m parity shards (Reed-Solomon is the named example)."
+        },
+        {
+          "edge": "ec-n",
+          "caption": "Shards are written in parallel to different drives on ShardStore nodes."
+        },
+        {
+          "edge": "nodes-az",
+          "caption": "Placement spreads them across failure domains, at least three AZs for standard classes."
+        },
+        {
+          "edge": "f-i",
+          "caption": "Only after the data is durable is the metadata committed. The object becomes visible when its metadata exists. This ordering is the standard design, not a published S3 detail."
+        }
+      ]
+    },
+    {
+      "id": "get",
+      "name": "GET an object (strongly consistent)",
+      "steps": [
+        {
+          "edge": "c-f",
+          "caption": "The client requests the object."
+        },
+        {
+          "edge": "f-w",
+          "caption": "The witness acts as a read barrier so the metadata cache can tell whether its copy is fresh."
+        },
+        {
+          "edge": "f-i",
+          "caption": "A fresh cached entry is used. A stale one is invalidated and read from the persistence tier."
+        },
+        {
+          "edge": "f-ec",
+          "caption": "Any k of the k+m shards are enough to reconstruct the object, so slow or failed drives can be skipped."
+        }
+      ]
+    },
+    {
+      "id": "repair",
+      "name": "A drive fails",
+      "steps": [
+        {
+          "edge": "s-n",
+          "caption": "Background verification finds shards that are lost or fail their checksum."
+        },
+        {
+          "edge": "ec-n",
+          "caption": "Lost shards are rebuilt from the surviving ones and written to healthy drives, restoring full redundancy. Durability rests on repairing faster than drives fail."
+        }
+      ]
+    }
+  ]
+}
