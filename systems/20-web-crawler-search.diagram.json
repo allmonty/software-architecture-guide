@@ -33,7 +33,7 @@
       "id": "fetch",
       "label": "Fetchers (async)",
       "kind": "service",
-      "summary": "Download pages with thousands of concurrent connections. Google's 1998 crawlers kept about 300 connections each and used asynchronous I/O with queues between states. Each keeps its own DNS cache.",
+      "summary": "Download pages with hundreds of concurrent connections per crawler (Brin and Page: about 300 each; Mercator: worker threads typically in the hundreds). Google's 1998 crawlers kept about 300 connections each and used asynchronous I/O with queues between states. Each keeps its own DNS cache.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf",

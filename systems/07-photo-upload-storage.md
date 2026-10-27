@@ -192,7 +192,7 @@ Reading a photo needed several disk operations for metadata alone. Packing photo
 
 <details><summary>Design the upload path for 20 MB photos on flaky networks.</summary>
 
-Create a pending record, hand out a short-lived pre-signed multipart URL, let the client resume per part, then process asynchronously. A sweeper cleans up uploads that never complete.
+Create a pending record, hand out a set of short-lived pre-signed part URLs (S3 multipart needs one per part, plus initiate and complete calls) or a resumable session URI, let the client resume per part, then process asynchronously. A sweeper cleans up uploads that never complete.
 
 </details>
 
@@ -228,3 +228,4 @@ f4 encrypts each blob with its own key and deletes the key, which makes the data
 - Scoped: the modern upload pipeline and image-serving advice are `[INDUSTRY PATTERN]`, not tied to a company.
 - Not verified: Facebook's current architecture, and what became of the "proactively push new photos into the Cache" optimization the Haystack paper says it planned.
 - Quote audit (2026-10-27): restored an omitted phrase in the Haystack inode quote ("one (or typically more) …").
+- Corrected (independent review, 2026-10-27): the upload outline now says S3 multipart needs one pre-signed URL per part, as note 12 shows.

@@ -54,7 +54,7 @@ Picture a **post office that never closes and keeps a phone line open to every c
 
 **Functional**
 - 1:1 messaging (text)
-- Group chat, ≤ 100 participants (bounded fan-out; WhatsApp's help center says 1,024 `[CONFIRMED]`, though its marketing page says 1,000 ([help center](https://faq.whatsapp.com/iphone/chats/how-to-add-and-remove-group-participants)))
+- Group chat, ≤ 100 participants (bounded fan-out; a help-center figure of 1,024 was reported by search results but not read by us `[INDUSTRY PATTERN]`; WhatsApp's marketing page says 1,000 ([help center](https://faq.whatsapp.com/iphone/chats/how-to-add-and-remove-group-participants)))
 - Offline queueing for 30 days
 - Media attachments (image/video/audio)
 - Message status: sent ✓ / delivered ✓✓ / read (blue ✓✓)
@@ -381,3 +381,4 @@ Clients generate message IDs so the server can drop duplicates, and acknowledgem
 - Softened: the "32 engineers" figure and the XMPP/ejabberd history are marked as secondary-source claims that were not re-verified.
 - Scoped: the 1,024 group limit is from WhatsApp's help center per search results. A marketing page says 1,000, noted in the text.
 - Not re-verified (carried over): the capacity table (assumptions, re-derived by hand: 500M × 20 = 10B messages/day ≈ 115.7k/s), the status-tick rules in groups, Slack's WebSocket-to-Envoy migration, presence heartbeat timings (design choices), the Signal X3DH/Double Ratchet specs (the whitepaper does not use those names), and every Redis/Kafka/Cassandra/Consul component, which is `[INDUSTRY PATTERN]`.
+- Downgraded (independent review, 2026-10-27): the 1,024 group-size figure came from search results; WhatsApp's help-center page is script-rendered and could not be read by the reviewer or by us, so the tag is no longer CONFIRMED.
