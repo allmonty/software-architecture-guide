@@ -1,0 +1,307 @@
+{
+  "id": "32-distributed-cache",
+  "title": "Distributed Cache",
+  "kind": "real-system",
+  "nodes": [
+    {
+      "id": "user",
+      "label": "User",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Loads pages whose data is read through the cache.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf"
+      ]
+    },
+    {
+      "id": "web",
+      "label": "Web servers (cache clients)",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Check the cache first; on a miss read the database and fill the cache; on a write update the database and delete the cache key. Client logic is a library or the mcrouter proxy.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf"
+      ]
+    },
+    {
+      "id": "mcrouter",
+      "label": "mcrouter proxy",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Presents a memcached interface and routes requests to servers; gets use UDP directly, sets and deletes go over TCP through the proxy.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf"
+      ]
+    },
+    {
+      "id": "cache",
+      "label": "Cache cluster",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Partitioned memcached servers that hold disposable copies of data and may evict at any time.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf"
+      ],
+      "group": "Cache cluster"
+    },
+    {
+      "id": "server",
+      "label": "Memcached server",
+      "kind": "datastore",
+      "c4": "component",
+      "summary": "In-memory hash table. Issues 64-bit lease tokens on misses (once per key per 10 seconds by default) and refuses sets whose token was invalidated by a delete.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf"
+      ],
+      "parent": "cache",
+      "group": "Cache cluster"
+    },
+    {
+      "id": "leases",
+      "label": "Lease arbitration",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Prevents stale sets from reordered updates and throttles thundering herds: other readers within the window are told to wait briefly.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf"
+      ],
+      "parent": "cache",
+      "group": "Cache cluster"
+    },
+    {
+      "id": "gutter",
+      "label": "Gutter pool",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "About 1% of the cluster's servers, taking over for failed servers; entries expire quickly to avoid needing invalidations.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf"
+      ]
+    },
+    {
+      "id": "regional",
+      "label": "Regional pool",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Shared by several frontend clusters for rarely accessed data, instead of replicating everywhere.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf"
+      ]
+    },
+    {
+      "id": "db",
+      "label": "Database (source of truth)",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "MySQL holding authoritative data; protected from read load by the cache.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf"
+      ],
+      "technology": "MySQL"
+    },
+    {
+      "id": "squeal",
+      "label": "Invalidation daemon (mcsqueal)",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Runs on every database, reads committed statements, extracts the cache keys to delete and broadcasts batched deletes to every frontend cluster in the region.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf"
+      ]
+    },
+    {
+      "id": "warm",
+      "label": "Alternative: write-through or write-behind",
+      "kind": "service",
+      "c4": "note",
+      "summary": "Writing to the cache and database together (or asynchronously later) avoids the miss after a write, at the cost of ordering and loss risks. The paper chooses delete-on-write because deletes are idempotent.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "user-web",
+      "from": "user",
+      "to": "web",
+      "label": "request",
+      "mode": "sync"
+    },
+    {
+      "id": "web-mcr",
+      "from": "web",
+      "to": "mcrouter",
+      "label": "sets and deletes (TCP)",
+      "mode": "sync"
+    },
+    {
+      "id": "web-server",
+      "from": "web",
+      "to": "server",
+      "label": "gets (UDP) and lease tokens",
+      "mode": "sync",
+      "protocol": "UDP"
+    },
+    {
+      "id": "server-leases",
+      "from": "server",
+      "to": "leases",
+      "label": "issue or check lease",
+      "mode": "sync"
+    },
+    {
+      "id": "web-db",
+      "from": "web",
+      "to": "db",
+      "label": "read on miss, write",
+      "mode": "sync"
+    },
+    {
+      "id": "web-gutter",
+      "from": "web",
+      "to": "gutter",
+      "label": "retry when server does not answer",
+      "mode": "sync"
+    },
+    {
+      "id": "web-regional",
+      "from": "web",
+      "to": "regional",
+      "label": "rarely used keys",
+      "mode": "sync"
+    },
+    {
+      "id": "mcr-server",
+      "from": "mcrouter",
+      "to": "server",
+      "label": "route set or delete",
+      "mode": "sync"
+    },
+    {
+      "id": "db-squeal",
+      "from": "db",
+      "to": "squeal",
+      "label": "committed writes (commit log)",
+      "mode": "async"
+    },
+    {
+      "id": "squeal-mcr",
+      "from": "squeal",
+      "to": "mcrouter",
+      "label": "batched deletes",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "read-miss",
+      "name": "A read miss fills the cache with a lease",
+      "steps": [
+        {
+          "edge": "user-web",
+          "caption": "A request needs a value."
+        },
+        {
+          "edge": "web-server",
+          "caption": "The web server asks the cache; on a miss the server returns a lease token."
+        },
+        {
+          "edge": "web-db",
+          "caption": "The web server reads the database."
+        },
+        {
+          "edge": "web-mcr",
+          "caption": "It sets the value with the lease token; the server stores it only if the token is still valid."
+        }
+      ]
+    },
+    {
+      "id": "write",
+      "name": "A write invalidates the cache",
+      "steps": [
+        {
+          "edge": "web-db",
+          "caption": "The web server updates the database."
+        },
+        {
+          "edge": "web-mcr",
+          "caption": "It sends a delete for the key (deletes are idempotent)."
+        },
+        {
+          "edge": "db-squeal",
+          "caption": "The database's committed writes also feed the invalidation daemon."
+        },
+        {
+          "edge": "squeal-mcr",
+          "caption": "Batched deletes reach every frontend cluster in the region."
+        }
+      ]
+    },
+    {
+      "id": "herd",
+      "name": "A hot key is invalidated (thundering herd)",
+      "steps": [
+        {
+          "edge": "web-server",
+          "caption": "Many readers miss the key at once."
+        },
+        {
+          "edge": "server-leases",
+          "caption": "Only one receives a lease token; the rest are told to wait a moment."
+        },
+        {
+          "edge": "web-db",
+          "caption": "One reader queries the database; the others later find the value in the cache."
+        }
+      ]
+    },
+    {
+      "id": "server-down",
+      "name": "A cache server fails (failure)",
+      "steps": [
+        {
+          "edge": "web-server",
+          "caption": "The get gets no response, so the client assumes the server failed."
+        },
+        {
+          "edge": "web-gutter",
+          "caption": "It retries against the gutter pool, which fills from the database with quickly expiring entries."
+        },
+        {
+          "edge": "web-db",
+          "caption": "The database is shielded from most of the failed server's traffic."
+        }
+      ]
+    },
+    {
+      "id": "stale-set",
+      "name": "A reordered update would set a stale value (failure)",
+      "steps": [
+        {
+          "edge": "web-server",
+          "caption": "A reader missed earlier and holds a lease token."
+        },
+        {
+          "edge": "web-db",
+          "caption": "A writer updates the database."
+        },
+        {
+          "edge": "web-mcr",
+          "caption": "The writer's delete invalidates the lease token, so the reader's later set is refused instead of storing stale data."
+        }
+      ]
+    }
+  ]
+}
