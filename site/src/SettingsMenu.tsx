@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { FONTS, THEMES } from "./settings-core.ts";
+import { FONTS, SIZE, THEMES } from "./settings-core.ts";
 import { resetSettings, updateSettings, useSettings } from "./settings.ts";
 
 const THEME_LABEL = { system: "System", light: "Light", warm: "Warm", dark: "Dark" } as const;
@@ -46,6 +46,16 @@ export function SettingsMenu() {
                 </label>
               ))}
             </div>
+          </fieldset>
+          <fieldset>
+            <legend>Reading text size</legend>
+            <div className="size-row">
+              <button onClick={() => updateSettings({ size: s.size - 1 })} disabled={s.size <= SIZE.min} aria-label="Smaller text">A−</button>
+              <input type="range" min={SIZE.min} max={SIZE.max} step={1} value={s.size} onChange={(e) => updateSettings({ size: Number(e.target.value) })} aria-label="Reading text size in pixels" />
+              <button onClick={() => updateSettings({ size: s.size + 1 })} disabled={s.size >= SIZE.max} aria-label="Larger text">A+</button>
+              <output>{s.size} px</output>
+            </div>
+            <p className="muted small">Diagram labels keep a fixed size.</p>
           </fieldset>
           <button className="linkish" onClick={resetSettings}>Reset to defaults</button>
         </div>
