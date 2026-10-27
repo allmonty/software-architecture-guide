@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A system-design study set: **31 systems** (22 to 31 cover AI systems, live streaming, observability and stream processing), each with a deep Markdown note and a structured diagram, plus a Vite + React + React Flow site in `site/` that renders the diagrams interactively. `README.md` is the hub (index, learning path, concept matrix). The reader is a senior engineer preparing for interviews. **Correctness is the top requirement.**
+A system-design study set: **35 systems** (22 to 31 cover AI systems, live streaming, observability and stream processing; 32 to 35 are building blocks: cache, coordination, top-K and ID generation), plus a `toolkit/` folder (casebook, primers, workbook, see its README), each with a deep Markdown note and a structured diagram, plus a Vite + React + React Flow site in `site/` that renders the diagrams interactively. `README.md` is the hub (index, learning path, concept matrix). The reader is a senior engineer preparing for interviews. **Correctness is the top requirement.**
 
 ## Commands
 
