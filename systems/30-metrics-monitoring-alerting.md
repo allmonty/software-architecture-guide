@@ -69,6 +69,13 @@ Prometheus "fundamentally stores all data as time series: streams of timestamped
 
 ---
 
+### Push or pull?
+
+The two published designs differ here, and each choice has reasons:
+- **Pull (Prometheus):** the server scrapes targets over HTTP, discovering them through service discovery or static configuration, with a push gateway only for short-lived jobs `[CONFIRMED]`. Consequences (ours): the collector controls the rate and knows when a target is down (a failed scrape is itself a signal); targets need an HTTP endpoint reachable from the collector; short-lived jobs and firewalled networks fit badly.
+- **Push (Monarch):** "a client sends data to one of the nearby ingestion routers", usually through an instrumentation library that writes at the frequency needed for the retention policy `[CONFIRMED]`. Consequences (ours): works through firewalls and for short-lived tasks; the client decides the rate, so the backend needs ingestion limits, and a silent target is harder to tell from a dead one without extra heartbeats.
+- **Averaging percentiles is wrong.** Latency distributions should be stored as histograms or other mergeable summaries and combined before taking a percentile; the 99th percentile of per-instance 99ths is not the fleet's 99th percentile (our reasoning). Monarch's data model has first-class distribution-typed time series, and describes comprehensive support for them as a design goal `[CONFIRMED]`.
+
 ## 3. A hyperscale in-memory design: Gorilla `[CONFIRMED]` (Pelkonen et al., VLDB 2015)
 
 **Requirements and insight.** Gorilla's authors argue that monitoring users care about **aggregate analysis**, not individual data points, and that recent data matters far more than old data. Their database optimises "for remaining highly available for writes and reads, even in the face of failures, at the expense of possibly dropping small amounts of data on the write path". Because the system stores no user data, ACID guarantees are not a core requirement. They also wanted state transitions (a bad release, a config change) visible within tens of seconds, and most queries to run within tens of milliseconds.
@@ -215,6 +222,12 @@ These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from
 - Alert load: zone-local evaluation, standing queries that pre-aggregate.
 
 **Answer outlines** (try the questions above first)
+
+<details><summary>Push or pull?</summary>
+
+Pull gives the collector control of the rate and a built-in liveness signal, but needs reachable endpoints and handles short-lived jobs poorly (a push gateway covers them). Push suits firewalls, ephemeral tasks and very large fleets with regional ingestion routers, but needs ingestion limits and separate liveness checks. Large systems often mix both; say which failure you are optimising for.
+
+</details>
 
 <details><summary>Consistency or availability for a monitoring database?</summary>
 

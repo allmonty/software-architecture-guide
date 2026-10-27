@@ -36,6 +36,12 @@
     "status": "confirmed"
   },
   {
+    "quote": "a client sends data to one of the nearby ingestion routers",
+    "url": "https://www.vldb.org/pvldb/vol13/p3181-adams.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "for remaining highly available for writes and reads, even in the face of failures, at the expense of possibly dropping small amounts of data on the write path",
     "url": "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf",
     "via": "direct",
