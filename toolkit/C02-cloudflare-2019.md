@@ -64,6 +64,6 @@ Design a staged rollout for rules that must reach every edge in under a minute d
 ---
 ## ✅ Verification log
 
-*Fact-check, 2026-10-27, by reading the full text of the source. Quotations are confirmed by `npm run verify`.*
+*Fact-check, 2026-10-27, by reading the full text of the source. This page has no quotations, so `npm run verify` had nothing to check.*
 - Verified in the Cloudflare post: the timeline, the 27-minute duration, the rule and deployment path, the list of contributing factors, the access problems during response, the change list, and the Quicksilver figures.
 - Our analysis section is not sourced.

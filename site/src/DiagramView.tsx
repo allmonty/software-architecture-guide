@@ -288,7 +288,7 @@ export function DiagramView({
                 <details>
                   <summary>Quotations from these sources ({nodeQuotes.length})</summary>
                   <p className="muted small">Words from this element's sources that the note quotes and the verifier found in the page. They may support nearby claims rather than this element alone.</p>
-                  <ul>{nodeQuotes.map((c) => <li key={c.quote}>“{c.quote}”</li>)}</ul>
+                  <ul>{nodeQuotes.map((c, i) => <li key={`${i}-${c.quote}`}>“{c.quote}”</li>)}</ul>
                 </details>
               )}
               {mentions.length > 0 && (

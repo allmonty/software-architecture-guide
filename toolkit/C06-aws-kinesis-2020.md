@@ -60,6 +60,6 @@ Draw the dependency chain from Kinesis to ECS and mark each edge as hard, best-e
 ---
 ## ✅ Verification log
 
-*Fact-check, 2026-10-27, by reading the full text of the source. Quotations are confirmed by `npm run verify`.*
+*Fact-check, 2026-10-27, by reading the full text of the source. This page has no quotations, so `npm run verify` had nothing to check.*
 - Verified in the AWS summary: the trigger and root cause, the thread-per-server design, the recovery constraints, the timeline, the dependent-service failures, and the planned changes.
 - Our analysis section is not sourced.

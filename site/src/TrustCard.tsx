@@ -68,8 +68,8 @@ export function TrustCard({ id, title, markdown, claims, diagram }: { id: string
           <table className="evidence">
             <thead><tr><th>Quotation</th><th>Found in</th></tr></thead>
             <tbody>
-              {confirmed.map((c) => (
-                <tr key={c.quote}>
+              {confirmed.map((c, i) => (
+                <tr key={`${i}-${c.quote}`}>
                   <td>“{c.quote.length > 170 ? c.quote.slice(0, 167) + "…" : c.quote}”</td>
                   <td>
                     <a href={c.url} target="_blank" rel="noreferrer">{host(c.url ?? "")}</a>{" "}

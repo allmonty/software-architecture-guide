@@ -59,6 +59,6 @@ Write the decision record GitHub's team faced at 23:13 UTC: options (fail forwar
 ---
 ## ✅ Verification log
 
-*Fact-check, 2026-10-27, by reading the full text of the source. Quotations are confirmed by `npm run verify`.*
+*Fact-check, 2026-10-27, by reading the full text of the source. This page has no quotations, so `npm run verify` had nothing to check.*
 - Verified in the GitHub post: the maintenance trigger, the 43-second partition, the Orchestrator failover behaviour, the data-integrity decision, backup restore constraints, the 954-write example, and the technical and organisational follow-ups.
 - Our analysis section is not sourced.
