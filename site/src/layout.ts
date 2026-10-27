@@ -1,7 +1,7 @@
 import dagre from "@dagrejs/dagre";
 
-export const NODE_W = 200;
-export const NODE_H = 88;
+export const NODE_W = 220;
+export const NODE_H = 104;
 
 /**
  * Left-to-right layered layout; returns top-left positions keyed by element id.
@@ -31,7 +31,7 @@ function dagreLayout(ids: string[], pairs: [string, string][], boundary: string[
 }
 
 // Rough size of the canvas, used to choose the direction that needs the least shrinking to fit.
-const CANVAS = { w: 1000, h: 640 };
+const CANVAS = { w: 760, h: 400 };
 
 /** Lay the view out left-to-right and top-to-bottom and keep whichever fills the canvas better. */
 export function layout(ids: string[], pairs: [string, string][], boundary: string[] = []): { pos: Pos; dir: Dir } {

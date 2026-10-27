@@ -29,7 +29,6 @@ export function App() {
         <SystemPage
           key={`${system.id}?${query}`}
           system={system}
-          initialTab={params.get("tab") === "notes" ? "notes" : "diagram"}
           initialLevel={(["context", "container", "component"] as const).find((l) => l === params.get("level")) ?? "container"}
           initialFocus={params.get("focus")}
           initialFlow={params.get("flow")}

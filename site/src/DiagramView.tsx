@@ -17,7 +17,7 @@ function C4Node({ data }: NodeProps<Node<C4Data>>) {
       <Handle type="target" position={data.dir === "TB" ? Position.Top : Position.Left} />
       <strong>{el.label}</strong>
       <em>{typeLine(el)}</em>
-      <span>{el.summary.length > 96 ? el.summary.slice(0, 93) + "…" : el.summary}</span>
+      <span>{el.summary.length > 80 ? el.summary.slice(0, 77) + "…" : el.summary}</span>
       <Handle type="source" position={data.dir === "TB" ? Position.Bottom : Position.Right} />
     </div>
   );
@@ -38,12 +38,16 @@ export function DiagramView({
   initialStep = 0,
   initialLevel = "container",
   initialFocus = null,
+  big = false,
+  onToggleBig,
 }: {
   diagram: Diagram;
   initialFlow?: string | null;
   initialStep?: number;
   initialLevel?: Level;
   initialFocus?: string | null;
+  big?: boolean;
+  onToggleBig?: () => void;
 }) {
   const focusable = useMemo(() => containersWithComponents(diagram), [diagram]);
   const startFocus = focusable.find((n) => n.id === initialFocus)?.id ?? focusable[0]?.id ?? null;
@@ -140,7 +144,7 @@ export function DiagramView({
   const kids = selEl?.node ? diagram.nodes.filter((n) => n.parent === selEl.node!.id) : [];
 
   return (
-    <div className="diagram">
+    <div className="diagram-col">
       <div className="canvas">
         <div className="levels">
           {LEVELS.map((l) => (
@@ -178,6 +182,9 @@ export function DiagramView({
           <Background />
           <Controls showInteractive={false} />
         </ReactFlow>
+        {onToggleBig && (
+          <button className="enlarge" onClick={onToggleBig} aria-pressed={big}>{big ? "Shrink graph" : "Enlarge graph"}</button>
+        )}
         {Object.keys(mv).length > 0 && (
           <button className="reset" onClick={() => setMoved((m) => ({ ...m, [viewKey]: {} }))}>Reset layout</button>
         )}

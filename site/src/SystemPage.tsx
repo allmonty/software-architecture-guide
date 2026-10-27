@@ -28,20 +28,18 @@ const components: Components = {
 
 export function SystemPage({
   system,
-  initialTab,
   initialLevel,
   initialFocus,
   initialFlow,
   initialStep,
 }: {
   system: System;
-  initialTab: "diagram" | "notes";
   initialLevel: "context" | "container" | "component";
   initialFocus: string | null;
   initialFlow: string | null;
   initialStep: number;
 }) {
-  const [tab, setTab] = useState<"diagram" | "notes">(initialTab);
+  const [big, setBig] = useState(false);
   return (
     <main className="system">
       <div className="bar">
@@ -51,31 +49,27 @@ export function SystemPage({
             {system.diagram.kind === "reference-design" ? "Reference design" : "Real system"}
           </small>
         </h1>
-        <nav>
-          <button aria-pressed={tab === "diagram"} onClick={() => setTab("diagram")}>Diagram</button>
-          <button aria-pressed={tab === "notes"} onClick={() => setTab("notes")}>Notes</button>
-        </nav>
       </div>
-      {tab === "diagram" && (
-        <p className="legend muted">
-          <span className="chip sw-person">person</span>
-          <span className="chip sw-external">external system</span>
-          <span className="chip sw-service">service</span>
-          <span className="chip sw-data">data store</span>
-          <span className="chip sw-queue">queue / log</span>
-          <span className="chip sw-edge">edge / CDN</span>
-          <span className="chip sw-client">client</span>
-          <span className="chip tint">lighter = component</span>
-          · Border: solid = confirmed, dashed = industry pattern, dotted = speculative · Lines: dashed = async
-        </p>
-      )}
-      {tab === "diagram" ? (
-        <DiagramView key={system.id} diagram={system.diagram} initialFlow={initialFlow} initialStep={initialStep} initialLevel={initialLevel} initialFocus={initialFocus} />
-      ) : (
-        <article className="notes">
+      <p className="legend muted">
+        <span className="chip sw-person">person</span>
+        <span className="chip sw-external">external system</span>
+        <span className="chip sw-service">service</span>
+        <span className="chip sw-data">data store</span>
+        <span className="chip sw-queue">queue / log</span>
+        <span className="chip sw-edge">edge / CDN</span>
+        <span className="chip sw-client">client</span>
+        <span className="chip tint">lighter = component</span>
+        · Border: solid = confirmed, dashed = industry pattern, dotted = speculative · Lines: dashed = async
+      </p>
+      {/* Diagram and flows on the left, the full note on the right, each scrolling on its own. */}
+      <div className={`split ${big ? "big" : ""}`}>
+        <div className="left">
+          <DiagramView key={system.id} diagram={system.diagram} initialFlow={initialFlow} initialStep={initialStep} initialLevel={initialLevel} initialFocus={initialFocus} big={big} onToggleBig={() => setBig(!big)} />
+        </div>
+        <article className="notes right">
           <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{system.markdown}</ReactMarkdown>
         </article>
-      )}
+      </div>
     </main>
   );
 }
