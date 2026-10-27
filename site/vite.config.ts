@@ -24,8 +24,6 @@ function noteHistory(): Record<string, { date: string; subject: string }[]> {
 export default defineConfig({
   base: "./",
   plugins: [react()],
-  // GitHub Pages serves the docs/ folder of the main branch, so the build goes there (committed).
-  build: { outDir: "../docs", emptyOutDir: true },
   define: { __NOTE_HISTORY__: JSON.stringify(noteHistory()) },
   server: { fs: { allow: [".."] } },
 });

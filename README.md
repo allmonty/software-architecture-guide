@@ -22,7 +22,7 @@ Each system has a deep note (`systems/NN-*.md`) and a structured diagram (`syste
 | [`systems/`](systems/) | The 35 notes, one diagram (`.diagram.json`) and one quote ledger (`.claims.json`) each |
 | [`toolkit/`](toolkit/README.md) | Casebook of 6 real incidents (`C`), 10 cross-cutting primers (`P`), a workbook of 5 practice pages (`W`) |
 | [`site/`](site/) | The React + React Flow site: home page study tracks, diagrams, search, reading settings |
-| [`docs/`](docs/) | The built site, served by GitHub Pages |
+| [`.github/workflows/`](.github/workflows/pages.yml) | The workflow that builds and deploys the site |
 | [`schema/`](schema/), [`scripts/`](scripts/), [`test/`](test/) | The diagram schema, the validator, the quote verifier, the freshness and link checks, and their tests |
 | [`CLAUDE.md`](CLAUDE.md) | Conventions and sourcing rules, for contributors and for Claude Code |
 | [`ROADMAP.md`](ROADMAP.md) | What is not done yet, and why |
@@ -165,16 +165,18 @@ The home page is a study guide: pick a goal (interview, building blocks, archite
 ```sh
 npm install && (cd site && npm install)   # once
 npm run dev      # from the repository root or site/, http://localhost:5173
-npm run build    # static output in docs/ (see Publishing on GitHub Pages)
+npm run build    # static output in site/dist (see Publishing on GitHub Pages)
 ```
 
 Each diagram follows the **C4 model**: switch between **1 · Context**, **2 · Containers** and **3 · Components** (the last only where the notes describe a container's internals). Higher levels roll relationships up from the lower ones. In a diagram: **click an element or a line** for its summary, confidence badge and sources. Pick a **flow** and use **← / →** (or the buttons) to step through it. Dashed borders mark `INDUSTRY PATTERN` components and dotted ones `SPECULATIVE`. Colours follow the C4 palette (person, external system, container, component) and each box shows a `[Type: technology]` line. Drag boxes to untangle lines (kept per view, with a Reset button). The views are **Graph**, **Split** (diagram and note side by side) and **Text**, and every page opens with a trust summary.
 
 ## Publishing on GitHub Pages
 
-The site is a static build served from the `docs/` folder of the `main` branch. In the repository settings choose **Pages → Build and deployment → Deploy from a branch → `main` / `/docs`**; it then appears at `https://allmonty.github.io/system-design-atlas/`. Links use a hash (`#13-netflix?view=split`) and relative asset paths, so it works from any subpath.
+A GitHub Actions workflow ([`.github/workflows/pages.yml`](.github/workflows/pages.yml)) builds the site and deploys it on every push to `main`: it installs, runs `npm run validate` and `npm test` (a failing check stops the deploy), then `npm run build`, which writes the static site to `site/dist`. Nothing generated is committed.
 
-After any change to a note, a diagram or the site, run `npm run build` and commit `docs/` together with the change; Pages serves exactly what is committed. The build also embeds each note's recent commit history, so build from a full checkout.
+One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**. The site then appears at `https://allmonty.github.io/system-design-atlas/`. Links use a hash (`#13-netflix?view=split`) and relative asset paths, so it works from any subpath. The workflow can also be started by hand from the Actions tab.
+
+`npm run verify` is not part of the workflow, because it fetches every cited page; run it locally before pushing content changes. The build embeds each note's recent commit history, so the workflow checks out the full history.
 
 ## Checking the content
 

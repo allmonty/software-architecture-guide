@@ -15,7 +15,7 @@ npm install
 npm run validate   # schema, references, required sections, relative links, sources on non-speculative nodes
 npm test           # validator tests (node:test via tsx); single file: npx tsx --test test/validate.test.ts
 cd site && npm install && npm run dev      # http://localhost:5173
-npm run build      # tsc --noEmit + vite build, output in docs/ (committed: GitHub Pages serves it)
+npm run build      # tsc --noEmit + vite build, output in site/dist (not committed; the Pages workflow builds and deploys it)
 npm run sweep      # needs `vite preview` on :5188 and headless Chrome on :9333 (see scripts/browser-sweep.mjs); checks every page
 ```
 
