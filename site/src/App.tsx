@@ -55,10 +55,12 @@ const PATH: { title: string; ids: string[] }[] = [
   { title: "Foundations", ids: ["01", "02", "03"] },
   { title: "Storage and data infrastructure", ids: ["05", "04", "07", "06"] },
   { title: "Real-time communication", ids: ["08", "09", "18", "21"] },
-  { title: "Media delivery", ids: ["14", "12", "13"] },
+  { title: "Media delivery", ids: ["14", "12", "13", "29"] },
   { title: "Feeds and notifications", ids: ["11", "10"] },
   { title: "Correctness under contention", ids: ["16", "17", "19"] },
   { title: "Location and discovery", ids: ["15", "20"] },
+  { title: "Data pipelines and observability", ids: ["30", "31"] },
+  { title: "AI systems", ids: ["22", "24", "23", "25", "28", "26", "27"] },
 ];
 
 function Card({ s }: { s: (typeof systems)[number] }) {
