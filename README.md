@@ -93,22 +93,22 @@ For interviews, practise each note's **Interview questions**, and walk the **flo
 |---|---|
 | Caching and request coalescing | 01, 09, 11, 12, 13, 14, 29, 32 |
 | CDN and edge delivery | 07, 12, 13, 14, 29 |
-| Sharding / partitioning / consistent hashing | 01, 03, 04, 09, 11, 13, 15, 16, 20, 24, 30, 31 |
+| Sharding / partitioning / consistent hashing | 01, 03, 04, 05, 09, 11, 13, 15, 16, 20, 24, 30, 31, 34 |
 | Replication, quorums, erasure coding | 03, 04, 05, 06, 07, 30, 31 |
-| Consistency models and trade-offs | 03, 04, 05, 06, 16, 18, 30 |
+| Consistency models and trade-offs | 03, 04, 05, 06, 16, 18, 30, 33 |
 | Queues, logs and event-driven design | 04, 08, 10, 17, 19, 31 |
-| Consensus, leader election and fencing | 33, 04 |
-| Approximate counting and top-K | 34, 31 |
+| Consensus, leader election and fencing | 33, 04, 19, 31 |
+| Approximate counting and top-K | 34 |
 | Cache consistency, stampede protection | 32 |
-| Idempotency and retries | 01, 10, 16, 17, 25, 31, 32 |
+| Idempotency and retries | 01, 04, 10, 16, 17, 25, 31, 32 |
 | Event sourcing and immutable logs | 04, 17, 19 |
 | Concurrency control (constraints, locks, OT, single writer) | 16, 18, 19, 33 |
 | Real-time push and WebSockets | 08, 09, 18, 21, 29 |
 | Rate limiting and back-pressure | 02, 10, 17, 20, 22, 25, 29, 30 |
-| Fail-open and failure handling | 02, 10, 17, 19, 27, 30 |
+| Failure handling (fail open, failover, recovery) | 02, 10, 17, 19, 27, 30 |
 | Pre-signed URLs and blob storage | 05, 06, 07, 12, 14 |
-| Control plane vs data plane, steering | 13, 09, 21, 29 |
-| ID generation | 01, 11, 35 |
+| Control plane vs data plane, steering | 13, 29 |
+| ID generation | 01, 09, 11, 35 |
 | Geospatial and time-range indexing | 15, 16 |
 | Search and inverted indexes | 20, 23, 24 |
 | Ranking and recommendation pipelines | 11, 20, 23, 26 |
@@ -136,7 +136,7 @@ npm run dev      # from system-design/ or site/, http://localhost:5173
 npm run build    # static output in site/dist
 ```
 
-Each diagram follows the **C4 model**: switch between **1 · Context**, **2 · Containers** and **3 · Components** (the last only where the notes describe a container's internals). Higher levels roll relationships up from the lower ones. In a diagram: **click an element or a line** for its summary, confidence badge and sources. Pick a **flow** and use **← / →** (or the buttons) to step through it. Dashed borders mark `INDUSTRY PATTERN` components and dotted ones `SPECULATIVE`. Colours follow the C4 palette (person, external system, container, component) and each box shows a `[Type: technology]` line. Drag boxes to untangle lines (kept per view, with a Reset button). The **Notes** tab renders the full note.
+Each diagram follows the **C4 model**: switch between **1 · Context**, **2 · Containers** and **3 · Components** (the last only where the notes describe a container's internals). Higher levels roll relationships up from the lower ones. In a diagram: **click an element or a line** for its summary, confidence badge and sources. Pick a **flow** and use **← / →** (or the buttons) to step through it. Dashed borders mark `INDUSTRY PATTERN` components and dotted ones `SPECULATIVE`. Colours follow the C4 palette (person, external system, container, component) and each box shows a `[Type: technology]` line. Drag boxes to untangle lines (kept per view, with a Reset button). The views are **Graph**, **Split** (diagram and note side by side) and **Text**, and every page opens with a trust summary.
 
 ## Checking the content
 
