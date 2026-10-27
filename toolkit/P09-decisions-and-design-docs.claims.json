@@ -1,0 +1,92 @@
+[
+  {
+    "quote": "Large documents are never kept up to date",
+    "url": "https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "small, modular documents have at least a chance at being updated.",
+    "url": "https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "numbered sequentially and monotonically",
+    "url": "https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "if a decision is reversed, we will keep the old one around, but mark it as superseded",
+    "url": "https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the whole document should be one or two pages long",
+    "url": "https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "its context, and its consequences",
+    "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "when the team accepts an ADR, it becomes immutable",
+    "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "prevents other architects who weren't involved in the decision-making process",
+    "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "relatively informal documents",
+    "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the high level implementation strategy and key design decisions with emphasis on the trade-offs that were considered",
+    "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "when making changes is still cheap",
+    "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Rule #1 is: Write them in whatever form makes the most sense for the particular project.",
+    "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "A clear indicator that a doc might not be necessary are design docs that are really implementation manuals.",
+    "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "every company gets about three innovation tokens",
+    "url": "https://mcfunley.com/choose-boring-technology",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "their failure modes are well understood",
+    "url": "https://mcfunley.com/choose-boring-technology",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]

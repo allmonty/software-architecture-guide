@@ -1,0 +1,20 @@
+[
+  {
+    "quote": "incrementally migrate a legacy system by gradually replacing specific pieces of functionality with new applications and services",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "customers continue to use the same interface and are unaware that a migration is in progress",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "for making a large-scale change to a software system in gradual way that allows you to release the system regularly while the change is still in-progress",
+    "url": "https://martinfowler.com/bliki/BranchByAbstraction.html",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]
