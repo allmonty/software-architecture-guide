@@ -1,0 +1,415 @@
+{
+  "id": "26-recommendation-system",
+  "title": "Recommendation System (Two-Stage ML Ranking)",
+  "kind": "real-system",
+  "nodes": [
+    {
+      "id": "user",
+      "label": "User",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Opens the app and gets a ranked list; their watches, searches and impressions become the next training data.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf"
+      ]
+    },
+    {
+      "id": "api",
+      "label": "Recommendation API",
+      "kind": "edge",
+      "c4": "container",
+      "summary": "Receives a request with user and context, calls the stages, returns the list, and logs impressions and actions. Industry practice.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf"
+      ]
+    },
+    {
+      "id": "candgen",
+      "label": "Candidate generation",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Narrows millions of items to hundreds using a learned user embedding and nearest-neighbour search, and can blend other candidate sources.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf"
+      ],
+      "group": "Candidate generation"
+    },
+    {
+      "id": "usermodel",
+      "label": "User model",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Neural network that turns watch history, search history, demographics, geography, device and example age into a user embedding.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf"
+      ],
+      "parent": "candgen",
+      "group": "Candidate generation"
+    },
+    {
+      "id": "ann",
+      "label": "Nearest-neighbour search",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Approximate search in the dot-product space over video embeddings, sublinear in the number of items, within tens of milliseconds. YouTube found A/B results not sensitive to the algorithm. See note 24.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf"
+      ],
+      "parent": "candgen",
+      "group": "Candidate generation"
+    },
+    {
+      "id": "sources",
+      "label": "Other candidate sources",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Popular, trending, followed or related items blended with the embedding candidates. The YouTube paper says the design enables blending other sources; the specific sources here are our examples.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf"
+      ],
+      "parent": "candgen",
+      "group": "Candidate generation"
+    },
+    {
+      "id": "ranker",
+      "label": "Ranking model",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Deep network scoring each impression of a few hundred candidates with hundreds of features, trained for expected watch time per impression rather than clicks.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf"
+      ]
+    },
+    {
+      "id": "rerank",
+      "label": "Re-ranking and policy",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Removes ineligible or seen items, enforces diversity, adds exploration and business rules. Industry practice.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf"
+      ]
+    },
+    {
+      "id": "features",
+      "label": "Feature store",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Online features such as recent watches, searches and impressions, defined once for training and serving to avoid skew. Serving up-to-the-second impression history is an engineering challenge in itself.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf"
+      ]
+    },
+    {
+      "id": "corpus",
+      "label": "Item corpus and embeddings",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Video catalogue with embeddings used by the nearest-neighbour index; new items must enter quickly because users prefer fresh content.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf"
+      ]
+    },
+    {
+      "id": "events",
+      "label": "Event log (Kafka)",
+      "kind": "queue",
+      "c4": "container",
+      "summary": "One Kafka queue for user actions and another for features, so a streaming job can join them.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2209.07663"
+      ],
+      "technology": "Kafka"
+    },
+    {
+      "id": "joiner",
+      "label": "Online joiner (Flink)",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Joins features with labels from user actions into training examples, using a unique key per request and an on-disk store for late actions; applies negative sampling with log-odds correction at serving.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2209.07663"
+      ],
+      "technology": "Flink"
+    },
+    {
+      "id": "trainer",
+      "label": "Training (batch and online)",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Batch training over history, then online training on real-time examples; the training parameter servers are snapshotted daily.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2209.07663",
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf"
+      ]
+    },
+    {
+      "id": "modelstore",
+      "label": "Serving parameters",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Parameters the serving path uses. Changed sparse embeddings are synchronised from training at about a minute-level interval; dense parameters about daily.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2209.07663"
+      ]
+    },
+    {
+      "id": "abtest",
+      "label": "Alternative: decide by live A/B test",
+      "kind": "service",
+      "c4": "note",
+      "summary": "The YouTube paper uses offline metrics to iterate but relies on live A/B experiments for the final decision, because live results are not always correlated with offline ones.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "user-api",
+      "from": "user",
+      "to": "api",
+      "label": "open home or next item",
+      "mode": "sync"
+    },
+    {
+      "id": "api-user",
+      "from": "api",
+      "to": "user",
+      "label": "ranked list",
+      "mode": "async"
+    },
+    {
+      "id": "api-usermodel",
+      "from": "api",
+      "to": "usermodel",
+      "label": "user and context",
+      "mode": "sync"
+    },
+    {
+      "id": "usermodel-features",
+      "from": "usermodel",
+      "to": "features",
+      "label": "recent watches, searches",
+      "mode": "sync"
+    },
+    {
+      "id": "usermodel-ann",
+      "from": "usermodel",
+      "to": "ann",
+      "label": "user embedding",
+      "mode": "sync"
+    },
+    {
+      "id": "ann-corpus",
+      "from": "ann",
+      "to": "corpus",
+      "label": "nearest item embeddings",
+      "mode": "sync"
+    },
+    {
+      "id": "ann-ranker",
+      "from": "ann",
+      "to": "ranker",
+      "label": "hundreds of candidates",
+      "mode": "sync"
+    },
+    {
+      "id": "sources-ranker",
+      "from": "sources",
+      "to": "ranker",
+      "label": "other candidates",
+      "mode": "sync"
+    },
+    {
+      "id": "ranker-features",
+      "from": "ranker",
+      "to": "features",
+      "label": "rich features",
+      "mode": "sync"
+    },
+    {
+      "id": "ranker-rerank",
+      "from": "ranker",
+      "to": "rerank",
+      "label": "scored list",
+      "mode": "sync"
+    },
+    {
+      "id": "rerank-api",
+      "from": "rerank",
+      "to": "api",
+      "label": "final list",
+      "mode": "sync"
+    },
+    {
+      "id": "api-events",
+      "from": "api",
+      "to": "events",
+      "label": "log impressions and actions",
+      "mode": "async"
+    },
+    {
+      "id": "events-joiner",
+      "from": "events",
+      "to": "joiner",
+      "label": "actions and features",
+      "mode": "async"
+    },
+    {
+      "id": "joiner-trainer",
+      "from": "joiner",
+      "to": "trainer",
+      "label": "training examples",
+      "mode": "async"
+    },
+    {
+      "id": "trainer-model",
+      "from": "trainer",
+      "to": "modelstore",
+      "label": "sync changed parameters",
+      "mode": "async"
+    },
+    {
+      "id": "model-ranker",
+      "from": "modelstore",
+      "to": "ranker",
+      "label": "load parameters",
+      "mode": "sync"
+    },
+    {
+      "id": "model-usermodel",
+      "from": "modelstore",
+      "to": "usermodel",
+      "label": "load parameters",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "serve",
+      "name": "Serving a recommendation list",
+      "steps": [
+        {
+          "edge": "user-api",
+          "caption": "The user opens the home page; the API receives user and context."
+        },
+        {
+          "edge": "api-usermodel",
+          "caption": "The user model builds a user embedding from history and context."
+        },
+        {
+          "edge": "usermodel-ann",
+          "caption": "The embedding is the query for the nearest-neighbour index."
+        },
+        {
+          "edge": "ann-corpus",
+          "caption": "The index returns the closest videos from millions."
+        },
+        {
+          "edge": "ann-ranker",
+          "caption": "Hundreds of candidates go to the ranking model."
+        },
+        {
+          "edge": "ranker-features",
+          "caption": "The ranker fetches many features for the user and each video."
+        },
+        {
+          "edge": "ranker-rerank",
+          "caption": "The scored list goes to re-ranking, which applies filters and diversity."
+        },
+        {
+          "edge": "rerank-api",
+          "caption": "The final list returns to the API."
+        },
+        {
+          "edge": "api-user",
+          "caption": "The user sees dozens of videos."
+        }
+      ]
+    },
+    {
+      "id": "learn",
+      "name": "Learning from what the user does",
+      "steps": [
+        {
+          "edge": "api-events",
+          "caption": "Impressions and actions are logged."
+        },
+        {
+          "edge": "events-joiner",
+          "caption": "The joiner pairs each action with the features shown at the time."
+        },
+        {
+          "edge": "joiner-trainer",
+          "caption": "Training examples reach online training."
+        },
+        {
+          "edge": "trainer-model",
+          "caption": "Changed sparse parameters are pushed to serving at about a minute-level interval."
+        },
+        {
+          "edge": "model-ranker",
+          "caption": "The ranker uses the updated parameters on the next requests."
+        }
+      ]
+    },
+    {
+      "id": "late-action",
+      "name": "An action arrives days after the impression (failure mode)",
+      "steps": [
+        {
+          "edge": "api-events",
+          "caption": "The impression's features were logged when it was shown."
+        },
+        {
+          "edge": "events-joiner",
+          "caption": "Days later the action arrives; the in-memory cache has dropped the features, so the joiner looks in the on-disk store to pair them."
+        }
+      ]
+    },
+    {
+      "id": "ps-failure",
+      "name": "A training server fails (failure)",
+      "steps": [
+        {
+          "edge": "joiner-trainer",
+          "caption": "Examples keep arriving at online training."
+        },
+        {
+          "edge": "trainer-model",
+          "caption": "The failed server is restored from the daily snapshot, losing up to a day of updates, which Monolith found tolerable for quality."
+        }
+      ]
+    },
+    {
+      "id": "stage-down",
+      "name": "The candidate search is down (failure)",
+      "steps": [
+        {
+          "edge": "api-usermodel",
+          "caption": "The API cannot get embedding candidates."
+        },
+        {
+          "edge": "sources-ranker",
+          "caption": "It falls back to other candidate sources such as popular items so the page is not empty (our design reasoning)."
+        }
+      ]
+    }
+  ]
+}
