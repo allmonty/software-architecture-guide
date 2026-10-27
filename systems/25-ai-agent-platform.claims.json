@@ -130,5 +130,41 @@
     "url": "https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "the traditional view is that there is a choice between virtualization with strong security and high overhead, and container technologies with weaker security and minimal overhead",
+    "url": "https://www.usenix.org/system/files/nsdi20-paper-agache.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "96% fewer lines than QEMU",
+    "url": "https://www.usenix.org/system/files/nsdi20-paper-agache.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "memory overhead of less than 5MB per container",
+    "url": "https://www.usenix.org/system/files/nsdi20-paper-agache.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats",
+    "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "agents are stateful and errors compound",
+    "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "resume from where the agent was when the errors occurred",
+    "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+    "via": "direct",
+    "status": "confirmed"
   }
 ]

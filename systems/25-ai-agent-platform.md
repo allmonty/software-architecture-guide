@@ -107,6 +107,28 @@ ReAct has the model generate "reasoning traces and task-specific actions in an i
 
 ---
 
+## 4b. Sandboxing technology: Firecracker `[CONFIRMED]` (Agache et al., NSDI 2020)
+
+Section 5 says model-written code must run in an isolated sandbox. The best-documented example of the isolation technology behind such sandboxes is Firecracker, the virtual machine monitor AWS built for Lambda and Fargate. The paper's framing is the choice an agent platform also faces: "the traditional view is that there is a choice between virtualization with strong security and high overhead, and container technologies with weaker security and minimal overhead", a trade-off the authors call unacceptable for multi-tenant providers. What they built:
+- **Design:** keep the Linux KVM hypervisor, but replace QEMU with a new minimal virtual machine monitor, device model and API for **MicroVMs**. About 50k lines of Rust, "96% fewer lines than QEMU", to shrink the attack surface.
+- **Performance:** with a minimal guest kernel configuration, "memory overhead of less than 5MB per container", boot to application code in under 125 ms, and creation of up to 150 MicroVMs per second per host.
+- **Defence in depth ("jailer"):** Firecracker itself runs inside a restrictive sandbox: a chroot, separate pid and network namespaces, dropped privileges and a seccomp-bpf profile that whitelists 24 syscalls (with argument filtering) and 30 ioctls.
+- **Contrast with containers:** containers share the host kernel and rely on cgroups, namespaces, seccomp-bpf and chroot for isolation; a hypervisor boundary is a smaller and stronger interface. The paper discusses the trade-offs at length.
+
+What this gives an interview answer: a concrete reason to put untrusted generated code in a micro-VM rather than a plain container, and real numbers for start-up time and per-sandbox overhead. It does not tell us how any agent product sandboxes code, and the figures are for Firecracker on AWS hardware in 2020.
+
+## 4c. Lessons from a production multi-agent system `[CONFIRMED]` (Anthropic, June 2025)
+
+Anthropic's engineering post on its multi-agent research system adds production detail to section 2. It uses an **orchestrator-worker** pattern: a lead agent plans, saves its plan to memory, and spawns subagents that search in parallel with their own context windows and return condensed findings. Reported points that matter for platform design:
+- **Cost:** "agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats", so the task must be valuable enough to pay for it. Token usage alone explained 80% of the variance in a browsing benchmark (BrowseComp).
+- **Quality:** a multi-agent system with a larger lead model and smaller subagents outperformed a single larger agent by 90.2% on their internal research evaluation, strongest on breadth-first tasks; they note most coding tasks have fewer parallelisable parts than research.
+- **State and recovery:** "agents are stateful and errors compound"; when errors occur they cannot just restart from the beginning, so they built systems that "resume from where the agent was when the errors occurred".
+- **Deployments:** because agents may be anywhere in their process during an update, they use **rainbow deployments**, gradually shifting traffic from old to new versions while both run.
+- **Debugging:** agents are non-deterministic between runs, which made production tracing necessary.
+- **Limits they report:** lead agents run subagents synchronously, creating bottlenecks (the lead cannot steer subagents and subagents cannot coordinate); early versions made errors such as spawning 50 subagents for simple queries, so effort-scaling rules were embedded in prompts.
+
+These are one company's reported experiences with one product, and the numbers come from its internal evaluations.
+
 ## 5. Reference platform `[INDUSTRY PATTERN]`
 
 No vendor publishes its full agent platform, so this is the standard design:
@@ -155,6 +177,7 @@ Anthropic's diagram of a coding agent shows the loop of reading the task, editin
 
 - Tokens per run grow with steps because each step usually resends the growing history. Ten steps with a context of 20,000 tokens at the end could read on the order of 100,000 input tokens in total, before prompt caching. These numbers are assumptions to show the shape, not measurements.
 - Cost per task ≈ input tokens × input price + output tokens × output price + tool and sandbox costs. Prices vary, so state them as assumptions in an interview.
+- A published data point on the multiplier: Anthropic reports agents using about 4 times and multi-agent systems about 15 times the tokens of a chat interaction (section 4c).
 - Levers: fewer steps (better tools), smaller models for easy steps, prompt caching of the stable prefix, summarising old turns, stopping early.
 
 ---
@@ -164,8 +187,8 @@ Anthropic's diagram of a coding agent shows the loop of reading the task, editin
 1. **Anthropic's post is guidance from one vendor's experience,** not a benchmark. It contains no measured platform design.
 2. **ReAct's numbers are from 2022-era models** (the paper uses PaLM) and specific benchmarks; do not read them as current model performance.
 3. **MCP is a living specification.** We read version 2025-06-18; later versions may differ.
-4. **Platform pieces (state, sandbox, approvals, budgets, tracing) are industry practice,** not sourced claims. The sandbox design in particular is our reasoning; we read no primary source on sandbox technology.
-5. **Not read:** other agent papers (Reflexion, Toolformer, SWE-agent), agent evaluation benchmarks beyond mentions, vendor agent SDK documentation, container or microVM isolation documentation.
+4. **Platform pieces (state, sandbox, approvals, budgets, tracing) are industry practice,** not sourced claims. The sandbox policy (no network, no secrets, short lifetime) is our reasoning; Firecracker (section 4b) documents the isolation technology but not agent-specific policy.
+5. **Not read:** other agent papers (Reflexion, Toolformer, SWE-agent), agent evaluation benchmarks beyond mentions, vendor agent SDK documentation, gVisor and container isolation documentation.
 
 ---
 
@@ -241,9 +264,9 @@ Assume tool and web content is hostile. Keep the agent's permissions narrow so a
 ## Sources and provenance
 
 > **Kind:** reference design with real parts. The workflow and agent guidance, the MCP protocol and the ReAct method are published. How any vendor runs an agent platform is not, so the platform in section 5 is the standard design `[INDUSTRY PATTERN]`.
-> **Sources read on 2026-10-27:** Schluntz and Zhang, Anthropic, [*Building effective agents*](https://www.anthropic.com/engineering/building-effective-agents) (19 December 2024; read through an Internet Archive copy) · Model Context Protocol, specification version 2025-06-18: [Architecture](https://modelcontextprotocol.io/specification/2025-06-18/architecture), [Lifecycle](https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle) and [Tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools) · Yao et al., [*ReAct: Synergizing Reasoning and Acting in Language Models*](https://arxiv.org/pdf/2210.03629) (ICLR 2023; PDF text extracted locally).
+> **Sources read on 2026-10-27:** Schluntz and Zhang, Anthropic, [*Building effective agents*](https://www.anthropic.com/engineering/building-effective-agents) (19 December 2024; read through an Internet Archive copy) · Model Context Protocol, specification version 2025-06-18: [Architecture](https://modelcontextprotocol.io/specification/2025-06-18/architecture), [Lifecycle](https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle) and [Tools](https://modelcontextprotocol.io/specification/2025-06-18/server/tools) · Yao et al., [*ReAct: Synergizing Reasoning and Acting in Language Models*](https://arxiv.org/pdf/2210.03629) (ICLR 2023; PDF text extracted locally) · Agache et al., [*Firecracker: Lightweight Virtualization for Serverless Applications*](https://www.usenix.org/system/files/nsdi20-paper-agache.pdf) (NSDI 2020; PDF text extracted locally) · Anthropic, [*How we built our multi-agent research system*](https://www.anthropic.com/engineering/multi-agent-research-system) (June 2025; read through an Internet Archive copy).
 > **Dated material:** guidance from December 2024, a protocol version from June 2025 and a 2022 paper. This field changes quickly.
-> **Not read:** other agent research and benchmarks, vendor agent SDKs, sandbox technology documentation.
+> **Not read:** other agent research and benchmarks, vendor agent SDKs, gVisor and container isolation documentation.
 > **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible or illustrative.
 
 ---
@@ -253,5 +276,7 @@ Assume tool and web content is hostile. Keep the agent's permissions narrow so a
 - Verified in Anthropic's post: workflow and agent definitions, simplicity advice, the five workflow patterns, agent loop description, stopping conditions, sandbox and guardrail recommendation, framework caution, tool-design advice including absolute file paths and time spent on tools, coding agent verification by tests and human review.
 - Verified in the MCP specification (2025-06-18): client-host-server architecture, host and client responsibilities, isolation principle, initialize and initialized handshake, timeout recommendation, tools capability and `tools/list`, `tools/call`, human-in-the-loop recommendation, `isError`, untrusted annotations, server and client security requirements.
 - Verified in the ReAct paper: abstract claims, 34% and 10% gains, HotpotQA and Fever comparisons (27.4 vs 29.4, 60.9 vs 56.3), Table 2 failure shares (47%, 23%, 56%), repetition pattern, back-off at 7 and 5 steps.
+- Verified in the Firecracker paper: the isolation trade-off statement, KVM with a replacement minimal VMM, about 50k lines of Rust (96% fewer than QEMU), under 5 MB memory overhead, boot under 125 ms, 150 MicroVMs per second per host, the jailer's chroot, namespaces, privilege drop and seccomp profile (24 syscalls, 30 ioctls).
+- Verified in Anthropic's multi-agent post: the 4 times and 15 times token figures, 80% variance explained by token usage, 90.2% internal evaluation gain, resume-from-error and rainbow-deployment statements, synchronous-subagent limitation.
 - Labelled industry pattern, not sourced: orchestrator state and checkpointing, tool gateway and credentials, sandbox design, budgets, approvals, injection defences, async execution, observability, evaluation harness, cost arithmetic.
 - Not claimed: how any specific vendor's agent product is built.

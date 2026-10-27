@@ -120,10 +120,11 @@
       "label": "Sandbox pool",
       "kind": "service",
       "c4": "container",
-      "summary": "Isolated, short-lived environments where model-written code or commands run: no platform secrets, restricted network, resource limits. Anthropic recommends extensive testing in sandboxed environments; the design is ours.",
+      "summary": "Isolated, short-lived environments where model-written code or commands run: no platform secrets, restricted network, resource limits. Firecracker documents the isolation technology (KVM micro-VMs, under 5 MB overhead, boot under 125 ms); the agent-specific policy is our design. Anthropic recommends extensive testing in sandboxed environments.",
       "confidence": "INDUSTRY PATTERN",
       "sources": [
-        "https://www.anthropic.com/engineering/building-effective-agents"
+        "https://www.anthropic.com/engineering/building-effective-agents",
+        "https://www.usenix.org/system/files/nsdi20-paper-agache.pdf"
       ]
     },
     {
