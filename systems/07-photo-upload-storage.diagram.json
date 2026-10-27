@@ -5,13 +5,14 @@
   "nodes": [
     {
       "id": "client",
-      "label": "Client (mobile / web)",
+      "label": "User (mobile / web app)",
       "kind": "client",
       "summary": "Uploads photos and views them at several sizes.",
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html"
-      ]
+      ],
+      "c4": "person"
     },
     {
       "id": "api",
@@ -22,7 +23,8 @@
       "sources": [
         "https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html"
       ],
-      "details": "Presigned URLs grant time-limited access to upload a specific key and act as bearer tokens, so use short expiry and unique keys. Facebook's 2010 Haystack uploads went through a web server instead."
+      "details": "Presigned URLs grant time-limited access to upload a specific key and act as bearer tokens, so use short expiry and unique keys. Facebook's 2010 Haystack uploads went through a web server instead.",
+      "c4": "container"
     },
     {
       "id": "blob",
@@ -33,7 +35,8 @@
       "sources": [
         "https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html"
       ],
-      "details": "This is the generic stand-in for the upload half. It is not Haystack."
+      "details": "This is the generic stand-in for the upload half. It is not Haystack.",
+      "c4": "container"
     },
     {
       "id": "web",
@@ -44,7 +47,9 @@
       "sources": [
         "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf"
       ],
-      "group": "Facebook (2010)"
+      "group": "Facebook (2010)",
+      "c4": "component",
+      "parent": "haystack"
     },
     {
       "id": "dir",
@@ -55,7 +60,9 @@
       "sources": [
         "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf"
       ],
-      "group": "Facebook (2010)"
+      "group": "Facebook (2010)",
+      "c4": "component",
+      "parent": "haystack"
     },
     {
       "id": "cdn",
@@ -66,7 +73,8 @@
       "sources": [
         "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf",
         "https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "cache",
@@ -77,7 +85,9 @@
       "sources": [
         "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf"
       ],
-      "group": "Facebook (2010)"
+      "group": "Facebook (2010)",
+      "c4": "component",
+      "parent": "haystack"
     },
     {
       "id": "store",
@@ -89,7 +99,9 @@
         "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf"
       ],
       "details": "Append-only. Deletes set a flag. Compaction reclaims space. About 25% of photos are deleted within a year.",
-      "group": "Facebook (2010)"
+      "group": "Facebook (2010)",
+      "c4": "component",
+      "parent": "haystack"
     },
     {
       "id": "router",
@@ -100,7 +112,9 @@
       "sources": [
         "https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf"
       ],
-      "group": "Facebook (2014)"
+      "group": "Facebook (2014)",
+      "c4": "component",
+      "parent": "warm"
     },
     {
       "id": "f4",
@@ -112,7 +126,10 @@
         "https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf"
       ],
       "details": "Cell: 14 racks × 15 hosts × 30 4TB drives (at the time). Delete = delete the per-BLOB encryption key. Index files are triple replicated.",
-      "group": "Facebook (2014)"
+      "group": "Facebook (2014)",
+      "c4": "component",
+      "parent": "warm",
+      "technology": "Reed-Solomon (10,4)"
     },
     {
       "id": "graph",
@@ -122,7 +139,8 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "worker",
@@ -133,7 +151,32 @@
       "sources": [
         "https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html"
       ],
-      "details": "Haystack scaled each photo to four sizes at upload time. The async worker is the modern equivalent."
+      "details": "Haystack scaled each photo to four sizes at upload time. The async worker is the modern equivalent.",
+      "c4": "container"
+    },
+    {
+      "id": "haystack",
+      "label": "Haystack storage (2010)",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Facebook's 2010 photo store: web tier, Directory, Cache and Store machines.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf"
+      ],
+      "details": "Grouping container: it names the units the sources describe together. The components inside it are listed in the Components view."
+    },
+    {
+      "id": "warm",
+      "label": "Warm storage (2014)",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Facebook's 2014 warm tier: router/transformer tier and f4 erasure-coded cells.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf"
+      ],
+      "details": "Grouping container: it names the units the sources describe together. The components inside it are listed in the Components view."
     }
   ],
   "edges": [

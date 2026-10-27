@@ -14,7 +14,8 @@
         "https://dropbox.tech/infrastructure/-testing-our-new-sync-engine"
       ],
       "details": "Deterministic Control thread, fuzzed with seeded randomized simulation (CanopyCheck for the planner, Trinity for concurrency). Moves are atomic and shared items have globally unique IDs.",
-      "group": "clients"
+      "group": "clients",
+      "c4": "container"
     },
     {
       "id": "dev-b",
@@ -26,7 +27,8 @@
         "https://dropbox.tech/infrastructure/rewriting-the-heart-of-our-sync-engine",
         "https://dropbox.tech/infrastructure/-testing-our-new-sync-engine"
       ],
-      "group": "clients"
+      "group": "clients",
+      "c4": "container"
     },
     {
       "id": "meta",
@@ -38,7 +40,9 @@
         "https://dropbox.tech/infrastructure/streaming-file-synchronization",
         "https://dropbox.tech/infrastructure/reintroducing-edgestore"
       ],
-      "details": "The post describes the commit call returning \"need blocks\". The server component's name and layout beyond that are not given."
+      "details": "The post describes the commit call returning \"need blocks\". The server component's name and layout beyond that are not given.",
+      "c4": "container",
+      "technology": "Edgestore (sharded MySQL)"
     },
     {
       "id": "edge",
@@ -49,7 +53,9 @@
       "sources": [
         "https://dropbox.tech/infrastructure/reintroducing-edgestore"
       ],
-      "details": "As of that post: several trillion entries, millions of queries per second, 5–9s availability. Older figures."
+      "details": "As of that post: several trillion entries, millions of queries per second, 5–9s availability. Older figures.",
+      "c4": "container",
+      "technology": "Sharded MySQL"
     },
     {
       "id": "block",
@@ -60,7 +66,8 @@
       "sources": [
         "https://dropbox.tech/infrastructure/streaming-file-synchronization"
       ],
-      "details": "Blocks are up to 4 MB, SHA-256 hashed. The downloader aims to stay \"just one blockserver network call behind the uploading client\"."
+      "details": "Blocks are up to 4 MB, SHA-256 hashed. The downloader aims to stay \"just one blockserver network call behind the uploading client\".",
+      "c4": "container"
     },
     {
       "id": "bindex",
@@ -71,7 +78,9 @@
       "sources": [
         "https://dropbox.tech/infrastructure/inside-the-magic-pocket"
       ],
-      "group": "Magic Pocket"
+      "group": "Magic Pocket",
+      "c4": "component",
+      "parent": "magic-pocket"
     },
     {
       "id": "cell",
@@ -85,7 +94,9 @@
         "https://dropbox.tech/infrastructure/magic-pocket-infrastructure"
       ],
       "details": "The erasure-coding scheme and parameters are not given in the posts. Blocks are immutable. Repair starts when a node is offline for 15 minutes.",
-      "group": "Magic Pocket"
+      "group": "Magic Pocket",
+      "c4": "component",
+      "parent": "magic-pocket"
     },
     {
       "id": "zones",
@@ -97,7 +108,9 @@
         "https://dropbox.tech/infrastructure/inside-the-magic-pocket"
       ],
       "details": "Zones: western, central and eastern US (as of the post).",
-      "group": "Magic Pocket"
+      "group": "Magic Pocket",
+      "c4": "component",
+      "parent": "magic-pocket"
     },
     {
       "id": "notify",
@@ -108,7 +121,33 @@
       "sources": [
         "https://dropbox.tech/infrastructure/streaming-file-synchronization"
       ],
-      "details": "Treat as a design placeholder, not a statement about Dropbox's implementation."
+      "details": "Treat as a design placeholder, not a statement about Dropbox's implementation.",
+      "c4": "container"
+    },
+    {
+      "id": "magic-pocket",
+      "label": "Magic Pocket (block store)",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Dropbox's in-house immutable block store: Block Index, cells of buckets and volumes, and a second zone.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://dropbox.tech/infrastructure/inside-the-magic-pocket",
+        "https://dropbox.tech/infrastructure/improving-storage-efficiency-in-magic-pocket-our-immutable-blob-store",
+        "https://dropbox.tech/infrastructure/magic-pocket-infrastructure"
+      ],
+      "details": "Grouping container: it names the units the sources describe together. The components inside it are listed in the Components view."
+    },
+    {
+      "id": "user",
+      "label": "Dropbox user",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Edits files on one or more devices.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://dropbox.tech/infrastructure/rewriting-the-heart-of-our-sync-engine"
+      ]
     }
   ],
   "edges": [
@@ -188,6 +227,20 @@
       "from": "dev-b",
       "to": "block",
       "label": "download blocks",
+      "mode": "sync"
+    },
+    {
+      "id": "user-a",
+      "from": "user",
+      "to": "dev-a",
+      "label": "edits files",
+      "mode": "sync"
+    },
+    {
+      "id": "user-b",
+      "from": "user",
+      "to": "dev-b",
+      "label": "sees changes",
       "mode": "sync"
     }
   ],

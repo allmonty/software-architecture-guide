@@ -5,14 +5,15 @@
   "nodes": [
     {
       "id": "creator",
-      "label": "Creator client",
+      "label": "Creator",
       "kind": "client",
       "summary": "Starts a resumable upload (POST returns a session URI, then PUT bytes) and can resume after a drop with Content-Range: bytes */N and a 308 response.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://developers.google.com/youtube/v3/guides/using_resumable_upload_protocol"
       ],
-      "details": "Limits: 256 GB or 12 hours, whichever is less (15 minutes by default for unverified accounts)."
+      "details": "Limits: 256 GB or 12 hours, whichever is less (15 minutes by default for unverified accounts).",
+      "c4": "person"
     },
     {
       "id": "api",
@@ -23,7 +24,8 @@
       "sources": [
         "https://newsletter.systemdesign.one/p/youtube-system-design",
         "https://developers.google.com/youtube/v3/guides/using_resumable_upload_protocol"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "raw",
@@ -33,7 +35,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://newsletter.systemdesign.one/p/youtube-system-design"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "queue",
@@ -43,7 +46,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://newsletter.systemdesign.one/p/youtube-system-design"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "orch",
@@ -54,7 +58,8 @@
       "sources": [
         "https://newsletter.systemdesign.one/p/youtube-system-design"
       ],
-      "details": "Chunk length and ladder rungs in the baseline are illustrative. YouTube has not published them."
+      "details": "Chunk length and ladder rungs in the baseline are illustrative. YouTube has not published them.",
+      "c4": "container"
     },
     {
       "id": "vcu",
@@ -65,7 +70,8 @@
       "sources": [
         "https://blog.youtube/inside-youtube/new-era-video-infrastructure/"
       ],
-      "details": "Blog dated 2021-04-21. Whether every YouTube encode runs on the VCU is not stated."
+      "details": "Blog dated 2021-04-21. Whether every YouTube encode runs on the VCU is not stated.",
+      "c4": "container"
     },
     {
       "id": "segments",
@@ -76,7 +82,8 @@
       "sources": [
         "https://datatracker.ietf.org/doc/html/rfc8216"
       ],
-      "details": "Segments are static, cacheable files, ideal for CDNs."
+      "details": "Segments are static, cacheable files, ideal for CDNs.",
+      "c4": "container"
     },
     {
       "id": "cdn",
@@ -87,7 +94,8 @@
       "sources": [
         "https://newsletter.systemdesign.one/p/youtube-system-design"
       ],
-      "details": "Google and Netflix both run ISP-embedded caches (Google Global Cache, Open Connect)."
+      "details": "Google and Netflix both run ISP-embedded caches (Google Global Cache, Open Connect).",
+      "c4": "container"
     },
     {
       "id": "meta",
@@ -97,7 +105,9 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://vitess.io/docs/overview/history/"
-      ]
+      ],
+      "c4": "container",
+      "technology": "Vitess / MySQL"
     },
     {
       "id": "search",
@@ -107,18 +117,20 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://newsletter.systemdesign.one/p/youtube-system-design"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "viewer",
-      "label": "Viewer client",
+      "label": "Viewer",
       "kind": "client",
       "summary": "Fetches the manifest, starts on a low rendition and adapts per segment from measured throughput and buffer.",
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://datatracker.ietf.org/doc/html/rfc8216",
         "https://newsletter.systemdesign.one/p/youtube-system-design"
-      ]
+      ],
+      "c4": "person"
     },
     {
       "id": "views",
@@ -128,7 +140,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://newsletter.systemdesign.one/p/youtube-system-design"
-      ]
+      ],
+      "c4": "container"
     }
   ],
   "edges": [

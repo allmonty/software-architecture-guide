@@ -5,14 +5,15 @@
   "nodes": [
     {
       "id": "client",
-      "label": "Game client",
+      "label": "Player",
       "kind": "client",
       "summary": "Pings candidate regions, queues for a mode (solo or party), receives push events, then connects to a dedicated game server.",
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://open-match.dev/site/docs/guides/matchmaker/"
       ],
-      "group": "player"
+      "group": "player",
+      "c4": "person"
     },
     {
       "id": "frontend",
@@ -23,7 +24,9 @@
       "sources": [
         "https://open-match.dev/site/docs/guides/matchmaker/"
       ],
-      "group": "matchmaking"
+      "group": "matchmaking",
+      "c4": "component",
+      "parent": "openmatch"
     },
     {
       "id": "tickets",
@@ -34,7 +37,9 @@
       "sources": [
         "https://open-match.dev/site/docs/guides/matchmaker/"
       ],
-      "group": "matchmaking"
+      "group": "matchmaking",
+      "c4": "component",
+      "parent": "openmatch"
     },
     {
       "id": "director",
@@ -45,7 +50,9 @@
       "sources": [
         "https://open-match.dev/site/docs/guides/matchmaker/"
       ],
-      "group": "matchmaking"
+      "group": "matchmaking",
+      "c4": "component",
+      "parent": "openmatch"
     },
     {
       "id": "mmf",
@@ -58,7 +65,9 @@
         "https://open-match.dev/site/docs/overview/"
       ],
       "details": "Open Match's overview says nothing about rating or MMR. Those rules are yours to write.",
-      "group": "matchmaking"
+      "group": "matchmaking",
+      "c4": "component",
+      "parent": "openmatch"
     },
     {
       "id": "evaluator",
@@ -69,7 +78,9 @@
       "sources": [
         "https://open-match.dev/site/docs/guides/matchmaker/"
       ],
-      "group": "matchmaking"
+      "group": "matchmaking",
+      "c4": "component",
+      "parent": "openmatch"
     },
     {
       "id": "rating",
@@ -81,7 +92,8 @@
         "https://www.microsoft.com/en-us/research/publication/trueskilltm-a-bayesian-skill-rating-system/"
       ],
       "details": "TrueSkill is a Bayesian generalisation of Elo. It tracks uncertainty, models draws, handles any number of entities and infers individual skills from team results. Confirmed: TrueSkill (abstract) tracks uncertainty, models draws and infers individual skill from team results. Running it asynchronously after the match is our design choice.",
-      "group": "matchmaking"
+      "group": "matchmaking",
+      "c4": "container"
     },
     {
       "id": "alloc",
@@ -93,7 +105,10 @@
         "https://agones.dev/site/docs/reference/gameserverallocation/"
       ],
       "details": "Packed (default) bin-packs for dynamic clusters. Distributed spreads across static ones.",
-      "group": "servers"
+      "group": "servers",
+      "c4": "component",
+      "parent": "agones",
+      "technology": "Kubernetes (Agones)"
     },
     {
       "id": "fleet",
@@ -105,7 +120,9 @@
         "https://agones.dev/site/docs/reference/fleet/",
         "https://agones.dev/site/docs/reference/gameserverallocation/"
       ],
-      "group": "servers"
+      "group": "servers",
+      "c4": "component",
+      "parent": "agones"
     },
     {
       "id": "gs",
@@ -116,7 +133,8 @@
       "sources": [
         "https://agones.dev/site/docs/reference/gameserverallocation/"
       ],
-      "group": "servers"
+      "group": "servers",
+      "c4": "container"
     },
     {
       "id": "chat",
@@ -128,7 +146,8 @@
         "https://technology.riotgames.com/news/chat-service-architecture-servers"
       ],
       "details": "Riot (2015): offline messages persisted until next login (MySQL legacy, Riak newer shards). Load tests to at least 30 servers.",
-      "group": "lobby"
+      "group": "lobby",
+      "c4": "container"
     },
     {
       "id": "push",
@@ -140,7 +159,34 @@
         "https://technology.riotgames.com/news/riot-messaging-service"
       ],
       "details": "Riot's RMS (2017). Using it for matchmaking events is our application of the published design. Confirmed: Riot's RMS pushes service-to-client messages over WebSockets with Edge and Routing tiers. Using it for match-found and ready-check events is our application of that design.",
-      "group": "lobby"
+      "group": "lobby",
+      "c4": "container"
+    },
+    {
+      "id": "openmatch",
+      "label": "Open Match",
+      "kind": "service",
+      "c4": "container",
+      "summary": "The matchmaking framework: Game Frontend, ticket pool, Director, Match Function and Evaluator.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://open-match.dev/site/docs/guides/matchmaker/",
+        "https://open-match.dev/site/docs/overview/"
+      ],
+      "details": "Grouping container: it names the units the sources describe together. The components inside it are listed in the Components view."
+    },
+    {
+      "id": "agones",
+      "label": "Agones",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Game-server fleets on Kubernetes and atomic allocation.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://agones.dev/site/docs/reference/gameserverallocation/",
+        "https://agones.dev/site/docs/reference/fleet/"
+      ],
+      "details": "Grouping container: it names the units the sources describe together. The components inside it are listed in the Components view."
     }
   ],
   "edges": [

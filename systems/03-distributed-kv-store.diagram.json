@@ -5,14 +5,15 @@
   "nodes": [
     {
       "id": "client",
-      "label": "Client",
+      "label": "Client application",
       "kind": "client",
       "summary": "Calls get(key) and put(key, context, object). The context carries the vector-clock version it read.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
       ],
-      "details": "Paper §4.1: get returns one object or a list of conflicting versions plus a context. Keys and objects are opaque byte arrays; an MD5 hash of the key picks the ring position."
+      "details": "Paper §4.1: get returns one object or a list of conflicting versions plus a context. Keys and objects are opaque byte arrays; an MD5 hash of the key picks the ring position.",
+      "c4": "external-system"
     },
     {
       "id": "coord",
@@ -23,7 +24,9 @@
       "sources": [
         "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
       ],
-      "details": "Paper §4.5, §5: the write coordinator is chosen as the node that replied fastest to the previous read, to avoid overloading the first node and improve 99.9th-percentile latency."
+      "details": "Paper §4.5, §5: the write coordinator is chosen as the node that replied fastest to the previous read, to avoid overloading the first node and improve 99.9th-percentile latency.",
+      "c4": "container",
+      "technology": "Java (per the paper)"
     },
     {
       "id": "rep1",
@@ -34,7 +37,8 @@
       "sources": [
         "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
       ],
-      "details": "N−1 clockwise successors, skipping positions so every replica is a distinct physical node (§4.3)."
+      "details": "N−1 clockwise successors, skipping positions so every replica is a distinct physical node (§4.3).",
+      "c4": "container"
     },
     {
       "id": "rep2",
@@ -44,7 +48,8 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "down",
@@ -55,7 +60,8 @@
       "sources": [
         "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
       ],
-      "details": "With a sloppy quorum, its replica goes to the next healthy node instead (§4.6)."
+      "details": "With a sloppy quorum, its replica goes to the next healthy node instead (§4.6).",
+      "c4": "container"
     },
     {
       "id": "hint",
@@ -66,7 +72,8 @@
       "sources": [
         "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
       ],
-      "details": "§4.6 hinted handoff. Works best when churn is low. If the stand-in disappears first, anti-entropy has to repair."
+      "details": "§4.6 hinted handoff. Works best when churn is low. If the stand-in disappears first, anti-entropy has to repair.",
+      "c4": "container"
     },
     {
       "id": "clock",
@@ -77,7 +84,9 @@
       "sources": [
         "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
       ],
-      "details": "§4.4. Truncated when the clock exceeds a threshold (\"say 10\") by dropping the oldest pair. Cassandra instead uses per-mutation timestamps and last-write-wins (Cassandra docs)."
+      "details": "§4.4. Truncated when the clock exceeds a threshold (\"say 10\") by dropping the oldest pair. Cassandra instead uses per-mutation timestamps and last-write-wins (Cassandra docs).",
+      "c4": "component",
+      "parent": "coord"
     },
     {
       "id": "merkle",
@@ -89,7 +98,9 @@
         "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
         "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html"
       ],
-      "details": "Paper §4.7. Cassandra also uses Merkle trees and adds sub-range and incremental repair."
+      "details": "Paper §4.7. Cassandra also uses Merkle trees and adds sub-range and incremental repair.",
+      "c4": "component",
+      "parent": "coord"
     },
     {
       "id": "gossip",
@@ -101,7 +112,9 @@
         "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
         "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html"
       ],
-      "details": "Paper §4.8. Failure detection is local to each node. Cassandra: Phi Accrual detector on every node."
+      "details": "Paper §4.8. Failure detection is local to each node. Cassandra: Phi Accrual detector on every node.",
+      "c4": "component",
+      "parent": "coord"
     },
     {
       "id": "engine",
@@ -111,7 +124,10 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
-      ]
+      ],
+      "c4": "component",
+      "parent": "coord",
+      "technology": "Berkeley DB, MySQL or in-memory"
     }
   ],
   "edges": [

@@ -5,13 +5,14 @@
   "nodes": [
     {
       "id": "producer",
-      "label": "Producers",
+      "label": "Producing services",
       "kind": "client",
       "summary": "Services, schedulers and campaign jobs that request notifications. They retry, so every request carries an idempotency key.",
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html"
-      ]
+      ],
+      "c4": "external-system"
     },
     {
       "id": "ingest",
@@ -22,7 +23,8 @@
       "sources": [
         "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html"
       ],
-      "details": "Idempotency keys matter because queues deliver at-least-once, so the same logical notification can arrive twice."
+      "details": "Idempotency keys matter because queues deliver at-least-once, so the same logical notification can arrive twice.",
+      "c4": "container"
     },
     {
       "id": "dedup",
@@ -32,7 +34,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "orch",
@@ -43,7 +46,8 @@
       "sources": [
         "https://developer.apple.com/documentation/usernotifications/handling-notification-responses-from-apns"
       ],
-      "details": "APNs returns 429 for too many consecutive requests to one token, which is one reason to cap per-user frequency."
+      "details": "APNs returns 429 for too many consecutive requests to one token, which is one reason to cap per-user frequency.",
+      "c4": "container"
     },
     {
       "id": "prefs",
@@ -54,7 +58,8 @@
       "sources": [
         "https://firebase.google.com/docs/cloud-messaging/manage-tokens"
       ],
-      "details": "Store a timestamp with every token, delete on APNs 410 Unregistered and FCM UNREGISTERED (404)."
+      "details": "Store a timestamp with every token, delete on APNs 410 Unregistered and FCM UNREGISTERED (404).",
+      "c4": "container"
     },
     {
       "id": "qhigh",
@@ -65,7 +70,8 @@
       "sources": [
         "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html"
       ],
-      "details": "Standard queues give at-least-once delivery and best-effort ordering, so workers must be idempotent."
+      "details": "Standard queues give at-least-once delivery and best-effort ordering, so workers must be idempotent.",
+      "c4": "container"
     },
     {
       "id": "qnorm",
@@ -75,7 +81,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "qemail",
@@ -85,7 +92,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "workers",
@@ -97,7 +105,8 @@
         "https://developer.apple.com/documentation/usernotifications/handling-notification-responses-from-apns",
         "https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns"
       ],
-      "details": "APNs: do not retry BadDeviceToken, DeviceTokenNotForTopic, Forbidden, ExpiredToken, Unregistered or PayloadTooLarge. 5xx can be retried with back-off, 15 minutes after a Shutdown."
+      "details": "APNs: do not retry BadDeviceToken, DeviceTokenNotForTopic, Forbidden, ExpiredToken, Unregistered or PayloadTooLarge. 5xx can be retried with back-off, 15 minutes after a Shutdown.",
+      "c4": "container"
     },
     {
       "id": "dlq",
@@ -107,7 +116,8 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "apns",
@@ -118,7 +128,8 @@
       "sources": [
         "https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns",
         "https://developer.apple.com/documentation/usernotifications/handling-notification-responses-from-apns"
-      ]
+      ],
+      "c4": "external-system"
     },
     {
       "id": "fcm",
@@ -129,18 +140,20 @@
       "sources": [
         "https://firebase.google.com/docs/cloud-messaging/customize-messages/setting-message-lifespan",
         "https://firebase.google.com/docs/cloud-messaging/android-message-priority"
-      ]
+      ],
+      "c4": "external-system"
     },
     {
       "id": "device",
-      "label": "User device",
+      "label": "End user (device)",
       "kind": "client",
       "summary": "Receives the push, may show only the latest if several were stored while offline.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns",
         "https://firebase.google.com/docs/cloud-messaging/customize-messages/setting-message-lifespan"
-      ]
+      ],
+      "c4": "person"
     }
   ],
   "edges": [

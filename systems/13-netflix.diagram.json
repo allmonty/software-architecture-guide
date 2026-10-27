@@ -5,14 +5,15 @@
   "nodes": [
     {
       "id": "client",
-      "label": "Netflix client",
+      "label": "Member",
       "kind": "client",
       "summary": "Presses play, receives a rank-ordered list of OCA URLs and streams from the top-ranked one. Content is optimised dynamically per device and network conditions.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
         "https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c"
-      ]
+      ],
+      "c4": "person"
     },
     {
       "id": "playback",
@@ -24,7 +25,9 @@
         "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
         "https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c"
       ],
-      "group": "Control plane (AWS)"
+      "group": "Control plane (AWS)",
+      "c4": "component",
+      "parent": "control"
     },
     {
       "id": "steer",
@@ -37,7 +40,9 @@
         "https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c"
       ],
       "details": "Proximity rank is by network proximity alone, from BGP-advertised IP ranges: the OCA site advertising the longest, most specific matching prefix is first.",
-      "group": "Control plane (AWS)"
+      "group": "Control plane (AWS)",
+      "c4": "component",
+      "parent": "control"
     },
     {
       "id": "ccs",
@@ -50,7 +55,9 @@
         "https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c"
       ],
       "details": "The control plane services control fill behaviour (adding new files nightly), compute file storage/hashing and handle playback telemetry.",
-      "group": "Control plane (AWS)"
+      "group": "Control plane (AWS)",
+      "c4": "component",
+      "parent": "control"
     },
     {
       "id": "oca-isp",
@@ -63,7 +70,9 @@
         "https://openconnect.netflix.com/en/"
       ],
       "details": "Storage servers: mostly HDD, 200 TB+, ~40 Gbps. Flash servers: SSD, up to ~100 Gbps, up to 18 TB (2017 post).",
-      "group": "Open Connect (data plane)"
+      "group": "Open Connect (data plane)",
+      "c4": "component",
+      "parent": "openconnect"
     },
     {
       "id": "oca-ix",
@@ -75,7 +84,9 @@
         "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
         "https://openconnect.netflix.com/en/"
       ],
-      "group": "Open Connect (data plane)"
+      "group": "Open Connect (data plane)",
+      "c4": "component",
+      "parent": "openconnect"
     },
     {
       "id": "fill",
@@ -87,7 +98,9 @@
         "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
         "https://netflixtechblog.com/distributing-content-to-open-connect-3e3e391d4dc9"
       ],
-      "group": "Open Connect (data plane)"
+      "group": "Open Connect (data plane)",
+      "c4": "component",
+      "parent": "openconnect"
     },
     {
       "id": "kafka",
@@ -97,7 +110,35 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c"
-      ]
+      ],
+      "c4": "container"
+    },
+    {
+      "id": "control",
+      "label": "Control plane (AWS)",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Playback Apps, the Steering Service and the Cache Control Service, running in AWS.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+        "https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c"
+      ],
+      "details": "Grouping container: it names the units the sources describe together. The components inside it are listed in the Components view."
+    },
+    {
+      "id": "openconnect",
+      "label": "Open Connect CDN",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Netflix's CDN: appliances in ISPs and IXPs plus the nightly fill process.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+        "https://openconnect.netflix.com/en/",
+        "https://netflixtechblog.com/distributing-content-to-open-connect-3e3e391d4dc9"
+      ],
+      "details": "Grouping container: it names the units the sources describe together. The components inside it are listed in the Components view."
     }
   ],
   "edges": [

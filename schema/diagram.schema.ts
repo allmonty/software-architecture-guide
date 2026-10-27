@@ -9,6 +9,12 @@ const Node = z.object({
   id: Id,
   label: z.string().min(1),
   kind: z.enum(["client", "edge", "service", "datastore", "queue", "external"]),
+  // C4 role: person and external-system are outside the system. Containers are runnable or deployable
+  // units and data stores. Components live inside a container (set `parent`). "note" is an annotation
+  // (e.g. an alternative approach) that is not part of the architecture.
+  c4: z.enum(["person", "external-system", "container", "component", "note"]),
+  technology: z.string().optional(),
+  parent: Id.optional(),
   group: z.string().optional(),
   summary: z.string().min(1),
   details: z.string().optional(), // markdown

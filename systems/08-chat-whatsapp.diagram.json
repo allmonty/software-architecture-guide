@@ -5,7 +5,7 @@
   "nodes": [
     {
       "id": "alice",
-      "label": "Alice's device",
+      "label": "Alice (sender)",
       "kind": "client",
       "summary": "Encrypts each message per recipient device with a Signal pairwise session (client-fanout). Holds a local message DB and retries with client-generated IDs.",
       "confidence": "INDUSTRY PATTERN",
@@ -13,18 +13,20 @@
         "https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf",
         "https://engineering.fb.com/2021/07/14/security/whatsapp-multi-device/"
       ],
-      "details": "Message key: AES256-CBC + HMAC-SHA256, new key per message via hash ratchet plus DH ratchet. Transport to the server is wrapped in a Noise Pipes channel (Curve25519, AES-GCM, SHA256). Confirmed (whitepaper, Meta Engineering): per-device client-fanout encryption with Signal sessions. Client-generated message IDs for idempotent retries are the standard design, not stated by WhatsApp."
+      "details": "Message key: AES256-CBC + HMAC-SHA256, new key per message via hash ratchet plus DH ratchet. Transport to the server is wrapped in a Noise Pipes channel (Curve25519, AES-GCM, SHA256). Confirmed (whitepaper, Meta Engineering): per-device client-fanout encryption with Signal sessions. Client-generated message IDs for idempotent retries are the standard design, not stated by WhatsApp.",
+      "c4": "person"
     },
     {
       "id": "bob",
-      "label": "Bob's device",
+      "label": "Bob (recipient)",
       "kind": "client",
       "summary": "Receives ciphertext, decrypts locally and sends delivery and read receipts.",
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf"
       ],
-      "details": "Decrypting locally is confirmed. Delivery and read receipts are the standard design and are not described in the whitepaper."
+      "details": "Decrypting locally is confirmed. Delivery and read receipts are the standard design and are not described in the whitepaper.",
+      "c4": "person"
     },
     {
       "id": "lb",
@@ -35,7 +37,8 @@
       "sources": [
         "https://newsletter.systemdesign.one/p/whatsapp-system-design"
       ],
-      "details": "The baseline notes WebSockets in the interview design. Per a secondary source WhatsApp historically used a customised XMPP over long-lived TCP. Not re-verified."
+      "details": "The baseline notes WebSockets in the interview design. Per a secondary source WhatsApp historically used a customised XMPP over long-lived TCP. Not re-verified.",
+      "c4": "container"
     },
     {
       "id": "chat",
@@ -47,7 +50,8 @@
         "https://blog.whatsapp.com/1-million-is-so-2011",
         "https://newsletter.systemdesign.one/p/whatsapp-system-design"
       ],
-      "details": "2M connections: WhatsApp blog, 2012-01-06. The routing design here is the standard interview design. Confirmed: a 2012 WhatsApp post reports 2M+ TCP connections on one FreeBSD/Erlang server. Routing ciphertext between servers is the standard design. WhatsApp does not publish its server design."
+      "details": "2M connections: WhatsApp blog, 2012-01-06. The routing design here is the standard interview design. Confirmed: a 2012 WhatsApp post reports 2M+ TCP connections on one FreeBSD/Erlang server. Routing ciphertext between servers is the standard design. WhatsApp does not publish its server design.",
+      "c4": "container"
     },
     {
       "id": "registry",
@@ -58,7 +62,9 @@
       "sources": [
         "https://newsletter.systemdesign.one/p/whatsapp-system-design"
       ],
-      "details": "Reference-design component. WhatsApp's real implementation is not public."
+      "details": "Reference-design component. WhatsApp's real implementation is not public.",
+      "c4": "container",
+      "technology": "Redis (interview design)"
     },
     {
       "id": "inbox",
@@ -70,7 +76,8 @@
         "https://www.whatsapp.com/legal/privacy-policy",
         "https://engineering.fb.com/2021/07/14/security/whatsapp-multi-device/"
       ],
-      "details": "The storage technology (Kafka/Cassandra in the baseline) is an interview-design choice, not stated by WhatsApp. Confirmed: undelivered messages are kept encrypted for up to 30 days and deleted after delivery (privacy policy). A per-device inbox structure is our design assumption."
+      "details": "The storage technology (Kafka/Cassandra in the baseline) is an interview-design choice, not stated by WhatsApp. Confirmed: undelivered messages are kept encrypted for up to 30 days and deleted after delivery (privacy policy). A per-device inbox structure is our design assumption.",
+      "c4": "container"
     },
     {
       "id": "push",
@@ -80,7 +87,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://newsletter.systemdesign.one/p/whatsapp-system-design"
-      ]
+      ],
+      "c4": "external-system"
     },
     {
       "id": "keys",
@@ -90,7 +98,8 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "blob",
@@ -101,7 +110,8 @@
       "sources": [
         "https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf"
       ],
-      "details": "Pre-signed URLs and the CDN are the interview-design mechanics. The whitepaper confirms an encrypted attachment uploaded to a blob store with the keys inside the E2EE message."
+      "details": "Pre-signed URLs and the CDN are the interview-design mechanics. The whitepaper confirms an encrypted attachment uploaded to a blob store with the keys inside the E2EE message.",
+      "c4": "container"
     },
     {
       "id": "presence",
@@ -111,7 +121,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://newsletter.systemdesign.one/p/whatsapp-system-design"
-      ]
+      ],
+      "c4": "container"
     }
   ],
   "edges": [

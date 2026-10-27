@@ -5,7 +5,7 @@
   "nodes": [
     {
       "id": "driver",
-      "label": "Driver app",
+      "label": "Driver",
       "kind": "client",
       "summary": "Sends GPS location every few seconds. Noisy fixes are cleaned by map matching.",
       "confidence": "INDUSTRY PATTERN",
@@ -13,17 +13,19 @@
         "https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers",
         "https://highscalability.com/how-uber-scales-their-real-time-market-platform/"
       ],
-      "details": "A 2015 talk (via a secondary summary, not re-verified) put the interval at about 4 s."
+      "details": "A 2015 talk (via a secondary summary, not re-verified) put the interval at about 4 s.",
+      "c4": "person"
     },
     {
       "id": "rider",
-      "label": "Rider app",
+      "label": "Rider",
       "kind": "client",
       "summary": "Requests a ride at a pickup point and receives a match.",
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.uber.com/us/en/marketplace/matching/"
-      ]
+      ],
+      "c4": "person"
     },
     {
       "id": "ingest",
@@ -33,7 +35,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "h3",
@@ -45,7 +48,8 @@
         "https://www.uber.com/blog/h3/",
         "https://h3geo.org/docs/core-library/restable/"
       ],
-      "details": "Res 9 ≈ 0.105 km² per cell, res 8 ≈ 0.737 km². Hexagons have one distance to every neighbour. Uber built H3 for pricing and dispatch."
+      "details": "Res 9 ≈ 0.105 km² per cell, res 8 ≈ 0.737 km². Hexagons have one distance to every neighbour. Uber built H3 for pricing and dispatch.",
+      "c4": "container"
     },
     {
       "id": "geoindex",
@@ -57,7 +61,8 @@
         "https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers",
         "https://highscalability.com/how-uber-scales-their-real-time-market-platform/"
       ],
-      "details": "In a 2015 description (secondary source, not re-verified) the shard key was a Google S2 level-12 cell and nodes formed a Ringpop ring. H3 came in 2018."
+      "details": "In a 2015 description (secondary source, not re-verified) the shard key was a Google S2 level-12 cell and nodes formed a Ringpop ring. H3 came in 2018.",
+      "c4": "container"
     },
     {
       "id": "redis",
@@ -67,7 +72,9 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers"
-      ]
+      ],
+      "c4": "container",
+      "technology": "Redis"
     },
     {
       "id": "cass",
@@ -77,7 +84,9 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers"
-      ]
+      ],
+      "c4": "container",
+      "technology": "Cassandra"
     },
     {
       "id": "match",
@@ -88,7 +97,8 @@
       "sources": [
         "https://www.uber.com/us/en/marketplace/matching/"
       ],
-      "details": "Uber says early matching picked the closest driver immediately and that closest does not always mean quickest. Whether the batch is solved as an assignment problem is our interpretation."
+      "details": "Uber says early matching picked the closest driver immediately and that closest does not always mean quickest. Whether the batch is solved as an assignment problem is our interpretation.",
+      "c4": "container"
     },
     {
       "id": "eta",
@@ -99,7 +109,8 @@
       "sources": [
         "https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers"
       ],
-      "details": "The Uber matching page we read does not describe ETA computation."
+      "details": "The Uber matching page we read does not describe ETA computation.",
+      "c4": "container"
     },
     {
       "id": "surge",
@@ -109,7 +120,8 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://www.uber.com/blog/h3/"
-      ]
+      ],
+      "c4": "container"
     }
   ],
   "edges": [

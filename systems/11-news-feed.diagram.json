@@ -5,13 +5,14 @@
   "nodes": [
     {
       "id": "client",
-      "label": "Client app",
+      "label": "User",
       "kind": "client",
       "summary": "Posts, and reads the home feed with cursor pagination.",
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://github.com/twitter/the-algorithm/tree/main/home-mixer"
-      ]
+      ],
+      "c4": "person"
     },
     {
       "id": "postapi",
@@ -22,7 +23,8 @@
       "sources": [
         "https://web.archive.org/web/2023/https://instagram-engineering.com/sharding-ids-at-instagram-1cf5a71e5a5c"
       ],
-      "details": "Instagram generates IDs inside Postgres with a PL/pgSQL function per logical shard (a Postgres schema). Thousands of logical shards map to far fewer physical servers."
+      "details": "Instagram generates IDs inside Postgres with a PL/pgSQL function per logical shard (a Postgres schema). Thousands of logical shards map to far fewer physical servers.",
+      "c4": "container"
     },
     {
       "id": "poststore",
@@ -33,7 +35,8 @@
       "sources": [
         "https://web.archive.org/web/2023/https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale",
         "https://web.archive.org/web/2023/https://instagram-engineering.com/sharding-ids-at-instagram-1cf5a71e5a5c"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "graph",
@@ -43,7 +46,8 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://web.archive.org/web/2023/https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "queue",
@@ -53,7 +57,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://web.archive.org/web/2023/https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "fanout",
@@ -64,7 +69,8 @@
       "sources": [
         "https://web.archive.org/web/2023/https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale"
       ],
-      "details": "Twitter's 2017 post names a Fanout Service that writes to the Haplo timeline cache. The hybrid skip rule is a general design and its threshold is not in the sources we read."
+      "details": "Twitter's 2017 post names a Fanout Service that writes to the Haplo timeline cache. The hybrid skip rule is a general design and its threshold is not in the sources we read.",
+      "c4": "container"
     },
     {
       "id": "haplo",
@@ -75,7 +81,9 @@
       "sources": [
         "https://web.archive.org/web/2023/https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale"
       ],
-      "details": "At the time: aggregate 40M–100M commands per second and ~800K service requests per second. Caches protect backing stores from heavy read traffic."
+      "details": "At the time: aggregate 40M–100M commands per second and ~800K service requests per second. Caches protect backing stores from heavy read traffic.",
+      "c4": "container",
+      "technology": "Redis (HybridList)"
     },
     {
       "id": "timeline",
@@ -87,7 +95,9 @@
         "https://github.com/twitter/the-algorithm/tree/main/home-mixer",
         "https://github.com/twitter/the-algorithm"
       ],
-      "details": "Candidate sources named: Earlybird search index (~50% of posts, in-network), Tweet-mixer / Cr Mixer (out-of-network), UTEG interaction graph, Follow Recommendation Service."
+      "details": "Candidate sources named: Earlybird search index (~50% of posts, in-network), Tweet-mixer / Cr Mixer (out-of-network), UTEG interaction graph, Follow Recommendation Service.",
+      "c4": "container",
+      "technology": "Scala (Product Mixer)"
     },
     {
       "id": "postcache",
@@ -97,7 +107,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://web.archive.org/web/2023/https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "ranker",
@@ -107,7 +118,8 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://github.com/twitter/the-algorithm"
-      ]
+      ],
+      "c4": "container"
     }
   ],
   "edges": [

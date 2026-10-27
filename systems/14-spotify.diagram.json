@@ -5,7 +5,7 @@
   "nodes": [
     {
       "id": "client",
-      "label": "Spotify client",
+      "label": "Listener",
       "kind": "client",
       "summary": "Plays audio, prefetches the next track, keeps an encrypted local cache of partial tracks (up to 10% of free disk, 50 MB–10 GB in 2010) and reports a stream after 30 seconds of playback.",
       "confidence": "CONFIRMED",
@@ -13,7 +13,8 @@
         "https://people.cs.umass.edu/~phillipa/CSE390/spotify-p2p10.pdf",
         "https://support.spotify.com/us/artists/article/how-we-count-streams/"
       ],
-      "details": "Random access (user picks a track) is ~39% of playbacks. On a cache miss the 2010 client asked the server for ~15 seconds of audio over its open TCP connection."
+      "details": "Random access (user picks a track) is ~39% of playbacks. On a cache miss the 2010 client asked the server for ~15 seconds of audio over its open TCP connection.",
+      "c4": "person"
     },
     {
       "id": "api",
@@ -23,7 +24,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://newsletter.systemdesign.one/p/spotify-system-design"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "catalog",
@@ -33,7 +35,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://newsletter.systemdesign.one/p/spotify-system-design"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "cdn",
@@ -43,7 +46,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://newsletter.systemdesign.one/p/spotify-system-design"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "blob",
@@ -55,18 +59,20 @@
         "https://newsletter.systemdesign.one/p/spotify-system-design",
         "https://support.spotify.com/us/article/audio-quality/"
       ],
-      "details": "Current app tiers (Spotify Support): Low ≈24, Normal ≈96, High ≈160, Very high ≈320 kbit/s, Lossless up to 24-bit/44.1 kHz FLAC. Web player AAC 128/256 kbit/s."
+      "details": "Current app tiers (Spotify Support): Low ≈24, Normal ≈96, High ≈160, Very high ≈320 kbit/s, Lossless up to 24-bit/44.1 kHz FLAC. Web player AAC 128/256 kbit/s.",
+      "c4": "container"
     },
     {
       "id": "peers",
-      "label": "Peer network (2010)",
+      "label": "Peer clients (2010)",
       "kind": "client",
       "summary": "In 2010, clients also served cached chunks to each other. Only 8.8% of played music data came from Spotify's servers. Spotify later removed P2P from the desktop client, and mobile and web never used it.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://people.cs.umass.edu/~phillipa/CSE390/spotify-p2p10.pdf"
       ],
-      "details": "Peers do no re-encoding: a peer holding the q9 (≈320 kbps) version cannot serve a q5 (≈160 kbps) request. The 2010 figures are from the P2P paper. The later removal of P2P from the desktop client is a secondary report (TechCrunch citing TorrentFreak)."
+      "details": "Peers do no re-encoding: a peer holding the q9 (≈320 kbps) version cannot serve a q5 (≈160 kbps) request. The 2010 figures are from the P2P paper. The later removal of P2P from the desktop client is a secondary report (TechCrunch citing TorrentFreak).",
+      "c4": "external-system"
     },
     {
       "id": "artist",
@@ -77,7 +83,8 @@
       "sources": [
         "https://newsletter.systemdesign.one/p/spotify-system-design"
       ],
-      "group": "upload"
+      "group": "upload",
+      "c4": "person"
     },
     {
       "id": "transcode",
@@ -90,7 +97,8 @@
         "https://newsletter.systemdesign.one/p/spotify-system-design"
       ],
       "details": "The loudness behaviour is from Spotify Support. The async transcoding pipeline is the standard design. Confirmed (Spotify Support): loudness normalisation is applied during playback toward -14 LUFS. The asynchronous transcoding pipeline is the standard design and is not stated by Spotify.",
-      "group": "upload"
+      "group": "upload",
+      "c4": "container"
     },
     {
       "id": "search",
@@ -101,7 +109,8 @@
       "sources": [
         "https://newsletter.systemdesign.one/p/spotify-system-design"
       ],
-      "group": "upload"
+      "group": "upload",
+      "c4": "container"
     }
   ],
   "edges": [

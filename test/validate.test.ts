@@ -11,8 +11,8 @@ const good = () => ({
   title: "Toy System",
   kind: "reference-design",
   nodes: [
-    { id: "a", label: "A", kind: "client", summary: "s", confidence: "SPECULATIVE", sources: [] },
-    { id: "b", label: "B", kind: "service", summary: "s", confidence: "CONFIRMED", sources: ["https://example.com"] },
+    { id: "a", label: "A", kind: "client", c4: "person", summary: "s", confidence: "SPECULATIVE", sources: [] },
+    { id: "b", label: "B", kind: "service", c4: "container", summary: "s", confidence: "CONFIRMED", sources: ["https://example.com"] },
   ],
   edges: [{ id: "a-b", from: "a", to: "b" }],
   flows: [{ id: "f", name: "F", steps: [{ edge: "a-b", caption: "go" }] }],
@@ -57,4 +57,11 @@ test("id must match file stem", () => {
 test("broken relative link fails, existing ones pass", () => {
   const e = run(() => {}, md + "\n[gone](./nope.md) [ok](./99-toy.md#x) [web](https://example.com)\n");
   assert.deepEqual(e.filter((m) => m.includes("broken relative link")), ["99-toy: broken relative link: ./nope.md"]);
+});
+
+test("component needs a container parent; non-components must not have one", () => {
+  const a = run((d) => ((d.nodes[1] as { c4: string }).c4 = "component"));
+  assert.match(a.join("\n"), /needs a container parent/);
+  const b = run((d) => ((d.nodes[0] as { parent?: string }).parent = "b"));
+  assert.match(b.join("\n"), /only components have a parent/);
 });

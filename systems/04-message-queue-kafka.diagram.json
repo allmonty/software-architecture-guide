@@ -5,14 +5,15 @@
   "nodes": [
     {
       "id": "producer",
-      "label": "Producer",
+      "label": "Producer applications",
       "kind": "client",
       "summary": "Sends records to a topic. Key hash picks the partition, so one key keeps its order. Idempotent by default (enable.idempotence=true, acks=all).",
       "confidence": "CONFIRMED",
       "sources": [
         "https://kafka.apache.org/40/configuration/producer-configs/",
         "https://kafka.apache.org/40/design/design/"
-      ]
+      ],
+      "c4": "external-system"
     },
     {
       "id": "leader",
@@ -23,7 +24,8 @@
       "sources": [
         "https://kafka.apache.org/40/design/design/"
       ],
-      "details": "A partition is an ordered, append-only log and the unit of ordering and parallelism."
+      "details": "A partition is an ordered, append-only log and the unit of ordering and parallelism.",
+      "c4": "container"
     },
     {
       "id": "follower",
@@ -35,7 +37,8 @@
         "https://kafka.apache.org/40/design/design/",
         "https://kafka.apache.org/40/configuration/broker-configs/"
       ],
-      "details": "With acks=all the leader waits for the full ISR. min.insync.replicas (default 1) sets the minimum that must acknowledge. unclean.leader.election.enable defaults to false: favour consistency over availability."
+      "details": "With acks=all the leader waits for the full ISR. min.insync.replicas (default 1) sets the minimum that must acknowledge. unclean.leader.election.enable defaults to false: favour consistency over availability.",
+      "c4": "container"
     },
     {
       "id": "controller",
@@ -48,7 +51,8 @@
         "https://kafka.apache.org/40/design/design/",
         "https://kafka.apache.org/blog/2025/03/18/apache-kafka-4.0.0-release-announcement/"
       ],
-      "details": "Kafka 4.0 (2025-03-18) is the first major release that operates entirely without ZooKeeper."
+      "details": "Kafka 4.0 (2025-03-18) is the first major release that operates entirely without ZooKeeper.",
+      "c4": "container"
     },
     {
       "id": "coord",
@@ -59,18 +63,20 @@
       "sources": [
         "https://kafka.apache.org/40/design/design/"
       ],
-      "details": "Each partition is consumed by exactly one member of a consumer group at a time. KIP-848's new consumer protocol is GA in 4.0 as an opt-in (group.protocol=consumer)."
+      "details": "Each partition is consumed by exactly one member of a consumer group at a time. KIP-848's new consumer protocol is GA in 4.0 as an opt-in (group.protocol=consumer).",
+      "c4": "container"
     },
     {
       "id": "consumer",
-      "label": "Consumer group",
+      "label": "Consumer applications",
       "kind": "client",
       "summary": "Members poll their assigned partitions at their own pace (pull model). Add members up to the partition count, or add groups to re-read the same data independently.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://kafka.apache.org/40/design/design/"
       ],
-      "details": "Pull model: a slow consumer \"simply falls behind and catches up when it can\"."
+      "details": "Pull model: a slow consumer \"simply falls behind and catches up when it can\".",
+      "c4": "external-system"
     },
     {
       "id": "tier",
@@ -81,7 +87,9 @@
       "sources": [
         "https://cwiki.apache.org/confluence/display/KAFKA/KIP-405%3A+Kafka+Tiered+Storage"
       ],
-      "details": "KIP-405, marked production-ready since Kafka 3.9. Pluggable RemoteStorageManager."
+      "details": "KIP-405, marked production-ready since Kafka 3.9. Pluggable RemoteStorageManager.",
+      "c4": "external-system",
+      "technology": "Object storage (S3, HDFS)"
     }
   ],
   "edges": [

@@ -77,6 +77,13 @@ export function validateDir(dir: string): string[] {
         if (!edges.has(s.edge)) err(`flow ${f.id} step ${i + 1}: unknown edge ${s.edge}`);
       });
     }
+    const byId = new Map(d.nodes.map((n) => [n.id, n]));
+    if (!d.nodes.some((n) => n.c4 === "container")) err("C4: needs at least one container");
+    for (const n of d.nodes) {
+      if (n.c4 === "component") {
+        if (!n.parent || byId.get(n.parent)?.c4 !== "container") err(`C4: component ${n.id} needs a container parent`);
+      } else if (n.parent) err(`C4: only components have a parent (${n.id})`);
+    }
     for (const n of d.nodes) {
       if (n.confidence !== "SPECULATIVE" && n.sources.length === 0) {
         err(`node ${n.id}: ${n.confidence} needs at least one source`);

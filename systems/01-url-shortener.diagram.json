@@ -5,13 +5,14 @@
   "nodes": [
     {
       "id": "client",
-      "label": "Browser / API client",
+      "label": "User (browser or API client)",
       "kind": "client",
       "summary": "Creates short links (write) and follows them (read, ~100x more often).",
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://systemdesign.one/url-shortening-system-design/"
-      ]
+      ],
+      "c4": "person"
     },
     {
       "id": "cdn",
@@ -23,7 +24,8 @@
         "https://www.squid-cache.org/Doc/config/collapsed_forwarding/",
         "https://systemdesign.one/url-shortening-system-design/"
       ],
-      "details": "Collapsed forwarding is a documented Squid feature `[CONFIRMED]`. Using it for a viral short link is the design application `[INDUSTRY PATTERN]`."
+      "details": "Collapsed forwarding is a documented Squid feature `[CONFIRMED]`. Using it for a viral short link is the design application `[INDUSTRY PATTERN]`.",
+      "c4": "container"
     },
     {
       "id": "lb",
@@ -33,7 +35,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://systemdesign.one/url-shortening-system-design/"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "shorten",
@@ -44,7 +47,8 @@
       "sources": [
         "https://systemdesign.one/url-shortening-system-design/"
       ],
-      "group": "write path"
+      "group": "write path",
+      "c4": "container"
     },
     {
       "id": "redirect",
@@ -57,7 +61,8 @@
         "https://systemdesign.one/url-shortening-system-design/"
       ],
       "details": "Status-code semantics are `[CONFIRMED]` in RFC 9110 §15.4: 301 is heuristically cacheable, 307 MUST NOT change the method. Choosing 301 vs 302 is a product trade-off between cache efficiency and click analytics.",
-      "group": "read path"
+      "group": "read path",
+      "c4": "container"
     },
     {
       "id": "kgs",
@@ -69,7 +74,8 @@
         "https://systemdesign.one/url-shortening-system-design/"
       ],
       "details": "Losing an in-memory range on a crash only wastes IDs. Raw counters are predictable, so scramble them (random bits, shuffled ranges or a bijective permutation) if guessability matters.",
-      "group": "write path"
+      "group": "write path",
+      "c4": "container"
     },
     {
       "id": "ranges",
@@ -80,7 +86,9 @@
       "sources": [
         "https://systemdesign.one/url-shortening-system-design/"
       ],
-      "group": "write path"
+      "group": "write path",
+      "c4": "container",
+      "technology": "ZooKeeper or DynamoDB"
     },
     {
       "id": "bloom",
@@ -92,7 +100,8 @@
         "https://en.wikipedia.org/wiki/Bloom_filter",
         "https://systemdesign.one/url-shortening-system-design/"
       ],
-      "details": "Standard Bloom filters cannot delete, so expired links still answer \"maybe\" and fall through to the lookup."
+      "details": "Standard Bloom filters cannot delete, so expired links still answer \"maybe\" and fall through to the lookup.",
+      "c4": "container"
     },
     {
       "id": "cache",
@@ -103,7 +112,9 @@
       "sources": [
         "https://systemdesign.one/url-shortening-system-design/"
       ],
-      "group": "read path"
+      "group": "read path",
+      "c4": "container",
+      "technology": "Redis"
     },
     {
       "id": "urlstore",
@@ -114,7 +125,9 @@
       "sources": [
         "https://systemdesign.one/url-shortening-system-design/"
       ],
-      "details": "Capacity (assumed 100M writes/day, 5 yrs, ~2.5 KB/record): ~1k writes/s, ~100k reads/s, ~456 TB before replication."
+      "details": "Capacity (assumed 100M writes/day, 5 yrs, ~2.5 KB/record): ~1k writes/s, ~100k reads/s, ~456 TB before replication.",
+      "c4": "container",
+      "technology": "NoSQL key-value (DynamoDB or Cassandra class)"
     },
     {
       "id": "inverted",
@@ -124,7 +137,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://systemdesign.one/url-shortening-system-design/"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "kafka",
@@ -134,7 +148,9 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://systemdesign.one/url-shortening-system-design/"
-      ]
+      ],
+      "c4": "container",
+      "technology": "Kafka"
     },
     {
       "id": "warehouse",
@@ -144,7 +160,9 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://systemdesign.one/url-shortening-system-design/"
-      ]
+      ],
+      "c4": "container",
+      "technology": "HDFS / warehouse"
     }
   ],
   "edges": [

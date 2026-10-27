@@ -5,13 +5,14 @@
   "nodes": [
     {
       "id": "broker",
-      "label": "Broker / trader",
+      "label": "Broker / trader systems",
       "kind": "client",
       "summary": "Sends orders and receives execution reports. Orders are limit or market, buy or sell.",
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://newsletter.systemdesign.one/p/stock-exchange-system-design"
-      ]
+      ],
+      "c4": "external-system"
     },
     {
       "id": "gateway",
@@ -22,7 +23,8 @@
       "sources": [
         "https://newsletter.systemdesign.one/p/stock-exchange-system-design"
       ],
-      "details": "FIX uses MsgSeqNum and ResendRequest for session recovery (checked in the earlier pass)."
+      "details": "FIX uses MsgSeqNum and ResendRequest for session recovery (checked in the earlier pass).",
+      "c4": "container"
     },
     {
       "id": "risk",
@@ -32,7 +34,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://newsletter.systemdesign.one/p/stock-exchange-system-design"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "sequencer",
@@ -44,7 +47,9 @@
         "https://martinfowler.com/articles/lmax.html",
         "https://lmax-exchange.github.io/disruptor/disruptor.html"
       ],
-      "details": "LMAX: input disruptor, business logic processor, output disruptors. The Disruptor ring buffer follows a single-writer principle and reports 3 orders of magnitude lower mean latency and ~8× throughput versus queues."
+      "details": "LMAX: input disruptor, business logic processor, output disruptors. The Disruptor ring buffer follows a single-writer principle and reports 3 orders of magnitude lower mean latency and ~8× throughput versus queues.",
+      "c4": "component",
+      "parent": "core"
     },
     {
       "id": "journal",
@@ -54,7 +59,8 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://martinfowler.com/articles/lmax.html"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "engine",
@@ -65,7 +71,10 @@
       "sources": [
         "https://martinfowler.com/articles/lmax.html"
       ],
-      "details": "Sharded by symbol in the standard design, so each shard stays single-threaded."
+      "details": "Sharded by symbol in the standard design, so each shard stays single-threaded.",
+      "c4": "component",
+      "parent": "core",
+      "technology": "Single thread, in memory (LMAX)"
     },
     {
       "id": "book",
@@ -76,7 +85,9 @@
       "sources": [
         "https://newsletter.systemdesign.one/p/stock-exchange-system-design"
       ],
-      "details": "Reading the best price is O(1). Finding the next level when one empties costs O(log P) or a tick scan (earlier pass)."
+      "details": "Reading the best price is O(1). Finding the next level when one empties costs O(log P) or a tick scan (earlier pass).",
+      "c4": "component",
+      "parent": "core"
     },
     {
       "id": "standby",
@@ -86,7 +97,8 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://martinfowler.com/articles/lmax.html"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "md",
@@ -96,7 +108,8 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/moldudp64.pdf"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "rerequest",
@@ -107,17 +120,33 @@
       "sources": [
         "https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/moldudp64.pdf"
       ],
-      "details": "The GLIMPSE snapshot service was verified in the earlier pass."
+      "details": "The GLIMPSE snapshot service was verified in the earlier pass.",
+      "c4": "container"
     },
     {
       "id": "subscriber",
-      "label": "Market-data subscriber",
+      "label": "Market-data subscribers",
       "kind": "client",
       "summary": "Detects gaps from sequence numbers, requests retransmission, and rebuilds the book from the stream.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/moldudp64.pdf"
-      ]
+      ],
+      "c4": "external-system"
+    },
+    {
+      "id": "core",
+      "label": "Matching core (one shard)",
+      "kind": "service",
+      "c4": "container",
+      "summary": "The sequenced, single-threaded core: sequencer and input journaling, the deterministic engine and the in-memory order book.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://martinfowler.com/articles/lmax.html",
+        "https://lmax-exchange.github.io/disruptor/disruptor.html",
+        "https://newsletter.systemdesign.one/p/stock-exchange-system-design"
+      ],
+      "details": "Grouping container: it names the units the sources describe together. The components inside it are listed in the Components view."
     }
   ],
   "edges": [

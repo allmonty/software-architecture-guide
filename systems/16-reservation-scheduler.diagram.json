@@ -11,7 +11,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.postgresql.org/docs/current/rangetypes.html"
-      ]
+      ],
+      "c4": "person"
     },
     {
       "id": "search",
@@ -21,7 +22,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.postgresql.org/docs/current/rangetypes.html"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "booking",
@@ -32,7 +34,8 @@
       "sources": [
         "https://www.postgresql.org/docs/current/transaction-iso.html"
       ],
-      "details": "PostgreSQL: applications using Serializable or Repeatable Read must be prepared to retry the whole transaction."
+      "details": "PostgreSQL: applications using Serializable or Repeatable Read must be prepared to retry the whole transaction.",
+      "c4": "container"
     },
     {
       "id": "inventory",
@@ -44,7 +47,9 @@
         "https://www.postgresql.org/docs/current/rangetypes.html",
         "https://www.postgresql.org/docs/current/ddl-constraints.html"
       ],
-      "details": "UNIQUE is usually unsuitable for ranges. Exclusion constraints need btree_gist for scalar equality. tstzrange bounds are not canonicalised, so pass '[)' explicitly."
+      "details": "UNIQUE is usually unsuitable for ranges. Exclusion constraints need btree_gist for scalar equality. tstzrange bounds are not canonicalised, so pass '[)' explicitly.",
+      "c4": "container",
+      "technology": "PostgreSQL"
     },
     {
       "id": "holds",
@@ -54,7 +59,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.postgresql.org/docs/current/rangetypes.html"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "pay",
@@ -64,7 +70,8 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://docs.stripe.com/api/idempotent_requests"
-      ]
+      ],
+      "c4": "external-system"
     },
     {
       "id": "outbox",
@@ -74,7 +81,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.postgresql.org/docs/current/rangetypes.html"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "notify",
@@ -84,7 +92,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.postgresql.org/docs/current/rangetypes.html"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "access",
@@ -95,7 +104,8 @@
       "sources": [
         "https://www.postgresql.org/docs/current/rangetypes.html"
       ],
-      "details": "Physical state (occupied) can differ from the booked state, so a pure calendar model is not enough."
+      "details": "Physical state (occupied) can differ from the booked state, so a pure calendar model is not enough.",
+      "c4": "external-system"
     },
     {
       "id": "pricing",
@@ -105,7 +115,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.postgresql.org/docs/current/rangetypes.html"
-      ]
+      ],
+      "c4": "container"
     }
   ],
   "edges": [

@@ -5,7 +5,7 @@
   "nodes": [
     {
       "id": "alice",
-      "label": "Alice's editor",
+      "label": "Alice (editor)",
       "kind": "client",
       "summary": "Applies her edit locally at once, then sends it. Keeps at most one operation in flight plus a buffer of later local edits.",
       "confidence": "INDUSTRY PATTERN",
@@ -13,18 +13,20 @@
         "https://github.com/Operational-Transformation/ot.js/blob/master/lib/client.js",
         "https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs.html"
       ],
-      "details": "This is the ot.js client protocol (Jupiter-style): states Synchronized, AwaitingConfirm, AwaitingWithBuffer. Google's 2010 post describes the same client-server idea. Read in an earlier pass."
+      "details": "This is the ot.js client protocol (Jupiter-style): states Synchronized, AwaitingConfirm, AwaitingWithBuffer. Google's 2010 post describes the same client-server idea. Read in an earlier pass.",
+      "c4": "person"
     },
     {
       "id": "bob",
-      "label": "Bob's editor",
+      "label": "Bob (editor)",
       "kind": "client",
       "summary": "Receives Alice's operation, transforms it against any of his own unacknowledged edits, then applies it.",
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://github.com/Operational-Transformation/ot.js/blob/master/lib/client.js",
         "https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs.html"
-      ]
+      ],
+      "c4": "person"
     },
     {
       "id": "gateway",
@@ -35,7 +37,8 @@
       "sources": [
         "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/"
       ],
-      "details": "Figma, a different product, uses WebSockets to a server cluster with a separate process per document."
+      "details": "Figma, a different product, uses WebSockets to a server cluster with a separate process per document.",
+      "c4": "container"
     },
     {
       "id": "server",
@@ -47,7 +50,9 @@
         "https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs_22.html",
         "https://github.com/Operational-Transformation/ot.js/blob/master/lib/client.js"
       ],
-      "details": "A central server that assigns a total order is what lets client-server OT stay simple. The 2010 post describes replaying the log from the beginning (earlier pass)."
+      "details": "A central server that assigns a total order is what lets client-server OT stay simple. The 2010 post describes replaying the log from the beginning (earlier pass).",
+      "c4": "component",
+      "parent": "docserver"
     },
     {
       "id": "log",
@@ -57,7 +62,9 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs_22.html"
-      ]
+      ],
+      "c4": "component",
+      "parent": "docserver"
     },
     {
       "id": "presence",
@@ -67,7 +74,9 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs.html"
-      ]
+      ],
+      "c4": "component",
+      "parent": "docserver"
     },
     {
       "id": "diffsync",
@@ -78,7 +87,8 @@
       "sources": [
         "https://neil.fraser.name/writing/sync/"
       ],
-      "details": "Rejected for intent-sensitive editing because diffs carry no intent."
+      "details": "Rejected for intent-sensitive editing because diffs carry no intent.",
+      "c4": "note"
     },
     {
       "id": "crdt",
@@ -90,7 +100,22 @@
         "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
         "https://martin.kleppmann.com/2019/03/25/papoc-interleaving-anomalies.html"
       ],
-      "details": "Some published algorithms show interleaving anomalies on concurrent inserts at the same spot (Kleppmann et al.)."
+      "details": "Some published algorithms show interleaving anomalies on concurrent inserts at the same spot (Kleppmann et al.).",
+      "c4": "note"
+    },
+    {
+      "id": "docserver",
+      "label": "Document server",
+      "kind": "service",
+      "c4": "container",
+      "summary": "The per-document authority: the OT server, the revision log and presence.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs_22.html",
+        "https://github.com/Operational-Transformation/ot.js/blob/master/lib/client.js",
+        "https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs.html"
+      ],
+      "details": "Grouping container: it names the units the sources describe together. The components inside it are listed in the Components view."
     }
   ],
   "edges": [

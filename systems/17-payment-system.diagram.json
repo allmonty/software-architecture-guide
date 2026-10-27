@@ -5,13 +5,14 @@
   "nodes": [
     {
       "id": "client",
-      "label": "Checkout (browser / app)",
+      "label": "Customer",
       "kind": "client",
       "summary": "Collects payment details and sends them straight to the PSP, so the merchant handles only tokens. Never trusted to say a payment succeeded.",
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://docs.stripe.com/payments/paymentintents/lifecycle"
-      ]
+      ],
+      "c4": "person"
     },
     {
       "id": "order",
@@ -21,7 +22,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://docs.stripe.com/payments/paymentintents/lifecycle"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "payment",
@@ -33,7 +35,8 @@
         "https://docs.stripe.com/api/idempotent_requests",
         "https://docs.stripe.com/payments/paymentintents/lifecycle"
       ],
-      "details": "Key = a stable business identity plus an attempt number. A timeout is not a failure: retry with the same key or fetch the intent."
+      "details": "Key = a stable business identity plus an attempt number. A timeout is not a failure: retry with the same key or fetch the intent.",
+      "c4": "container"
     },
     {
       "id": "paydb",
@@ -43,7 +46,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://docs.stripe.com/api/idempotent_requests"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "psp",
@@ -55,7 +59,8 @@
         "https://docs.stripe.com/api/idempotent_requests",
         "https://docs.stripe.com/payments/paymentintents/lifecycle"
       ],
-      "details": "Stripe v1 saves the status code and body of the first request, including 500s. Keys up to 255 characters, pruned after at least 24 hours, changed parameters on the same key error."
+      "details": "Stripe v1 saves the status code and body of the first request, including 500s. Keys up to 255 characters, pruned after at least 24 hours, changed parameters on the same key error.",
+      "c4": "external-system"
     },
     {
       "id": "webhook",
@@ -66,7 +71,8 @@
       "sources": [
         "https://docs.stripe.com/webhooks"
       ],
-      "details": "Live-mode retries for up to three days with exponential back-off. Default signature tolerance 5 minutes."
+      "details": "Live-mode retries for up to three days with exponential back-off. Default signature tolerance 5 minutes.",
+      "c4": "container"
     },
     {
       "id": "queue",
@@ -76,7 +82,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://docs.stripe.com/webhooks"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "ledger",
@@ -87,7 +94,9 @@
       "sources": [
         "https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/"
       ],
-      "details": "Square's Books: books, journal_entries and book_entries tables on Cloud Spanner, ~20 TB, built and run by a team of three (2019)."
+      "details": "Square's Books: books, journal_entries and book_entries tables on Cloud Spanner, ~20 TB, built and run by a team of three (2019).",
+      "c4": "container",
+      "technology": "Cloud Spanner (Square Books)"
     },
     {
       "id": "recon",
@@ -97,7 +106,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "notify",
@@ -107,7 +117,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://docs.stripe.com/webhooks"
-      ]
+      ],
+      "c4": "container"
     }
   ],
   "edges": [

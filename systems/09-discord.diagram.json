@@ -5,7 +5,7 @@
   "nodes": [
     {
       "id": "client",
-      "label": "Discord client",
+      "label": "Discord user",
       "kind": "client",
       "summary": "Opens a WebSocket for chat and a second WebSocket plus UDP for voice.",
       "confidence": "CONFIRMED",
@@ -13,7 +13,8 @@
         "https://discord.com/blog/how-discord-scaled-elixir-to-5-000-000-concurrent-users",
         "https://discord.com/blog/how-discord-handles-two-and-half-million-concurrent-voice-users-using-webrtc"
       ],
-      "group": "clients"
+      "group": "clients",
+      "c4": "person"
     },
     {
       "id": "api",
@@ -23,7 +24,8 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://discord.com/blog/how-discord-stores-trillions-of-messages"
-      ]
+      ],
+      "c4": "container"
     },
     {
       "id": "session",
@@ -34,7 +36,10 @@
       "sources": [
         "https://discord.com/blog/how-discord-scaled-elixir-to-5-000-000-concurrent-users"
       ],
-      "details": "Ring lookups for session restarts were cut from ~30 s to under a second using FastGlobal (constant module data)."
+      "details": "Ring lookups for session restarts were cut from ~30 s to under a second using FastGlobal (constant module data).",
+      "c4": "component",
+      "parent": "gateway",
+      "technology": "Elixir (GenServer)"
     },
     {
       "id": "guild",
@@ -44,7 +49,10 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://discord.com/blog/how-discord-scaled-elixir-to-5-000-000-concurrent-users"
-      ]
+      ],
+      "c4": "component",
+      "parent": "gateway",
+      "technology": "Elixir (GenServer)"
     },
     {
       "id": "manifold",
@@ -55,7 +63,9 @@
       "sources": [
         "https://discord.com/blog/how-discord-scaled-elixir-to-5-000-000-concurrent-users"
       ],
-      "details": "Semaphore (an ETS counter) makes callers fail early when too many requests are outstanding, instead of a circuit breaker."
+      "details": "Semaphore (an ETS counter) makes callers fail early when too many requests are outstanding, instead of a circuit breaker.",
+      "c4": "component",
+      "parent": "gateway"
     },
     {
       "id": "memberlist",
@@ -65,7 +75,10 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://discord.com/blog/using-rust-to-scale-elixir-for-11-million-concurrent-users"
-      ]
+      ],
+      "c4": "component",
+      "parent": "gateway",
+      "technology": "Rust NIF via Rustler"
     },
     {
       "id": "readstates",
@@ -75,7 +88,9 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://discord.com/blog/why-discord-is-switching-from-go-to-rust"
-      ]
+      ],
+      "c4": "container",
+      "technology": "Rust"
     },
     {
       "id": "dataservices",
@@ -85,7 +100,9 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://discord.com/blog/how-discord-stores-trillions-of-messages"
-      ]
+      ],
+      "c4": "container",
+      "technology": "Rust"
     },
     {
       "id": "scylla",
@@ -96,7 +113,9 @@
       "sources": [
         "https://discord.com/blog/how-discord-stores-trillions-of-messages"
       ],
-      "details": "p99 reads 40–125 ms → ~15 ms. Inserts 5–70 ms → steady 5 ms. Cutover May 2022."
+      "details": "p99 reads 40–125 ms → ~15 ms. Inserts 5–70 ms → steady 5 ms. Cutover May 2022.",
+      "c4": "container",
+      "technology": "ScyllaDB"
     },
     {
       "id": "discovery",
@@ -106,7 +125,9 @@
       "confidence": "CONFIRMED",
       "sources": [
         "https://discord.com/blog/how-discord-handles-two-and-half-million-concurrent-voice-users-using-webrtc"
-      ]
+      ],
+      "c4": "container",
+      "technology": "etcd"
     },
     {
       "id": "voice",
@@ -117,7 +138,22 @@
       "sources": [
         "https://discord.com/blog/how-discord-handles-two-and-half-million-concurrent-voice-users-using-webrtc"
       ],
-      "details": "850+ voice servers in 13 regions and 2.6 million+ concurrent voice users at the time (2018)."
+      "details": "850+ voice servers in 13 regions and 2.6 million+ concurrent voice users at the time (2018).",
+      "c4": "container",
+      "technology": "Elixir + C++ SFU"
+    },
+    {
+      "id": "gateway",
+      "label": "Gateway (sessions + guilds)",
+      "kind": "service",
+      "c4": "container",
+      "summary": "The Elixir real-time tier: a session process per user, a process per guild, Manifold fan-out and the member list.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://discord.com/blog/how-discord-scaled-elixir-to-5-000-000-concurrent-users",
+        "https://discord.com/blog/using-rust-to-scale-elixir-for-11-million-concurrent-users"
+      ],
+      "details": "Grouping container: it names the units the sources describe together. The components inside it are listed in the Components view."
     }
   ],
   "edges": [

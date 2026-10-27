@@ -11,7 +11,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://stripe.com/blog/rate-limiters"
-      ]
+      ],
+      "c4": "external-system"
     },
     {
       "id": "gateway",
@@ -23,7 +24,8 @@
         "https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/other_features/global_rate_limiting",
         "https://stripe.com/blog/rate-limiters"
       ],
-      "details": "Envoy runs the limiter as an HTTP filter in front of the services `[CONFIRMED]`."
+      "details": "Envoy runs the limiter as an HTTP filter in front of the services `[CONFIRMED]`.",
+      "c4": "container"
     },
     {
       "id": "local",
@@ -34,7 +36,9 @@
       "sources": [
         "https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/other_features/global_rate_limiting"
       ],
-      "details": "Envoy: a local token bucket \"can absorb very large bursts in load that might otherwise overwhelm a global rate limit service\". The recommended shape is local first, then global."
+      "details": "Envoy: a local token bucket \"can absorb very large bursts in load that might otherwise overwhelm a global rate limit service\". The recommended shape is local first, then global.",
+      "c4": "component",
+      "parent": "gateway"
     },
     {
       "id": "rls",
@@ -46,7 +50,9 @@
         "https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/other_features/global_rate_limiting",
         "https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/rate_limit_filter"
       ],
-      "details": "If the call fails: `failure_mode_deny=true` returns 500, otherwise the request is allowed through (counted as `failure_mode_allowed`). The page does not state the default."
+      "details": "If the call fails: `failure_mode_deny=true` returns 500, otherwise the request is allowed through (counted as `failure_mode_allowed`). The page does not state the default.",
+      "c4": "container",
+      "technology": "gRPC"
     },
     {
       "id": "store",
@@ -59,7 +65,9 @@
         "https://stripe.com/blog/rate-limiters",
         "https://blog.cloudflare.com/counting-things-a-lot-of-different-things/"
       ],
-      "details": "Stripe uses Redis. Cloudflare uses Twemproxy + Twemcache with GET/SET/atomic INCR and avoids compare-and-swap because of contention during attacks. Redis documents the INCR/EXPIRE race and its fixes."
+      "details": "Stripe uses Redis. Cloudflare uses Twemproxy + Twemcache with GET/SET/atomic INCR and avoids compare-and-swap because of contention during attacks. Redis documents the INCR/EXPIRE race and its fixes.",
+      "c4": "container",
+      "technology": "Redis or memcached"
     },
     {
       "id": "shedder",
@@ -70,7 +78,8 @@
       "sources": [
         "https://stripe.com/blog/rate-limiters"
       ],
-      "details": "Fleet usage shedder reserves capacity for critical methods using a Redis cluster counting requests of each type. The worker shedder is the \"final line of defense\" during incidents."
+      "details": "Fleet usage shedder reserves capacity for critical methods using a Redis cluster counting requests of each type. The worker shedder is the \"final line of defense\" during incidents.",
+      "c4": "container"
     },
     {
       "id": "config",
@@ -81,7 +90,8 @@
       "sources": [
         "https://stripe.com/blog/rate-limiters"
       ],
-      "details": "Stripe: dark-launch each limiter to see what it would block, and keep kill switches and alerting."
+      "details": "Stripe: dark-launch each limiter to see what it would block, and keep kill switches and alerting.",
+      "c4": "container"
     },
     {
       "id": "api",
@@ -91,7 +101,8 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://stripe.com/blog/rate-limiters"
-      ]
+      ],
+      "c4": "external-system"
     }
   ],
   "edges": [
