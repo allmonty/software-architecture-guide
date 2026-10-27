@@ -1,0 +1,213 @@
+{
+  "id": "18-google-docs",
+  "title": "Google Docs (Real-Time Collaboration)",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "alice",
+      "label": "Alice's editor",
+      "kind": "client",
+      "summary": "Applies her edit locally at once, then sends it. Keeps at most one operation in flight plus a buffer of later local edits.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://github.com/Operational-Transformation/ot.js/blob/master/lib/client.js",
+        "https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs.html"
+      ],
+      "details": "This is the ot.js client protocol (Jupiter-style): states Synchronized, AwaitingConfirm, AwaitingWithBuffer. Google's 2010 post describes the same client-server idea. Read in an earlier pass."
+    },
+    {
+      "id": "bob",
+      "label": "Bob's editor",
+      "kind": "client",
+      "summary": "Receives Alice's operation, transforms it against any of his own unacknowledged edits, then applies it.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://github.com/Operational-Transformation/ot.js/blob/master/lib/client.js",
+        "https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs.html"
+      ]
+    },
+    {
+      "id": "gateway",
+      "label": "Connection gateway",
+      "kind": "edge",
+      "summary": "Long-lived WebSocket connections that carry operations and cursor/presence messages.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/"
+      ],
+      "details": "Figma, a different product, uses WebSockets to a server cluster with a separate process per document."
+    },
+    {
+      "id": "server",
+      "label": "OT server (per document)",
+      "kind": "service",
+      "summary": "Single authority per document: assigns each operation the next revision number, transforms it against operations the client had not seen, appends it to the log and broadcasts to every client.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs_22.html",
+        "https://github.com/Operational-Transformation/ot.js/blob/master/lib/client.js"
+      ],
+      "details": "A central server that assigns a total order is what lets client-server OT stay simple. The 2010 post describes replaying the log from the beginning (earlier pass)."
+    },
+    {
+      "id": "log",
+      "label": "Revision log",
+      "kind": "datastore",
+      "summary": "Append-only list of transformed operations. The document is the replay of this log. Snapshots to shorten replay are an assumed optimisation.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs_22.html"
+      ]
+    },
+    {
+      "id": "presence",
+      "label": "Presence / cursors",
+      "kind": "service",
+      "summary": "Broadcasts cursor positions and selections, transformed against concurrent edits.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs.html"
+      ]
+    },
+    {
+      "id": "diffsync",
+      "label": "Alternative: differential sync",
+      "kind": "service",
+      "summary": "Fraser's algorithm: a symmetric loop of diff and fuzzy patch with shadow copies. Conflicts resolve automatically, but a patch whose context changed too much fails and is dropped.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://neil.fraser.name/writing/sync/"
+      ],
+      "details": "Rejected for intent-sensitive editing because diffs carry no intent."
+    },
+    {
+      "id": "crdt",
+      "label": "Alternative: CRDT",
+      "kind": "service",
+      "summary": "Yjs/Automerge-style data types that converge without a central server. Figma is CRDT-inspired but keeps a central authority and last-writer-wins per property.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
+        "https://martin.kleppmann.com/2019/03/25/papoc-interleaving-anomalies.html"
+      ],
+      "details": "Some published algorithms show interleaving anomalies on concurrent inserts at the same spot (Kleppmann et al.)."
+    }
+  ],
+  "edges": [
+    {
+      "id": "a-gw",
+      "from": "alice",
+      "to": "gateway",
+      "label": "op (rev 7)",
+      "mode": "async",
+      "protocol": "WebSocket"
+    },
+    {
+      "id": "gw-srv",
+      "from": "gateway",
+      "to": "server",
+      "label": "operation",
+      "mode": "sync"
+    },
+    {
+      "id": "srv-log",
+      "from": "server",
+      "to": "log",
+      "label": "append transformed op",
+      "mode": "sync"
+    },
+    {
+      "id": "srv-gw",
+      "from": "server",
+      "to": "gateway",
+      "label": "broadcast op (rev 8)",
+      "mode": "async"
+    },
+    {
+      "id": "gw-bob",
+      "from": "gateway",
+      "to": "bob",
+      "label": "op + ack to Alice",
+      "mode": "async",
+      "protocol": "WebSocket"
+    },
+    {
+      "id": "srv-pres",
+      "from": "server",
+      "to": "presence",
+      "label": "cursor transforms",
+      "mode": "async"
+    },
+    {
+      "id": "log-srv",
+      "from": "log",
+      "to": "server",
+      "label": "replay on open",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "edit",
+      "name": "Alice types, Bob sees it",
+      "steps": [
+        {
+          "edge": "a-gw",
+          "caption": "Alice's editor applies the change to her screen immediately and sends the operation with the revision it was based on."
+        },
+        {
+          "edge": "gw-srv",
+          "caption": "The connection gateway forwards it to the document's server."
+        },
+        {
+          "edge": "srv-log",
+          "caption": "The server transforms it against any operations it has applied since that revision, then assigns the next revision and appends it to the log."
+        },
+        {
+          "edge": "srv-gw",
+          "caption": "It broadcasts the transformed operation to every client."
+        },
+        {
+          "edge": "gw-bob",
+          "caption": "Bob's editor transforms it against his own pending edits and applies it. Alice receives it as an acknowledgement."
+        }
+      ]
+    },
+    {
+      "id": "concurrent",
+      "name": "Two people edit the same spot",
+      "steps": [
+        {
+          "edge": "a-gw",
+          "caption": "Alice inserts text at position 3, based on revision 7."
+        },
+        {
+          "edge": "gw-srv",
+          "caption": "Bob also inserted at position 3 based on revision 7. The server received his first, so it is revision 8."
+        },
+        {
+          "edge": "srv-log",
+          "caption": "The server transforms Alice's operation against Bob's: her insert shifts to account for his text, then becomes revision 9. Both intents survive and everyone converges to the same text."
+        },
+        {
+          "edge": "srv-gw",
+          "caption": "Each client applies the operations it had not yet seen, transformed against its own pending edits."
+        }
+      ]
+    },
+    {
+      "id": "open",
+      "name": "Open a document",
+      "steps": [
+        {
+          "edge": "log-srv",
+          "caption": "The document is the replay of its revision log. (Snapshots are a common optimisation, but we do not claim Google uses them.)"
+        },
+        {
+          "edge": "srv-pres",
+          "caption": "Cursors and selections are broadcast and transformed against concurrent edits too."
+        }
+      ]
+    }
+  ]
+}
