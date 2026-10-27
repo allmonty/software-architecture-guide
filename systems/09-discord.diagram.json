@@ -1,0 +1,297 @@
+{
+  "id": "09-discord",
+  "title": "Discord",
+  "kind": "real-system",
+  "nodes": [
+    {
+      "id": "client",
+      "label": "Discord client",
+      "kind": "client",
+      "summary": "Opens a WebSocket for chat and a second WebSocket plus UDP for voice.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://discord.com/blog/how-discord-scaled-elixir-to-5-000-000-concurrent-users",
+        "https://discord.com/blog/how-discord-handles-two-and-half-million-concurrent-voice-users-using-webrtc"
+      ],
+      "group": "clients"
+    },
+    {
+      "id": "api",
+      "label": "API (monolith)",
+      "kind": "service",
+      "summary": "Receives writes such as sending a message and talks to the data services. The 2023 post calls it the API monolith.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://discord.com/blog/how-discord-stores-trillions-of-messages"
+      ]
+    },
+    {
+      "id": "session",
+      "label": "Session process",
+      "kind": "service",
+      "summary": "One Elixir GenServer per connected user. Subscribes to the user's guilds (about 5 on average). Up to 500,000 live sessions per VM at the time.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://discord.com/blog/how-discord-scaled-elixir-to-5-000-000-concurrent-users"
+      ],
+      "details": "Ring lookups for session restarts were cut from ~30 s to under a second using FastGlobal (constant module data)."
+    },
+    {
+      "id": "guild",
+      "label": "Guild process",
+      "kind": "service",
+      "summary": "One GenServer per guild. Publishes every event to all connected sessions. Large guilds (30,000 users) fell behind: one send/2 took 30–70 µs, so one publish took 0.9–2.1 s.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://discord.com/blog/how-discord-scaled-elixir-to-5-000-000-concurrent-users"
+      ]
+    },
+    {
+      "id": "manifold",
+      "label": "Manifold",
+      "kind": "service",
+      "summary": "Batches a publish: groups recipient PIDs by remote node, sends one message per node to a partitioner that spreads local delivery across cores.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://discord.com/blog/how-discord-scaled-elixir-to-5-000-000-concurrent-users"
+      ],
+      "details": "Semaphore (an ETS counter) makes callers fail early when too many requests are outstanding, instead of a circuit breaker."
+    },
+    {
+      "id": "memberlist",
+      "label": "Member list (Rust SortedSet)",
+      "kind": "service",
+      "summary": "Rust NIF via Rustler for a sorted set that handles hundreds of thousands of entries. Insert 0.61–3.68 µs. Lets clients receive updates only for the visible part of the list.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://discord.com/blog/using-rust-to-scale-elixir-for-11-million-concurrent-users"
+      ]
+    },
+    {
+      "id": "readstates",
+      "label": "Read States service",
+      "kind": "service",
+      "summary": "Tracks which channels and messages each user has read. Rewritten from Go to Rust to remove GC latency spikes every ~2 minutes.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://discord.com/blog/why-discord-is-switching-from-go-to-rust"
+      ]
+    },
+    {
+      "id": "dataservices",
+      "label": "Data services (Rust)",
+      "kind": "service",
+      "summary": "Sit between the API monolith and the databases. Coalesce concurrent identical row requests into one query, using consistent-hash routing by channel ID.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://discord.com/blog/how-discord-stores-trillions-of-messages"
+      ]
+    },
+    {
+      "id": "scylla",
+      "label": "ScyllaDB (messages)",
+      "kind": "datastore",
+      "summary": "Messages partitioned by channel plus a time bucket, with Snowflake IDs (time-sortable). 177 Cassandra nodes became 72 ScyllaDB nodes at 9 TB each.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://discord.com/blog/how-discord-stores-trillions-of-messages"
+      ],
+      "details": "p99 reads 40–125 ms → ~15 ms. Inserts 5–70 ms → steady 5 ms. Cutover May 2022."
+    },
+    {
+      "id": "discovery",
+      "label": "Voice discovery (etcd)",
+      "kind": "service",
+      "summary": "Voice servers report load to etcd. The Guilds service assigns the least-utilised voice server in the region to the guild.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://discord.com/blog/how-discord-handles-two-and-half-million-concurrent-voice-users-using-webrtc"
+      ]
+    },
+    {
+      "id": "voice",
+      "label": "Voice server",
+      "kind": "service",
+      "summary": "Elixir signaling component plus a C++ SFU that forwards audio and video within a channel. Client-server, not peer-to-peer. Audio over UDP, no ICE, Salsa20 encryption.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://discord.com/blog/how-discord-handles-two-and-half-million-concurrent-voice-users-using-webrtc"
+      ],
+      "details": "850+ voice servers in 13 regions and 2.6 million+ concurrent voice users at the time (2018)."
+    }
+  ],
+  "edges": [
+    {
+      "id": "c-session",
+      "from": "client",
+      "to": "session",
+      "label": "WebSocket",
+      "mode": "sync",
+      "protocol": "WebSocket"
+    },
+    {
+      "id": "session-guild",
+      "from": "session",
+      "to": "guild",
+      "label": "subscribe",
+      "mode": "sync"
+    },
+    {
+      "id": "guild-manifold",
+      "from": "guild",
+      "to": "manifold",
+      "label": "publish event",
+      "mode": "sync"
+    },
+    {
+      "id": "manifold-session",
+      "from": "manifold",
+      "to": "session",
+      "label": "batched delivery per node",
+      "mode": "async"
+    },
+    {
+      "id": "session-c",
+      "from": "session",
+      "to": "client",
+      "label": "push event",
+      "mode": "async"
+    },
+    {
+      "id": "c-api",
+      "from": "client",
+      "to": "api",
+      "label": "send message",
+      "mode": "sync",
+      "protocol": "HTTPS"
+    },
+    {
+      "id": "api-guild",
+      "from": "api",
+      "to": "guild",
+      "label": "publish",
+      "mode": "async"
+    },
+    {
+      "id": "api-ds",
+      "from": "api",
+      "to": "dataservices",
+      "label": "write / read",
+      "mode": "sync"
+    },
+    {
+      "id": "ds-scylla",
+      "from": "dataservices",
+      "to": "scylla",
+      "label": "one query per hot row",
+      "mode": "sync"
+    },
+    {
+      "id": "session-read",
+      "from": "session",
+      "to": "readstates",
+      "label": "read-state lookup",
+      "mode": "sync"
+    },
+    {
+      "id": "guild-member",
+      "from": "guild",
+      "to": "memberlist",
+      "label": "visible-range updates",
+      "mode": "sync"
+    },
+    {
+      "id": "c-disc",
+      "from": "client",
+      "to": "discovery",
+      "label": "which voice server?",
+      "mode": "sync"
+    },
+    {
+      "id": "disc-voice",
+      "from": "discovery",
+      "to": "voice",
+      "label": "least utilised in region",
+      "mode": "sync"
+    },
+    {
+      "id": "c-voice",
+      "from": "client",
+      "to": "voice",
+      "label": "signaling WS + UDP audio",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "message",
+      "name": "Send a message to a guild",
+      "steps": [
+        {
+          "edge": "c-api",
+          "caption": "The client sends the message through the API."
+        },
+        {
+          "edge": "api-ds",
+          "caption": "The write goes through the Rust data services. (The posts do not show whether persisting or publishing comes first, so this order is a labelled assumption.)"
+        },
+        {
+          "edge": "ds-scylla",
+          "caption": "Data services route by channel ID to one instance, coalesce concurrent identical reads, and talk to ScyllaDB, where the row's partition is channel plus time bucket."
+        },
+        {
+          "edge": "api-guild",
+          "caption": "The event is published to the guild process."
+        },
+        {
+          "edge": "guild-manifold",
+          "caption": "The guild hands the publish to Manifold instead of sending N messages itself."
+        },
+        {
+          "edge": "manifold-session",
+          "caption": "Manifold groups sessions by remote node and sends one message per node, then spreads local delivery across cores."
+        },
+        {
+          "edge": "session-c",
+          "caption": "Each session pushes the event down its WebSocket to the user."
+        }
+      ]
+    },
+    {
+      "id": "history",
+      "name": "Scroll back through history",
+      "steps": [
+        {
+          "edge": "c-api",
+          "caption": "The client requests older messages for a channel."
+        },
+        {
+          "edge": "api-ds",
+          "caption": "The request goes to the data services, which route by channel ID."
+        },
+        {
+          "edge": "ds-scylla",
+          "caption": "If many users ask for the same rows, only one database query is made. p99 reads dropped to ~15 ms after the move to ScyllaDB."
+        }
+      ]
+    },
+    {
+      "id": "voice",
+      "name": "Join a voice channel",
+      "steps": [
+        {
+          "edge": "c-disc",
+          "caption": "The client's join request reaches the Guilds service, which consults voice discovery."
+        },
+        {
+          "edge": "disc-voice",
+          "caption": "Discovery assigns the least utilised voice server in the guild's region."
+        },
+        {
+          "edge": "c-voice",
+          "caption": "The client opens a second WebSocket to that server for signaling and sends audio over UDP. The SFU forwards it to others in the channel."
+        }
+      ]
+    }
+  ]
+}
