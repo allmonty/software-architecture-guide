@@ -61,7 +61,7 @@
       "id": "block",
       "label": "Block servers",
       "kind": "service",
-      "summary": "Accept uploaded blocks directly from clients. Streaming sync lets a downloader prefetch blocks of an uncommitted file from server memory.",
+      "summary": "Accept uploaded blocks directly from clients. Streaming sync lets a downloader learn the blocklist of an uncommitted file (kept in memcache by the metadata server) and prefetch those blocks from here.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://dropbox.tech/infrastructure/streaming-file-synchronization"

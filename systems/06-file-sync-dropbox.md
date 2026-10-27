@@ -70,7 +70,7 @@ What this buys you (our analysis, `[INDUSTRY PATTERN]`):
 
 ### Streaming sync `[CONFIRMED]`
 
-Before it, "the entire file must be uploaded to our servers and committed to our databases" before other clients could see it. Streaming sync lets the downloading client prefetch blocks of an uncommitted file from server memcache so it is nearly done when the metadata commit lands. The goal: the downloader should "always be just one blockserver network call behind the uploading client". Dropbox reports "up to 2x" improvement for multi-client sync, and one test went from 89 s to 64 s for a 100 MB file. It applies to large new files only.
+Before it, "the entire file must be uploaded to our servers and committed to our databases" before other clients could see it. Streaming sync keeps the blocklist of a not-yet-committed file in a memcache entry (written on a failed commit, read by `list`), so the downloading client learns about the file early and prefetches its blocks from the block servers; it is then nearly done when the metadata commit lands. The goal: the downloader should "always be just one blockserver network call behind the uploading client". Dropbox reports "up to 2x" improvement for multi-client sync, and one test went from 89 s to 64 s for a 100 MB file. It applies to large new files only.
 
 ---
 
@@ -234,3 +234,4 @@ It is the last agreed state, so comparing it with each side shows who changed wh
 - Removed: any detail of Dropbox's public HTTP API (cursors, long-poll). Our fetch of the API docs returned only navigation, so nothing from it is used.
 - Not read in full: Panda, Alki, cross-shard transactions (seen only in search snippets), so used only as pointers.
 - Scoped: "dedup", conflict handling, device notification and the end-to-end flow are labelled `[INDUSTRY PATTERN]` because no Dropbox post we read states them.
+- Corrected (independent review, 2026-10-27): streaming sync keeps the blocklist of an uncommitted file in memcache, not the block data; the downloader prefetches blocks from the block servers.
