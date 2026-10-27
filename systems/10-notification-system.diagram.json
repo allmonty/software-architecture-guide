@@ -1,0 +1,358 @@
+{
+  "id": "10-notification-system",
+  "title": "Notification System",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "producer",
+      "label": "Producers",
+      "kind": "client",
+      "summary": "Services, schedulers and campaign jobs that request notifications. They retry, so every request carries an idempotency key.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html"
+      ]
+    },
+    {
+      "id": "ingest",
+      "label": "Ingest API",
+      "kind": "service",
+      "summary": "Validates, authorises and rate-limits producers, then checks the dedup store before accepting.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html"
+      ],
+      "details": "Idempotency keys matter because queues deliver at-least-once, so the same logical notification can arrive twice."
+    },
+    {
+      "id": "dedup",
+      "label": "Dedup store",
+      "kind": "datastore",
+      "summary": "TTL'd record of idempotency keys already seen, returning the previous result for repeats.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html"
+      ]
+    },
+    {
+      "id": "orch",
+      "label": "Orchestrator",
+      "kind": "service",
+      "summary": "Loads preferences, device tokens and rules. Drops or delays for opt-out, quiet hours and frequency caps, and logs the reason. Renders the template.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://developer.apple.com/documentation/usernotifications/handling-notification-responses-from-apns"
+      ],
+      "details": "APNs returns 429 for too many consecutive requests to one token, which is one reason to cap per-user frequency."
+    },
+    {
+      "id": "prefs",
+      "label": "Preferences + tokens",
+      "kind": "datastore",
+      "summary": "Per-user opt-ins and quiet hours, and device tokens with a last-seen timestamp. Stale tokens (FCM: not connected for a month) are pruned.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://firebase.google.com/docs/cloud-messaging/manage-tokens"
+      ],
+      "details": "Store a timestamp with every token, delete on APNs 410 Unregistered and FCM UNREGISTERED (404)."
+    },
+    {
+      "id": "qhigh",
+      "label": "Push queue (high priority)",
+      "kind": "queue",
+      "summary": "Separate queue and workers for urgent notifications (OTP, fraud) so a marketing blast cannot starve them.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html"
+      ],
+      "details": "Standard queues give at-least-once delivery and best-effort ordering, so workers must be idempotent."
+    },
+    {
+      "id": "qnorm",
+      "label": "Push queue (normal)",
+      "kind": "queue",
+      "summary": "Bulk and marketing push. Throttled to provider limits and pausable.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html"
+      ]
+    },
+    {
+      "id": "qemail",
+      "label": "Email / SMS queues",
+      "kind": "queue",
+      "summary": "One queue per channel, so a provider outage on one channel does not stall the others.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html"
+      ]
+    },
+    {
+      "id": "workers",
+      "label": "Channel workers",
+      "kind": "service",
+      "summary": "Call the provider with the right priority, TTL and collapse key. Retry with back-off on retryable errors. Never retry errors that cannot succeed.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://developer.apple.com/documentation/usernotifications/handling-notification-responses-from-apns",
+        "https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns"
+      ],
+      "details": "APNs: do not retry BadDeviceToken, DeviceTokenNotForTopic, Forbidden, ExpiredToken, Unregistered or PayloadTooLarge. 5xx can be retried with back-off, 15 minutes after a Shutdown."
+    },
+    {
+      "id": "dlq",
+      "label": "Dead-letter queue",
+      "kind": "queue",
+      "summary": "Messages that keep failing land here after maxReceiveCount receives, for inspection and redrive. Retention should exceed the source queue's.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html"
+      ]
+    },
+    {
+      "id": "apns",
+      "label": "APNs",
+      "kind": "external",
+      "summary": "Apple's push service. HTTP/2, 4 KB payload, priority 10/5/1, apns-expiration (0 = one attempt, no storage), apns-collapse-id (≤64 bytes), one stored notification per bundle ID.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns",
+        "https://developer.apple.com/documentation/usernotifications/handling-notification-responses-from-apns"
+      ]
+    },
+    {
+      "id": "fcm",
+      "label": "FCM",
+      "kind": "external",
+      "summary": "Google's push service. TTL 0–28 days (default 4 weeks), collapse_key, normal vs high priority, Doze can delay normal-priority delivery.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://firebase.google.com/docs/cloud-messaging/customize-messages/setting-message-lifespan",
+        "https://firebase.google.com/docs/cloud-messaging/android-message-priority"
+      ]
+    },
+    {
+      "id": "device",
+      "label": "User device",
+      "kind": "client",
+      "summary": "Receives the push, may show only the latest if several were stored while offline.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns",
+        "https://firebase.google.com/docs/cloud-messaging/customize-messages/setting-message-lifespan"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "p-in",
+      "from": "producer",
+      "to": "ingest",
+      "label": "POST /notify + idempotency key",
+      "mode": "sync"
+    },
+    {
+      "id": "in-dedup",
+      "from": "ingest",
+      "to": "dedup",
+      "label": "seen before?",
+      "mode": "sync"
+    },
+    {
+      "id": "in-orch",
+      "from": "ingest",
+      "to": "orch",
+      "label": "accepted",
+      "mode": "sync"
+    },
+    {
+      "id": "orch-prefs",
+      "from": "orch",
+      "to": "prefs",
+      "label": "preferences, tokens",
+      "mode": "sync"
+    },
+    {
+      "id": "orch-qh",
+      "from": "orch",
+      "to": "qhigh",
+      "label": "urgent",
+      "mode": "sync"
+    },
+    {
+      "id": "orch-qn",
+      "from": "orch",
+      "to": "qnorm",
+      "label": "bulk",
+      "mode": "sync"
+    },
+    {
+      "id": "orch-qe",
+      "from": "orch",
+      "to": "qemail",
+      "label": "email / SMS",
+      "mode": "sync"
+    },
+    {
+      "id": "qh-w",
+      "from": "qhigh",
+      "to": "workers",
+      "label": "dequeue",
+      "mode": "sync"
+    },
+    {
+      "id": "qn-w",
+      "from": "qnorm",
+      "to": "workers",
+      "label": "dequeue",
+      "mode": "sync"
+    },
+    {
+      "id": "w-apns",
+      "from": "workers",
+      "to": "apns",
+      "label": "HTTP/2 POST",
+      "mode": "sync"
+    },
+    {
+      "id": "w-fcm",
+      "from": "workers",
+      "to": "fcm",
+      "label": "send",
+      "mode": "sync"
+    },
+    {
+      "id": "apns-dev",
+      "from": "apns",
+      "to": "device",
+      "label": "deliver (best effort)",
+      "mode": "async"
+    },
+    {
+      "id": "fcm-dev",
+      "from": "fcm",
+      "to": "device",
+      "label": "deliver (best effort)",
+      "mode": "async"
+    },
+    {
+      "id": "apns-w",
+      "from": "apns",
+      "to": "workers",
+      "label": "410 / 429 / 5xx",
+      "mode": "sync"
+    },
+    {
+      "id": "w-prefs",
+      "from": "workers",
+      "to": "prefs",
+      "label": "remove dead token",
+      "mode": "sync"
+    },
+    {
+      "id": "w-dlq",
+      "from": "workers",
+      "to": "dlq",
+      "label": "give up after N tries",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "send",
+      "name": "Send an urgent push",
+      "steps": [
+        {
+          "edge": "p-in",
+          "caption": "A service asks to notify a user, with an idempotency key so a retry cannot create a second notification."
+        },
+        {
+          "edge": "in-dedup",
+          "caption": "The ingest API checks whether this key was already accepted."
+        },
+        {
+          "edge": "in-orch",
+          "caption": "New request: hand it to the orchestrator."
+        },
+        {
+          "edge": "orch-prefs",
+          "caption": "The orchestrator loads the user's preferences and device tokens, and checks opt-out, quiet hours and frequency caps."
+        },
+        {
+          "edge": "orch-qh",
+          "caption": "An urgent message goes to the high-priority push queue so bulk traffic cannot delay it."
+        },
+        {
+          "edge": "qh-w",
+          "caption": "A channel worker dequeues it. Queues are at-least-once, so the worker records the send to stay idempotent."
+        },
+        {
+          "edge": "w-apns",
+          "caption": "For an iPhone the worker POSTs to APNs with priority 10, a short expiration and a collapse ID."
+        },
+        {
+          "edge": "apns-dev",
+          "caption": "APNs delivers on a best-effort basis. Acceptance is not a delivery receipt."
+        }
+      ]
+    },
+    {
+      "id": "dead-token",
+      "name": "APNs says the token is dead",
+      "steps": [
+        {
+          "edge": "w-apns",
+          "caption": "The worker sends a push to a stored token."
+        },
+        {
+          "edge": "apns-w",
+          "caption": "APNs answers 410 Unregistered: the token is no longer active for this app."
+        },
+        {
+          "edge": "w-prefs",
+          "caption": "Do not retry. Remove or deactivate the token so it is never used again."
+        }
+      ]
+    },
+    {
+      "id": "retry",
+      "name": "Provider is failing",
+      "steps": [
+        {
+          "edge": "w-apns",
+          "caption": "A send fails with a 5xx or Shutdown response."
+        },
+        {
+          "edge": "apns-w",
+          "caption": "These are retryable (after 15 minutes on Shutdown). 429 is retryable after a delay. Use back-off with jitter."
+        },
+        {
+          "edge": "w-dlq",
+          "caption": "After maxReceiveCount failed attempts the message moves to the dead-letter queue for inspection and redrive."
+        }
+      ]
+    },
+    {
+      "id": "android",
+      "name": "Send to an Android device",
+      "steps": [
+        {
+          "edge": "orch-qn",
+          "caption": "A normal-priority notification is queued for bulk delivery."
+        },
+        {
+          "edge": "qn-w",
+          "caption": "A worker dequeues it."
+        },
+        {
+          "edge": "w-fcm",
+          "caption": "It sends to FCM with a TTL (default 4 weeks, max 28 days) and a collapse_key so an older pending message is replaced."
+        },
+        {
+          "edge": "fcm-dev",
+          "caption": "In Doze, normal priority delivery may be delayed until the device wakes. High priority is reserved for time-sensitive, user-visible content."
+        }
+      ]
+    }
+  ]
+}
