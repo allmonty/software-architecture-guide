@@ -1,0 +1,333 @@
+{
+  "id": "01-url-shortener",
+  "title": "URL Shortener",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "client",
+      "label": "Browser / API client",
+      "kind": "client",
+      "summary": "Creates short links (write) and follows them (read, ~100x more often).",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://systemdesign.one/url-shortening-system-design/"
+      ]
+    },
+    {
+      "id": "cdn",
+      "label": "CDN / edge",
+      "kind": "edge",
+      "summary": "Serves hot redirects from the edge and collapses simultaneous misses for one link into a single origin request.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.squid-cache.org/Doc/config/collapsed_forwarding/",
+        "https://systemdesign.one/url-shortening-system-design/"
+      ],
+      "details": "Collapsed forwarding is a documented Squid feature `[CONFIRMED]`. Using it for a viral short link is the design application `[INDUSTRY PATTERN]`."
+    },
+    {
+      "id": "lb",
+      "label": "Load balancer",
+      "kind": "edge",
+      "summary": "Spreads traffic across stateless service instances. Read and write paths run on separate fleets so redirects never starve shortening.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://systemdesign.one/url-shortening-system-design/"
+      ]
+    },
+    {
+      "id": "shorten",
+      "label": "Shorten service",
+      "kind": "service",
+      "summary": "Validates the long URL, enforces 1:1 / custom aliases, asks the KGS for a key and writes the mapping.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://systemdesign.one/url-shortening-system-design/"
+      ],
+      "group": "write path"
+    },
+    {
+      "id": "redirect",
+      "label": "Redirect service",
+      "kind": "service",
+      "summary": "Looks up short→long and answers 301 or 302. 301 is heuristically cacheable by browsers, 302 is not.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.rfc-editor.org/rfc/rfc9110.html#name-redirection-3xx",
+        "https://systemdesign.one/url-shortening-system-design/"
+      ],
+      "details": "Status-code semantics are `[CONFIRMED]` in RFC 9110 §15.4: 301 is heuristically cacheable, 307 MUST NOT change the method. Choosing 301 vs 302 is a product trade-off between cache efficiency and click analytics.",
+      "group": "read path"
+    },
+    {
+      "id": "kgs",
+      "label": "Key generation service",
+      "kind": "service",
+      "summary": "Hands out unique keys from an in-memory leased counter range, base62-encoded to 7 characters (3.5 trillion keys).",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://systemdesign.one/url-shortening-system-design/"
+      ],
+      "details": "Losing an in-memory range on a crash only wastes IDs. Raw counters are predictable, so scramble them (random bits, shuffled ranges or a bijective permutation) if guessability matters.",
+      "group": "write path"
+    },
+    {
+      "id": "ranges",
+      "label": "Token range service",
+      "kind": "datastore",
+      "summary": "Strongly consistent store (ZooKeeper or DynamoDB with conditional writes) that leases non-overlapping counter ranges to KGS instances.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://systemdesign.one/url-shortening-system-design/"
+      ],
+      "group": "write path"
+    },
+    {
+      "id": "bloom",
+      "label": "Bloom filters",
+      "kind": "datastore",
+      "summary": "Answers \"definitely not seen\" cheaply: short-URL filter returns 404 without hitting cache or DB. Long-URL filter shortcuts the 1:1 check. False positives, never false negatives.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Bloom_filter",
+        "https://systemdesign.one/url-shortening-system-design/"
+      ],
+      "details": "Standard Bloom filters cannot delete, so expired links still answer \"maybe\" and fall through to the lookup."
+    },
+    {
+      "id": "cache",
+      "label": "Redis cache",
+      "kind": "datastore",
+      "summary": "Cache-aside, LRU, ~1 day TTL, partitioned by short URL. Cache on the second access to avoid thrashing on one-hit links.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://systemdesign.one/url-shortening-system-design/"
+      ],
+      "group": "read path"
+    },
+    {
+      "id": "urlstore",
+      "label": "URL store (NoSQL KV)",
+      "kind": "datastore",
+      "summary": "short_url → long_url + metadata. Partitioned by short URL via consistent hashing (DynamoDB / Cassandra class).",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://systemdesign.one/url-shortening-system-design/"
+      ],
+      "details": "Capacity (assumed 100M writes/day, 5 yrs, ~2.5 KB/record): ~1k writes/s, ~100k reads/s, ~456 TB before replication."
+    },
+    {
+      "id": "inverted",
+      "label": "Inverted index",
+      "kind": "datastore",
+      "summary": "long_url → short_url, partitioned by long URL. Only needed when the same long URL must map to the same short URL (1:1), which most real products skip.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://systemdesign.one/url-shortening-system-design/"
+      ]
+    },
+    {
+      "id": "kafka",
+      "label": "Kafka (click events)",
+      "kind": "queue",
+      "summary": "The redirect service emits a click event; analytics consumes it asynchronously so a slow warehouse never delays a redirect.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://systemdesign.one/url-shortening-system-design/"
+      ]
+    },
+    {
+      "id": "warehouse",
+      "label": "Analytics warehouse",
+      "kind": "datastore",
+      "summary": "Batch store (HDFS / warehouse) for non-real-time click counts, referrers and geo.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://systemdesign.one/url-shortening-system-design/"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "c-cdn",
+      "from": "client",
+      "to": "cdn",
+      "label": "GET /abc1234",
+      "mode": "sync",
+      "protocol": "HTTPS"
+    },
+    {
+      "id": "cdn-lb",
+      "from": "cdn",
+      "to": "lb",
+      "label": "miss",
+      "mode": "sync"
+    },
+    {
+      "id": "lb-redirect",
+      "from": "lb",
+      "to": "redirect",
+      "label": "redirect traffic",
+      "mode": "sync"
+    },
+    {
+      "id": "redirect-bloom",
+      "from": "redirect",
+      "to": "bloom",
+      "label": "exists?",
+      "mode": "sync"
+    },
+    {
+      "id": "redirect-cache",
+      "from": "redirect",
+      "to": "cache",
+      "label": "lookup",
+      "mode": "sync"
+    },
+    {
+      "id": "cache-store",
+      "from": "cache",
+      "to": "urlstore",
+      "label": "miss → read",
+      "mode": "sync"
+    },
+    {
+      "id": "redirect-kafka",
+      "from": "redirect",
+      "to": "kafka",
+      "label": "click event",
+      "mode": "async"
+    },
+    {
+      "id": "kafka-wh",
+      "from": "kafka",
+      "to": "warehouse",
+      "label": "batch load",
+      "mode": "async"
+    },
+    {
+      "id": "c-lb",
+      "from": "client",
+      "to": "lb",
+      "label": "PUT /url",
+      "mode": "sync",
+      "protocol": "HTTPS"
+    },
+    {
+      "id": "lb-shorten",
+      "from": "lb",
+      "to": "shorten",
+      "label": "write traffic",
+      "mode": "sync"
+    },
+    {
+      "id": "shorten-bloom",
+      "from": "shorten",
+      "to": "bloom",
+      "label": "long URL seen?",
+      "mode": "sync"
+    },
+    {
+      "id": "shorten-inv",
+      "from": "shorten",
+      "to": "inverted",
+      "label": "check / insert long→short",
+      "mode": "sync"
+    },
+    {
+      "id": "shorten-kgs",
+      "from": "shorten",
+      "to": "kgs",
+      "label": "next key",
+      "mode": "sync"
+    },
+    {
+      "id": "kgs-ranges",
+      "from": "kgs",
+      "to": "ranges",
+      "label": "lease range",
+      "mode": "sync"
+    },
+    {
+      "id": "shorten-store",
+      "from": "shorten",
+      "to": "urlstore",
+      "label": "write mapping",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "redirect",
+      "name": "Follow a short link",
+      "steps": [
+        {
+          "edge": "c-cdn",
+          "caption": "The browser requests the short URL. Popular redirects are answered at the edge."
+        },
+        {
+          "edge": "cdn-lb",
+          "caption": "On an edge miss the request goes to the origin. Simultaneous misses for the same link are collapsed into one."
+        },
+        {
+          "edge": "lb-redirect",
+          "caption": "The load balancer routes it to a stateless redirect instance."
+        },
+        {
+          "edge": "redirect-bloom",
+          "caption": "A Bloom filter rejects keys that were never created, so scans never reach the cache or database."
+        },
+        {
+          "edge": "redirect-cache",
+          "caption": "Cache-aside lookup in Redis."
+        },
+        {
+          "edge": "cache-store",
+          "caption": "On a cache miss the value is read from the URL store, then cached."
+        },
+        {
+          "edge": "redirect-kafka",
+          "caption": "A click event is emitted asynchronously. The 301/302 response does not wait for it."
+        },
+        {
+          "edge": "kafka-wh",
+          "caption": "Analytics consumes the events in batches, off the hot path."
+        }
+      ]
+    },
+    {
+      "id": "shorten",
+      "name": "Create a short link",
+      "steps": [
+        {
+          "edge": "c-lb",
+          "caption": "The client submits the long URL (and optionally an alias and expiry)."
+        },
+        {
+          "edge": "lb-shorten",
+          "caption": "A shorten-service instance takes the request."
+        },
+        {
+          "edge": "shorten-bloom",
+          "caption": "If 1:1 is required, a Bloom filter says whether this long URL was definitely never seen."
+        },
+        {
+          "edge": "shorten-inv",
+          "caption": "On a \"maybe\", the inverted index confirms whether a short URL already exists. A lock on the long URL prevents concurrent duplicates."
+        },
+        {
+          "edge": "shorten-kgs",
+          "caption": "Otherwise ask the key generation service for a key from its in-memory range."
+        },
+        {
+          "edge": "kgs-ranges",
+          "caption": "Only when its range is exhausted does the KGS lease a new non-overlapping range from the consistent store."
+        },
+        {
+          "edge": "shorten-store",
+          "caption": "The mapping is written to the URL store (and the inverted index when 1:1 is on)."
+        }
+      ]
+    }
+  ]
+}
