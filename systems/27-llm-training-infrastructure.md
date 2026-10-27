@@ -100,7 +100,7 @@ This is the origin of the placement rule in section 3, and the 52% figure is a u
 
 ## 5. Reliability: failures are the normal case `[CONFIRMED]`
 
-**Llama 3 numbers.** "The complexity and potential failure scenarios of 16K GPU training surpass those of much larger CPU clusters", and "a single GPU failure may require a restart of the entire job". Even so, Llama 3 achieved "higher than 90% effective training time" while also performing automated maintenance. In a 54-day period there were 466 interruptions: 47 planned (maintenance, configuration or dataset updates) and 419 unexpected. About 78% of the unexpected were attributed to confirmed or suspected hardware; GPU causes were 58.7%, led by faulty GPUs, HBM3 memory failures, and software bugs, network switch or cable faults and host maintenance next. Manual intervention was needed only three times; automation handled the rest.
+**Llama 3 numbers.** "The complexity and potential failure scenarios of 16K GPU training surpass those of much larger CPU clusters", and "a single GPU failure may require a restart of the entire job". Even so, Llama 3 achieved "higher than 90% effective training time" while also performing automated maintenance. In a 54-day period there were 466 interruptions: 47 planned (maintenance, configuration or dataset updates) and 419 unexpected. About 78% of the unexpected were attributed to confirmed or suspected hardware. GPU causes (faulty GPUs, HBM3 and SRAM memory, processors, thermal and silent data corruption) were 58.7% of the total; other large categories were software bugs, network switch or cable faults, and unplanned host maintenance. Manual intervention was needed only three times; automation handled the rest.
 
 **Operational tools.** The team used PyTorch's NCCL flight recorder (a ring buffer of collective metadata and stack traces dumped on watchdog timeout), faster job startup and checkpointing, and selective, live-enabled heavier tracing without a restart. Stalls on NVLink often show as hung CUDA kernels without an error, so the communication library monitors state and times out. **Stragglers** are still-functioning but slow hardware; "even a single straggler can slow down thousands of other GPUs", found by prioritising suspicious communications.
 
@@ -205,7 +205,7 @@ Each GPU saves its own shard; copy to host memory first so the GPU resumes in se
 
 <details><summary>Why does topology matter?</summary>
 
-Tensor parallelism exchanges data every layer and needs the fastest links, so it stays inside a server; data parallelism communicates least often and can cross pods. The scheduler must place groups so that high-traffic dimensions share fast links.
+Tensor parallelism exchanges data every layer and needs the fastest links, so it stays inside a server; data parallelism sits outermost because it can prefetch sharded weights and reduce gradients asynchronously, so it tolerates the higher latency of crossing pods. The scheduler must place groups so that high-traffic dimensions share fast links.
 
 </details>
 
