@@ -60,7 +60,7 @@ Expected non-200 results that are not broken links: `403`/`406` from sites that 
 - Notes that restate an earlier note (the `neokim-post/` upgrades) re-check the key claims against primary sources and list what was **not** re-checked in the Verification log.
 - Where a popular article disagrees with the primary source, say so in a Reviewer notes section rather than silently choosing.
 
-### Extra rules for AI notes (22 to 28)
+### Extra rules for AI notes (22 to 28; the dated-source and primary-source rules also apply to 29 to 31)
 
 - AI facts age fast. State the **date of each source** and quote vendor or benchmark numbers only from the primary paper or post, never from secondary coverage. Say which models, hardware and datasets a number was measured on.
 - Do not describe a vendor's internals (how a named chatbot is served, how a named company trains) unless it published them. Name the system type, cite the open papers, and label the rest a reference design.
