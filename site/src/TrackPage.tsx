@@ -3,6 +3,8 @@ import { useProgress } from "./progress.ts";
 import { ItemRow } from "./Home.tsx";
 import { TrackIcon } from "./icons.tsx";
 
+const hours = (minutes: number) => Math.round(minutes / 6) / 10; // one decimal, so "left" can never exceed the total
+
 export function TrackPage({ id }: { id: string }) {
   const { done } = useProgress();
   const track = tracks.find((t) => t.id === id);
@@ -20,7 +22,7 @@ export function TrackPage({ id }: { id: string }) {
       <p className="muted">{track.audience}</p>
       <div className="progress-row">
         <span className="bar-track"><span style={{ width: `${(100 * n) / steps.length}%` }} /></span>
-        <span>{n} of {steps.length} done · about {Math.round(left / 60 * 10) / 10} h left of {Math.round(mins / 60)} h</span>
+        <span>{n} of {steps.length} done · about {hours(left)} h left of {hours(mins)} h</span>
       </div>
       {nextIndex >= 0 && <p><a className="button primary" href={steps[nextIndex].item.href}>{n === 0 ? "Start" : "Continue"}: {steps[nextIndex].item.title}</a></p>}
       {nextIndex < 0 && <p><b>Track complete.</b> Revisit the workbook, or pick another goal from the <a href="#">home page</a>.</p>}
