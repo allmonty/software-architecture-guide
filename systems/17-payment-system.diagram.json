@@ -1,0 +1,295 @@
+{
+  "id": "17-payment-system",
+  "title": "Payment System",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "client",
+      "label": "Checkout (browser / app)",
+      "kind": "client",
+      "summary": "Collects payment details and sends them straight to the PSP, so the merchant handles only tokens. Never trusted to say a payment succeeded.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://docs.stripe.com/payments/paymentintents/lifecycle"
+      ]
+    },
+    {
+      "id": "order",
+      "label": "Order service",
+      "kind": "service",
+      "summary": "Owns fulfilment. An order stays pending payment while the intent is processing, and ships only on a confirmed success.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://docs.stripe.com/payments/paymentintents/lifecycle"
+      ]
+    },
+    {
+      "id": "payment",
+      "label": "Payment service",
+      "kind": "service",
+      "summary": "Creates one payment intent per order, stores your own intent and attempt records before calling the provider, and calls it with an idempotency key.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://docs.stripe.com/api/idempotent_requests",
+        "https://docs.stripe.com/payments/paymentintents/lifecycle"
+      ],
+      "details": "Key = a stable business identity plus an attempt number. A timeout is not a failure: retry with the same key or fetch the intent."
+    },
+    {
+      "id": "paydb",
+      "label": "Payment DB",
+      "kind": "datastore",
+      "summary": "Intents, attempts and idempotency records, committed together with outbox events.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://docs.stripe.com/api/idempotent_requests"
+      ]
+    },
+    {
+      "id": "psp",
+      "label": "Payment provider (PSP)",
+      "kind": "external",
+      "summary": "State machine: requires_payment_method → requires_confirmation → requires_action → processing → succeeded, or canceled. Async methods can take days. Idempotent: retries with the same key return the saved result.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://docs.stripe.com/api/idempotent_requests",
+        "https://docs.stripe.com/payments/paymentintents/lifecycle"
+      ],
+      "details": "Stripe v1 saves the status code and body of the first request, including 500s. Keys up to 255 characters, pruned after at least 24 hours, changed parameters on the same key error."
+    },
+    {
+      "id": "webhook",
+      "label": "Webhook endpoint",
+      "kind": "service",
+      "summary": "Verifies the Stripe-Signature on the raw body, records the event ID under a unique constraint, enqueues, and returns 2xx quickly. Events may be duplicated and unordered.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://docs.stripe.com/webhooks"
+      ],
+      "details": "Live-mode retries for up to three days with exponential back-off. Default signature tolerance 5 minutes."
+    },
+    {
+      "id": "queue",
+      "label": "Outbox / event queue",
+      "kind": "queue",
+      "summary": "Carries confirmed-payment events to the ledger and notifications without loss. Workers load the current object from the provider instead of trusting event order.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://docs.stripe.com/webhooks"
+      ]
+    },
+    {
+      "id": "ledger",
+      "label": "Ledger (immutable double-entry)",
+      "kind": "datastore",
+      "summary": "Every transaction is a journal entry that balances to zero, as book entries with debits and credits. Append-only: corrections are new entries. Money is integers in minor units.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/"
+      ],
+      "details": "Square's Books: books, journal_entries and book_entries tables on Cloud Spanner, ~20 TB, built and run by a team of three (2019)."
+    },
+    {
+      "id": "recon",
+      "label": "Reconciliation job",
+      "kind": "service",
+      "summary": "Compares the ledger and intents with the provider's settlement and transaction reports and writes correcting entries for differences.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/"
+      ]
+    },
+    {
+      "id": "notify",
+      "label": "Notifications",
+      "kind": "service",
+      "summary": "Sends receipts and failure notices after a confirmed state change.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://docs.stripe.com/webhooks"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "c-order",
+      "from": "client",
+      "to": "order",
+      "label": "place order",
+      "mode": "sync"
+    },
+    {
+      "id": "order-pay",
+      "from": "order",
+      "to": "payment",
+      "label": "create payment",
+      "mode": "sync"
+    },
+    {
+      "id": "pay-db",
+      "from": "payment",
+      "to": "paydb",
+      "label": "intent + attempt",
+      "mode": "sync"
+    },
+    {
+      "id": "pay-psp",
+      "from": "payment",
+      "to": "psp",
+      "label": "create / confirm (Idempotency-Key)",
+      "mode": "sync",
+      "protocol": "HTTPS"
+    },
+    {
+      "id": "c-psp",
+      "from": "client",
+      "to": "psp",
+      "label": "card details → token",
+      "mode": "sync"
+    },
+    {
+      "id": "psp-wh",
+      "from": "psp",
+      "to": "webhook",
+      "label": "payment_intent.succeeded",
+      "mode": "async",
+      "protocol": "HTTPS"
+    },
+    {
+      "id": "wh-q",
+      "from": "webhook",
+      "to": "queue",
+      "label": "enqueue event",
+      "mode": "sync"
+    },
+    {
+      "id": "q-pay",
+      "from": "queue",
+      "to": "payment",
+      "label": "apply state change",
+      "mode": "sync"
+    },
+    {
+      "id": "q-ledger",
+      "from": "queue",
+      "to": "ledger",
+      "label": "journal entry",
+      "mode": "sync"
+    },
+    {
+      "id": "q-notify",
+      "from": "queue",
+      "to": "notify",
+      "label": "receipt",
+      "mode": "async"
+    },
+    {
+      "id": "recon-ledger",
+      "from": "recon",
+      "to": "ledger",
+      "label": "compare",
+      "mode": "async"
+    },
+    {
+      "id": "recon-psp",
+      "from": "recon",
+      "to": "psp",
+      "label": "settlement reports",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "pay",
+      "name": "Pay for an order",
+      "steps": [
+        {
+          "edge": "c-order",
+          "caption": "The customer places an order."
+        },
+        {
+          "edge": "order-pay",
+          "caption": "The order service asks the payment service to create a payment. One payment intent per order."
+        },
+        {
+          "edge": "pay-db",
+          "caption": "The payment service persists its own intent and attempt record before calling the provider, so a crash can be resolved by repeating the same call."
+        },
+        {
+          "edge": "c-psp",
+          "caption": "Card details go from the customer's device straight to the provider. Only a token reaches the merchant."
+        },
+        {
+          "edge": "pay-psp",
+          "caption": "The payment service confirms the intent with an idempotency key. A timeout is treated as unknown, not failed."
+        },
+        {
+          "edge": "psp-wh",
+          "caption": "The provider calls the webhook when the payment succeeds. This may be late, duplicated or out of order."
+        },
+        {
+          "edge": "wh-q",
+          "caption": "The endpoint verifies the signature, records the event ID, enqueues, and answers 2xx at once."
+        },
+        {
+          "edge": "q-ledger",
+          "caption": "A worker loads the current state and writes a balanced, append-only journal entry."
+        },
+        {
+          "edge": "q-pay",
+          "caption": "The payment becomes succeeded and the order may now be fulfilled."
+        },
+        {
+          "edge": "q-notify",
+          "caption": "A receipt is sent."
+        }
+      ]
+    },
+    {
+      "id": "timeout",
+      "name": "Timeout after calling the PSP",
+      "steps": [
+        {
+          "edge": "pay-psp",
+          "caption": "The call times out. The payment may or may not have been created."
+        },
+        {
+          "edge": "pay-psp",
+          "caption": "Retry with the same idempotency key. The provider returns the saved result of the first attempt instead of charging again. Never start a fresh payment."
+        }
+      ]
+    },
+    {
+      "id": "dup",
+      "name": "Duplicate or late webhook",
+      "steps": [
+        {
+          "edge": "psp-wh",
+          "caption": "The provider retries for up to three days and may send the same event twice. Ordering is not guaranteed."
+        },
+        {
+          "edge": "wh-q",
+          "caption": "The unique constraint on the event ID drops the duplicate before it is enqueued."
+        },
+        {
+          "edge": "q-pay",
+          "caption": "The worker fetches the object's current state rather than assuming events arrive in order."
+        }
+      ]
+    },
+    {
+      "id": "recon",
+      "name": "Daily reconciliation",
+      "steps": [
+        {
+          "edge": "recon-psp",
+          "caption": "Fetch the provider's settlement and transaction reports."
+        },
+        {
+          "edge": "recon-ledger",
+          "caption": "Compare with the ledger. Differences are investigated and fixed with correcting entries, never by editing history."
+        }
+      ]
+    }
+  ]
+}
