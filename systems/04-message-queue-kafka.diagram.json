@@ -1,0 +1,219 @@
+{
+  "id": "04-message-queue-kafka",
+  "title": "Message Queue / Log (Apache Kafka)",
+  "kind": "real-system",
+  "nodes": [
+    {
+      "id": "producer",
+      "label": "Producer",
+      "kind": "client",
+      "summary": "Sends records to a topic. Key hash picks the partition, so one key keeps its order. Idempotent by default (enable.idempotence=true, acks=all).",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://kafka.apache.org/40/configuration/producer-configs/",
+        "https://kafka.apache.org/40/design/design/"
+      ]
+    },
+    {
+      "id": "leader",
+      "label": "Partition leader (broker)",
+      "kind": "queue",
+      "summary": "Appends to the partition's log and serves reads. One leader per partition. Followers fetch from it.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://kafka.apache.org/40/design/design/"
+      ],
+      "details": "A partition is an ordered, append-only log and the unit of ordering and parallelism."
+    },
+    {
+      "id": "follower",
+      "label": "Follower replicas",
+      "kind": "queue",
+      "summary": "Hot standbys that fetch from the leader. Those caught up form the ISR. A record is committed once every ISR member has applied it.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://kafka.apache.org/40/design/design/",
+        "https://kafka.apache.org/40/configuration/broker-configs/"
+      ],
+      "details": "With acks=all the leader waits for the full ISR. min.insync.replicas (default 1) sets the minimum that must acknowledge. unclean.leader.election.enable defaults to false: favour consistency over availability."
+    },
+    {
+      "id": "controller",
+      "label": "KRaft controller quorum",
+      "kind": "service",
+      "summary": "Raft quorum that stores cluster metadata and elects partition leaders. Fences brokers that miss heartbeats (session timeout default 9 s, heartbeat every 2 s).",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://kafka.apache.org/40/configuration/broker-configs/",
+        "https://kafka.apache.org/40/design/design/",
+        "https://kafka.apache.org/blog/2025/03/18/apache-kafka-4.0.0-release-announcement/"
+      ],
+      "details": "Kafka 4.0 (2025-03-18) is the first major release that operates entirely without ZooKeeper."
+    },
+    {
+      "id": "coord",
+      "label": "Group coordinator",
+      "kind": "service",
+      "summary": "A broker that tracks consumer-group membership, assigns partitions and stores committed offsets. Consumers never talk to each other.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://kafka.apache.org/40/design/design/"
+      ],
+      "details": "Each partition is consumed by exactly one member of a consumer group at a time. KIP-848's new consumer protocol is GA in 4.0 as an opt-in (group.protocol=consumer)."
+    },
+    {
+      "id": "consumer",
+      "label": "Consumer group",
+      "kind": "client",
+      "summary": "Members poll their assigned partitions at their own pace (pull model). Add members up to the partition count, or add groups to re-read the same data independently.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://kafka.apache.org/40/design/design/"
+      ],
+      "details": "Pull model: a slow consumer \"simply falls behind and catches up when it can\"."
+    },
+    {
+      "id": "tier",
+      "label": "Tiered storage (remote)",
+      "kind": "datastore",
+      "summary": "Hot data stays on broker disks. Rolled segments are copied to object storage such as S3. Old reads are served from the remote tier.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://cwiki.apache.org/confluence/display/KAFKA/KIP-405%3A+Kafka+Tiered+Storage"
+      ],
+      "details": "KIP-405, marked production-ready since Kafka 3.9. Pluggable RemoteStorageManager."
+    }
+  ],
+  "edges": [
+    {
+      "id": "p-l",
+      "from": "producer",
+      "to": "leader",
+      "label": "produce (acks=all)",
+      "mode": "sync",
+      "protocol": "Kafka TCP"
+    },
+    {
+      "id": "l-f",
+      "from": "leader",
+      "to": "follower",
+      "label": "followers fetch",
+      "mode": "sync"
+    },
+    {
+      "id": "f-l",
+      "from": "follower",
+      "to": "leader",
+      "label": "ack once in ISR",
+      "mode": "sync"
+    },
+    {
+      "id": "ctl-l",
+      "from": "controller",
+      "to": "leader",
+      "label": "elect leader",
+      "mode": "async"
+    },
+    {
+      "id": "c-coord",
+      "from": "consumer",
+      "to": "coord",
+      "label": "join / heartbeat",
+      "mode": "sync"
+    },
+    {
+      "id": "coord-c",
+      "from": "coord",
+      "to": "consumer",
+      "label": "partition assignment",
+      "mode": "sync"
+    },
+    {
+      "id": "c-l",
+      "from": "consumer",
+      "to": "leader",
+      "label": "poll (pull)",
+      "mode": "sync"
+    },
+    {
+      "id": "l-tier",
+      "from": "leader",
+      "to": "tier",
+      "label": "offload old segments",
+      "mode": "async"
+    },
+    {
+      "id": "tier-c",
+      "from": "tier",
+      "to": "consumer",
+      "label": "backfill reads",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "produce",
+      "name": "Produce a record durably",
+      "steps": [
+        {
+          "edge": "p-l",
+          "caption": "The producer sends a record to the leader of its partition. The key hash chose the partition."
+        },
+        {
+          "edge": "l-f",
+          "caption": "The leader appends to its log and followers fetch the new data."
+        },
+        {
+          "edge": "f-l",
+          "caption": "Followers in the ISR confirm. With acks=all the leader waits for the full ISR, and rejects the write if fewer than min.insync.replicas are available."
+        }
+      ]
+    },
+    {
+      "id": "consume",
+      "name": "Join a consumer group and read",
+      "steps": [
+        {
+          "edge": "c-coord",
+          "caption": "A consumer joins the group and heartbeats to the group coordinator broker."
+        },
+        {
+          "edge": "coord-c",
+          "caption": "The coordinator assigns it partitions. Each partition goes to exactly one member of the group."
+        },
+        {
+          "edge": "c-l",
+          "caption": "The consumer pulls from each partition leader. Only committed records (replicated to the ISR) are visible."
+        }
+      ]
+    },
+    {
+      "id": "failover",
+      "name": "Leader broker dies",
+      "steps": [
+        {
+          "edge": "ctl-l",
+          "caption": "The active controller notices the broker missed heartbeats and fences it. A new leader is elected from the ISR for each affected partition."
+        },
+        {
+          "edge": "p-l",
+          "caption": "Producers retry against the new leader. The idempotent producer's sequence numbers stop the retry from duplicating records."
+        }
+      ]
+    },
+    {
+      "id": "tiered",
+      "name": "Read old data (tiered storage)",
+      "steps": [
+        {
+          "edge": "l-tier",
+          "caption": "Rolled segments are copied asynchronously to remote object storage, so local retention can be short."
+        },
+        {
+          "edge": "tier-c",
+          "caption": "A consumer that rewinds beyond local retention is served from the remote tier."
+        }
+      ]
+    }
+  ]
+}
