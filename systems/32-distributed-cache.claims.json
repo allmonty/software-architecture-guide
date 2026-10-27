@@ -3,42 +3,49 @@
     "quote": "Scaling Memcache",
     "url": "https://github.com/donnemartin/system-design-primer",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "use[s] memcache as a demand-filled look-aside cache",
     "url": "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the web server retrieves the data from the database or other backend service and populates the cache with the key-value pair",
     "url": "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "sends a delete request to memcache that invalidates any stale data",
     "url": "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "because deletes are idempotent",
     "url": "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "is not the authoritative source of the data and is therefore allowed to evict cached data",
     "url": "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "by shunting load to idle servers we limit that risk.",
     "url": "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   }
 ]

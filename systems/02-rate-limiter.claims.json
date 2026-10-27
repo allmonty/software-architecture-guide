@@ -3,19 +3,22 @@
     "quote": "by far the most important one",
     "url": "https://stripe.com/blog/rate-limiters",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "20 API requests in progress at the same time",
     "url": "https://stripe.com/blog/rate-limiters",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Final line of defense",
     "url": "https://stripe.com/blog/rate-limiters",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "design a rate limiter",
@@ -26,19 +29,22 @@
     "quote": "only an approximation",
     "url": "https://blog.cloudflare.com/counting-things-a-lot-of-different-things/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "In the above code there is a race condition.",
     "url": "https://redis.io/docs/latest/commands/incr/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "during attacks, we will have a lot of requests, creating a lot of contention",
     "url": "https://blog.cloudflare.com/counting-things-a-lot-of-different-things/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "already blocked",

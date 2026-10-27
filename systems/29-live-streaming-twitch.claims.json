@@ -3,306 +3,357 @@
     "quote": "hundreds to thousands of servers",
     "url": "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "low-latency HTTP live streaming",
     "url": "https://blog.twitch.tv/en/2021/10/25/low-latency-high-reach-creating-an-unparalleled-live-video-streaming-network-at-twitch/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "over 10 billion messages a day",
     "url": "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
     "via": "archive",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "hundreds of billions of messages per day",
     "url": "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
     "via": "archive",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "We take RTMP video in, and then transport it to the transcode system.",
     "url": "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
     "via": "archive",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "maintains nearly a hundred points of presence (PoPs) in different geographic regions around the world",
     "url": "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "is connected to our private backbone network",
     "url": "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "overcome the instability of the public Internet, especially when delivering time-sensitive data like live video",
     "url": "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "host the resources that are needed to provide computationally intensive media transformations, like video transcoding",
     "url": "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "takes an incoming Real Time Messaging Protocol (RTMP) stream from the creator, and turns it into an HLS-compliant stream",
     "url": "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "several variations of the stream with a range of video resolutions and bitrates",
     "url": "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "as quickly as possible",
     "url": "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "a network of data centers distributed across the world, which are organized in a directed graph hierarchy we call a Replication Tree",
     "url": "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "stores a copy of all generated segments, thumbnails, and playlists in one of our Simple Storage Service (S3) buckets",
     "url": "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "still ran HAProxy and statically sent live video streams to only one of the origins",
     "url": "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "an outage in a control plane or loss of backbone capacity",
     "url": "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "can terminate any number of media transport protocols (e.g., RTMP or WebRTC)",
     "url": "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "monitors the compute resources in every origin",
     "url": "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "uses a randomized greedy algorithm to compute routing decisions",
     "url": "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "is able to utilize 100% of the compute resources available to Twitch at the peak times",
     "url": "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "can automatically direct new live video streams to an unaffected origin",
     "url": "https://blog.twitch.tv/en/2022/04/26/ingesting-live-video-streams-at-global-scale/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "that's 1,500,000 different streams",
     "url": "https://blog.twitch.tv/en/2021/10/25/low-latency-high-reach-creating-an-unparalleled-live-video-streaming-network-at-twitch/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "Transcoding is computationally very expensive.",
     "url": "https://blog.twitch.tv/en/2021/10/25/low-latency-high-reach-creating-an-unparalleled-live-video-streaming-network-at-twitch/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "by 10 times, at only two times the cost",
     "url": "https://blog.twitch.tv/en/2021/10/25/low-latency-high-reach-creating-an-unparalleled-live-video-streaming-network-at-twitch/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "at over 10x the scale of our previous solution",
     "url": "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "buffers can increase latency",
     "url": "https://blog.twitch.tv/en/2021/10/25/low-latency-high-reach-creating-an-unparalleled-live-video-streaming-network-at-twitch/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "When a big channel goes live, you suddenly have a few million people watching a channel",
     "url": "https://blog.twitch.tv/en/2021/10/25/low-latency-high-reach-creating-an-unparalleled-live-video-streaming-network-at-twitch/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "design for up front",
     "url": "https://blog.twitch.tv/en/2021/10/25/low-latency-high-reach-creating-an-unparalleled-live-video-streaming-network-at-twitch/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "MUST periodically reload a Media Playlist file to learn what media is currently available",
     "url": "https://www.rfc-editor.org/rfc/rfc8216",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "no earlier than one-half the target duration",
     "url": "https://www.rfc-editor.org/rfc/rfc8216",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "no later than 1.5 times the target duration",
     "url": "https://www.rfc-editor.org/rfc/rfc8216",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "a typical target duration is 10 seconds",
     "url": "https://www.rfc-editor.org/rfc/rfc8216",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "can trigger playback stalls",
     "url": "https://www.rfc-editor.org/rfc/rfc8216",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "MUST defer responding to the request until the Playlist contains",
     "url": "https://www.ietf.org/archive/id/draft-pantos-hls-rfc8216bis-17.txt",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "before the resource is available",
     "url": "https://www.ietf.org/archive/id/draft-pantos-hls-rfc8216bis-17.txt",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "MUST be at least twice the Part Target Duration",
     "url": "https://www.ietf.org/archive/id/draft-pantos-hls-rfc8216bis-17.txt",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "ingests the video, then automatically transcodes and optimizes it, making live video streams available within seconds",
     "url": "https://aws.amazon.com/about-aws/whats-new/2020/07/introducing-amazon-ivs/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "the same video technology Twitch uses for its live streaming service",
     "url": "https://aws.amazon.com/about-aws/whats-new/2020/07/introducing-amazon-ivs/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "designed to improve streaming over unreliable networks and protect against jitter, packet loss, and network bandwidth fluctuations",
     "url": "https://docs.aws.amazon.com/ivs/latest/LowLatencyUserGuide/what-is.html",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "Amazon IVS channels can deliver video with latency under 5 seconds",
     "url": "https://docs.aws.amazon.com/ivs/latest/LowLatencyUserGuide/what-is.html",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "for a traditional Over-The-Top (OTT) stream, latency may be as high as 30 seconds",
     "url": "https://docs.aws.amazon.com/ivs/latest/LowLatencyUserGuide/what-is.html",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "captures up to 90 seconds of the broadcaster's stream",
     "url": "https://dev.twitch.tv/docs/api/reference/#create-clip",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "assume it failed",
     "url": "https://dev.twitch.tv/docs/api/reference/#create-clip",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "is a highly scalable real-time distributed system written in Go",
     "url": "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
     "via": "archive",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "Receives and distribute messages between clients and backend services",
     "url": "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
     "via": "archive",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "speaks the IRC protocol over both raw TCP and WebSockets",
     "url": "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
     "via": "archive",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "Distributes messages internally across Edge nodes",
     "url": "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
     "via": "archive",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "a hierarchical message distribution system which executes massive fanout",
     "url": "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
     "via": "archive",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "analysis on user actions",
     "url": "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
     "via": "archive",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "evaluate viewer messages against existing rules, like the channel's automod settings, to determine if a message should be delivered or rejected",
     "url": "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "fans the message out to all edges with a subscription to the message's topic",
     "url": "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/",
     "via": "direct",
+    "sourceClass": "primary",
     "status": "confirmed"
   }
 ]

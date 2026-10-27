@@ -3,6 +3,7 @@
     "quote": "was created in 2010 to solve the MySQL scalability challenges that the team at YouTube faced",
     "url": "https://vitess.io/docs/overview/history/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   }
 ]

@@ -3,13 +3,15 @@
     "quote": "an algorithm, such as Reed-Solomon",
     "url": "https://www.allthingsdistributed.com/2023/07/building-and-operating-a-pretty-big-storage-system.html",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "quickly detecting and repairing any lost redundancy",
     "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/DataDurability.html",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "based on research, may differ from real implementation",

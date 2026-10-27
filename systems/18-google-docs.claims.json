@@ -3,109 +3,127 @@
     "quote": "a symmetrical algorithm employing an unending cycle of background difference (diff) and patch operations",
     "url": "https://neil.fraser.name/writing/sync/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "The enabling feature is that the patch algorithm is fuzzy, meaning patches may be applied even if the document has changed.",
     "url": "https://neil.fraser.name/writing/sync/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "will automatically show up negatively in the following diff and will be patched out of the Client Text",
     "url": "https://neil.fraser.name/writing/sync/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "retransmitted to the remote party on every sync",
     "url": "https://neil.fraser.name/writing/sync/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Algorithms based on Operation Transformation are currently popular for implementing edit-based collaborative systems",
     "url": "https://neil.fraser.name/writing/sync/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "all user actions must be captured",
     "url": "https://neil.fraser.name/writing/sync/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "OTs were unnecessarily complex for our problem space",
     "url": "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Figma isn't a text editor",
     "url": "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "inspired by something called CRDTs",
     "url": "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Figma isn't using true CRDTs though",
     "url": "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Our server is the central authority",
     "url": "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "a last-writer-wins register",
     "url": "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "a separate process for each multiplayer document",
     "url": "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Interleaving anomalies",
     "url": "https://martin.kleppmann.com/papers/interleaving-papoc19.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "may be randomly interleaved",
     "url": "https://martin.kleppmann.com/papers/interleaving-papoc19.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "several published algorithms",
     "url": "https://martin.kleppmann.com/2019/03/25/papoc-interleaving-anomalies.html",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "cannot be guaranteed by any algorithm",
     "url": "https://martin.kleppmann.com/2019/03/25/papoc-interleaving-anomalies.html",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "does not guarantee convergence",
     "url": "https://martin.kleppmann.com/2019/03/25/papoc-interleaving-anomalies.html",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "See version history",

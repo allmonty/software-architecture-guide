@@ -3,12 +3,14 @@
     "quote": "a listener plays your song for at least 30 seconds",
     "url": "https://support.spotify.com/us/artists/article/how-we-count-streams/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "is applied during playback",
     "url": "https://support.spotify.com/us/artists/article/loudness-normalization/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   }
 ]

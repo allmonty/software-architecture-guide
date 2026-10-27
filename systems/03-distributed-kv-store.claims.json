@@ -3,72 +3,84 @@
     "quote": "always writeable",
     "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "usually less than 1 MB",
     "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Every node in Dynamo should have the same set of responsibilities as its peers",
     "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "solve the problem by assigning multiple tokens in the token ring to each physical node",
     "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "high performance read engine",
     "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "most Amazon services in production set a higher W",
     "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the first N healthy nodes from the preference list",
     "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "relieves the anti-entropy protocol from having to do it",
     "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Cassandra uses a simpler last-write-wins model where every mutation is timestamped",
     "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "tens of kilobytes",
     "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Write operations are always sent to all replicas, regardless of consistency level",
     "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "A storage interface that is more sophisticated",
     "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   }
 ]

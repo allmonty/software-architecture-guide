@@ -33,36 +33,42 @@
     "quote": "will refuse to generate ids until a time that is after the last time we generated an id",
     "url": "https://raw.githubusercontent.com/twitter-archive/snowflake/snowflake-2010/README.mkd",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "mostly because GUIDs are big, and they index badly in MySQL",
     "url": "https://code.flickr.net/2010/02/08/ticket-servers-distributed-unique-primary-keys-on-the-cheap/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "but this hurts no one",
     "url": "https://code.flickr.net/2010/02/08/ticket-servers-distributed-unique-primary-keys-on-the-cheap/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "dumbest possible thing that will work",
     "url": "https://code.flickr.net/2010/02/08/ticket-servers-distributed-unique-primary-keys-on-the-cheap/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "SHOULD use UUIDv7",
     "url": "https://www.rfc-editor.org/rfc/rfc9562.txt",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "features a time-ordered value field derived from the widely implemented and well-known Unix Epoch timestamp source",
     "url": "https://www.rfc-editor.org/rfc/rfc9562.txt",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   }
 ]

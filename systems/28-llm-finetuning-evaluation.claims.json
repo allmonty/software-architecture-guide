@@ -3,126 +3,147 @@
     "quote": "required less compute for large-scale models and performed better",
     "url": "https://arxiv.org/pdf/2407.21783",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "optimizing single LLM calls with retrieval and in-context examples is usually enough",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "demonstrably improves outcomes",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "retrains all model parameters",
     "url": "https://arxiv.org/pdf/2106.09685",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "deploying independent instances of fine-tuned models, each with 175B parameters, is prohibitively expensive",
     "url": "https://arxiv.org/pdf/2106.09685",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "no additional inference latency",
     "url": "https://arxiv.org/pdf/2106.09685",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "a quick operation with very little memory overhead",
     "url": "https://arxiv.org/pdf/2106.09685",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "to finetune a 65B parameter model on a single 48GB GPU while preserving full 16-bit finetuning task performance",
     "url": "https://arxiv.org/pdf/2305.14314",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "backpropagates gradients through a frozen, 4-bit quantized pretrained language model into Low Rank Adapters",
     "url": "https://arxiv.org/pdf/2305.14314",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "a cheap and reasonable alternative to human evaluation",
     "url": "https://arxiv.org/pdf/2305.14314",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "current chatbot benchmarks are not trustworthy to accurately evaluate the performance levels of chatbots",
     "url": "https://arxiv.org/pdf/2305.14314",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "100x fewer parameters",
     "url": "https://arxiv.org/pdf/2203.02155",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "without compromising labeler preference scores",
     "url": "https://arxiv.org/pdf/2203.02155",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "rather than any broader notion of 'human values'",
     "url": "https://arxiv.org/pdf/2203.02155",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "a complex and often unstable procedure",
     "url": "https://arxiv.org/pdf/2305.18290",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "with only a simple classification loss",
     "url": "https://arxiv.org/pdf/2305.18290",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "several rounds of post-training",
     "url": "https://arxiv.org/pdf/2407.21783",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "cannot effectively tell the difference",
     "url": "https://arxiv.org/pdf/2306.05685",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "over 80% agreement",
     "url": "https://arxiv.org/pdf/2306.05685",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the same level of agreement between humans",
     "url": "https://arxiv.org/pdf/2306.05685",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "stores all adapters in the main memory and fetches the adapters used by the currently running queries to the GPU memory",
     "url": "https://arxiv.org/pdf/2311.03285",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   }
 ]

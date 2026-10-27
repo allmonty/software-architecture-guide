@@ -3,192 +3,224 @@
     "quote": "Building effective agents",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "orchestrated through predefined code paths",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "dynamically direct their own processes and tool usage",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "often trade latency and cost for better task performance",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "higher costs, and the potential for compounding errors",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "draw an important architectural distinction",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the simplest solution possible, and only increasing complexity when needed",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "might mean not building agentic systems at all",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "optimizing single LLM calls with retrieval and in-context examples is usually enough",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "where it's difficult or impossible to predict the required number of steps",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "are typically just LLMs using tools based on environmental feedback in a loop",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "stopping conditions (such as a maximum number of iterations)",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "extensive testing in sandboxed environments, along with the appropriate guardrails",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "often create extra layers of abstraction that can obscure the underlying prompts and responses",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "agent-computer interface",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "spent more time optimizing our tools than the overall prompt",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "human review remains crucial for ensuring solutions align with broader system requirements",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "reasoning traces and task-specific actions in an interleaved manner",
     "url": "https://arxiv.org/pdf/2210.03629",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "induce, track, and update action plans as well as handle exceptions",
     "url": "https://arxiv.org/pdf/2210.03629",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "including failing to recover from repetitive steps",
     "url": "https://arxiv.org/pdf/2210.03629",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the model repetitively generates the previous thoughts and actions",
     "url": "https://arxiv.org/pdf/2210.03629",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "follows a client-host-server architecture where each host can run multiple client instances",
     "url": "https://modelcontextprotocol.io/specification/2025-06-18/architecture",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "should not be able to read the whole conversation, nor 'see into' other servers",
     "url": "https://modelcontextprotocol.io/specification/2025-06-18/architecture",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "SHOULD establish timeouts for all sent requests",
     "url": "https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "model-controlled",
     "url": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "there SHOULD always be a human in the loop with the ability to deny tool invocations",
     "url": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the traditional view is that there is a choice between virtualization with strong security and high overhead, and container technologies with weaker security and minimal overhead",
     "url": "https://www.usenix.org/system/files/nsdi20-paper-agache.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "96% fewer lines than QEMU",
     "url": "https://www.usenix.org/system/files/nsdi20-paper-agache.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "memory overhead of less than 5MB per container",
     "url": "https://www.usenix.org/system/files/nsdi20-paper-agache.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats",
     "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "agents are stateful and errors compound",
     "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "resume from where the agent was when the errors occurred",
     "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   }
 ]

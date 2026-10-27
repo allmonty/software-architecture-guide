@@ -3,109 +3,127 @@
     "quote": "Large documents are never kept up to date",
     "url": "https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "small, modular documents have at least a chance at being updated.",
     "url": "https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "if a decision is reversed, we will keep the old one around, but mark it as superseded",
     "url": "https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the whole document should be one or two pages long",
     "url": "https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "its context, and its consequences",
     "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "when the team accepts an ADR, it becomes immutable",
     "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "prevents other architects who weren't involved in the decision-making process",
     "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Design Docs at Google",
     "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "relatively informal documents",
     "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the high level implementation strategy and key design decisions with emphasis on the trade-offs that were considered",
     "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "when making changes is still cheap",
     "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Rule #1 is: Write them in whatever form makes the most sense for the particular project.",
     "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the place to write down the trade-offs you made",
     "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "one of the most important",
     "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "A clear indicator that a doc might not be necessary are design docs that are really implementation manuals.",
     "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Choose Boring Technology",
     "url": "https://mcfunley.com/choose-boring-technology",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "every company gets about three innovation tokens",
     "url": "https://mcfunley.com/choose-boring-technology",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "their failure modes are well understood",
     "url": "https://mcfunley.com/choose-boring-technology",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "we accept X to gain Y",

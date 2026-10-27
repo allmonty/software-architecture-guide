@@ -3,120 +3,140 @@
     "quote": "past a certain point, however, increasing reliability is worse for a service (and its users) rather than better",
     "url": "https://sre.google/sre-book/embracing-risk/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "jointly define a quarterly error budget based on the service's service level objective",
     "url": "https://sre.google/sre-book/embracing-risk/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "provides a clear, objective metric that determines how unreliable the service is allowed to be within a single quarter",
     "url": "https://sre.google/sre-book/embracing-risk/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the politics from negotiations",
     "url": "https://sre.google/sre-book/embracing-risk/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "make it easier to decide the rate of releases",
     "url": "https://sre.google/sre-book/embracing-risk/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Service Level Objectives",
     "url": "https://sre.google/sre-book/embracing-risk/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Start by thinking about (or finding out!) what your users care about, not what you can measure.",
     "url": "https://sre.google/sre-book/service-level-objectives/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "don't pick a target based on current performance",
     "url": "https://sre.google/sre-book/service-level-objectives/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "if you can't ever win a conversation about priorities by quoting a particular SLO, it's probably not worth having that SLO",
     "url": "https://sre.google/sre-book/service-level-objectives/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "perfection can wait",
     "url": "https://sre.google/sre-book/service-level-objectives/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "is not a purely technical activity",
     "url": "https://sre.google/sre-book/service-level-objectives/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "crafting an SLA requires business and legal teams to pick appropriate consequences and penalties for a breach",
     "url": "https://sre.google/sre-book/service-level-objectives/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Addressing Cascading Failures",
     "url": "https://sre.google/sre-book/embracing-risk/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "a failure that grows over time as a result of positive feedback",
     "url": "https://sre.google/sre-book/addressing-cascading-failures/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "causing a domino effect that takes down all the replicas for a service",
     "url": "https://sre.google/sre-book/addressing-cascading-failures/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Postmortem Culture",
     "url": "https://sre.google/sre-book/embracing-risk/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "to ensure that the incident is documented, that all contributing root cause(s) are well understood, and, especially, that effective preventive actions are put in place to reduce the likelihood and/or impact of recurrence.",
     "url": "https://sre.google/sre-book/postmortem-culture/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "without indicting any individual or team",
     "url": "https://sre.google/sre-book/postmortem-culture/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "everyone involved in an incident had good intentions and did the right thing with the information they had",
     "url": "https://sre.google/sre-book/postmortem-culture/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "people will not bring issues to light for fear of punishment",
     "url": "https://sre.google/sre-book/postmortem-culture/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   }
 ]

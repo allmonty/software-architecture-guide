@@ -3,6 +3,7 @@
     "quote": "a command was issued with the intention to assess the availability of global backbone capacity, which unintentionally took down all the connections in our backbone network",
     "url": "https://engineering.fb.com/2021/10/05/networking-traffic/outage-details/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   }
 ]

@@ -3,102 +3,119 @@
     "quote": "millions of events per second",
     "url": "https://discord.com/blog/how-discord-scaled-elixir-to-5-000-000-concurrent-users",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "could take anywhere from 900ms to 2.1s",
     "url": "https://discord.com/blog/how-discord-scaled-elixir-to-5-000-000-concurrent-users",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "linearizability",
     "url": "https://discord.com/blog/how-discord-scaled-elixir-to-5-000-000-concurrent-users",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Powers every single Discord guild",
     "url": "https://discord.com/blog/using-rust-to-scale-elixir-for-11-million-concurrent-users",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "well under the 1 millisecond threshold",
     "url": "https://discord.com/blog/using-rust-to-scale-elixir-for-11-million-concurrent-users",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "tens of millions",
     "url": "https://discord.com/blog/why-discord-is-switching-from-go-to-rust",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "latency and CPU spikes roughly every 2 minutes",
     "url": "https://discord.com/blog/why-discord-is-switching-from-go-to-rust",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "had no latency spikes",
     "url": "https://discord.com/blog/why-discord-is-switching-from-go-to-rust",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "beat Go on every single performance metric",
     "url": "https://discord.com/blog/why-discord-is-switching-from-go-to-rust",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "We ran 12 Cassandra nodes, storing billions of messages",
     "url": "https://discord.com/blog/how-discord-stores-trillions-of-messages",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "177 nodes with trillions of messages",
     "url": "https://discord.com/blog/how-discord-stores-trillions-of-messages",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "177 Cassandra nodes to just 72 ScyllaDB nodes",
     "url": "https://discord.com/blog/how-discord-stores-trillions-of-messages",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "a static time window",
     "url": "https://discord.com/blog/how-discord-stores-trillions-of-messages",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Every ID we use is a Snowflake, making it chronologically sortable.",
     "url": "https://discord.com/blog/how-discord-stores-trillions-of-messages",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "If multiple users are requesting the same row at the same time, we'll only query the database once.",
     "url": "https://discord.com/blog/how-discord-stores-trillions-of-messages",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "assigns the least utilized voice server in the given region to the guild",
     "url": "https://discord.com/blog/how-discord-handles-two-and-half-million-concurrent-voice-users-using-webrtc",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "becomes prohibitively expensive as the number of participants increases",
     "url": "https://discord.com/blog/how-discord-handles-two-and-half-million-concurrent-voice-users-using-webrtc",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   }
 ]

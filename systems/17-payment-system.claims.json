@@ -3,7 +3,8 @@
     "quote": "the status code and body of the first request",
     "url": "https://docs.stripe.com/api/idempotent_requests",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "pending payment",
@@ -14,19 +15,22 @@
     "quote": "saves the status code and body of the first request made with a given idempotency key after endpoint execution begins",
     "url": "https://docs.stripe.com/api/idempotent_requests",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "compares incoming parameters to those of the original request and errors if they're not the same",
     "url": "https://docs.stripe.com/api/idempotent_requests",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "don't repeat successful operations",
     "url": "https://docs.stripe.com/api/idempotent_requests",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "response stored",
@@ -42,43 +46,50 @@
     "quote": "an expensive group-by aggregate for each merchant",
     "url": "https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "nothing is stopping [the payout_id] from being nulled out",
     "url": "https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "All transactions (which we call 'journal entries') must balance to 0, so each cent lost is matched with a cent gained",
     "url": "https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "not just what financial state change occurred, but why",
     "url": "https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "effectively append-only and immutable",
     "url": "https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "You can't update the data in place",
     "url": "https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "there will always be a trace of what happened",
     "url": "https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "payment succeeded",

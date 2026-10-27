@@ -13,12 +13,14 @@
     "quote": "accessed only once",
     "url": "https://systemdesign.one/url-shortening-system-design/",
     "via": "direct",
+    "sourceClass": "secondary",
     "status": "confirmed"
   },
   {
     "quote": "one-hit wonders",
     "url": "https://en.wikipedia.org/wiki/Bloom_filter",
     "via": "direct",
+    "sourceClass": "secondary",
     "status": "confirmed"
   }
 ]

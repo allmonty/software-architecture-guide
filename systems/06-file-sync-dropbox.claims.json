@@ -3,7 +3,8 @@
     "quote": "Scaling to exabytes and beyond",
     "url": "https://dropbox.tech/infrastructure/magic-pocket-infrastructure",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "mechanism but does not use the word",
@@ -14,145 +15,169 @@
     "quote": "the entire file must be uploaded to our servers and committed to our databases",
     "url": "https://dropbox.tech/infrastructure/streaming-file-synchronization",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "always be just one blockserver network call behind the uploading client",
     "url": "https://dropbox.tech/infrastructure/streaming-file-synchronization",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "1GB logical storage containers called buckets",
     "url": "https://dropbox.tech/infrastructure/inside-the-magic-pocket",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "around 50PB of raw data",
     "url": "https://dropbox.tech/infrastructure/inside-the-magic-pocket",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "around a hundred petabytes",
     "url": "https://dropbox.tech/infrastructure/inside-the-magic-pocket",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "giant sharded MySQL cluster",
     "url": "https://dropbox.tech/infrastructure/inside-the-magic-pocket",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "within one second of it being uploaded locally",
     "url": "https://dropbox.tech/infrastructure/inside-the-magic-pocket",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "once an OSD has been offline for 15 minutes",
     "url": "https://dropbox.tech/infrastructure/inside-the-magic-pocket",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Erasure coding for nearly all data",
     "url": "https://dropbox.tech/infrastructure/improving-storage-efficiency-in-magic-pocket-our-immutable-blob-store",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "We were an early adopter of Amazon S3",
     "url": "https://dropbox.tech/infrastructure/magic-pocket-infrastructure",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "from our initial double-digit-petabyte prototypes to a multi-exabyte behemoth",
     "url": "https://dropbox.tech/infrastructure/inside-the-magic-pocket",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "around 6 months",
     "url": "https://dropbox.tech/infrastructure/inside-the-magic-pocket",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "less than half a dozen people",
     "url": "https://dropbox.tech/infrastructure/inside-the-magic-pocket",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "several trillion entries",
     "url": "https://dropbox.tech/infrastructure/reintroducing-edgestore",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "millions of queries per second",
     "url": "https://dropbox.tech/infrastructure/reintroducing-edgestore",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "5–9s of availability",
     "url": "https://dropbox.tech/infrastructure/reintroducing-edgestore",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "thousands of machines across multiple data centers",
     "url": "https://dropbox.tech/infrastructure/reintroducing-edgestore",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "files lacked a stable identifier that would be preserved across moves",
     "url": "https://dropbox.tech/infrastructure/rewriting-the-heart-of-our-sync-engine",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "The latest state of the user's Dropbox in the cloud",
     "url": "https://dropbox.tech/infrastructure/-testing-our-new-sync-engine",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "The last observed state of the user's Dropbox on disk",
     "url": "https://dropbox.tech/infrastructure/-testing-our-new-sync-engine",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "The last known 'fully synced' state between the Remote Tree and Local Tree",
     "url": "https://dropbox.tech/infrastructure/-testing-our-new-sync-engine",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "a series of operations to incrementally converge the trees",
     "url": "https://dropbox.tech/infrastructure/-testing-our-new-sync-engine",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "we can always reproduce the bug from the original seed",
     "url": "https://dropbox.tech/infrastructure/rewriting-the-heart-of-our-sync-engine",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "millions of scenarios every day",
     "url": "https://dropbox.tech/infrastructure/rewriting-the-heart-of-our-sync-engine",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "conflicted copy",

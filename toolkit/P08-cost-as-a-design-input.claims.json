@@ -3,13 +3,15 @@
     "quote": "fully utilizes all resources, achieves an outcome at the lowest possible price point, and meets your functional requirements",
     "url": "https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "does not provide implementation details or architectural patterns",
     "url": "https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "unit economic and value-based metrics demonstrate business impact better than aggregate spend",

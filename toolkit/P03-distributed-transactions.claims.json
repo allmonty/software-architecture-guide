@@ -3,72 +3,84 @@
     "quote": "typically assign a dedicated database to each microservice",
     "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/saga",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "traditional database guarantees like ACID aren't directly applicable to multiple independently managed data stores",
     "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/saga",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "are often better suited for the Saga pattern",
     "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/saga",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the classic way of achieving this would be to introduce a two-phase commit between the storage of the consumer position and the storage of the consumers output",
     "url": "https://raw.githubusercontent.com/apache/kafka/trunk/docs/design/design.md",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "can be handled more simply and generally by letting the consumer store its offset in the same place as its output",
     "url": "https://raw.githubusercontent.com/apache/kafka/trunk/docs/design/design.md",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "will not support a two-phase commit",
     "url": "https://raw.githubusercontent.com/apache/kafka/trunk/docs/design/design.md",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "manages transactions by breaking them into a sequence of local transactions",
     "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/saga",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "if a local transaction fails, the saga performs a series of compensating transactions to reverse the changes that the preceding local transactions made.",
     "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/saga",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "serve as the point of no return in the saga",
     "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/saga",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "compensating transactions might not always succeed, which can leave the system in an inconsistent state",
     "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/saga",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "this approach works until an error occurs between saving the order object and publishing the event",
     "url": "https://learn.microsoft.com/en-us/azure/architecture/databases/guide/transactional-outbox-cosmos",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "when you save the business object and its events within the same database transaction, the system guarantees no data loss",
     "url": "https://learn.microsoft.com/en-us/azure/architecture/databases/guide/transactional-outbox-cosmos",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   }
 ]

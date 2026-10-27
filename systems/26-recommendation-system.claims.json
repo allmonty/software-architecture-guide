@@ -3,138 +3,161 @@
     "quote": "a strict serving latency of tens of milliseconds",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "represents one of the largest scale and most sophisticated industrial recommendation systems in existence",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "according to the classic two-stage information retrieval dichotomy",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "generally relevant to the user with high precision",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "broad personalization via collaborative filtering",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "more than 100 times speedup over traditional softmax",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "general purpose libraries",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "were not particularly sensitive to the choice of nearest neighbor search algorithm",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "many more features describing the video and the user's relationship to the video",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "with similar architecture",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "generally a simple function of expected watch time per impression",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "often promotes deceptive videos that the user does not complete",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "live A/B results are not always correlated with offline experiments",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "system reliability could be traded-off for real-time learning",
     "url": "https://arxiv.org/pdf/2209.07663",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "AUC improvement",
     "url": "https://arxiv.org/pdf/2209.07663",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "System Architectures for Personalization and Recommendation",
     "url": "https://netflixtechblog.com/system-architectures-for-personalization-and-recommendation-e081aa94b5d8",
     "via": "archive",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "subject to an availability and response time Service Level Agreements (SLA)",
     "url": "https://netflixtechblog.com/system-architectures-for-personalization-and-recommendation-e081aa94b5d8",
     "via": "archive",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "it is always important to think of a fast fallback mechanism such as reverting to a precomputed result",
     "url": "https://netflixtechblog.com/system-architectures-for-personalization-and-recommendation-e081aa94b5d8",
     "via": "archive",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "will not react quickly to changes in context or new data",
     "url": "https://netflixtechblog.com/system-architectures-for-personalization-and-recommendation-e081aa94b5d8",
     "via": "archive",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "a natural setting for applying incremental learning algorithms",
     "url": "https://netflixtechblog.com/system-architectures-for-personalization-and-recommendation-e081aa94b5d8",
     "via": "archive",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "All approaches can and should be combined",
     "url": "https://netflixtechblog.com/system-architectures-for-personalization-and-recommendation-e081aa94b5d8",
     "via": "archive",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "enables blending candidates generated by other sources",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "from an exploration/exploitation perspective",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   }
 ]

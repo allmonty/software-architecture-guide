@@ -3,120 +3,140 @@
     "quote": "severely underutilizes GPU computation and becomes memory-bound",
     "url": "https://arxiv.org/pdf/2309.06180",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "only 20.4% - 38.2% of the KV cache memory is used to store the actual token states",
     "url": "https://arxiv.org/pdf/2309.06180",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the block size 16 is large enough to efficiently utilize the GPU",
     "url": "https://arxiv.org/pdf/2309.06180",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "ensuring fairness and preventing starvation",
     "url": "https://arxiv.org/pdf/2309.06180",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "either evict all or none of the blocks of a sequence",
     "url": "https://arxiv.org/pdf/2309.06180",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "vLLM improves the throughput of popular LLMs by 2-4× with the same level of latency compared to the state-of-the-art systems, such as FasterTransformer and Orca",
     "url": "https://arxiv.org/pdf/2309.06180",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "cannot return to the client",
     "url": "https://www.usenix.org/system/files/osdi22-yu.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "newly arrived requests have to wait until the current batch completely finishes",
     "url": "https://www.usenix.org/system/files/osdi22-yu.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "schedules execution at the granularity of iteration (instead of request)",
     "url": "https://www.usenix.org/system/files/osdi22-yu.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "only to a selected set of operations",
     "url": "https://www.usenix.org/system/files/osdi22-yu.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "36.9× throughput improvement at the same level of latency",
     "url": "https://www.usenix.org/system/files/osdi22-yu.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "leads to strong prefill-decoding interferences",
     "url": "https://arxiv.org/pdf/2401.09670",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the duration of the prefill phase",
     "url": "https://arxiv.org/pdf/2401.09670",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the average time taken to generate a token for each request (except for the first token)",
     "url": "https://arxiv.org/pdf/2401.09670",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the maximum request rate that can be served adhering to the SLO attainment goal (say, 90%) for each GPU provisioned",
     "url": "https://arxiv.org/pdf/2401.09670",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "7.4 × more requests or 12.6× tighter SLO",
     "url": "https://arxiv.org/pdf/2401.09670",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "equivalently 90Gbps bandwidth",
     "url": "https://arxiv.org/pdf/2401.09670",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "generation stalls",
     "url": "https://arxiv.org/pdf/2403.02310",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "identical outputs",
     "url": "https://arxiv.org/pdf/2211.17192",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "continues to grow infinitely",
     "url": "https://arxiv.org/pdf/2309.06180",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   }
 ]

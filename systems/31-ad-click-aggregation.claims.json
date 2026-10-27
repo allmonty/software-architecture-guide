@@ -3,84 +3,98 @@
     "quote": "Photon must guarantee that a single click is never processed twice, since this leads to double-charging the advertisers",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "Google loses money for every click which is not processed",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "stop trying to groom unbounded datasets into finite pools of information that eventually become complete",
     "url": "https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "we will never know if or when we have seen all of our data",
     "url": "https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "correctness, latency, and cost",
     "url": "https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "the time that each individual event occurred on its producing device",
     "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "declares that event time has reached time t in that stream, meaning that there should be no more elements from the stream with a timestamp t' <= t",
     "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "this places a limit on how deterministic event time applications can be",
     "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "continuously draws snapshots of the distributed streaming data flow",
     "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/stateful-stream-processing/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "to guarantee end-to-end exactly-once record delivery (in addition to exactly-once state semantics), the data sink needs to take part in the checkpointing mechanism",
     "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/connectors/datastream/guarantees/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "exactly once with transactional producers (v 0.11+)",
     "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/connectors/datastream/guarantees/",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "a highly scalable analytic data warehousing system that stores critical measurement data related to Google's Internet advertising business",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42851.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "typically at a frequency of every few minutes",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42851.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   },
   {
     "quote": "users can never see any effects from a partially incorporated update",
     "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/42851.pdf",
     "via": "direct",
-    "status": "confirmed"
+    "status": "confirmed",
+    "sourceClass": "primary"
   }
 ]
