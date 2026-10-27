@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Background, Controls, MarkerType, Position, ReactFlow, type Edge, type Node } from "@xyflow/react";
+import { Background, Controls, MarkerType, Position, ReactFlow, type Edge, type Node, type NodeChange } from "@xyflow/react";
 import ReactMarkdown from "react-markdown";
 import type { Diagram } from "../../schema/diagram.schema.ts";
 import { layout, NODE_H, NODE_W } from "./layout.ts";
@@ -21,7 +21,15 @@ export function DiagramView({
   );
   const flow = diagram.flows.find((f) => f.id === flowId) ?? null;
 
-  const pos = useMemo(() => layout(diagram), [diagram]);
+  const auto = useMemo(() => layout(diagram), [diagram]);
+  // Positions the reader dragged; they override the automatic layout until reset.
+  const [moved, setMoved] = useState<Record<string, { x: number; y: number }>>({});
+  const pos = { ...auto, ...moved };
+  const onNodesChange = (changes: NodeChange[]) => {
+    for (const c of changes) {
+      if (c.type === "position" && c.position) setMoved((m) => ({ ...m, [c.id]: c.position! }));
+    }
+  };
   const current = flow?.steps[step];
   const seen = new Set(flow?.steps.slice(0, step).map((s) => s.edge));
 
@@ -77,7 +85,8 @@ export function DiagramView({
           fitView
           fitViewOptions={{ padding: 0.12 }}
           minZoom={0.1}
-          nodesDraggable={false}
+          nodesDraggable
+          onNodesChange={onNodesChange}
           nodesConnectable={false}
           onNodeClick={(_, n) => setSelected(n.id)}
           onPaneClick={() => setSelected(null)}
@@ -85,6 +94,9 @@ export function DiagramView({
           <Background />
           <Controls showInteractive={false} />
         </ReactFlow>
+        {Object.keys(moved).length > 0 && (
+          <button className="reset" onClick={() => setMoved({})}>Reset layout</button>
+        )}
       </div>
       <aside className="panel">
         <section>
