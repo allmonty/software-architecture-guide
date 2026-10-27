@@ -1,0 +1,26 @@
+[
+  {
+    "quote": "by default, the CREATE INDEX command creates B-tree indexes, which fit the most common situations",
+    "url": "https://www.postgresql.org/docs/current/indexes-types.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "can handle equality and range queries on data that can be sorted into some ordering",
+    "url": "https://www.postgresql.org/docs/current/indexes-types.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "minimizes space amplification at the cost of read and write amplification",
+    "url": "https://github.com/facebook/rocksdb/wiki/Compaction",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "minimizes write amplification at the cost of read and space amplification",
+    "url": "https://github.com/facebook/rocksdb/wiki/Compaction",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]
