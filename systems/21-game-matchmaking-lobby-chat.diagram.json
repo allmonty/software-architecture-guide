@@ -1,0 +1,352 @@
+{
+  "id": "21-game-matchmaking-lobby-chat",
+  "title": "Online Game: Matchmaking + Lobby Chat",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "client",
+      "label": "Game client",
+      "kind": "client",
+      "summary": "Pings candidate regions, queues for a mode (solo or party), receives push events, then connects to a dedicated game server.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://open-match.dev/site/docs/guides/matchmaker/"
+      ],
+      "group": "player"
+    },
+    {
+      "id": "frontend",
+      "label": "Game Frontend",
+      "kind": "service",
+      "summary": "Receives the matchmaking request, authenticates the player, creates a Ticket, and later retrieves the Assignment for it.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://open-match.dev/site/docs/guides/matchmaker/"
+      ],
+      "group": "matchmaking"
+    },
+    {
+      "id": "tickets",
+      "label": "Ticket pool",
+      "kind": "datastore",
+      "summary": "Each Ticket (mode, rating, region latencies, party) is indexed by its SearchFields and joins the pool Open Match considers for matches.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://open-match.dev/site/docs/guides/matchmaker/"
+      ],
+      "group": "matchmaking"
+    },
+    {
+      "id": "director",
+      "label": "Director",
+      "kind": "service",
+      "summary": "Knows the Match Profiles to serve. Periodically calls FetchMatches, then gets a game server from the allocation system and sets the Assignment on every ticket in the match.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://open-match.dev/site/docs/guides/matchmaker/"
+      ],
+      "group": "matchmaking"
+    },
+    {
+      "id": "mmf",
+      "label": "Match Function",
+      "kind": "service",
+      "summary": "Your matching logic: queries tickets that fit a profile and returns Matches. This is where rating and latency rules live, and where search windows widen as tickets age (a design choice).",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://open-match.dev/site/docs/guides/matchmaker/",
+        "https://open-match.dev/site/docs/overview/"
+      ],
+      "details": "Open Match's overview says nothing about rating or MMR. Those rules are yours to write.",
+      "group": "matchmaking"
+    },
+    {
+      "id": "evaluator",
+      "label": "Evaluator",
+      "kind": "service",
+      "summary": "Concurrent match functions may propose overlapping matches. The evaluator deduplicates proposals before results return. A default one is provided.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://open-match.dev/site/docs/guides/matchmaker/"
+      ],
+      "group": "matchmaking"
+    },
+    {
+      "id": "rating",
+      "label": "Rating service (TrueSkill-style)",
+      "kind": "service",
+      "summary": "After a match, updates each player's skill distribution (mean and uncertainty) from team results. Runs asynchronously, off the queue's critical path.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.microsoft.com/en-us/research/publication/trueskilltm-a-bayesian-skill-rating-system/"
+      ],
+      "details": "TrueSkill is a Bayesian generalisation of Elo. It tracks uncertainty, models draws, handles any number of entities and infers individual skills from team results.",
+      "group": "matchmaking"
+    },
+    {
+      "id": "alloc",
+      "label": "GameServerAllocation (Agones)",
+      "kind": "service",
+      "summary": "Atomically allocates a Ready GameServer from a Fleet and moves it to Allocated. Returns address and ports. Selectors are tried in order.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://agones.dev/site/docs/reference/gameserverallocation/"
+      ],
+      "details": "Packed (default) bin-packs for dynamic clusters. Distributed spreads across static ones.",
+      "group": "servers"
+    },
+    {
+      "id": "fleet",
+      "label": "Fleet of warm game servers",
+      "kind": "datastore",
+      "summary": "A set of warm GameServers kept Ready or Allocated. Allocated servers stay until SDK.Shutdown() is called or they are deleted.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://agones.dev/site/docs/reference/fleet/",
+        "https://agones.dev/site/docs/reference/gameserverallocation/"
+      ],
+      "group": "servers"
+    },
+    {
+      "id": "gs",
+      "label": "Dedicated game server",
+      "kind": "service",
+      "summary": "A Kubernetes Pod running the game. Uses the SDK for lifecycle: Ready when it can accept connections, Shutdown when done.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://agones.dev/site/docs/reference/gameserverallocation/"
+      ],
+      "group": "servers"
+    },
+    {
+      "id": "chat",
+      "label": "Lobby chat cluster (per region)",
+      "kind": "service",
+      "summary": "XMPP-style chat with one session process per player. 6–12 nodes per regional shard sharing only a few fully replicated in-memory tables, so session lookups are local reads.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://technology.riotgames.com/news/chat-service-architecture-servers"
+      ],
+      "details": "Riot (2015): offline messages persisted until next login (MySQL legacy, Riak newer shards). Load tests to at least 30 servers.",
+      "group": "lobby"
+    },
+    {
+      "id": "push",
+      "label": "Messaging service (Edge + Routing)",
+      "kind": "service",
+      "summary": "Service-to-client push over WebSockets. Edge nodes hold connections. Routing nodes hold the global player-to-edge table and route published messages. Carries match found, ready check and assignment ready events.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://technology.riotgames.com/news/riot-messaging-service"
+      ],
+      "details": "Riot's RMS (2017). Using it for matchmaking events is our application of the published design.",
+      "group": "lobby"
+    }
+  ],
+  "edges": [
+    {
+      "id": "c-fe",
+      "from": "client",
+      "to": "frontend",
+      "label": "queue for a mode",
+      "mode": "sync"
+    },
+    {
+      "id": "fe-tickets",
+      "from": "frontend",
+      "to": "tickets",
+      "label": "create Ticket",
+      "mode": "sync"
+    },
+    {
+      "id": "dir-mmf",
+      "from": "director",
+      "to": "mmf",
+      "label": "FetchMatches(profile)",
+      "mode": "sync"
+    },
+    {
+      "id": "mmf-tickets",
+      "from": "mmf",
+      "to": "tickets",
+      "label": "query matching tickets",
+      "mode": "sync"
+    },
+    {
+      "id": "mmf-eval",
+      "from": "mmf",
+      "to": "evaluator",
+      "label": "proposed matches",
+      "mode": "sync"
+    },
+    {
+      "id": "eval-dir",
+      "from": "evaluator",
+      "to": "director",
+      "label": "deduplicated matches",
+      "mode": "sync"
+    },
+    {
+      "id": "dir-alloc",
+      "from": "director",
+      "to": "alloc",
+      "label": "allocate a server",
+      "mode": "sync"
+    },
+    {
+      "id": "alloc-fleet",
+      "from": "alloc",
+      "to": "fleet",
+      "label": "pick a Ready server",
+      "mode": "sync"
+    },
+    {
+      "id": "fleet-gs",
+      "from": "fleet",
+      "to": "gs",
+      "label": "server → Allocated",
+      "mode": "sync"
+    },
+    {
+      "id": "dir-tickets",
+      "from": "director",
+      "to": "tickets",
+      "label": "SetAssignment on each ticket",
+      "mode": "sync"
+    },
+    {
+      "id": "fe-c",
+      "from": "frontend",
+      "to": "client",
+      "label": "Assignment (address, ports)",
+      "mode": "sync"
+    },
+    {
+      "id": "dir-push",
+      "from": "director",
+      "to": "push",
+      "label": "match found / ready check",
+      "mode": "async"
+    },
+    {
+      "id": "push-c",
+      "from": "push",
+      "to": "client",
+      "label": "push event",
+      "mode": "async",
+      "protocol": "WebSocket"
+    },
+    {
+      "id": "c-chat",
+      "from": "client",
+      "to": "chat",
+      "label": "party / lobby chat",
+      "mode": "sync",
+      "protocol": "TCP"
+    },
+    {
+      "id": "c-gs",
+      "from": "client",
+      "to": "gs",
+      "label": "play (UDP)",
+      "mode": "sync"
+    },
+    {
+      "id": "gs-rating",
+      "from": "gs",
+      "to": "rating",
+      "label": "match result",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "match",
+      "name": "Queue → match → play",
+      "steps": [
+        {
+          "edge": "c-fe",
+          "caption": "The client asks to queue for a mode. The frontend authenticates the player."
+        },
+        {
+          "edge": "fe-tickets",
+          "caption": "A Ticket (mode, rating, latency to each region, party) joins the pool."
+        },
+        {
+          "edge": "dir-mmf",
+          "caption": "The Director periodically asks for matches for a profile. Open Match runs your Match Function."
+        },
+        {
+          "edge": "mmf-tickets",
+          "caption": "The function queries tickets that fit and forms balanced teams. The rating and latency windows widen as tickets wait."
+        },
+        {
+          "edge": "mmf-eval",
+          "caption": "Several functions may propose overlapping matches, so the evaluator deduplicates them."
+        },
+        {
+          "edge": "eval-dir",
+          "caption": "Surviving matches return to the Director."
+        },
+        {
+          "edge": "dir-alloc",
+          "caption": "The Director requests a game server from the allocation system."
+        },
+        {
+          "edge": "alloc-fleet",
+          "caption": "Agones atomically picks a Ready server from the fleet (Packed by default)."
+        },
+        {
+          "edge": "fleet-gs",
+          "caption": "The chosen server moves to Allocated and stays until it calls Shutdown."
+        },
+        {
+          "edge": "dir-tickets",
+          "caption": "The Director writes an Assignment (address, ports) onto every ticket in the match."
+        },
+        {
+          "edge": "fe-c",
+          "caption": "The frontend returns the Assignment to each client."
+        },
+        {
+          "edge": "c-gs",
+          "caption": "The clients connect to the dedicated server and play."
+        }
+      ]
+    },
+    {
+      "id": "notify",
+      "name": "Match found + ready check",
+      "steps": [
+        {
+          "edge": "dir-push",
+          "caption": "When a match forms, an event is published to the messaging service."
+        },
+        {
+          "edge": "push-c",
+          "caption": "The Edge tier pushes it down each player's WebSocket: match found, accept or decline."
+        }
+      ]
+    },
+    {
+      "id": "lobby",
+      "name": "Lobby and party chat",
+      "steps": [
+        {
+          "edge": "c-chat",
+          "caption": "Players in a party or lobby chat. Each player has a session process on a regional chat node, and the routing table is a local read."
+        }
+      ]
+    },
+    {
+      "id": "after",
+      "name": "After the match",
+      "steps": [
+        {
+          "edge": "gs-rating",
+          "caption": "The result is sent to the rating service, which updates each player's skill distribution from the team outcome. This runs asynchronously."
+        }
+      ]
+    }
+  ]
+}
