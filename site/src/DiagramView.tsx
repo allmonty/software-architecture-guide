@@ -165,7 +165,7 @@ export function DiagramView({
 
   return (
     <div className="diagram-col">
-      <div className="canvas">
+      <div className={`canvas${flow?.failure ? " failure" : ""}`}>
         <div className="levels">
           {LEVELS.map((l) => (
             <button
@@ -214,6 +214,8 @@ export function DiagramView({
               <button
                 key={f.id}
                 aria-pressed={f.id === flowId}
+                className={f.failure ? "flow-failure" : undefined}
+                title={f.failure ? "A failure, overload or other abnormal case" : undefined}
                 onClick={() => { setFlowId(f.id === flowId ? null : f.id); setStep(0); }}
               >
                 {f.name}
@@ -222,7 +224,7 @@ export function DiagramView({
             {diagram.flows.length === 0 && <p className="muted">No flows for this system.</p>}
           </div>
           {flow && current && (
-            <div className="stepper">
+            <div className={`stepper${flow.failure ? " failure" : ""}`}>
               <p className="caption">
                 <b>Step {step + 1}/{flow.steps.length}.</b> {current.caption}
               </p>
@@ -230,6 +232,14 @@ export function DiagramView({
               {!here?.rel && !here?.inside && <p className="muted caption">Not drawn in this view.</p>}
               <button disabled={step === 0} onClick={() => setStep(step - 1)}>← Back</button>
               <button disabled={step === flow.steps.length - 1} onClick={() => setStep(step + 1)}>Next →</button>
+              <span className="muted small hint">or press the ← and → keys</span>
+              <ol className="step-list">
+                {flow.steps.map((st, i) => (
+                  <li key={i} className={i === step ? "now" : i < step ? "past" : ""} aria-current={i === step ? "step" : undefined}>
+                    <button className="linkish" onClick={() => setStep(i)}>{st.caption}</button>
+                  </li>
+                ))}
+              </ol>
             </div>
           )}
         </section>

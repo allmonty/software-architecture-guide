@@ -293,3 +293,17 @@ button.study { margin-left: auto; }
 /* Names in the note that open the matching diagram element (Split view only). */
 .node-ref { border-bottom: 1px dotted var(--accent); cursor: pointer; }
 .node-ref:hover, .node-ref:focus-visible { background: color-mix(in srgb, var(--accent) 18%, transparent); outline: none; }
+
+/* ---- Flows ---- */
+.flows button.flow-failure { border-color: var(--c-spec); }
+.flows button.flow-failure[aria-pressed="true"] { background: var(--c-spec); border-color: var(--c-spec); color: var(--bg); }
+.stepper.failure { border-left: 4px solid var(--c-spec); padding-left: 10px; }
+.canvas.failure .react-flow__edge.edge-current .react-flow__edge-path { stroke: var(--c-spec); }
+.canvas.failure .react-flow__node.lit { border-color: var(--c-spec); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-spec) 35%, transparent); }
+.hint { align-self: center; }
+.step-list { flex-basis: 100%; margin: 8px 0 0; padding-left: 22px; font-size: .88rem; }
+.step-list li { margin: 3px 0; } .step-list li.past { color: var(--muted); }
+.step-list li.now { font-weight: 600; } .step-list li.now::marker { color: var(--accent); }
+.stepper.failure .step-list li.now::marker { color: var(--c-spec); }
+.step-list button.linkish { text-align: left; text-decoration: none; color: inherit; font: inherit; }
+.step-list button.linkish:hover { text-decoration: underline; }
