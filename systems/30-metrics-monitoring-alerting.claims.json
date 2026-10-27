@@ -1,0 +1,74 @@
+[
+  {
+    "quote": "fundamentally stores all data as time series: streams of timestamped values belonging to the same metric and the same set of labeled dimensions",
+    "url": "https://prometheus.io/docs/concepts/data_model/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the change of any label's value, including adding or removing labels, will create a new time series",
+    "url": "https://prometheus.io/docs/concepts/data_model/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Do not use labels to store dimensions with high cardinality (many different label values), such as user IDs, email addresses, or other unbounded sets of values",
+    "url": "https://prometheus.io/docs/practices/naming/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "either directly or via an intermediary push gateway for short-lived jobs",
+    "url": "https://prometheus.io/docs/introduction/overview/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "via a pull model over HTTP",
+    "url": "https://prometheus.io/docs/introduction/overview/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "not clustered or replicated",
+    "url": "https://prometheus.io/docs/prometheus/latest/storage/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "for remaining highly available for writes and reads, even in the face of failures, at the expense of possibly dropping small amounts of data on the write path",
+    "url": "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "unlocked new monitoring and debugging tools",
+    "url": "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "readily trades consistency for high availability and partition tolerance",
+    "url": "https://www.vldb.org/pvldb/vol13/p3181-adams.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "may block for a long time",
+    "url": "https://www.vldb.org/pvldb/vol13/p3181-adams.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "drops delayed writes and returns partial data for queries if necessary",
+    "url": "https://www.vldb.org/pvldb/vol13/p3181-adams.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "takes care of deduplicating, grouping, and routing",
+    "url": "https://prometheus.io/docs/alerting/latest/alertmanager/",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]

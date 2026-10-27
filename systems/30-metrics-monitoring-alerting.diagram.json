@@ -1,0 +1,419 @@
+{
+  "id": "30-metrics-monitoring-alerting",
+  "title": "Metrics Monitoring and Alerting",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "oncall",
+      "label": "On-call engineer",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Receives notifications, looks at dashboards and queries to diagnose.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://prometheus.io/docs/alerting/latest/alertmanager/"
+      ]
+    },
+    {
+      "id": "targets",
+      "label": "Monitored services and exporters",
+      "kind": "external",
+      "c4": "external-system",
+      "summary": "Expose or send numeric measurements (counters, gauges, latency distributions) with labels.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://prometheus.io/docs/introduction/overview/",
+        "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf"
+      ]
+    },
+    {
+      "id": "chan",
+      "label": "Notification channels",
+      "kind": "external",
+      "c4": "external-system",
+      "summary": "Email, PagerDuty, OpsGenie and similar receivers.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://prometheus.io/docs/alerting/latest/alertmanager/"
+      ]
+    },
+    {
+      "id": "collector",
+      "label": "Collectors",
+      "kind": "edge",
+      "c4": "container",
+      "summary": "Scrape targets over HTTP (Prometheus pull model, with a push gateway for short-lived jobs) or receive pushed data (Monarch ingestion routers), enforce label rules and route each series to its shard.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://prometheus.io/docs/introduction/overview/",
+        "https://www.vldb.org/pvldb/vol13/p3181-adams.pdf"
+      ]
+    },
+    {
+      "id": "tsdb",
+      "label": "Time series database (region A)",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "In-memory recent window with a log, periodic compressed blocks and an index, sharded across hosts. Gorilla holds 26 hours; Prometheus keeps two-hour blocks.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf",
+        "https://prometheus.io/docs/prometheus/latest/storage/"
+      ],
+      "group": "Time series database (region A)"
+    },
+    {
+      "id": "head",
+      "label": "In-memory recent data",
+      "kind": "datastore",
+      "c4": "component",
+      "summary": "Compressed recent points (delta-of-delta timestamps, XOR values: 16 bytes to 1.37 bytes). 85% of queries in the predecessor system were for the last 26 hours.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf"
+      ],
+      "parent": "tsdb",
+      "group": "Time series database (region A)"
+    },
+    {
+      "id": "wal",
+      "label": "Log",
+      "kind": "datastore",
+      "c4": "component",
+      "summary": "Append-only log of recent data. Gorilla buffers up to 64 kB so a crash can lose a second or two for higher write availability; Prometheus uses a write-ahead log to protect the in-memory block.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf",
+        "https://prometheus.io/docs/prometheus/latest/storage/"
+      ],
+      "parent": "tsdb",
+      "group": "Time series database (region A)"
+    },
+    {
+      "id": "blocks",
+      "label": "Compressed blocks on disk",
+      "kind": "datastore",
+      "c4": "component",
+      "summary": "Every two hours the compressed block is written to disk with a checkpoint marker; Prometheus blocks hold chunks, index and metadata.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf",
+        "https://prometheus.io/docs/prometheus/latest/storage/"
+      ],
+      "parent": "tsdb",
+      "group": "Time series database (region A)"
+    },
+    {
+      "id": "index",
+      "label": "Series index",
+      "kind": "datastore",
+      "c4": "component",
+      "summary": "Maps metric names and labels to series. Each new label combination is a new series, so high-cardinality labels inflate it.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://prometheus.io/docs/prometheus/latest/storage/",
+        "https://prometheus.io/docs/practices/naming/"
+      ],
+      "parent": "tsdb",
+      "group": "Time series database (region A)"
+    },
+    {
+      "id": "shardmgr",
+      "label": "Shard manager",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Paxos-based system that assigns shards to nodes and redistributes them when a node fails; write clients buffer one minute of data meanwhile.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf"
+      ]
+    },
+    {
+      "id": "tsdb2",
+      "label": "Replica in another region",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Each series is written to two hosts in separate regions with no consistency guarantee; reads fail over to the other region.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf"
+      ]
+    },
+    {
+      "id": "longterm",
+      "label": "Long-term store (rollups)",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Persistent store for history; Gorilla fronts HBase as a write-through cache. Downsampled rollups for long retention are industry practice.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf"
+      ]
+    },
+    {
+      "id": "rules",
+      "label": "Rule evaluators",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Periodically run alerting and recording rules (standing queries in Monarch); an alert is pending until its condition has held for the configured time, then firing. Run in the same zone as the data.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/",
+        "https://www.vldb.org/pvldb/vol13/p3181-adams.pdf"
+      ]
+    },
+    {
+      "id": "am",
+      "label": "Alertmanager",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Deduplicates, groups, routes, silences and inhibits alerts; can run as a cluster.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://prometheus.io/docs/alerting/latest/alertmanager/"
+      ]
+    },
+    {
+      "id": "query",
+      "label": "Query API and dashboards",
+      "kind": "edge",
+      "c4": "container",
+      "summary": "Ad hoc queries and graphs, served from the closest healthy replica.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.vldb.org/pvldb/vol13/p3181-adams.pdf",
+        "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf"
+      ]
+    },
+    {
+      "id": "meta",
+      "label": "Alternative: independent meta-monitoring",
+      "kind": "service",
+      "c4": "note",
+      "summary": "A separate, simpler system watches the monitor and a dead man's switch alert fires if alerts stop arriving. Industry practice, not from the sources.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://prometheus.io/docs/introduction/overview/"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "coll-targets",
+      "from": "collector",
+      "to": "targets",
+      "label": "scrape metrics (pull)",
+      "mode": "sync",
+      "protocol": "HTTP"
+    },
+    {
+      "id": "coll-shardmgr",
+      "from": "collector",
+      "to": "shardmgr",
+      "label": "which node owns this series?",
+      "mode": "sync"
+    },
+    {
+      "id": "coll-head",
+      "from": "collector",
+      "to": "head",
+      "label": "write samples",
+      "mode": "async"
+    },
+    {
+      "id": "coll-tsdb2",
+      "from": "collector",
+      "to": "tsdb2",
+      "label": "stream a second copy",
+      "mode": "async"
+    },
+    {
+      "id": "head-wal",
+      "from": "head",
+      "to": "wal",
+      "label": "append",
+      "mode": "async"
+    },
+    {
+      "id": "head-blocks",
+      "from": "head",
+      "to": "blocks",
+      "label": "flush compressed block every 2 hours",
+      "mode": "async"
+    },
+    {
+      "id": "head-index",
+      "from": "head",
+      "to": "index",
+      "label": "register series",
+      "mode": "sync"
+    },
+    {
+      "id": "blocks-longterm",
+      "from": "blocks",
+      "to": "longterm",
+      "label": "persist history",
+      "mode": "async"
+    },
+    {
+      "id": "shardmgr-head",
+      "from": "shardmgr",
+      "to": "head",
+      "label": "assign and move shards",
+      "mode": "sync"
+    },
+    {
+      "id": "rules-head",
+      "from": "rules",
+      "to": "head",
+      "label": "evaluate expression",
+      "mode": "sync"
+    },
+    {
+      "id": "rules-am",
+      "from": "rules",
+      "to": "am",
+      "label": "firing alerts",
+      "mode": "async"
+    },
+    {
+      "id": "am-chan",
+      "from": "am",
+      "to": "chan",
+      "label": "grouped notification",
+      "mode": "async"
+    },
+    {
+      "id": "chan-oncall",
+      "from": "chan",
+      "to": "oncall",
+      "label": "page",
+      "mode": "async"
+    },
+    {
+      "id": "oncall-query",
+      "from": "oncall",
+      "to": "query",
+      "label": "dashboards and queries",
+      "mode": "sync"
+    },
+    {
+      "id": "query-head",
+      "from": "query",
+      "to": "head",
+      "label": "read recent data",
+      "mode": "sync"
+    },
+    {
+      "id": "query-tsdb2",
+      "from": "query",
+      "to": "tsdb2",
+      "label": "fail over reads",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "ingest",
+      "name": "A metric reaches storage",
+      "steps": [
+        {
+          "edge": "coll-targets",
+          "caption": "A collector scrapes a target (or receives pushed data)."
+        },
+        {
+          "edge": "coll-shardmgr",
+          "caption": "It finds which node owns the series."
+        },
+        {
+          "edge": "coll-head",
+          "caption": "The point is written to the in-memory block."
+        },
+        {
+          "edge": "coll-tsdb2",
+          "caption": "A second copy is streamed to the other region without a consistency guarantee."
+        },
+        {
+          "edge": "head-wal",
+          "caption": "It is appended to the log for recovery."
+        },
+        {
+          "edge": "head-blocks",
+          "caption": "Every two hours the compressed block is flushed to disk."
+        }
+      ]
+    },
+    {
+      "id": "alert",
+      "name": "A rule fires and someone is paged",
+      "steps": [
+        {
+          "edge": "rules-head",
+          "caption": "The evaluator runs the alert expression against the local data."
+        },
+        {
+          "edge": "rules-am",
+          "caption": "After the condition has held for the configured time the alert fires and goes to Alertmanager."
+        },
+        {
+          "edge": "am-chan",
+          "caption": "Alertmanager groups it with similar alerts and sends one notification."
+        },
+        {
+          "edge": "chan-oncall",
+          "caption": "The on-call engineer is paged."
+        },
+        {
+          "edge": "oncall-query",
+          "caption": "They open dashboards and query to diagnose."
+        }
+      ]
+    },
+    {
+      "id": "node-failure",
+      "name": "A storage node fails (failure)",
+      "steps": [
+        {
+          "edge": "coll-head",
+          "caption": "Writes to the failed node's shards are buffered by the clients for about a minute, dropping older points."
+        },
+        {
+          "edge": "shardmgr-head",
+          "caption": "The shard manager reassigns the shards to other nodes, usually within thirty seconds."
+        },
+        {
+          "edge": "query-tsdb2",
+          "caption": "If the move is too slow, reads can be pointed at the other region."
+        }
+      ]
+    },
+    {
+      "id": "region-loss",
+      "name": "A whole region is lost (failure)",
+      "steps": [
+        {
+          "edge": "query-tsdb2",
+          "caption": "Reads fail over to the other region's copy."
+        },
+        {
+          "edge": "coll-tsdb2",
+          "caption": "Writes continue to the surviving region; the failed region's reads stay off until it has been healthy for the retention window (26 hours in Gorilla)."
+        }
+      ]
+    },
+    {
+      "id": "cardinality",
+      "name": "A label explodes in cardinality (failure)",
+      "steps": [
+        {
+          "edge": "coll-head",
+          "caption": "A service starts adding a user ID to a label, creating a new series per user."
+        },
+        {
+          "edge": "head-index",
+          "caption": "The index and memory grow with every new series; without per-tenant series limits (our design reasoning) the shard can run out of memory."
+        }
+      ]
+    }
+  ]
+}
