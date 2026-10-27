@@ -1,0 +1,258 @@
+{
+  "id": "15-uber-proximity-dispatch",
+  "title": "Uber (Proximity + Dispatch)",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "driver",
+      "label": "Driver app",
+      "kind": "client",
+      "summary": "Sends GPS location every few seconds. Noisy fixes are cleaned by map matching.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers",
+        "https://highscalability.com/how-uber-scales-their-real-time-market-platform/"
+      ],
+      "details": "A 2015 talk (via a secondary summary, not re-verified) put the interval at about 4 s."
+    },
+    {
+      "id": "rider",
+      "label": "Rider app",
+      "kind": "client",
+      "summary": "Requests a ride at a pickup point and receives a match.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.uber.com/us/en/marketplace/matching/"
+      ]
+    },
+    {
+      "id": "ingest",
+      "label": "Location ingestion",
+      "kind": "service",
+      "summary": "Receives driver pings, map-matches them to road segments and writes the latest position. The write path dominates traffic.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers"
+      ]
+    },
+    {
+      "id": "h3",
+      "label": "H3 cell index",
+      "kind": "service",
+      "summary": "Turns (lat, lng) into a 64-bit hexagonal cell ID at a chosen resolution. Nearby search = the cell plus its k-ring of neighbours (grid_disk). 16 resolutions. Parent cell = bit truncation.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.uber.com/blog/h3/",
+        "https://h3geo.org/docs/core-library/restable/"
+      ],
+      "details": "Res 9 ≈ 0.105 km² per cell, res 8 ≈ 0.737 km². Hexagons have one distance to every neighbour. Uber built H3 for pricing and dispatch."
+    },
+    {
+      "id": "geoindex",
+      "label": "In-memory geo index (sharded by cell)",
+      "kind": "datastore",
+      "summary": "Holds the latest drivers per cell. A query looks up the rider's cell and its neighbouring cells, then filters by distance and availability.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers",
+        "https://highscalability.com/how-uber-scales-their-real-time-market-platform/"
+      ],
+      "details": "In a 2015 description (secondary source, not re-verified) the shard key was a Google S2 level-12 cell and nodes formed a Ringpop ring. H3 came in 2018."
+    },
+    {
+      "id": "redis",
+      "label": "Latest-location cache (Redis)",
+      "kind": "datastore",
+      "summary": "Latest position and a short buffer per driver. Fast reads for matching.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers"
+      ]
+    },
+    {
+      "id": "cass",
+      "label": "Location history (Cassandra)",
+      "kind": "datastore",
+      "summary": "Durable, write-heavy history for analytics and replay.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers"
+      ]
+    },
+    {
+      "id": "match",
+      "label": "Matching / dispatch",
+      "kind": "service",
+      "summary": "Waits a few seconds, collects nearby riders and drivers into a batch and chooses pairings to reduce average wait for everyone, not just the closest pair.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.uber.com/us/en/marketplace/matching/"
+      ],
+      "details": "Uber says early matching picked the closest driver immediately and that closest does not always mean quickest. Whether the batch is solved as an assignment problem is our interpretation."
+    },
+    {
+      "id": "eta",
+      "label": "ETA service",
+      "kind": "service",
+      "summary": "Ranks candidates by estimated arrival time over the road network instead of straight-line distance.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers"
+      ],
+      "details": "The Uber matching page we read does not describe ETA computation."
+    },
+    {
+      "id": "surge",
+      "label": "Pricing by hexagon",
+      "kind": "service",
+      "summary": "Supply and demand are measured per H3 hexagon in each city to calculate surge.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.uber.com/blog/h3/"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "d-ingest",
+      "from": "driver",
+      "to": "ingest",
+      "label": "GPS ping",
+      "mode": "async"
+    },
+    {
+      "id": "ingest-h3",
+      "from": "ingest",
+      "to": "h3",
+      "label": "cell for (lat, lng)",
+      "mode": "sync"
+    },
+    {
+      "id": "ingest-geo",
+      "from": "ingest",
+      "to": "geoindex",
+      "label": "upsert driver in cell",
+      "mode": "sync"
+    },
+    {
+      "id": "ingest-redis",
+      "from": "ingest",
+      "to": "redis",
+      "label": "latest location",
+      "mode": "sync"
+    },
+    {
+      "id": "ingest-cass",
+      "from": "ingest",
+      "to": "cass",
+      "label": "history",
+      "mode": "async"
+    },
+    {
+      "id": "r-match",
+      "from": "rider",
+      "to": "match",
+      "label": "request ride",
+      "mode": "sync"
+    },
+    {
+      "id": "match-h3",
+      "from": "match",
+      "to": "h3",
+      "label": "rider cell + k-ring",
+      "mode": "sync"
+    },
+    {
+      "id": "match-geo",
+      "from": "match",
+      "to": "geoindex",
+      "label": "drivers in those cells",
+      "mode": "sync"
+    },
+    {
+      "id": "match-eta",
+      "from": "match",
+      "to": "eta",
+      "label": "rank by ETA",
+      "mode": "sync"
+    },
+    {
+      "id": "match-d",
+      "from": "match",
+      "to": "driver",
+      "label": "offer trip",
+      "mode": "sync"
+    },
+    {
+      "id": "geo-surge",
+      "from": "geoindex",
+      "to": "surge",
+      "label": "supply per cell",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "ping",
+      "name": "Driver location update",
+      "steps": [
+        {
+          "edge": "d-ingest",
+          "caption": "The driver app sends its location every few seconds."
+        },
+        {
+          "edge": "ingest-h3",
+          "caption": "The index converts the cleaned position into an H3 cell ID, a single 64-bit integer, at the chosen resolution."
+        },
+        {
+          "edge": "ingest-geo",
+          "caption": "The driver is moved from their old cell to the new one in the in-memory index, sharded by cell."
+        },
+        {
+          "edge": "ingest-redis",
+          "caption": "The latest position is also cached for fast reads."
+        },
+        {
+          "edge": "ingest-cass",
+          "caption": "History is appended asynchronously to durable storage."
+        }
+      ]
+    },
+    {
+      "id": "request",
+      "name": "Rider requests a ride",
+      "steps": [
+        {
+          "edge": "r-match",
+          "caption": "The rider's request reaches matching. Uber evaluates nearby drivers and riders in one batch over a few seconds instead of taking the closest driver immediately."
+        },
+        {
+          "edge": "match-h3",
+          "caption": "The pickup becomes a cell plus a ring of neighbouring cells. Hexagons make all neighbours equidistant, so the search area grows evenly."
+        },
+        {
+          "edge": "match-geo",
+          "caption": "Matching reads the drivers in those cells: key lookups, not a 2-D distance scan."
+        },
+        {
+          "edge": "match-eta",
+          "caption": "Candidates are ranked by estimated arrival time, not straight-line distance."
+        },
+        {
+          "edge": "match-d",
+          "caption": "The chosen driver receives the offer."
+        }
+      ]
+    },
+    {
+      "id": "surge",
+      "name": "Surge pricing per hexagon",
+      "steps": [
+        {
+          "edge": "geo-surge",
+          "caption": "Supply and demand are counted per H3 hexagon. Uber says it calculates surge by measuring them in hexagons in each city."
+        }
+      ]
+    }
+  ]
+}
