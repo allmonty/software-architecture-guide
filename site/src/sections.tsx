@@ -1,37 +1,14 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Components } from "react-markdown";
+import { dedupe, sectionsOf, slugify } from "./text.ts";
+export { mentionsOf, sectionsOf, slugify } from "./text.ts";
+export type { Section } from "./text.ts";
 
 // Section navigation for long notes. Links are buttons, not hash links: a hash change would re-route the whole page.
-
-export const slugify = (t: string) =>
-  t.toLowerCase().replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[`*_]/g, "").replace(/[^\p{L}\p{N}\s-]/gu, "").trim().replace(/\s+/g, "-");
 
 const textOf = (n: ReactNode): string =>
   typeof n === "string" || typeof n === "number" ? String(n) : Array.isArray(n) ? n.map(textOf).join("")
     : n && typeof n === "object" && "props" in n ? textOf((n as { props: { children?: ReactNode } }).props.children) : "";
-
-/** Gives repeated slugs a numeric suffix, in document order, the same way for the outline and for the headings. */
-function dedupe() {
-  const seen = new Map<string, number>();
-  return (slug: string) => { const n = (seen.get(slug) ?? 0) + 1; seen.set(slug, n); return n === 1 ? slug : `${slug}-${n}`; };
-}
-
-export interface Section { slug: string; text: string; level: number }
-
-/** The h2 and h3 headings of a Markdown note, outside code fences. */
-export function sectionsOf(md: string): Section[] {
-  const unique = dedupe();
-  let code = false;
-  const out: Section[] = [];
-  for (const line of md.split("\n")) {
-    if (line.startsWith("```")) { code = !code; continue; }
-    const m = !code && line.match(/^(#{2,4}) (.+)/);
-    if (!m) continue;
-    const text = m[2].replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[`*]/g, "").trim();
-    out.push({ slug: unique(slugify(m[2])), text, level: m[1].length });
-  }
-  return out;
-}
 
 /** Updates ?section= in the address bar without a navigation, keeping the other parameters. */
 function rememberSection(slug: string | null) {
@@ -131,25 +108,3 @@ export function Outline({ markdown, variant, remount }: { markdown: string; vari
   );
 }
 
-/** The h2 sections of a note with their text, for finding where a term is discussed. Same slugs as the headings. */
-export function mentionsOf(md: string, term: string, limit = 3): Section[] {
-  if (term.trim().length < 4) return [];
-  const unique = dedupe();
-  const re = new RegExp(`(^|[^\\p{L}\\p{N}])${term.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\p{L}\\p{N}])`, "giu");
-  const found: { s: Section; n: number }[] = [];
-  let cur: { s: Section; body: string[] } | null = null;
-  const close = () => { if (cur) { const n = (cur.body.join("\n").match(re) ?? []).length; if (n) found.push({ s: cur.s, n }); } };
-  let code = false;
-  for (const line of md.split("\n")) {
-    if (line.startsWith("```")) code = !code;
-    const m = !code && line.match(/^(#{2,4}) (.+)/);
-    if (m && m[1].length > 2) { unique(slugify(m[2])); cur?.body.push(line); } // consume the slug so suffixes match the headings
-    else if (m) {
-      close();
-      const text = m[2].replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[`*]/g, "").trim();
-      cur = { s: { slug: unique(slugify(m[2])), text, level: 2 }, body: [] };
-    } else if (cur) cur.body.push(line);
-  }
-  close();
-  return found.sort((a, b) => b.n - a.n).slice(0, limit).map((f) => f.s);
-}

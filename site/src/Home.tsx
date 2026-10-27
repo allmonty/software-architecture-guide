@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { resolveRef, systems, toolkitPages, tracks, type Item } from "./data.ts";
 import { Backdrop, HeroArt } from "./Art.tsx";
+import { searchPages, type SearchPage } from "./text.ts";
 import { NamedIcon, TrackIcon } from "./icons.tsx";
 import { resetProgress, toggleDone, useProgress } from "./progress.ts";
 
@@ -62,6 +63,7 @@ export function Home() {
     return items;
   }, []);
   const needle = q.trim().toLowerCase();
+  const textHits = useMemo(() => (needle.length >= 3 ? searchPages(searchable, needle) : []), [needle]);
   const hits = needle ? all.filter((i) => `${i.title} ${i.ref} ${i.group} ${i.type}`.toLowerCase().includes(needle)) : [];
 
   const total = all.length;
@@ -138,9 +140,27 @@ export function Home() {
       <section>
         <h2><NamedIcon name="browse" />3. Browse everything</h2>
         <p className="muted small">Looking for an idea rather than a system? <a href="#concepts">Browse by concept</a>.</p>
-        <input className="search" type="search" placeholder="Search systems, primers, incidents and exercises" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search" />
+        <input className="search" type="search" placeholder="Search titles and the full text of every note" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search" />
         {needle ? (
-          <ul className="steps">{hits.length ? hits.map((i) => <ItemRow key={i.ref} item={i} />) : <li className="muted">No match.</li>}</ul>
+          <>
+            {hits.length > 0 && <><h3>Pages</h3><ul className="steps">{hits.map((i) => <ItemRow key={i.ref} item={i} />)}</ul></>}
+            {textHits.length > 0 && (
+              <>
+                <h3>In the text <span className="muted">({textHits.length}{textHits.length === 30 ? "+" : ""} sections)</span></h3>
+                <ul className="text-hits">
+                  {textHits.map((h) => (
+                    <li key={`${h.page.id}#${h.slug}`}>
+                      <a href={`${h.page.href}${h.slug ? `${h.page.href.includes("?") ? "&" : "?"}section=${h.slug}` : ""}`}>
+                        <span className="hit-where"><strong>{h.page.title}</strong>{h.heading && <span className="muted"> › {h.heading}</span>}</span>
+                        <span className="hit-snippet">{highlight(h.snippet, needle)}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            {hits.length === 0 && textHits.length === 0 && <p className="muted">{needle.length < 3 ? "Keep typing: the text search starts at three letters." : "No match."}</p>}
+          </>
         ) : (
           <>
             {STAGES.map((g) => {
@@ -167,6 +187,18 @@ export function Home() {
       </section>
     </main>
   );
+}
+
+// Every page the text search covers. Workbook pages are exercises, so they are searched too.
+const searchable: SearchPage[] = [
+  ...systems.map((s) => ({ id: s.id, title: s.diagram.title, href: `#${s.id}`, type: "System", markdown: s.markdown })),
+  ...toolkitPages.filter((p) => p.id !== "README").map((p) => ({ id: p.id, title: p.title, href: `#toolkit/${p.id}`, type: "Toolkit", markdown: p.markdown })),
+];
+
+function highlight(text: string, query: string) {
+  const words = query.split(/\s+/).filter((w) => w.length >= 2).map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  if (words.length === 0) return text;
+  return text.split(new RegExp(`(${words.join("|")})`, "gi")).map((part, i) => (i % 2 ? <mark key={i}>{part}</mark> : part));
 }
 
 function Card({ item }: { item: Item }) {

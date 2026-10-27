@@ -348,3 +348,10 @@ button.study { margin-left: auto; }
 .chips .num { color: var(--muted); }
 .concept-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 12px; }
 .focus .concept-chips { display: none; }
+
+/* ---- Full-text search results ---- */
+.text-hits { list-style: none; padding: 0; display: grid; gap: 8px; }
+.text-hits a { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: color-mix(in srgb, var(--card) 80%, transparent); text-decoration: none; color: var(--fg); }
+.text-hits a:hover { border-color: var(--accent); }
+.hit-snippet { font-size: .88rem; color: var(--muted); }
+.hit-snippet mark { background: color-mix(in srgb, var(--accent) 28%, transparent); color: var(--fg); border-radius: 3px; padding: 0 1px; }
