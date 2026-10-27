@@ -138,6 +138,12 @@ npm run build    # static output in site/dist
 
 Each diagram follows the **C4 model**: switch between **1 · Context**, **2 · Containers** and **3 · Components** (the last only where the notes describe a container's internals). Higher levels roll relationships up from the lower ones. In a diagram: **click an element or a line** for its summary, confidence badge and sources. Pick a **flow** and use **← / →** (or the buttons) to step through it. Dashed borders mark `INDUSTRY PATTERN` components and dotted ones `SPECULATIVE`. Colours follow the C4 palette (person, external system, container, component) and each box shows a `[Type: technology]` line. Drag boxes to untangle lines (kept per view, with a Reset button). The views are **Graph**, **Split** (diagram and note side by side) and **Text**, and every page opens with a trust summary.
 
+## Publishing on GitHub Pages
+
+The site is a static build served from the `docs/` folder of the `main` branch. In the repository settings choose **Pages → Build and deployment → Deploy from a branch → `main` / `/docs`**; it then appears at `https://<user>.github.io/<repository>/`. Links use a hash (`#13-netflix?view=split`) and relative asset paths, so it works from any subpath.
+
+After any change to a note, a diagram or the site, run `npm run build` and commit `docs/` together with the change; Pages serves exactly what is committed. The build also embeds each note's recent commit history, so build from a full checkout.
+
 ## Checking the content
 
 ```sh
