@@ -286,6 +286,7 @@
     },
     {
       "id": "saturated-site",
+      "failure": true,
       "name": "The nearest site is saturated (health miss)",
       "steps": [
         {

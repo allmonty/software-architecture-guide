@@ -379,6 +379,7 @@
     },
     {
       "id": "warm-failure",
+      "failure": true,
       "name": "A warm-storage block is unavailable",
       "steps": [
         {

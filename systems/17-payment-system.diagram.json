@@ -258,6 +258,7 @@
     },
     {
       "id": "timeout",
+      "failure": true,
       "name": "Timeout after calling the PSP",
       "steps": [
         {
@@ -272,6 +273,7 @@
     },
     {
       "id": "dup",
+      "failure": true,
       "name": "Duplicate or late webhook",
       "steps": [
         {

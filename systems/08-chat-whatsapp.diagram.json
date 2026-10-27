@@ -324,6 +324,7 @@
     },
     {
       "id": "server-crash",
+      "failure": true,
       "name": "A chat server crashes",
       "steps": [
         {

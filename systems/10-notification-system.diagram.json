@@ -311,6 +311,7 @@
     },
     {
       "id": "dead-token",
+      "failure": true,
       "name": "APNs says the token is dead",
       "steps": [
         {
@@ -329,6 +330,7 @@
     },
     {
       "id": "retry",
+      "failure": true,
       "name": "Provider is failing",
       "steps": [
         {

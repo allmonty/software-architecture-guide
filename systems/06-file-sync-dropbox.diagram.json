@@ -307,6 +307,7 @@
     },
     {
       "id": "interrupted",
+      "failure": true,
       "name": "Upload interrupted",
       "steps": [
         {

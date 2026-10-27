@@ -371,6 +371,7 @@
     },
     {
       "id": "node-failure",
+      "failure": true,
       "name": "A storage node fails (failure)",
       "steps": [
         {
@@ -389,6 +390,7 @@
     },
     {
       "id": "region-loss",
+      "failure": true,
       "name": "A whole region is lost (failure)",
       "steps": [
         {
@@ -403,6 +405,7 @@
     },
     {
       "id": "cardinality",
+      "failure": true,
       "name": "A label explodes in cardinality (failure)",
       "steps": [
         {

@@ -402,6 +402,7 @@
     },
     {
       "id": "robots-down",
+      "failure": true,
       "name": "robots.txt is unreachable",
       "steps": [
         {

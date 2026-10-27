@@ -236,6 +236,7 @@
     },
     {
       "id": "reconnect",
+      "failure": true,
       "name": "Alice loses her connection and returns",
       "steps": [
         {

@@ -304,6 +304,7 @@
     },
     {
       "id": "failed-chunk",
+      "failure": true,
       "name": "A transcoding chunk fails",
       "steps": [
         {

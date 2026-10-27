@@ -213,6 +213,7 @@
     },
     {
       "id": "repair",
+      "failure": true,
       "name": "A drive fails",
       "steps": [
         {

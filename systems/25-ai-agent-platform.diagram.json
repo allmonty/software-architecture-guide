@@ -319,6 +319,7 @@
     },
     {
       "id": "crash-resume",
+      "failure": true,
       "name": "A worker crashes mid-run (failure)",
       "steps": [
         {
@@ -337,6 +338,7 @@
     },
     {
       "id": "runaway",
+      "failure": true,
       "name": "The agent loops without progress (failure)",
       "steps": [
         {
@@ -373,6 +375,7 @@
     },
     {
       "id": "tool-injection",
+      "failure": true,
       "name": "A tool result contains injected instructions (failure)",
       "steps": [
         {

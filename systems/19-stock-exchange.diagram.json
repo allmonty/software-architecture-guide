@@ -284,6 +284,7 @@
     },
     {
       "id": "gap",
+      "failure": true,
       "name": "Market-data gap recovery",
       "steps": [
         {
@@ -298,6 +299,7 @@
     },
     {
       "id": "failover",
+      "failure": true,
       "name": "Engine failover",
       "steps": [
         {

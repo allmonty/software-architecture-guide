@@ -401,6 +401,7 @@
     },
     {
       "id": "duplicate",
+      "failure": true,
       "name": "The same click is seen twice (failure mode)",
       "steps": [
         {
@@ -415,6 +416,7 @@
     },
     {
       "id": "joiner-crash",
+      "failure": true,
       "name": "A joiner crashes after registering the id (failure)",
       "steps": [
         {
@@ -433,6 +435,7 @@
     },
     {
       "id": "late",
+      "failure": true,
       "name": "A late click arrives after the watermark (failure mode)",
       "steps": [
         {
@@ -451,6 +454,7 @@
     },
     {
       "id": "worker-crash",
+      "failure": true,
       "name": "The aggregator crashes (failure)",
       "steps": [
         {
@@ -469,6 +473,7 @@
     },
     {
       "id": "dc-outage",
+      "failure": true,
       "name": "A datacenter is lost (failure)",
       "steps": [
         {

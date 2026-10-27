@@ -455,6 +455,7 @@
     },
     {
       "id": "regression-blocked",
+      "failure": true,
       "name": "A candidate improves the target but regresses elsewhere (failure)",
       "steps": [
         {
@@ -473,6 +474,7 @@
     },
     {
       "id": "canary-rollback",
+      "failure": true,
       "name": "The canary degrades in production (failure)",
       "steps": [
         {

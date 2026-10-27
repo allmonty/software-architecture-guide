@@ -80,6 +80,8 @@ export function validateDir(dir: string): string[] {
         if (!edges.has(s.edge)) err(`flow ${f.id} step ${i + 1}: unknown edge ${s.edge}`);
       });
     }
+    // Every study note must show at least one case where things go wrong, and say so in the flow itself.
+    if (!d.flows.some((f) => f.failure)) err("needs at least one flow marked failure: true");
     const byId = new Map(d.nodes.map((n) => [n.id, n]));
     if (!d.nodes.some((n) => n.c4 === "container")) err("C4: needs at least one container");
     for (const n of d.nodes) {

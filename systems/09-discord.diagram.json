@@ -331,6 +331,7 @@
     },
     {
       "id": "large-guild",
+      "failure": true,
       "name": "A very large guild falls behind",
       "steps": [
         {

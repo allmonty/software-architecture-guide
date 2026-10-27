@@ -170,6 +170,7 @@
     },
     {
       "id": "clock-back",
+      "failure": true,
       "name": "The clock moves backwards (failure)",
       "steps": [
         {
@@ -184,6 +185,7 @@
     },
     {
       "id": "ticket-down",
+      "failure": true,
       "name": "A ticket server is down (failure)",
       "steps": [
         {

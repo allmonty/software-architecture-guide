@@ -34,6 +34,8 @@ const Edge = z.object({
 const Flow = z.object({
   id: Id,
   name: z.string().min(1),
+  // true when the flow is not the normal path: a failure, an overload or another abnormal case worth studying.
+  failure: z.boolean().optional(),
   steps: z.array(z.object({ edge: Id, caption: z.string().min(1) })).min(1),
 });
 

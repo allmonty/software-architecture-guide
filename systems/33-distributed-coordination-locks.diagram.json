@@ -196,6 +196,7 @@
     },
     {
       "id": "paused-holder",
+      "failure": true,
       "name": "A lock holder pauses and wakes up late (failure)",
       "steps": [
         {
@@ -218,6 +219,7 @@
     },
     {
       "id": "master-failure",
+      "failure": true,
       "name": "The master fails (failure)",
       "steps": [
         {

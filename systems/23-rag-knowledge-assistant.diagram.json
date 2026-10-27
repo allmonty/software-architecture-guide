@@ -428,6 +428,7 @@
     },
     {
       "id": "permission-revoked",
+      "failure": true,
       "name": "A user's access is revoked (security failure to prevent)",
       "steps": [
         {
@@ -446,6 +447,7 @@
     },
     {
       "id": "exact-id",
+      "failure": true,
       "name": "Embeddings miss an exact identifier",
       "steps": [
         {

@@ -349,6 +349,7 @@
     },
     {
       "id": "hot-link",
+      "failure": true,
       "name": "A link goes viral (hot key)",
       "steps": [
         {
@@ -375,6 +376,7 @@
     },
     {
       "id": "kgs-crash",
+      "failure": true,
       "name": "Key generator crashes",
       "steps": [
         {

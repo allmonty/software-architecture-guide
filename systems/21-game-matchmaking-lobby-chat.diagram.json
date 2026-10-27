@@ -396,6 +396,7 @@
     },
     {
       "id": "no-server",
+      "failure": true,
       "name": "No Ready game server is available",
       "steps": [
         {

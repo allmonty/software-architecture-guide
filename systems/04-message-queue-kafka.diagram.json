@@ -197,6 +197,7 @@
     },
     {
       "id": "failover",
+      "failure": true,
       "name": "Leader broker dies",
       "steps": [
         {

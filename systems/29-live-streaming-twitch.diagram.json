@@ -328,6 +328,7 @@
     },
     {
       "id": "origin-loss",
+      "failure": true,
       "name": "An origin loses capacity (failure)",
       "steps": [
         {
@@ -372,6 +373,7 @@
     },
     {
       "id": "chat-rejected",
+      "failure": true,
       "name": "A message the rules reject (failure path)",
       "steps": [
         {

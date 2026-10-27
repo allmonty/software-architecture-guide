@@ -225,6 +225,7 @@
     },
     {
       "id": "bad-merge",
+      "failure": true,
       "name": "Merging per-shard lists that are split by event (failure mode)",
       "steps": [
         {
@@ -239,6 +240,7 @@
     },
     {
       "id": "shard-down",
+      "failure": true,
       "name": "A summariser shard is down (failure)",
       "steps": [
         {

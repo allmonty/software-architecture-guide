@@ -253,6 +253,7 @@
     },
     {
       "id": "failure",
+      "failure": true,
       "name": "A replica is down (sloppy quorum)",
       "steps": [
         {
@@ -279,6 +280,7 @@
     },
     {
       "id": "repair",
+      "failure": true,
       "name": "Permanent divergence (anti-entropy)",
       "steps": [
         {

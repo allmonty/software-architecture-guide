@@ -261,6 +261,7 @@
     },
     {
       "id": "release-day",
+      "failure": true,
       "name": "Release day: a CDN miss storm",
       "steps": [
         {

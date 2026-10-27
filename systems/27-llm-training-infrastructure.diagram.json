@@ -306,6 +306,7 @@
     },
     {
       "id": "node-failure",
+      "failure": true,
       "name": "A GPU fails mid-run (failure)",
       "steps": [
         {
@@ -332,6 +333,7 @@
     },
     {
       "id": "straggler",
+      "failure": true,
       "name": "A slow GPU drags the whole job (failure mode)",
       "steps": [
         {
@@ -346,6 +348,7 @@
     },
     {
       "id": "ckpt-burst",
+      "failure": true,
       "name": "Checkpoint burst saturates storage",
       "steps": [
         {

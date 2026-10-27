@@ -320,6 +320,7 @@
     },
     {
       "id": "slow-shard",
+      "failure": true,
       "name": "A shard is slow or unavailable (failure)",
       "steps": [
         {

@@ -216,6 +216,7 @@
     },
     {
       "id": "store-down",
+      "failure": true,
       "name": "Counter store is down",
       "steps": [
         {

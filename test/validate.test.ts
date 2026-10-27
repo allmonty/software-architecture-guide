@@ -15,7 +15,7 @@ const good = () => ({
     { id: "b", label: "B", kind: "service", c4: "container", summary: "s", confidence: "CONFIRMED", sources: ["https://example.com"] },
   ],
   edges: [{ id: "a-b", from: "a", to: "b" }],
-  flows: [{ id: "f", name: "F", steps: [{ edge: "a-b", caption: "go" }] }],
+  flows: [{ id: "f", name: "F", failure: true, steps: [{ edge: "a-b", caption: "go" }] }],
 });
 
 function run(mutate: (d: ReturnType<typeof good>) => void, mdText = md) {
@@ -32,6 +32,11 @@ test("valid system passes", () => assert.deepEqual(run(() => {}), []));
 test("edge to unknown node fails", () => {
   const e = run((d) => (d.edges[0].to = "zzz"));
   assert.match(e.join("\n"), /unknown node zzz/);
+});
+
+test("a diagram with no failure flow fails", () => {
+  const e = run((d) => { (d.flows[0] as { failure?: boolean }).failure = false; });
+  assert.match(e.join("\n"), /at least one flow marked failure/);
 });
 
 test("flow step with unknown edge fails", () => {

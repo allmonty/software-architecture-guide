@@ -260,6 +260,7 @@
     },
     {
       "id": "celebrity",
+      "failure": true,
       "name": "An account with millions of followers posts",
       "steps": [
         {

@@ -378,6 +378,7 @@
     },
     {
       "id": "late-action",
+      "failure": true,
       "name": "An action arrives days after the impression (failure mode)",
       "steps": [
         {
@@ -392,6 +393,7 @@
     },
     {
       "id": "ps-failure",
+      "failure": true,
       "name": "A training server fails (failure)",
       "steps": [
         {
@@ -406,6 +408,7 @@
     },
     {
       "id": "stage-down",
+      "failure": true,
       "name": "The candidate search is down (failure)",
       "steps": [
         {

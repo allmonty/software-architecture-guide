@@ -251,6 +251,7 @@
     },
     {
       "id": "herd",
+      "failure": true,
       "name": "A hot key is invalidated (thundering herd)",
       "steps": [
         {
@@ -269,6 +270,7 @@
     },
     {
       "id": "server-down",
+      "failure": true,
       "name": "A cache server fails (failure)",
       "steps": [
         {
@@ -287,6 +289,7 @@
     },
     {
       "id": "stale-set",
+      "failure": true,
       "name": "A reordered update would set a stale value (failure)",
       "steps": [
         {

@@ -242,6 +242,7 @@
     },
     {
       "id": "parking",
+      "failure": true,
       "name": "Parking: overstay or no-show",
       "steps": [
         {
