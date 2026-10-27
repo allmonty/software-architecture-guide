@@ -1,0 +1,247 @@
+{
+  "id": "13-netflix",
+  "title": "Netflix (Video Delivery)",
+  "kind": "real-system",
+  "nodes": [
+    {
+      "id": "client",
+      "label": "Netflix client",
+      "kind": "client",
+      "summary": "Presses play, receives a rank-ordered list of OCA URLs and streams from the top-ranked one. Content is optimised dynamically per device and network conditions.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+        "https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c"
+      ]
+    },
+    {
+      "id": "playback",
+      "label": "Playback Apps (AWS)",
+      "kind": "service",
+      "summary": "Check user authorisation and licensing, then determine which specific files the playback needs for this client and its network conditions.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+        "https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c"
+      ],
+      "group": "Control plane (AWS)"
+    },
+    {
+      "id": "steer",
+      "label": "Steering Service (AWS)",
+      "kind": "service",
+      "summary": "Picks OCAs using what they reported plus client info such as geolocation, generates URLs, and returns them rank-ordered. Logs the steering manifest to Kafka.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+        "https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c"
+      ],
+      "details": "Proximity rank is by network proximity alone, from BGP-advertised IP ranges: the OCA site advertising the longest, most specific matching prefix is first.",
+      "group": "Control plane (AWS)"
+    },
+    {
+      "id": "ccs",
+      "label": "Cache Control Service (AWS)",
+      "kind": "datastore",
+      "summary": "Stores what OCAs report: health and capacity, BGP routes learned, files on disk. Also drives nightly fill and content placement.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+        "https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c"
+      ],
+      "details": "The control plane services control fill behaviour (adding new files nightly), compute file storage/hashing and handle playback telemetry.",
+      "group": "Control plane (AWS)"
+    },
+    {
+      "id": "oca-isp",
+      "label": "OCA inside an ISP",
+      "kind": "edge",
+      "summary": "Purpose-built cache appliance, provided free to qualifying ISPs. Stores encoded video/image files and serves HTTP/HTTPS. Holds no client data. ISPs control which customers are routed to it.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+        "https://openconnect.netflix.com/en/"
+      ],
+      "details": "Storage servers: mostly HDD, 200 TB+, ~40 Gbps. Flash servers: SSD, up to ~100 Gbps, up to 18 TB (2017 post).",
+      "group": "Open Connect (data plane)"
+    },
+    {
+      "id": "oca-ix",
+      "label": "OCA at an IXP",
+      "kind": "edge",
+      "summary": "Same appliances installed at internet exchange points and interconnected with ISPs through settlement-free peering.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+        "https://openconnect.netflix.com/en/"
+      ],
+      "group": "Open Connect (data plane)"
+    },
+    {
+      "id": "fill",
+      "label": "Nightly fill (off-peak)",
+      "kind": "service",
+      "summary": "Popular content is pre-positioned during configurable off-peak windows. Placement uses consistent hashing with 1000 slices per server, extended by Heterogeneous Cluster Allocation for mixed hardware. OCAs can fetch from each other.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://openconnect.netflix.com/Open-Connect-Overview.pdf",
+        "https://netflixtechblog.com/distributing-content-to-open-connect-3e3e391d4dc9"
+      ],
+      "group": "Open Connect (data plane)"
+    },
+    {
+      "id": "kafka",
+      "label": "Steering + OCA logs (Kafka)",
+      "kind": "queue",
+      "summary": "Steering manifests and OCA server logs are joined to compute cache misses (content miss, health miss), measured from the client's view.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "oca-ccs",
+      "from": "oca-isp",
+      "to": "ccs",
+      "label": "report health, BGP routes, files",
+      "mode": "async"
+    },
+    {
+      "id": "c-play",
+      "from": "client",
+      "to": "playback",
+      "label": "play",
+      "mode": "sync"
+    },
+    {
+      "id": "play-steer",
+      "from": "playback",
+      "to": "steer",
+      "label": "files needed",
+      "mode": "sync"
+    },
+    {
+      "id": "steer-ccs",
+      "from": "steer",
+      "to": "ccs",
+      "label": "OCA state",
+      "mode": "sync"
+    },
+    {
+      "id": "steer-c",
+      "from": "steer",
+      "to": "client",
+      "label": "ranked OCA URLs",
+      "mode": "sync"
+    },
+    {
+      "id": "c-oca",
+      "from": "client",
+      "to": "oca-isp",
+      "label": "HTTPS segments",
+      "mode": "sync",
+      "protocol": "HTTPS"
+    },
+    {
+      "id": "c-ix",
+      "from": "client",
+      "to": "oca-ix",
+      "label": "next in rank (if needed)",
+      "mode": "sync"
+    },
+    {
+      "id": "fill-oca",
+      "from": "fill",
+      "to": "oca-isp",
+      "label": "new files nightly",
+      "mode": "async"
+    },
+    {
+      "id": "ccs-fill",
+      "from": "ccs",
+      "to": "fill",
+      "label": "what to place",
+      "mode": "async"
+    },
+    {
+      "id": "steer-kafka",
+      "from": "steer",
+      "to": "kafka",
+      "label": "steering manifest",
+      "mode": "async"
+    },
+    {
+      "id": "oca-kafka",
+      "from": "oca-isp",
+      "to": "kafka",
+      "label": "bytes served",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "play",
+      "name": "Press play",
+      "steps": [
+        {
+          "edge": "c-play",
+          "caption": "The client asks the Playback Apps service in AWS to play a title."
+        },
+        {
+          "edge": "play-steer",
+          "caption": "Playback Apps check authorisation and licensing, decide which files this device needs, and ask the Steering Service to pick OCAs."
+        },
+        {
+          "edge": "steer-ccs",
+          "caption": "The Steering Service uses the data OCAs have reported to the Cache Control Service: health, BGP routes and files stored."
+        },
+        {
+          "edge": "steer-c",
+          "caption": "It returns a rank-ordered list of OCA URLs, ranked by network proximity first, with unhealthy or content-less sites filtered."
+        },
+        {
+          "edge": "c-oca",
+          "caption": "The client connects to the top-ranked OCA and streams video from it. AWS never touches the video bytes."
+        }
+      ]
+    },
+    {
+      "id": "fill",
+      "name": "Overnight fill",
+      "steps": [
+        {
+          "edge": "oca-ccs",
+          "caption": "OCAs continually report which files they hold, their health and the BGP routes they have learned."
+        },
+        {
+          "edge": "ccs-fill",
+          "caption": "The control plane decides what each cluster should hold, using predicted popularity and consistent hashing, accounting for mixed hardware."
+        },
+        {
+          "edge": "fill-oca",
+          "caption": "Files are added during off-peak windows when bandwidth is cheap. OCAs can also pull from each other."
+        }
+      ]
+    },
+    {
+      "id": "measure",
+      "name": "Measure delivery efficiency",
+      "steps": [
+        {
+          "edge": "steer-kafka",
+          "caption": "The steering manifest, including the proximity rank and filters applied, is logged."
+        },
+        {
+          "edge": "oca-kafka",
+          "caption": "OCAs log which files were actually streamed and how many bytes."
+        },
+        {
+          "edge": "steer-kafka",
+          "caption": "Joined per playback, a stream from a site below the first proximity rank counts as a cache miss: a content miss if files were absent, a health miss if the local site was saturated."
+        }
+      ]
+    }
+  ]
+}
