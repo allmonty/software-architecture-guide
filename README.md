@@ -1,6 +1,6 @@
-# System Design Atlas: 31 systems, explained and drawn
+# System Design Atlas: 35 systems, explained and drawn
 
-Thirty-one systems chosen to teach system design for **interviews and beyond**, including ten on AI systems, live streaming, observability and stream processing. Each has a deep note (`systems/NN-*.md`) and an **interactive diagram** (`systems/NN-*.diagram.json`) that the site in [`site/`](site/) renders: click a component for details and sources, and step through request flows.
+Thirty-five systems chosen to teach system design for **interviews and beyond**, including AI systems, live streaming, observability, stream processing, caching, coordination, ranking and ID generation. Each has a deep note (`systems/NN-*.md`) and an **interactive diagram** (`systems/NN-*.diagram.json`) that the site in [`site/`](site/) renders: click a component for details and sources, and step through request flows. A companion [toolkit](toolkit/README.md) adds a casebook of real incidents, cross-cutting primers (estimation, storage engines, transactions, load balancing, APIs, security, SLOs, cost, decisions, migrations) and a practice workbook (mock interviews, flaw drills, estimation drills, decision exercises, flashcards).
 
 **Trust first.** Every note says what is a **verified fact from a primary source** (company engineering post, paper, standard or official docs), what is a **standard design pattern**, and what is our own reasoning. Each ends with a **Verification log** listing what was checked and what was **not**.
 
@@ -54,6 +54,10 @@ Thirty-one systems chosen to teach system design for **interviews and beyond**, 
 | 29 | [Live streaming (Twitch)](systems/29-live-streaming-twitch.md) | real + pattern | ingest and origin routing, transcoding cost, HLS and low-latency HLS, chat fan-out | Four Twitch engineering posts, chat docs, RFC 8216, HLS 2nd-edition draft |
 | 30 | [Metrics monitoring and alerting](systems/30-metrics-monitoring-alerting.md) | reference + real parts | time series compression, availability over consistency, cardinality, alert pipeline | Gorilla (2015), Monarch (2020), Prometheus docs |
 | 31 | [Ad click aggregation](systems/31-ad-click-aggregation.md) | reference + real parts | dedup by id, event time and watermarks, checkpoints, exactly-once meanings, reconciliation | Photon (2013), Dataflow Model (2015), Flink and Kafka docs |
+| 32 | [Distributed cache (Memcache at Facebook)](systems/32-distributed-cache.md) | real + pattern | look-aside cache, leases, thundering herds, gutter pool, invalidation pipeline | Scaling Memcache at Facebook (NSDI 2013) |
+| 33 | [Coordination, locks and leader election](systems/33-distributed-coordination-locks.md) | real + pattern | consensus-backed lock service, sessions and leases, fencing tokens, herd-free locks | Chubby (OSDI 2006), ZooKeeper (ATC 2010), Raft (2014) |
+| 34 | [Top-K, heavy hitters and leaderboards](systems/34-top-k-leaderboard.md) | reference | sorted sets, Space-Saving counters, windows, merge correctness, sharded ranks | Redis docs, Space-Saving (ICDT 2005) |
+| 35 | [Unique ID generation](systems/35-unique-id-generation.md) | real + pattern | Snowflake bit layout, ticket servers, UUIDv7, clock safety, machine ids | Snowflake post and README, Flickr ticket servers, RFC 9562 |
 
 ## How to answer a system-design question
 
@@ -77,6 +81,7 @@ The answer outlines in each note are our own reasoning and are labelled as such.
 5. **Feeds, notifications and ranking:** 11 News feed → 10 Notification system.
 6. **Correctness under contention:** 16 Reservations → 17 Payments → 19 Stock exchange.
 7. **Location and discovery:** 15 Uber → 20 Web crawler + search.
+   **Building blocks:** 35 Unique IDs → 32 Distributed cache → 33 Coordination and locks → 34 Top-K and leaderboards (read these early or alongside the others; they recur everywhere).
 8. **Data pipelines and observability:** 30 Metrics monitoring → 31 Ad click aggregation.
 9. **AI systems:** 22 LLM inference serving → 24 Vector search → 23 RAG assistant → 25 AI agents → 28 Fine-tuning and evaluation → 26 Recommendations → 27 Training infrastructure.
 
@@ -86,21 +91,24 @@ For interviews, practise each note's **Interview questions**, and walk the **flo
 
 | Concept | Where to study it |
 |---|---|
-| Caching and request coalescing | 01, 09, 11, 12, 13, 14, 29 |
+| Caching and request coalescing | 01, 09, 11, 12, 13, 14, 29, 32 |
 | CDN and edge delivery | 07, 12, 13, 14, 29 |
 | Sharding / partitioning / consistent hashing | 01, 03, 04, 09, 11, 13, 15, 16, 20, 24, 30, 31 |
 | Replication, quorums, erasure coding | 03, 04, 05, 06, 07, 30, 31 |
 | Consistency models and trade-offs | 03, 04, 05, 06, 16, 18, 30 |
 | Queues, logs and event-driven design | 04, 08, 10, 17, 19, 31 |
-| Idempotency and retries | 01, 10, 16, 17, 25, 31 |
+| Consensus, leader election and fencing | 33, 04, 03 |
+| Approximate counting and top-K | 34, 31 |
+| Cache consistency, stampede protection | 32 |
+| Idempotency and retries | 01, 10, 16, 17, 25, 31, 32 |
 | Event sourcing and immutable logs | 04, 17, 19 |
-| Concurrency control (constraints, locks, OT, single writer) | 16, 18, 19 |
+| Concurrency control (constraints, locks, OT, single writer) | 16, 18, 19, 33 |
 | Real-time push and WebSockets | 08, 09, 18, 21, 29 |
 | Rate limiting and back-pressure | 02, 10, 17, 20, 22, 25, 29, 30 |
 | Fail-open and failure handling | 02, 10, 17, 19, 27, 30 |
 | Pre-signed URLs and blob storage | 05, 06, 07, 12, 14 |
 | Control plane vs data plane, steering | 13, 09, 21, 29 |
-| ID generation | 01, 11 |
+| ID generation | 01, 11, 35 |
 | Geospatial and time-range indexing | 15, 16 |
 | Search and inverted indexes | 20, 23, 24 |
 | Ranking and recommendation pipelines | 11, 20, 23, 26 |
