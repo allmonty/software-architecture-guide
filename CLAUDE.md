@@ -27,7 +27,7 @@ Deep links: `site/#07-photo-upload-storage?flow=upload&step=2` opens a flow at a
 - A diagram flow step names an **edge id**, so renaming an edge means updating its flows. The validator catches dangling references.
 - Required md headings are listed in `REQUIRED_SECTIONS` in `scripts/validate.ts`. They follow the template in `../neokim-post/CLAUDE.md`, including the 🏛️ Architecture lens (cites `../fundamentals-of-software-architecture/summaries/` chapters) and a `✅ Verification log` at the end.
 - **Confidence tags** (`CONFIRMED` / `INDUSTRY PATTERN` / `SPECULATIVE`) appear on every diagram node and on non-trivial prose claims. A node takes the tag of its weakest claim. Non-speculative nodes need at least one source URL.
-- `kind: "reference-design"` marks standard interview designs with no public architecture (notification system, payments, crawler, matchmaking, reservations). They are not claims about how a named company builds it.
+- `kind: "reference-design"` marks standard interview designs with no public architecture (notification system, payments, matchmaking, reservations). They are not claims about how a named company builds it.
 
 ## Adding or changing a system
 

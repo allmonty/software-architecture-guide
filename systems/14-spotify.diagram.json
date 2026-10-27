@@ -66,7 +66,7 @@
       "sources": [
         "https://people.cs.umass.edu/~phillipa/CSE390/spotify-p2p10.pdf"
       ],
-      "details": "Peers do no re-encoding: a peer holding the q9 (≈320 kbps) version cannot serve a q5 (≈160 kbps) request."
+      "details": "Peers do no re-encoding: a peer holding the q9 (≈320 kbps) version cannot serve a q5 (≈160 kbps) request. The 2010 figures are from the P2P paper. The later removal of P2P from the desktop client is a secondary report (TechCrunch citing TorrentFreak)."
     },
     {
       "id": "artist",
@@ -84,12 +84,12 @@
       "label": "Transcode + loudness measure",
       "kind": "service",
       "summary": "Asynchronously encodes the quality tiers and measures loudness. The gain is applied at playback toward -14 dB LUFS (ITU 1770), and the audio files are left untouched.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://support.spotify.com/us/artists/article/loudness-normalization/",
         "https://newsletter.systemdesign.one/p/spotify-system-design"
       ],
-      "details": "The loudness behaviour is from Spotify Support. The async transcoding pipeline is the standard design.",
+      "details": "The loudness behaviour is from Spotify Support. The async transcoding pipeline is the standard design. Confirmed (Spotify Support): loudness normalisation is applied during playback toward -14 LUFS. The asynchronous transcoding pipeline is the standard design and is not stated by Spotify.",
       "group": "upload"
     },
     {

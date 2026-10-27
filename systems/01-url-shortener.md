@@ -165,7 +165,7 @@ flowchart LR
 - **Cache-aside + LRU**, TTL ~1 day. Partition the cache by short URL, with leader-follower replicas for reads.
 - **Bloom filter on short URLs** returns 404 for non-existent keys without touching cache or DB (protects against enumeration/scan traffic). 🔧 A standard Bloom filter can't delete, so expired links still answer "maybe" and fall through to the lookup.
 - **Avoid cache thrashing** from "accessed only once" links: only cache on the **second** access (track the first access with a Bloom filter). Akamai does the same for "one-hit wonders" ([Bloom filter § examples](https://en.wikipedia.org/wiki/Bloom_filter#Examples)).
-- **Collapsed forwarding / request coalescing** at the proxy/cache: 10k simultaneous cache misses on a viral link → 1 origin request `[CONFIRMED]` that Squid supports it ([Squid `collapsed_forwarding`](https://www.squid-cache.org/Doc/config/collapsed_forwarding/)).
+- **Collapsed forwarding / request coalescing** at the proxy/cache: 10k simultaneous cache misses on a viral link → 1 origin request `[CONFIRMED]` that Squid supports it (a reviewer found Squid's docs say the directive is unavailable in Squid v8 and off by default, so check your version) ([Squid `collapsed_forwarding`](https://www.squid-cache.org/Doc/config/collapsed_forwarding/)).
 - **Separate read and write paths** (different services/fleets) so redirect traffic never starves shortening.
 
 ---

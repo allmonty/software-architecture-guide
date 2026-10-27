@@ -76,11 +76,11 @@
       "label": "Rating service (TrueSkill-style)",
       "kind": "service",
       "summary": "After a match, updates each player's skill distribution (mean and uncertainty) from team results. Runs asynchronously, off the queue's critical path.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.microsoft.com/en-us/research/publication/trueskilltm-a-bayesian-skill-rating-system/"
       ],
-      "details": "TrueSkill is a Bayesian generalisation of Elo. It tracks uncertainty, models draws, handles any number of entities and infers individual skills from team results.",
+      "details": "TrueSkill is a Bayesian generalisation of Elo. It tracks uncertainty, models draws, handles any number of entities and infers individual skills from team results. Confirmed: TrueSkill (abstract) tracks uncertainty, models draws and infers individual skill from team results. Running it asynchronously after the match is our design choice.",
       "group": "matchmaking"
     },
     {
@@ -135,11 +135,11 @@
       "label": "Messaging service (Edge + Routing)",
       "kind": "service",
       "summary": "Service-to-client push over WebSockets. Edge nodes hold connections. Routing nodes hold the global player-to-edge table and route published messages. Carries match found, ready check and assignment ready events.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://technology.riotgames.com/news/riot-messaging-service"
       ],
-      "details": "Riot's RMS (2017). Using it for matchmaking events is our application of the published design.",
+      "details": "Riot's RMS (2017). Using it for matchmaking events is our application of the published design. Confirmed: Riot's RMS pushes service-to-client messages over WebSockets with Edge and Routing tiers. Using it for match-found and ready-check events is our application of that design.",
       "group": "lobby"
     }
   ],

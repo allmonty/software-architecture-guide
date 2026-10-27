@@ -1,7 +1,7 @@
 {
   "id": "20-web-crawler-search",
   "title": "Web Crawler + Search",
-  "kind": "reference-design",
+  "kind": "real-system",
   "nodes": [
     {
       "id": "seeds",
@@ -287,7 +287,7 @@
         },
         {
           "edge": "fetch-robots",
-          "caption": "The fetcher consults the cached robots.txt. A 4xx means allowed, and a 5xx or network error means assume complete disallow."
+          "caption": "The fetcher consults the cached robots.txt. A 4xx means the crawler may access anything (RFC 9309 says MAY, a permission), and a 5xx or network error means assume complete disallow."
         },
         {
           "edge": "fetch-content",

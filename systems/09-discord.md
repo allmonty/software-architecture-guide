@@ -36,7 +36,7 @@ Three problems dominate:
 - Request/reply between Erlang processes costs about 12 µs.
 
 ### Big guilds hurt `[CONFIRMED]`
-Large servers reached **30,000 concurrent users** (the post cites a subreddit server). At peak, guild processes fell behind on their message queues and engineers "manually disabled message-generating features" to cope. The cause was fan-out cost: one `send/2` took **30–70 µs**, so one publish to a large guild took **900 ms–2.1 s**.
+Large servers reached **30,000 concurrent users** (the post cites a subreddit server). At peak, guild processes fell behind on their message queues and engineers had to manually intervene and turn off features that generated messages to cope (paraphrase). The cause was fan-out cost: one `send/2` took **30–70 µs**, and the post says publishing an event from a large guild "could take anywhere from 900ms to 2.1s". Applying that range to the 30,000-user example is our inference (30,000 × 30–70 µs ≈ 0.9–2.1 s), not a statement in the post.
 
 ### Manifold `[CONFIRMED]`
 Manifold distributes the cost of sending. It **groups recipient PIDs by remote node**, sends one message per node to a `Manifold.Partitioner`, which hashes PIDs (`:erlang.phash2/2`), groups them by core count and hands them to child workers for local delivery. The sending process calls `send/2` at most once per involved remote node, which preserves message ordering ("linearizability" in the post's words), and cuts inter-node network traffic.

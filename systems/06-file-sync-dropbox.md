@@ -68,7 +68,7 @@ Before it, "the entire file must be uploaded to our servers and committed to our
 | **Repair** | Starts "once an OSD has been offline for 15 minutes" |
 | **Erasure coding** | "Erasure coding for nearly all data". Recent data is first replicated, later aggregated and erasure coded. A **Live Coder** service can write straight into erasure-coded volumes (not ideal for latency-sensitive traffic). **The scheme and parameters are not given in the posts we read** |
 
-**History** (from "Scaling to exabytes and beyond", 2016-03-14): Dropbox "was an early adopter of Amazon S3", with file content stored on Amazon. It began storing and serving user files exclusively in-house on **2015-02-27**, and reached **over 90%** of user data in-house on **2015-10-07**. Its growth "from double-digit-petabyte prototypes to a multi-exabyte behemoth" took "around 6 months" (Inside the Magic Pocket). Most of Magic Pocket was built by "less than half a dozen people".
+**History** (from "Scaling to exabytes and beyond", 2016-03-14): Dropbox said "We were an early adopter of Amazon S3", with file content stored on Amazon. It began storing and serving user files exclusively in-house on **2015-02-27**, and reached **over 90%** of user data in-house on **2015-10-07**. Its growth "from our initial double-digit-petabyte prototypes to a multi-exabyte behemoth" took "around 6 months" (Inside the Magic Pocket). Most of Magic Pocket was built by "less than half a dozen people".
 
 **Why separate blocks from metadata?** Blocks are big, immutable and cold-ish: a different workload from small, hot, strongly consistent metadata. That separation is why the Block Index is a lookup *into* storage, not part of the file's metadata record `[INDUSTRY PATTERN]`.
 

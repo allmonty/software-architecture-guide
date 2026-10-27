@@ -1,7 +1,7 @@
 {
   "id": "02-rate-limiter",
   "title": "Rate Limiter",
-  "kind": "reference-design",
+  "kind": "real-system",
   "nodes": [
     {
       "id": "client",

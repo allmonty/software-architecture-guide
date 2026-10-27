@@ -65,7 +65,7 @@ Picture a **post office that never closes and keeps a phone line open to every c
 | **Actual active storage** | ~**400–500 TB** (most messages are deleted seconds after delivery). Article's figure: see Reviewer notes for how it can and can't be derived |
 | Bandwidth | 50M × 10 KB/s ≈ 500 GB/s peak |
 
-Real-world reference: WhatsApp's own blog (2012-01-06) reports pushing a single server past **2 million TCP connections** (`kern.ipc.numopensockets: 2277845`) on FreeBSD 8.2-STABLE with Erlang R14B03 and a 24-core Xeon X5675 `[CONFIRMED]` ([WhatsApp blog](https://blog.whatsapp.com/1-million-is-so-2011)). The "about 32 engineers at the 2014 acquisition" figure comes from a secondary summary of Rick Reed's talk ([HighScalability](http://highscalability.com/blog/2014/2/26/the-whatsapp-architecture-facebook-bought-for-19-billion.html)) and was **not** re-verified.
+Real-world reference: WhatsApp's own blog (early January 2012) reports pushing a single server past **2 million TCP connections** (`kern.ipc.numopensockets: 2277845`) on FreeBSD 8.2-STABLE with Erlang R14B03 and a 24-core Xeon X5675 `[CONFIRMED]` ([WhatsApp blog](https://blog.whatsapp.com/1-million-is-so-2011)). The "about 32 engineers at the 2014 acquisition" figure comes from a secondary summary of Rick Reed's talk ([HighScalability](http://highscalability.com/blog/2014/2/26/the-whatsapp-architecture-facebook-bought-for-19-billion.html)) and was **not** re-verified.
 
 ---
 
@@ -311,7 +311,7 @@ sequenceDiagram
 - Verified in the whitepaper v9 (2026-02-25): Signal protocol as the basis of E2EE; client-fanout per device; message keys AES256-CBC + HMAC-SHA256 (80-byte message key: 32 + 32 + 16 IV); hash ratchet plus per-round-trip DH ratchet for forward secrecy; Sender Key distribution through pairwise sessions with server-side fan-out for groups; sender keys cleared when a member leaves; server stores public identity, signed pre key and one-time pre keys; attachment steps (ephemeral AES256 + HMAC keys, blob store, SHA256 hash and pointer inside the encrypted message); Noise Pipes transport with Curve25519, AES-GCM and SHA256; history sync bundle deleted from the companion after import.
 - Verified in Meta Engineering (2021): per-device identity keys, "up to four other nonphone devices" in the beta, client-side fan-out, "Messages are not stored on the server after they are delivered", device-to-device history bundle, app state stored on the server end-to-end encrypted.
 - Verified in the privacy policy: up to 30 days for undelivered messages, deletion after delivery, forwarded media stored temporarily (no period given).
-- Verified in WhatsApp's blog: 2012-01-06, over 2 million TCP connections on FreeBSD 8.2-STABLE, Erlang R14B03, 24-core Xeon.
+- Verified in WhatsApp's blog: early January 2012 (a reviewer could not confirm the exact day), over 2 million TCP connections on FreeBSD 8.2-STABLE, Erlang R14B03, 24-core Xeon.
 - Corrected: the 2M-connection claim is now cited to WhatsApp's own post instead of a secondary summary.
 - Softened: the "32 engineers" figure and the XMPP/ejabberd history are marked as secondary-source claims that were not re-verified.
 - Scoped: the 1,024 group limit is from WhatsApp's help center per search results. A marketing page says 1,000, noted in the text.

@@ -107,7 +107,7 @@ Converts FIX into the internal binary format and returns execution reports. Can 
 - **Exactly-once** (duplicates detected by sequence)
 - **Gap detection** on inbound and outbound streams
 
-Each message type (new / cancel / trade) can have **its own topic with its own sequence**, so streams are ordered independently, there's less contention, and replay per topic is easy.
+**Inbound events (new orders and cancels) must share one total order per matching-engine shard.** A cancel and a fill for the same order need a defined relative order, or replay cannot reproduce the same matching and fairness is lost. Only **outbound or derived streams** (execution reports, market data, drop copies) can be split into topics with their own sequence numbers, since they are produced from the already-ordered input (reviewer correction, 2026-10-27: the earlier text suggested independent inbound sequences).
 
 ### 3.3 Matching engine
 - Verifies sequence numbers, **matches**, emits **trades** → market data.
