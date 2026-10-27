@@ -10,7 +10,7 @@
 - LoRA cut trainable parameters by 10,000 times and training GPU memory by 3 times compared with full fine-tuning of GPT-3 175B with Adam, with quality on par or better `[CONFIRMED]`; the checkpoint shrank from 350 GB to 35 MB under the paper's setup `[CONFIRMED]`.
 - InstructGPT: outputs of a 1.3B model fine-tuned with human feedback were preferred to those of the 175B GPT-3, with 100 times fewer parameters `[CONFIRMED]`.
 - Llama 3 post-training used six rounds of supervised fine-tuning, rejection sampling and DPO `[CONFIRMED]`; DPO "required less compute for large-scale models and performed better" than PPO in their tests `[CONFIRMED]`.
-- S-LoRA served thousands of LoRA adapters on one or more GPUs, with up to 4 times the throughput of naive LoRA serving in vLLM and HuggingFace PEFT `[CONFIRMED]`.
+- S-LoRA served thousands of LoRA adapters on one or more GPUs, with up to 4 times the throughput of vLLM with naive LoRA support and up to 30 times that of HuggingFace PEFT `[CONFIRMED]` (the authors' benchmarks).
 - Strong LLM judges matched human preferences with over 80% agreement, the same level as agreement between humans `[CONFIRMED]` (MT-Bench paper).
 
 **Decisions and trade-offs**
@@ -122,7 +122,7 @@ This is a large-organisation recipe; the sources do not say which parts matter m
 
 ## 5. Serving many fine-tuned variants: S-LoRA `[CONFIRMED]` (Sheng et al., 2023)
 
-With adapters, one deployment can serve many customised models, but naive designs load each adapter into GPU memory. **S-LoRA** "stores all adapters in the main memory and fetches the adapters used by the currently running queries to the GPU memory". **Unified Paging** uses one memory pool for adapter weights of different ranks and KV-cache tensors of varying lengths, reducing fragmentation. It adds a tensor-parallel strategy and custom kernels for batching requests that use different adapters. Reported results: thousands of adapters served on a single GPU or across several, up to 4 times the throughput of HuggingFace PEFT and vLLM with naive LoRA support, and several orders of magnitude more adapters served.
+With adapters, one deployment can serve many customised models, but naive designs load each adapter into GPU memory. **S-LoRA** "stores all adapters in the main memory and fetches the adapters used by the currently running queries to the GPU memory". **Unified Paging** uses one memory pool for adapter weights of different ranks and KV-cache tensors of varying lengths, reducing fragmentation. It adds a tensor-parallel strategy and custom kernels for batching requests that use different adapters. Reported results: thousands of adapters served on a single GPU or across several, up to 4 times the throughput of vLLM with naive LoRA support and up to 30 times that of HuggingFace PEFT, and several orders of magnitude more adapters served.
 
 ---
 
@@ -266,7 +266,7 @@ Register the model, pass the gate, run in shadow, then a small canary, ramp whil
 - Verified in InstructGPT: recipe, 40 contractors, 13k, 33k and 31k prompt counts, 1.3B versus 175B preference, 85 ± 3% preference, 21% versus 41% closed-domain hallucination, about 25% fewer toxic outputs when prompted to be respectful, no significant bias improvement, alignment tax and PPO-ptx, the statement on whose preferences.
 - Verified in DPO: description of RLHF, simple classification loss, no sampling during fine-tuning, comparison claims.
 - Verified in QLoRA (abstract): the 65B on a single 48 GB GPU claim, frozen 4-bit base with LoRA, NF4, Double Quantization, Paged Optimizers, the Guanaco 99.3% claim, and the statements about GPT-4 evaluation and benchmarks. The paper's experiments were not reviewed.
-- Verified in S-LoRA: adapters in main memory, Unified Paging, custom kernels and tensor parallelism, thousands of adapters, up to 4 times throughput.
+- Verified in S-LoRA: adapters in main memory, Unified Paging, custom kernels and tensor parallelism, thousands of adapters, up to 4 times the throughput of vLLM with naive LoRA support and up to 30 times that of HuggingFace PEFT (the abstract gives only the 4 times figure; the introduction gives both).
 - Verified in the MT-Bench paper: benchmark discrepancy statement, over 80% agreement, bias list.
 - Verified in Llama 3: rounds of SFT then DPO, six rounds, rejection sampling with K between 10 and 30, PagedAttention over 2 times throughput, DPO versus PPO statement, learning rate and β, model averaging, data cleaning and pruning list, contamination analysis, violation and false refusal rates, Llama Guard.
 - Labelled industry pattern, not sourced: the decision ladder, the release pipeline, shadow and canary rollout, monitoring, governance, cost arithmetic.
