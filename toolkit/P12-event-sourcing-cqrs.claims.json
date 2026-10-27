@@ -1,0 +1,191 @@
+[
+  {
+    "quote": "for most systems CQRS adds risky complexity",
+    "url": "https://martinfowler.com/bliki/CQRS.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Event Sourcing ensures that all changes to application state are stored as a sequence of events.",
+    "url": "https://martinfowler.com/eaaDev/EventSourcing.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "we guarantee that all changes to the domain objects are initiated by the event objects",
+    "url": "https://martinfowler.com/eaaDev/EventSourcing.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "We can discard the application state completely and rebuild it by re-running the events from the event log on an empty application.",
+    "url": "https://martinfowler.com/eaaDev/EventSourcing.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "We can determine the application state at any point in time.",
+    "url": "https://martinfowler.com/eaaDev/EventSourcing.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Each event is recorded in an append-only store",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "serves as the system of record",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Applications derive the current state of an entity by replaying all the events in its stream. This process is known as rehydration.",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Snapshots are an optimization, not a replacement for the eventstream.",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Don't confuse an event store with an eventstream message broker.",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "At its heart is the notion that you can use a different model to update information than the model you use to read information.",
+    "url": "https://martinfowler.com/bliki/CQRS.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "eventual consistency",
+    "url": "https://martinfowler.com/bliki/CQRS.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "specific business tasks instead of low-level data updates",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "CQRS allows you to separate the load from reads and writes allowing you to scale each independently.",
+    "url": "https://martinfowler.com/bliki/CQRS.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "such suitability for CQRS is very much the minority case",
+    "url": "https://martinfowler.com/bliki/CQRS.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "CQRS is a significant mental leap for all concerned, so shouldn't be tackled unless the benefit is worth the jump",
+    "url": "https://martinfowler.com/bliki/CQRS.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "should only be used on specific portions of a system",
+    "url": "https://martinfowler.com/bliki/CQRS.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "The domain or the business rules are simple.",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "specifically when combined with the Event Sourcing pattern.",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "One of the largest issues when using Event Sourcing is that you cannot ask the system a query such as",
+    "url": "https://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "fits well with event-based programming models",
+    "url": "https://martinfowler.com/bliki/CQRS.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Eventual consistency between the event store and projections is inherent to event sourcing.",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Register transformation functions that convert older event schemas to the current schema during deserialization.",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Event handlers must be idempotent so processing a duplicate event doesn't change the outcome.",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "The append-only, immutable nature of an event store conflicts with data protection regulations that require deletion of personal data",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "crypto-shredding",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "have not been so good",
+    "url": "https://martinfowler.com/bliki/CQRS.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  }
+]
