@@ -1,0 +1,29 @@
+[
+  {
+    "quote": "fully utilizes all resources, achieves an outcome at the lowest possible price point, and meets your functional requirements",
+    "url": "https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "does not provide implementation details or architectural patterns",
+    "url": "https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "unit economic and value-based metrics demonstrate business impact better than aggregate spend",
+    "status": "manual",
+    "note": "Confirmed on the Internet Archive copy of finops.org/framework/principles/ on 2026-10-27; the script cannot fetch finops.org directly."
+  },
+  {
+    "quote": "make conscious trade-off decisions among cost, quality, and speed",
+    "status": "manual",
+    "note": "Confirmed on the Internet Archive copy of finops.org/framework/principles/ on 2026-10-27; the script cannot fetch finops.org directly."
+  },
+  {
+    "quote": "from architecture design to ongoing operations",
+    "status": "manual",
+    "note": "Confirmed on the Internet Archive copy of finops.org/framework/principles/ on 2026-10-27; the script cannot fetch finops.org directly."
+  }
+]
