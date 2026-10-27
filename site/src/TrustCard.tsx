@@ -11,9 +11,10 @@ export const ISSUES_URL = "https://github.com/allmonty/study/issues/new";
 const host = (u: string) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return u; } };
 
 /** What a reader needs to judge a page before relying on it. Built from the page, its diagram and its quote ledger. */
-export function TrustCard({ title, markdown, claims, diagram }: { title: string; markdown: string; claims: LedgerEntry[]; diagram?: Diagram }) {
+export function TrustCard({ id, title, markdown, claims, diagram }: { id: string; title: string; markdown: string; claims: LedgerEntry[]; diagram?: Diagram }) {
   const t = trustOf(markdown, claims, diagram);
   const q = t.quotes;
+  const history = typeof __NOTE_HISTORY__ === "undefined" ? [] : __NOTE_HISTORY__[id] ?? [];
   const confirmed = claims.filter((c) => c.status === "confirmed");
   const report = `${ISSUES_URL}?title=${encodeURIComponent(`Correction: ${title}`)}&body=${encodeURIComponent(`Page: ${location.href}\n\nWhat is wrong, and the source that says otherwise:\n`)}`;
   return (
@@ -38,6 +39,13 @@ export function TrustCard({ title, markdown, claims, diagram }: { title: string;
         <details>
           <summary>What this page says it did not verify ({t.notVerified.length})</summary>
           <ul>{t.notVerified.map((b) => <li key={b}><ReactMarkdown>{b}</ReactMarkdown></li>)}</ul>
+        </details>
+      )}
+      {history.length > 0 && (
+        <details>
+          <summary>Change history (last change {history[0].date})</summary>
+          <ul>{history.map((h, i) => <li key={i}><span className="muted">{h.date}</span> {h.subject}</li>)}</ul>
+          <p className="muted small">From the repository's commit log: the latest {history.length} commits to this note's text.</p>
         </details>
       )}
       {confirmed.length > 0 && (

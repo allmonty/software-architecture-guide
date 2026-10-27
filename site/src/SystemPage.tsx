@@ -130,7 +130,7 @@ export function SystemPage({
         {mode === "text" && <aside className="side-outline"><Outline markdown={system.markdown} variant="list" /></aside>}
         <article className={`notes right${mode === "graph" ? " hidden" : ""}`}>
           <Outline markdown={system.markdown} variant="select" remount={mode} />
-          <TrustCard title={system.diagram.title} markdown={system.markdown} claims={system.claims} diagram={system.diagram} />
+          <TrustCard id={system.id} title={system.diagram.title} markdown={system.markdown} claims={system.claims} diagram={system.diagram} />
           <ConceptChips systemId={system.id} />
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
