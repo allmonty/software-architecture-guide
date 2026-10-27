@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A system-design study set: **21 systems**, each with a deep Markdown note and a structured diagram, plus a Vite + React + React Flow site in `site/` that renders the diagrams interactively. `README.md` is the hub (index, learning path, concept matrix). The reader is a senior engineer preparing for interviews. **Correctness is the top requirement.**
+A system-design study set: **31 systems** (22 to 31 cover AI systems, live streaming, observability and stream processing), each with a deep Markdown note and a structured diagram, plus a Vite + React + React Flow site in `site/` that renders the diagrams interactively. `README.md` is the hub (index, learning path, concept matrix). The reader is a senior engineer preparing for interviews. **Correctness is the top requirement.**
 
 ## Commands
 
@@ -59,6 +59,14 @@ Expected non-200 results that are not broken links: `403`/`406` from sites that 
 - WebFetch answers through a summarising model. Use it for quotes and numbers you then check against the page, and treat "not found" as "not in the returned extract", never as proof the page lacks it. For papers (PDF), download with curl and extract text locally, then grep it.
 - Notes that restate an earlier note (the `neokim-post/` upgrades) re-check the key claims against primary sources and list what was **not** re-checked in the Verification log.
 - Where a popular article disagrees with the primary source, say so in a Reviewer notes section rather than silently choosing.
+
+### Extra rules for AI notes (22 to 28)
+
+- AI facts age fast. State the **date of each source** and quote vendor or benchmark numbers only from the primary paper or post, never from secondary coverage. Say which models, hardware and datasets a number was measured on.
+- Do not describe a vendor's internals (how a named chatbot is served, how a named company trains) unless it published them. Name the system type, cite the open papers, and label the rest a reference design.
+- Keep three things apart: **model facts** (from papers), **system design reasoning** (ours) and **cost figures** (illustrative unless sourced).
+- Every AI note covers **evaluation, safety limits and cost control**, tagged `[INDUSTRY PATTERN]` unless a source states them.
+- PDF text can carry ligatures, hyphenated line breaks and stray spaces. `npm run verify` normalises most of them; if a correct quote still fails, quote a shorter phrase or paraphrase without quotation marks. The verifier caches normalised text in `.cache/sources/`; delete a stale entry after changing the normaliser.
 
 ## Git
 
