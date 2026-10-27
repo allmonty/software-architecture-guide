@@ -101,7 +101,19 @@ DistServe observes that existing systems **colocate** prefill and decoding and b
 
 **Goodput, not throughput.** The paper defines per-GPU **goodput** as "the maximum request rate that can be served adhering to the SLO attainment goal (say, 90%) for each GPU provisioned". A higher goodput directly lowers cost per query.
 
-**The design.** DistServe assigns prefill and decoding to **different GPUs**, eliminating the interference and letting each phase use its own parallelism strategy. It reports serving "7.4 × more requests or 12.6× tighter SLO" than state-of-the-art systems while keeping more than 90% of requests within latency constraints. (The price is moving the KV cache from the prefill GPUs to the decode GPUs. We did not read the paper's transfer-cost analysis in detail, so we do not state numbers for it.)
+**The design.** DistServe assigns prefill and decoding to **different GPUs**, eliminating the interference and letting each phase use its own parallelism strategy. It reports serving "7.4 × more requests or 12.6× tighter SLO" than state-of-the-art systems while keeping more than 90% of requests within latency constraints. 
+
+**The price: moving the KV cache.** Disaggregation means sending each request's KV cache from a prefill GPU to a decode GPU. The paper's example: the KV cache of a single 512-token request on OPT-66B is approximately 1.13 GB, so at an average of 10 requests per second the system must transfer 11.3 GB per second, "equivalently 90Gbps bandwidth" to make the overhead invisible. It relies on fast links: InfiniBand between nodes where available, otherwise NVLink inside a node (peak 600 GB/s between A100 GPUs). On its testbed, which had only 25 Gbps across nodes, DistServe therefore places the prefill and decode instances of a model stage on the same machine so the transfer uses NVLink; with that placement, KV transmission for OPT-175B accounted for less than 0.1% of total latency and over 95% of requests saw a transfer delay under 30 ms. The design is therefore tied to cluster topology.
+
+---
+
+## 5b. Other techniques the same papers point to `[CONFIRMED]`
+
+- **Chunked prefill and stall-free batching (Sarathi-Serve, Agrawal et al., 2024).** Mixing long prefills with ongoing decodes causes "generation stalls" (a decode stalling for seconds in vLLM's scheduler). Sarathi-Serve splits a prefill into near equal chunks and builds stall-free schedules that add new requests to a batch without pausing ongoing decodes. It reports 2.6 times higher serving capacity than vLLM for Mistral-7B on one A100, up to 3.7 times for Yi-34B on two A100s, and up to 5.6 times for Falcon-180B with pipeline parallelism, under tail-latency constraints. It is the main alternative to DistServe for the prefill/decode interference problem: schedule smarter on shared GPUs instead of separating them.
+- **Speculative decoding (Leviathan et al., 2022).** A small, fast model proposes several tokens and the large model checks them in parallel; with the paper's sampling method the output distribution is unchanged ("identical outputs"). It reports a 2X-3X speedup on T5-XXL over the standard T5X implementation, without retraining.
+- **FlashAttention (Dao et al., 2022).** An IO-aware exact attention algorithm that uses tiling to cut reads and writes between GPU high-bandwidth memory and on-chip SRAM. The paper's reported speedups are for training (for example 3 times on GPT-2 at sequence length 1K); we do not claim inference numbers from it.
+
+Quantization and vendor APIs remain unread.
 
 ---
 
@@ -142,9 +154,9 @@ model weights store ──► replicas (slow cold start)
 
 1. **The papers' speedups are relative to specific baselines and workloads.** The 2–4×, 36.9× and 7.4× figures compare against particular systems (FasterTransformer, Orca, vLLM) on particular models and datasets. They are not general speedups.
 2. **"Continuous batching" is a name, not a paper term.** Orca's term is iteration-level scheduling. Use the name your interviewer uses and be ready to explain the mechanism.
-3. **Disaggregation is not free.** Moving KV cache between GPUs needs a fast interconnect, and it is not a clear win for all workloads. We did not verify when it loses.
+3. **Disaggregation is not free.** It needs a fast interconnect and topology-aware placement (section 5). Sarathi-Serve shows chunked prefill on shared GPUs as a competing way to reduce the same interference; we did not find a paper that compares them head to head, and we do not claim which wins.
 4. **This note covers inference serving.** Training is in [27 LLM training infrastructure](27-llm-training-infrastructure.md) and improving a model is in [28 LLM fine-tuning, evaluation and deployment](28-llm-finetuning-evaluation.md).
-5. **We did not read** vendor documentation for specific commercial APIs, speculative decoding papers or quantization papers, so those techniques are only named in the interview material and not claimed.
+5. **We did not read** vendor documentation for specific commercial APIs or quantization papers, so quantization is not claimed. Speculative decoding, FlashAttention and chunked prefill are covered from their papers in section 5b.
 
 ---
 
@@ -219,9 +231,9 @@ Chat needs a low time to first token so the reply starts quickly and a steady to
 ## Sources and provenance
 
 > **Kind:** reference design with real parts. vLLM, Orca and DistServe are published research systems. How any commercial LLM service is built end to end is **not** published, so the platform in section 6 is the standard design `[INDUSTRY PATTERN]`.
-> **Sources read on 2026-10-26 (PDF text extracted locally):** Kwon et al., [*Efficient Memory Management for Large Language Model Serving with PagedAttention*](https://arxiv.org/pdf/2309.06180) (SOSP 2023) · Yu et al., [*Orca: A Distributed Serving System for Transformer-Based Generative Models*](https://www.usenix.org/system/files/osdi22-yu.pdf) (OSDI 2022) · Zhong et al., [*DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving*](https://arxiv.org/pdf/2401.09670) (OSDI 2024, arXiv v3 June 2024).
+> **Sources read on 2026-10-26 (PDF text extracted locally):** Kwon et al., [*Efficient Memory Management for Large Language Model Serving with PagedAttention*](https://arxiv.org/pdf/2309.06180) (SOSP 2023) · Yu et al., [*Orca: A Distributed Serving System for Transformer-Based Generative Models*](https://www.usenix.org/system/files/osdi22-yu.pdf) (OSDI 2022) · Zhong et al., [*DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving*](https://arxiv.org/pdf/2401.09670) (OSDI 2024, arXiv v3 June 2024) · Agrawal et al., [*Taming Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve*](https://arxiv.org/pdf/2403.02310) (2024) · Leviathan et al., [*Fast Inference from Transformers via Speculative Decoding*](https://arxiv.org/pdf/2211.17192) (2022) · Dao et al., [*FlashAttention*](https://arxiv.org/pdf/2205.14135) (2022).
 > **Dated material:** the papers are from 2022–2024 and the field moves quickly. The measurements are from the authors' hardware and models (A100 GPUs, OPT, GPT-3 and LLaMA models).
-> **Not read:** speculative decoding, quantization, FlashAttention, chunked prefill (Sarathi-Serve), vendor API documentation. Claims about those are not made.
+> **Not read:** quantization papers, vendor API documentation. Claims about those are not made.
 > **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible or illustrative.
 
 ---
@@ -230,7 +242,7 @@ Chat needs a low time to first token so the reply starts quickly and a steady to
 *Fact-check, 2026-10-26, by extracting each paper's text and checking numbers and quotations. Quotations are confirmed by `npm run verify`.*
 - Verified in the vLLM paper: 800 KB per token for OPT-13B and 1.6 GB per 2,048-token request (formula arithmetic re-derived: 2 × 5,120 × 40 × 2 = 819,200 bytes); 20.4%–38.2% usage; parameters 26 GB (65%) and KV cache about 12 GB on a 40 GB A100; Table 1 slot counts (15.7K, 9.7K, 60.1K) and KV memory (12, 21, 264 GB); block size 16 default; block table; copy-on-write; shared prefix; FCFS; all-or-nothing eviction with swap or recomputation; Megatron-style tensor parallelism; 2–4× throughput.
 - Verified in Orca: iteration-level scheduling, selective batching, the request-level batching limitation, 36.9× on GPT-3 175B versus FasterTransformer.
-- Verified in DistServe: disaggregation, TTFT and TPOT definitions, goodput definition with 90% SLO attainment, 7.4× and 12.6× figures.
+- Verified in DistServe: disaggregation, TTFT and TPOT definitions, goodput definition with 90% SLO attainment, 7.4× and 12.6× figures, and the KV-transfer analysis (1.13 GB per 512-token OPT-66B request, 11.3 GB/s at 10 requests per second, about 90 Gbps, NVLink 600 GB/s, under 0.1% of OPT-175B latency, over 95% of transfers under 30 ms, 25 Gbps cross-node testbed).
+- Verified in Sarathi-Serve, the speculative decoding paper and FlashAttention: the abstract-level claims quoted in section 5b (2.6, 3.7 and 5.6 times; 2X-3X with identical outputs; the training speedups). The papers' experimental setups beyond those figures were not reviewed.
 - Labelled industry pattern, not sourced: the gateway, router with prefix-aware routing, autoscaling, metering, overload and multi-tenancy design, and the cost formula.
-- Not read in detail: DistServe's KV-transfer cost analysis, so no transfer numbers are stated.
 - Not claimed: how any named commercial LLM service is built.

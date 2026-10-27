@@ -144,7 +144,7 @@
       "label": "Alternative: separate prefill and decode GPUs",
       "kind": "service",
       "c4": "note",
-      "summary": "DistServe assigns prefill and decoding to different GPUs to remove interference and tune parallelism per phase, at the price of moving the KV cache between them. It reports 7.4x more requests or 12.6x tighter SLO.",
+      "summary": "DistServe assigns prefill and decoding to different GPUs to remove interference and tune parallelism per phase, at the price of moving the KV cache between them (about 1.13 GB for a 512-token OPT-66B request; it places both phases on one machine to use NVLink when cross-node bandwidth is low). It reports 7.4x more requests or 12.6x tighter SLO. Sarathi-Serve's chunked prefill is the competing approach on shared GPUs.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://arxiv.org/pdf/2401.09670"
