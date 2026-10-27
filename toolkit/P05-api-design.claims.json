@@ -1,0 +1,38 @@
+[
+  {
+    "quote": "can often be arbitrarily sized, and also often grow over time",
+    "url": "https://google.aip.dev/158",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "RPCs returning collections of data must provide pagination at the outset, as it is a backwards-incompatible change to add pagination to an existing method.",
+    "url": "https://google.aip.dev/158",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "must be opaque (but URL-safe) strings, and must not be user-parseable",
+    "url": "https://google.aip.dev/158",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "allowing the same request to be issued more than once without subsequent calls having any effect",
+    "url": "https://google.aip.dev/155",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the server can detect duplication and ensure that the request is only processed once.",
+    "url": "https://google.aip.dev/155",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "if a connection error occurs, you can safely repeat the request without risk of creating a second object or performing the update twice.",
+    "url": "https://docs.stripe.com/api/idempotent_requests",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]
