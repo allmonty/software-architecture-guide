@@ -3,6 +3,7 @@ import type { Diagram } from "../../schema/diagram.schema.ts";
 import type { LedgerEntry } from "../../schema/trust.ts";
 import { STALE_DAYS } from "../../schema/trust.ts";
 import { trustOf } from "./data.ts";
+import { scrollToSection } from "./sections.tsx";
 
 // Where readers report a wrong or outdated statement. Change here if the repository moves.
 export const ISSUES_URL = "https://github.com/allmonty/study/issues/new";
@@ -59,7 +60,7 @@ export function TrustCard({ title, markdown, claims, diagram }: { title: string;
           </table>
         </details>
       )}
-      <p className="small"><a href={report} target="_blank" rel="noreferrer">Report an error on this page</a></p>
+      <p className="small"><button className="linkish" onClick={() => scrollToSection("verification-log")}>Read the full verification log</button> · <a href={report} target="_blank" rel="noreferrer">Report an error on this page</a></p>
     </aside>
   );
 }

@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import { systems, toolkitPages } from "./data.ts";
+import { systems, toolkitPages, type ToolkitPage } from "./data.ts";
 import { Home } from "./Home.tsx";
 import { TrackPage } from "./TrackPage.tsx";
 import { StudyToggle } from "./StudyToggle.tsx";
 import { SystemPage, components } from "./SystemPage.tsx";
+import { Outline, scrollToSection, useHeadingComponents } from "./sections.tsx";
 import { TrustCard } from "./TrustCard.tsx";
 import { SettingsMenu } from "./SettingsMenu.tsx";
 
@@ -38,11 +39,7 @@ export function App() {
       {trackId ? (
         <TrackPage id={trackId} />
       ) : page ? (
-        <main className="notes toolkit">
-          <p className="crumbs"><a href="#">← Home</a> · <a href="#toolkit/README">Toolkit index</a>{page.id !== "README" && <StudyToggle refId={page.id.slice(0, 3)} />}</p>
-          {page.id !== "README" && !page.id.startsWith("W") && <TrustCard title={page.title} markdown={page.markdown} claims={page.claims} />}
-          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={components}>{page.markdown}</ReactMarkdown>
-        </main>
+        <ToolkitView key={page.id} page={page} section={params.get("section")} />
       ) : system ? (
         <SystemPage
           key={`${system.id}?${query}`}
@@ -52,10 +49,24 @@ export function App() {
           initialFocus={params.get("focus")}
           initialFlow={params.get("flow")}
           initialStep={Number.isFinite(Number(params.get("step"))) ? Number(params.get("step")) - 1 : 0}
+          initialSection={params.get("section")}
         />
       ) : (
         <Home />
       )}
     </>
+  );
+}
+
+function ToolkitView({ page, section }: { page: ToolkitPage; section: string | null }) {
+  const headings = useHeadingComponents(page.markdown);
+  useEffect(() => { if (section) scrollToSection(section, false); }, [section]);
+  return (
+    <main className="notes toolkit">
+      <p className="crumbs"><a href="#">← Home</a> · <a href="#toolkit/README">Toolkit index</a>{page.id !== "README" && <StudyToggle refId={page.id.slice(0, 3)} />}</p>
+      <Outline markdown={page.markdown} variant="select" />
+      {page.id !== "README" && !page.id.startsWith("W") && <TrustCard title={page.title} markdown={page.markdown} claims={page.claims} />}
+      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={{ ...components, ...headings }}>{page.markdown}</ReactMarkdown>
+    </main>
   );
 }

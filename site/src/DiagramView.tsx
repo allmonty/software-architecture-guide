@@ -84,8 +84,9 @@ export function DiagramView({
   // Keep the URL in sync so the current view and step can be copied.
   useEffect(() => {
     const q = new URLSearchParams();
-    const view = new URLSearchParams(location.hash.split("?")[1] ?? "").get("view");
-    if (view) q.set("view", view);
+    const keep = new URLSearchParams(location.hash.split("?")[1] ?? "");
+    if (keep.get("view")) q.set("view", keep.get("view")!);
+    if (keep.get("section")) q.set("section", keep.get("section")!);
     q.set("level", level);
     if (level === "component" && focus) q.set("focus", focus);
     if (flowId) { q.set("flow", flowId); q.set("step", String(step + 1)); }

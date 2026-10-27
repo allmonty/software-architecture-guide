@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
@@ -6,6 +6,7 @@ import type { System } from "./data.ts";
 import { DiagramView } from "./DiagramView.tsx";
 import { StudyToggle } from "./StudyToggle.tsx";
 import { TrustCard } from "./TrustCard.tsx";
+import { Outline, scrollToSection, useHeadingComponents } from "./sections.tsx";
 import { systems, toolkitPages } from "./data.ts";
 import type { Components } from "react-markdown";
 
@@ -42,6 +43,7 @@ export function SystemPage({
   initialFocus,
   initialFlow,
   initialStep,
+  initialSection,
 }: {
   system: System;
   initialLevel: "context" | "container" | "component";
@@ -49,7 +51,11 @@ export function SystemPage({
   initialFocus: string | null;
   initialFlow: string | null;
   initialStep: number;
+  initialSection: string | null;
 }) {
+  const headings = useHeadingComponents(system.markdown);
+  // A shared link can point at a section; wait for the note to render, then scroll.
+  useEffect(() => { if (initialSection) scrollToSection(initialSection, false); }, [initialSection]);
   const [mode, setModeState] = useState<Mode>(initialMode);
   // Keep the chosen view in the URL without disturbing the diagram's own parameters.
   const setMode = (m: Mode) => {
@@ -106,9 +112,11 @@ export function SystemPage({
             />
           </div>
         )}
+        {mode === "text" && <aside className="side-outline"><Outline markdown={system.markdown} variant="list" /></aside>}
         <article className={`notes right${mode === "graph" ? " hidden" : ""}`}>
+          <Outline markdown={system.markdown} variant="select" remount={mode} />
           <TrustCard title={system.diagram.title} markdown={system.markdown} claims={system.claims} diagram={system.diagram} />
-          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={components}>{system.markdown}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={{ ...components, ...headings }}>{system.markdown}</ReactMarkdown>
         </article>
       </div>
     </main>
