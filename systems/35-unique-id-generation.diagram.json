@@ -1,0 +1,214 @@
+{
+  "id": "35-unique-id-generation",
+  "title": "Unique ID Generation",
+  "kind": "real-system",
+  "nodes": [
+    {
+      "id": "svc",
+      "label": "Services needing ids",
+      "kind": "client",
+      "c4": "external-system",
+      "summary": "Application services, shards and databases that create records and need unique keys.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://blog.twitter.com/engineering/en_us/a/2010/announcing-snowflake"
+      ]
+    },
+    {
+      "id": "idsvc",
+      "label": "ID service",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Generates 64-bit ids from time, machine id and sequence with no per-id coordination. Can run as a small service or be embedded in each application.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://blog.twitter.com/engineering/en_us/a/2010/announcing-snowflake",
+        "https://raw.githubusercontent.com/twitter-archive/snowflake/snowflake-2010/README.mkd"
+      ],
+      "group": "ID service (Snowflake-style)"
+    },
+    {
+      "id": "gen",
+      "label": "ID generator",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Composes 41 bits of milliseconds since a custom epoch, 10 bits of machine id and 12 bits of sequence; rolls over every 4,096 ids per machine, with protection against rollover within the same millisecond.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://raw.githubusercontent.com/twitter-archive/snowflake/snowflake-2010/README.mkd"
+      ],
+      "parent": "idsvc",
+      "group": "ID service (Snowflake-style)"
+    },
+    {
+      "id": "clock",
+      "label": "Clock guard",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Uses NTP and refuses to generate ids if the clock runs backwards until time passes the last timestamp used.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://raw.githubusercontent.com/twitter-archive/snowflake/snowflake-2010/README.mkd"
+      ],
+      "parent": "idsvc",
+      "group": "ID service (Snowflake-style)"
+    },
+    {
+      "id": "workers",
+      "label": "Machine-id registry",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Assigns each worker a unique machine id at startup (Snowflake used ZooKeeper, overridable in configuration).",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://blog.twitter.com/engineering/en_us/a/2010/announcing-snowflake"
+      ],
+      "technology": "ZooKeeper"
+    },
+    {
+      "id": "ticket",
+      "label": "Ticket servers (Flickr)",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Two MySQL servers, each with a one-row table; REPLACE INTO plus LAST_INSERT_ID gives an atomic auto-increment; odd and even ids; clients round-robin.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://code.flickr.net/2010/02/08/ticket-servers-distributed-unique-primary-keys-on-the-cheap/"
+      ],
+      "technology": "MySQL"
+    },
+    {
+      "id": "uuid",
+      "label": "UUIDv7 library",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Generates 128-bit ids client-side: 48-bit Unix millisecond timestamp plus random bits or a counter. RFC 9562 says new systems should prefer UUIDv7 over v1.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.rfc-editor.org/rfc/rfc9562.txt"
+      ]
+    },
+    {
+      "id": "db",
+      "label": "Sharded database",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Stores records keyed by the generated ids; time-ordered ids keep index inserts local.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://code.flickr.net/2010/02/08/ticket-servers-distributed-unique-primary-keys-on-the-cheap/",
+        "https://www.rfc-editor.org/rfc/rfc9562.txt"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "svc-gen",
+      "from": "svc",
+      "to": "gen",
+      "label": "request an id",
+      "mode": "sync"
+    },
+    {
+      "id": "gen-clock",
+      "from": "gen",
+      "to": "clock",
+      "label": "current time ok?",
+      "mode": "sync"
+    },
+    {
+      "id": "gen-workers",
+      "from": "gen",
+      "to": "workers",
+      "label": "machine id (at startup)",
+      "mode": "sync"
+    },
+    {
+      "id": "svc-ticket",
+      "from": "svc",
+      "to": "ticket",
+      "label": "REPLACE INTO / LAST_INSERT_ID",
+      "mode": "sync"
+    },
+    {
+      "id": "svc-uuid",
+      "from": "svc",
+      "to": "uuid",
+      "label": "create UUID locally",
+      "mode": "sync"
+    },
+    {
+      "id": "svc-db",
+      "from": "svc",
+      "to": "db",
+      "label": "insert with id",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "generate",
+      "name": "Generating a Snowflake-style id",
+      "steps": [
+        {
+          "edge": "gen-workers",
+          "caption": "At startup the worker obtains a unique machine id."
+        },
+        {
+          "edge": "svc-gen",
+          "caption": "A service asks for an id."
+        },
+        {
+          "edge": "gen-clock",
+          "caption": "The generator reads the clock and checks it has not gone backwards."
+        },
+        {
+          "edge": "svc-db",
+          "caption": "The service stores the record under the id, roughly in time order."
+        }
+      ]
+    },
+    {
+      "id": "clock-back",
+      "name": "The clock moves backwards (failure)",
+      "steps": [
+        {
+          "edge": "gen-clock",
+          "caption": "The guard sees the current time is before the last timestamp used."
+        },
+        {
+          "edge": "svc-gen",
+          "caption": "The generator waits (or fails the request) until time passes the last timestamp, rather than risking a duplicate id."
+        }
+      ]
+    },
+    {
+      "id": "ticket-down",
+      "name": "A ticket server is down (failure)",
+      "steps": [
+        {
+          "edge": "svc-ticket",
+          "caption": "One ticket server does not respond."
+        },
+        {
+          "edge": "svc-ticket",
+          "caption": "The client uses the other server; ids from it keep their parity, so uniqueness holds although the two sides drift out of step."
+        }
+      ]
+    },
+    {
+      "id": "uuid-local",
+      "name": "No coordination at all",
+      "steps": [
+        {
+          "edge": "svc-uuid",
+          "caption": "The service creates a UUIDv7 locally."
+        },
+        {
+          "edge": "svc-db",
+          "caption": "The 128-bit id is stored; the time-ordered prefix keeps index inserts local compared with random UUIDs."
+        }
+      ]
+    }
+  ]
+}
