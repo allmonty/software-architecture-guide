@@ -32,6 +32,10 @@ The gear menu in the site header sets theme (System, Light, Warm, Dark), font (s
 - **Concept index** is parsed from the README's `Concept → systems matrix` table (`schema/concepts.ts`): one row per concept, system numbers separated by commas.
 - **Names in the note** that match a diagram element's label (parentheses stripped, 4+ letters) become clickable in Split view (`site/src/nodeRefs.ts`), once per h2 section. Keep element labels distinctive.
 
+## Site design system
+
+`site/src/design.css` holds the tokens (4px spacing grid, three radii, type scale, shadows, layers, themes, diagram palette), the page frame and the one card look; its header comment is the guide. `site/src/styles.css` has page-specific rules only and must use the tokens: `test/design.test.ts` fails on raw px in `padding`, `margin`, `gap` or `border-radius` and on rem font sizes outside the scale (a line ending in `/* raw: reason */` is exempt). A new card-like element goes into the surface selector list in `design.css` rather than getting its own border, radius and shadow.
+
 ## Layout and conventions
 
 - `systems/NN-<slug>.md` and `systems/NN-<slug>.diagram.json` come in pairs and share the stem. The JSON `id` must equal the stem, and the md H1 must contain the JSON `title`.
