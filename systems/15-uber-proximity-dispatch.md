@@ -128,7 +128,7 @@ flowchart LR
 
 ### Sharding the geo index
 - The supply index (`cell → set of available drivers`) lives **in memory** across a cluster.
-- Uber's dispatch (**DISCO**, "dispatch optimization") historically used **Ringpop**: an application-layer library giving **consistent hashing** + **SWIM gossip membership**, so every node knows which node owns which key (cell) and requests are forwarded to the owner ([HighScalability, Matt Ranney 2015](https://highscalability.com/how-uber-scales-their-real-time-market-platform/)). In that talk the cell was a Google **S2** level-12 cell (3.31–6.38 km²), used as the shard key; H3 was open-sourced later, in 2018 ([Uber H3 blog](https://www.uber.com/blog/h3/)). The ringpop-node repo has been archived since 2019 ([GitHub](https://github.com/uber-node/ringpop-node)).
+- Uber's dispatch service (**DISCO**; HighScalability's summary of the talk expands the name as "dispatch optimization", but we found no expansion in Uber's own materials) historically used **Ringpop**: an application-layer library giving **consistent hashing** + **SWIM gossip membership**, so every node knows which node owns which key (cell) and requests are forwarded to the owner ([HighScalability, Matt Ranney 2015](https://highscalability.com/how-uber-scales-their-real-time-market-platform/)). In that talk the cell was a Google **S2** level-12 cell (3.31–6.38 km²), used as the shard key; H3 was open-sourced later, in 2018 ([Uber H3 blog](https://www.uber.com/blog/h3/)). The ringpop-node repo has been archived since 2019 ([GitHub](https://github.com/uber-node/ringpop-node)).
 - On each driver update, compute the cell and send the update to the owner node. If the driver changed cells, remove them from the old cell.
 
 ### Query flow
@@ -259,3 +259,4 @@ The closest driver is not always the quickest, and pairing several riders and dr
 - Not stated by the sources: the page does not mention ETA computation, so ETA ranking is `[INDUSTRY PATTERN]`.
 - Not re-verified (carried over): the HighScalability summary of Uber's 2015 talk (S2 level-12 shard keys, GPS every ~4 s, Ringpop/SWIM), the Newson & Krumm map-matching paper, Redis/Cassandra/Kafka roles, the `h3-py` function names and the `grid_disk` 19-cell count, Google S2 and geohash comparisons.
 - Not claimed: anything about Uber's current dispatch or location-storage stack.
+- Checked (2026-10-27): the expansion of DISCO rests on HighScalability's summary of the talk, a secondary source. Uber's InfoQ presentation page and the QCon slides give the name without an expansion, so the note says where the expansion comes from.
