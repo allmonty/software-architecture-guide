@@ -131,6 +131,30 @@ UPDATE inventory
 
 For a stay of several nights, update all the nights **in a fixed order** inside one transaction (to avoid deadlocks between two overlapping stays) and abort if any row updates zero rows. The **overbooking limit** is just a larger `capacity`, which is a business number. PostgreSQL behaviour that makes this safe `[CONFIRMED]`: under `READ COMMITTED`, if a concurrent updater commits first, "the search condition of the command (the WHERE clause) is re-evaluated to see if the updated version of the row still matches", so the second `UPDATE` sees `sold < capacity` against the new value.
 
+**Worked example (our illustration, with made-up numbers).** The table, one row per room type and night, with the guard also written as a constraint so a bug cannot oversell:
+
+```sql
+CREATE TABLE inventory (
+  room_type_id bigint NOT NULL,
+  night        date   NOT NULL,
+  capacity     int    NOT NULL,          -- rooms of this type we are willing to sell that night
+  sold         int    NOT NULL DEFAULT 0,
+  PRIMARY KEY (room_type_id, night),
+  CHECK (sold <= capacity)
+);
+```
+
+Say room type 7 (a double room) has `capacity = 2` and nothing sold. Each cell below is `sold / capacity`:
+
+| `night` | 10 Oct | 11 Oct | 12 Oct | 13 Oct |
+|---|---|---|---|---|
+| **Start** | 0 / 2 | 0 / 2 | 0 / 2 | 0 / 2 |
+| **Guest 1** books 10 to 12 Oct (nights 10 and 11) | **1** / 2 | **1** / 2 | 0 / 2 | 0 / 2 |
+| **Guest 2** books 11 to 13 Oct (nights 11 and 12) | 1 / 2 | **2** / 2 | **1** / 2 | 0 / 2 |
+| **Guest 3** asks for 11 to 12 Oct (night 11) | 1 / 2 | `sold < capacity` is false, **0 rows updated** | 1 / 2 | 0 / 2 |
+
+A stay covers the nights from check-in up to, but not including, the check-out date, so one booking is one row per night. Guest 3 is refused because the `UPDATE` for night 11 matches no row, and the application then rolls the whole transaction back. If guest 3 had asked for 10 to 12 Oct, the update for the 10th would already have succeeded and then the one for the 11th would fail, which is why all the nights go in one transaction: the 10th goes back to `1 / 2` instead of staying counted. Guests 1 and 2 both hit night 11, so they update the same row; that is the contention the fixed update order and the row-level locking handle. Setting `capacity` to 3 for a night is how a hotel allows one booking more than it has rooms (the overbooking limit above): it is only a number in this row.
+
 ### Option C: serializable isolation + retry `[CONFIRMED]`
 Run the availability check and insert inside a `SERIALIZABLE` transaction and retry on failure. The docs: "applications using this level must be prepared to retry transactions due to serialization failures", and a retry handler should treat SQLSTATE **`40001`** generically, "because it will be very hard to predict exactly which transactions might contribute to the read/write dependencies and need to be rolled back". Under `REPEATABLE READ`, a concurrent committed update to the same row yields `could not serialize access due to concurrent update`, and the application "should abort the current transaction and retry the whole transaction from the beginning".
 
