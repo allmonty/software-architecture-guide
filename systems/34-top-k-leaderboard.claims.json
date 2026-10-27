@@ -1,0 +1,26 @@
+[
+  {
+    "quote": "a skip list and a hash table",
+    "url": "https://redis.io/docs/latest/develop/data-types/sorted-sets/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "when we ask for sorted elements, Redis does not have to do any work at all, it's already sorted",
+    "url": "https://redis.io/docs/latest/develop/data-types/sorted-sets/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "sorted sets are suitable when there are tons of updates",
+    "url": "https://redis.io/docs/latest/develop/data-types/sorted-sets/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "reports both top-k and frequent elements with tight guarantees on errors",
+    "url": "https://www.cse.ust.hk/~raywong/comp5331/References/EfficientComputationOfFrequentAndTop-kElementsInDataStreams.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]

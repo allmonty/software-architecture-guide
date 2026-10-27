@@ -1,0 +1,255 @@
+{
+  "id": "34-top-k-leaderboard",
+  "title": "Top-K, Heavy Hitters and Leaderboards",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "events",
+      "label": "Event and score sources",
+      "kind": "client",
+      "c4": "external-system",
+      "summary": "Search logs, views, game servers: streams of events or score updates.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.cse.ust.hk/~raywong/comp5331/References/EfficientComputationOfFrequentAndTop-kElementsInDataStreams.pdf"
+      ]
+    },
+    {
+      "id": "viewer",
+      "label": "Viewer or player",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Asks for the top K, or for their own rank.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://redis.io/docs/latest/develop/data-types/sorted-sets/"
+      ]
+    },
+    {
+      "id": "sum",
+      "label": "Stream summarisers",
+      "kind": "service",
+      "c4": "container",
+      "summary": "One per partition; events for the same item always reach the same one. Hold bounded counters per time bucket.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.cse.ust.hk/~raywong/comp5331/References/EfficientComputationOfFrequentAndTop-kElementsInDataStreams.pdf"
+      ],
+      "group": "Stream summarisers (per partition)"
+    },
+    {
+      "id": "counters",
+      "label": "Space-Saving counters",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Monitors only m items; when an unmonitored item arrives it replaces the item with the smallest count and records the possible over-count. Counts are bounded estimates.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.cse.ust.hk/~raywong/comp5331/References/EfficientComputationOfFrequentAndTop-kElementsInDataStreams.pdf"
+      ],
+      "parent": "sum",
+      "group": "Stream summarisers (per partition)"
+    },
+    {
+      "id": "buckets",
+      "label": "Time buckets",
+      "kind": "datastore",
+      "c4": "component",
+      "summary": "One summary per minute (tumbling window); old buckets are dropped; the window answer merges the buckets in range.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.cse.ust.hk/~raywong/comp5331/References/EfficientComputationOfFrequentAndTop-kElementsInDataStreams.pdf"
+      ],
+      "parent": "sum",
+      "group": "Stream summarisers (per partition)"
+    },
+    {
+      "id": "merge",
+      "label": "Merge service",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Collects each partition's top candidates with counts and error bounds, sums per item, sorts, and produces the global top K per scope. Correct only if items are partitioned by key or enough candidates are collected.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.cse.ust.hk/~raywong/comp5331/References/EfficientComputationOfFrequentAndTop-kElementsInDataStreams.pdf"
+      ]
+    },
+    {
+      "id": "board",
+      "label": "Leaderboard store (sorted sets)",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Ordered sets of member and score: O(log N) update and rank; sharded by score range or member hash at scale.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://redis.io/docs/latest/develop/data-types/sorted-sets/"
+      ],
+      "technology": "Redis sorted sets"
+    },
+    {
+      "id": "cache",
+      "label": "Result cache",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Holds the current top K per scope with a short TTL so reads do not recompute.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://redis.io/docs/latest/develop/data-types/sorted-sets/"
+      ]
+    },
+    {
+      "id": "api",
+      "label": "Top-K API",
+      "kind": "edge",
+      "c4": "container",
+      "summary": "Serves top K and rank queries from the cache or the leaderboard store.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://redis.io/docs/latest/develop/data-types/sorted-sets/"
+      ]
+    },
+    {
+      "id": "cms",
+      "label": "Alternative: Count-Min Sketch",
+      "kind": "service",
+      "c4": "note",
+      "summary": "Another widely used approximate-frequency structure; its paper could not be retrieved, so nothing is claimed about it.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.cse.ust.hk/~raywong/comp5331/References/EfficientComputationOfFrequentAndTop-kElementsInDataStreams.pdf"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "ev-counters",
+      "from": "events",
+      "to": "counters",
+      "label": "event, partitioned by item",
+      "mode": "async"
+    },
+    {
+      "id": "counters-buckets",
+      "from": "counters",
+      "to": "buckets",
+      "label": "per-minute summary",
+      "mode": "sync"
+    },
+    {
+      "id": "sum-merge",
+      "from": "buckets",
+      "to": "merge",
+      "label": "top candidates with counts and error",
+      "mode": "async"
+    },
+    {
+      "id": "merge-cache",
+      "from": "merge",
+      "to": "cache",
+      "label": "global top K per scope",
+      "mode": "sync"
+    },
+    {
+      "id": "ev-board",
+      "from": "events",
+      "to": "board",
+      "label": "score updates",
+      "mode": "sync"
+    },
+    {
+      "id": "viewer-api",
+      "from": "viewer",
+      "to": "api",
+      "label": "top K or rank",
+      "mode": "sync"
+    },
+    {
+      "id": "api-cache",
+      "from": "api",
+      "to": "cache",
+      "label": "read top K",
+      "mode": "sync"
+    },
+    {
+      "id": "api-board",
+      "from": "api",
+      "to": "board",
+      "label": "rank and range query",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "trending",
+      "name": "Trending items for the last hour",
+      "steps": [
+        {
+          "edge": "ev-counters",
+          "caption": "Each event goes to the summariser that owns its item."
+        },
+        {
+          "edge": "counters-buckets",
+          "caption": "The item's count is updated in the current minute's bucket, evicting the smallest counter if the table is full."
+        },
+        {
+          "edge": "sum-merge",
+          "caption": "Periodically each partition reports its top candidates with counts and error bounds."
+        },
+        {
+          "edge": "merge-cache",
+          "caption": "The merge service sums counts per item and stores the global top K."
+        },
+        {
+          "edge": "api-cache",
+          "caption": "The API serves it from the cache."
+        }
+      ]
+    },
+    {
+      "id": "leaderboard",
+      "name": "A player's score and rank",
+      "steps": [
+        {
+          "edge": "ev-board",
+          "caption": "A score update is applied to the player's sorted set entry in O(log N)."
+        },
+        {
+          "edge": "viewer-api",
+          "caption": "The player asks for their rank."
+        },
+        {
+          "edge": "api-board",
+          "caption": "The API asks the store for the rank (counting members above), and returns the top N plus the player's position."
+        }
+      ]
+    },
+    {
+      "id": "bad-merge",
+      "name": "Merging per-shard lists that are split by event (failure mode)",
+      "steps": [
+        {
+          "edge": "sum-merge",
+          "caption": "Events for one item were spread across partitions, so its count in each partition is below every local cut-off."
+        },
+        {
+          "edge": "merge-cache",
+          "caption": "The merge sees the item in no local list and omits it although its total is among the largest; fix by partitioning on item or collecting extra candidates (our design reasoning)."
+        }
+      ]
+    },
+    {
+      "id": "shard-down",
+      "name": "A summariser shard is down (failure)",
+      "steps": [
+        {
+          "edge": "sum-merge",
+          "caption": "No report arrives from one partition."
+        },
+        {
+          "edge": "api-cache",
+          "caption": "The API keeps serving the cached result and marks it stale rather than showing a list that omits that partition's items (our design reasoning)."
+        }
+      ]
+    }
+  ]
+}
