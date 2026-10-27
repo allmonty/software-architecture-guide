@@ -22,3 +22,15 @@ export const systems: System[] = Object.entries(diagrams)
     return [{ id: parsed.data.id, diagram: parsed.data, markdown: md ?? "" }];
   })
   .sort((a, b) => a.id.localeCompare(b.id));
+
+// Toolkit pages (primers P, casebook C, workbook W, README) are plain Markdown without a diagram.
+export interface ToolkitPage { id: string; title: string; markdown: string }
+const toolkit = import.meta.glob("../../toolkit/*.md", { eager: true, query: "?raw", import: "default" });
+export const toolkitPages: ToolkitPage[] = Object.entries(toolkit)
+  .map(([path, md]) => {
+    const id = path.split("/").pop()!.replace(/\.md$/, "");
+    const title = (md as string).split("\n")[0].replace(/^#\s*/, "");
+    return { id, title, markdown: md as string };
+  })
+  .filter((p) => p.id !== "README")
+  .sort((a, b) => a.id.localeCompare(b.id));

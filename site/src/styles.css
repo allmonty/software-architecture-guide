@@ -149,3 +149,6 @@ html, body { overflow-x: hidden; }
 .notes details > summary { cursor: pointer; font-weight: 600; }
 .notes details[open] > summary { margin-bottom: 6px; }
 .glance { border-left: 4px solid var(--accent); padding-left: 14px; }
+
+/* Toolkit pages are single-column reading pages. */
+main.toolkit { max-width: 860px; margin: 0 auto; padding: 16px; overflow-wrap: anywhere; }

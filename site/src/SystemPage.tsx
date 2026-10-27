@@ -4,17 +4,20 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import type { System } from "./data.ts";
 import { DiagramView } from "./DiagramView.tsx";
-import { systems } from "./data.ts";
+import { systems, toolkitPages } from "./data.ts";
 import type { Components } from "react-markdown";
 
 // Notes are plain Markdown written for GitHub: map sibling-note links to site routes, mark the rest as non-navigable,
 // show Mermaid source collapsed (the interactive diagram replaces it) and let wide tables scroll.
-const components: Components = {
+export const components: Components = {
   a({ href = "", children }) {
     if (/^(https?:|mailto:|#)/.test(href)) return <a href={href} target={href.startsWith("#") ? undefined : "_blank"} rel="noreferrer">{children}</a>;
     const m = href.match(/(?:^|\/)(\d\d-[a-z0-9-]+)\.md/);
     const hit = m && systems.find((s) => s.id === m[1]);
     if (hit) return <a href={`#${hit.id}`}>{children}</a>;
+    const tk = href.match(/(?:^|\/)([PCW]\d\d-[a-z0-9-]+)\.md/);
+    const tkHit = tk && toolkitPages.find((p) => p.id === tk[1]);
+    if (tkHit) return <a href={`#toolkit/${tkHit.id}`}>{children}</a>;
     return <span className="deadlink" title={`Lives in the repository: ${href}`}>{children}</span>;
   },
   table: ({ children }) => <div className="tablewrap"><table>{children}</table></div>,

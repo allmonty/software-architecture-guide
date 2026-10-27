@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
-import { systems } from "./data.ts";
-import { SystemPage } from "./SystemPage.tsx";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+import { systems, toolkitPages } from "./data.ts";
+import { SystemPage, components } from "./SystemPage.tsx";
 
 // Hash routing keeps the build deployable on any static host.
 const useHash = () => {
@@ -19,13 +22,19 @@ export function App() {
   const [id, query = ""] = hash.split("?");
   const params = new URLSearchParams(query);
   const system = systems.find((s) => s.id === id);
+  const page = id.startsWith("toolkit/") ? toolkitPages.find((p) => p.id === id.slice(8)) : undefined;
   return (
     <>
       <header className="top">
         <a href="#" className="brand">System Design Atlas</a>
         <button onClick={() => toggleTheme()} aria-label="Toggle theme">◐</button>
       </header>
-      {system ? (
+      {page ? (
+        <main className="notes toolkit">
+          <p><a href="#">← All systems</a></p>
+          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={components}>{page.markdown}</ReactMarkdown>
+        </main>
+      ) : system ? (
         <SystemPage
           key={`${system.id}?${query}`}
           system={system}
@@ -99,6 +108,19 @@ function Home() {
           </section>
         );
       })}
+      <section>
+        <h2>Toolkit: casebook, primers and workbook</h2>
+        <ul className="cards">
+          {toolkitPages.map((p) => (
+            <li key={p.id}>
+              <a href={`#toolkit/${p.id}`}>
+                <span className="num">{p.id.slice(0, 3)}</span>
+                <strong>{p.title.replace(/^[PCW]\d\d — /, "")}</strong>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
       {more.length > 0 && (
         <section>
           <h2>More</h2>
