@@ -41,6 +41,10 @@ Deep links: `site/#07-photo-upload-storage?flow=upload&step=2` opens a flow at a
 
 Extra tag used in upgraded notes: `[EARLIER PASS]` means verified in the earlier neokim-post fact-check but not re-read here.
 
+## Toolkit (`toolkit/`)
+
+Pages without diagrams: casebook `C01-slug.md` (real incidents), primers `P01-slug.md` (cross-cutting topics) and workbook `W01-slug.md` (our exercises with answer keys). `toolkit/README.md` is the index. Rules: same sourcing and tagging as systems; each page needs **Sources and provenance** and **Verification log** headings (`validateToolkit` in `scripts/validate.ts`); relative links must resolve; `npm run verify -- P03` checks one page; workbook pages are skipped by `verify` because their quotation marks are exercise wording. Casebook pages retell an incident from the operator's own account, keep a clearly labelled "Our analysis" section, and avoid quotation marks on paraphrases. The site renders these pages under `#toolkit/<id>`.
+
 ## External link check
 
 ```sh
