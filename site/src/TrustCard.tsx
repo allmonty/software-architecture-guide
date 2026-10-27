@@ -6,7 +6,7 @@ import { trustOf } from "./data.ts";
 import { scrollToSection } from "./sections.tsx";
 
 // Where readers report a wrong or outdated statement. Change here if the repository moves.
-export const ISSUES_URL = "https://github.com/allmonty/software-architecture-guide/issues/new";
+export const ISSUES_URL = "https://github.com/allmonty/system-design-atlas/issues/new";
 
 const host = (u: string) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return u; } };
 

@@ -2,7 +2,7 @@
 
 **35 system-design case studies with interactive diagrams, an incident casebook, primers and a practice workbook, for senior engineers preparing for interviews or an architect role. Every claim says how well it is sourced.**
 
-[☕ Buy me a coffee](https://buymeacoffee.com/allmonty) · [Roadmap](ROADMAP.md) · [Report an error](https://github.com/allmonty/software-architecture-guide/issues/new) · Site: run it locally or [publish it on GitHub Pages](#publishing-on-github-pages)
+[☕ Buy me a coffee](https://buymeacoffee.com/allmonty) · [Roadmap](ROADMAP.md) · [Report an error](https://github.com/allmonty/system-design-atlas/issues/new) · [**Live site**](https://allmonty.github.io/system-design-atlas/) (or run it locally, see [publishing](#publishing-on-github-pages))
 
 Each system has a deep note (`systems/NN-*.md`) and a structured diagram (`systems/NN-*.diagram.json`) that the site in [`site/`](site/) draws in the C4 model: click a component for its summary and sources, and step through request flows, including the ones where something fails. The systems cover storage, messaging, feeds, real-time, media, payments and exchanges, and also AI serving, retrieval, agents, training, live streaming, observability, stream processing, caching, coordination, ranking and ID generation.
 
@@ -172,7 +172,7 @@ Each diagram follows the **C4 model**: switch between **1 · Context**, **2 · C
 
 ## Publishing on GitHub Pages
 
-The site is a static build served from the `docs/` folder of the `main` branch. In the repository settings choose **Pages → Build and deployment → Deploy from a branch → `main` / `/docs`**; it then appears at `https://<user>.github.io/<repository>/`. Links use a hash (`#13-netflix?view=split`) and relative asset paths, so it works from any subpath.
+The site is a static build served from the `docs/` folder of the `main` branch. In the repository settings choose **Pages → Build and deployment → Deploy from a branch → `main` / `/docs`**; it then appears at `https://allmonty.github.io/system-design-atlas/`. Links use a hash (`#13-netflix?view=split`) and relative asset paths, so it works from any subpath.
 
 After any change to a note, a diagram or the site, run `npm run build` and commit `docs/` together with the change; Pages serves exactly what is committed. The build also embeds each note's recent commit history, so build from a full checkout.
 
@@ -203,4 +203,4 @@ npm run freshness  # notes by the age of their last source read
 
 ## Support
 
-This is a free, unpaid project. If it helped you prepare, [buying me a coffee](https://buymeacoffee.com/allmonty) is appreciated and never expected. Corrections matter more: if a claim is wrong or out of date, [open an issue](https://github.com/allmonty/software-architecture-guide/issues/new) with the page and the source that says otherwise.
+This is a free, unpaid project. If it helped you prepare, [buying me a coffee](https://buymeacoffee.com/allmonty) is appreciated and never expected. Corrections matter more: if a claim is wrong or out of date, [open an issue](https://github.com/allmonty/system-design-atlas/issues/new) with the page and the source that says otherwise.
