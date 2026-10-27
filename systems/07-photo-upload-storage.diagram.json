@@ -1,0 +1,338 @@
+{
+  "id": "07-photo-upload-storage",
+  "title": "Photo Upload & Storage",
+  "kind": "real-system",
+  "nodes": [
+    {
+      "id": "client",
+      "label": "Client (mobile / web)",
+      "kind": "client",
+      "summary": "Uploads photos and views them at several sizes.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html"
+      ]
+    },
+    {
+      "id": "api",
+      "label": "Upload API",
+      "kind": "service",
+      "summary": "Creates a pending photo record and returns a short-lived pre-signed URL. Keeps large bytes off app servers (modern pattern).",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html"
+      ],
+      "details": "Presigned URLs grant time-limited access to upload a specific key and act as bearer tokens, so use short expiry and unique keys. Facebook's 2010 Haystack uploads went through a web server instead."
+    },
+    {
+      "id": "blob",
+      "label": "Blob storage (generic)",
+      "kind": "datastore",
+      "summary": "Any object store that accepts presigned uploads and emits an event when an object lands. Holds originals and derivatives in the modern pattern.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html"
+      ],
+      "details": "This is the generic stand-in for the upload half. It is not Haystack."
+    },
+    {
+      "id": "web",
+      "label": "Web tier (Haystack-era)",
+      "kind": "service",
+      "summary": "Takes the upload, asks the Directory for a write-enabled logical volume, assigns a photo id, scales to four sizes and writes to every physical volume of that volume.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf"
+      ],
+      "group": "Facebook (2010)"
+    },
+    {
+      "id": "dir",
+      "label": "Haystack Directory",
+      "kind": "datastore",
+      "summary": "Logical→physical volume map, write/read load balancing, decides CDN vs Cache, marks volumes read-only. Replicated database with memcache.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf"
+      ],
+      "group": "Facebook (2010)"
+    },
+    {
+      "id": "cdn",
+      "label": "CDN",
+      "kind": "edge",
+      "summary": "Absorbs the popular head of photo requests. The long tail misses it and reaches the Cache or Store.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf",
+        "https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf"
+      ]
+    },
+    {
+      "id": "cache",
+      "label": "Haystack Cache",
+      "kind": "datastore",
+      "summary": "Internal CDN as a DHT keyed by photo id. Caches only if the request is directly from a user and the photo came from a write-enabled Store machine.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf"
+      ],
+      "group": "Facebook (2010)"
+    },
+    {
+      "id": "store",
+      "label": "Haystack Store",
+      "kind": "datastore",
+      "summary": "Machines holding ~100 GB volume files of needles (header, cookie, key, alternate key, flags, size, data, checksum). In-memory index (about 10 B per photo) makes a read about one disk seek.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf"
+      ],
+      "details": "Append-only. Deletes set a flag. Compaction reclaims space. About 25% of photos are deleted within a year.",
+      "group": "Facebook (2010)"
+    },
+    {
+      "id": "router",
+      "label": "Router + transformer tier",
+      "kind": "service",
+      "summary": "Hides which storage system holds a BLOB, enables migration between them, and runs compute-heavy steps such as decryption and transformations.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf"
+      ],
+      "group": "Facebook (2014)"
+    },
+    {
+      "id": "f4",
+      "label": "f4 warm storage cells",
+      "kind": "datastore",
+      "summary": "Locked (read-only) volumes erasure coded with Reed-Solomon (10,4) inside a datacenter, plus geo XOR coding. Effective replication factor 3.6 → 2.8 → 2.1.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf"
+      ],
+      "details": "Cell: 14 racks × 15 hosts × 30 4TB drives (at the time). Delete = delete the per-BLOB encryption key. Index files are triple replicated.",
+      "group": "Facebook (2014)"
+    },
+    {
+      "id": "graph",
+      "label": "Metadata / graph store",
+      "kind": "datastore",
+      "summary": "Stores the BLOB handle with owner and relationships. The web tier builds photo URLs from it. Facebook used Tao.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf"
+      ]
+    },
+    {
+      "id": "worker",
+      "label": "Derivative worker",
+      "kind": "service",
+      "summary": "After an upload completes: validate, scan and produce thumbnail and display sizes. Idempotent and retryable.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html"
+      ],
+      "details": "Haystack scaled each photo to four sizes at upload time. The async worker is the modern equivalent."
+    }
+  ],
+  "edges": [
+    {
+      "id": "c-api",
+      "from": "client",
+      "to": "api",
+      "label": "start upload",
+      "mode": "sync"
+    },
+    {
+      "id": "api-c",
+      "from": "api",
+      "to": "client",
+      "label": "presigned URL",
+      "mode": "sync"
+    },
+    {
+      "id": "c-blob",
+      "from": "client",
+      "to": "blob",
+      "label": "PUT bytes (direct)",
+      "mode": "sync"
+    },
+    {
+      "id": "blob-w",
+      "from": "blob",
+      "to": "worker",
+      "label": "upload-complete event",
+      "mode": "async"
+    },
+    {
+      "id": "w-blob",
+      "from": "worker",
+      "to": "blob",
+      "label": "write derivatives",
+      "mode": "sync"
+    },
+    {
+      "id": "w-graph",
+      "from": "worker",
+      "to": "graph",
+      "label": "mark ready + handle",
+      "mode": "sync"
+    },
+    {
+      "id": "c-cdn",
+      "from": "client",
+      "to": "cdn",
+      "label": "GET photo URL",
+      "mode": "sync"
+    },
+    {
+      "id": "cdn-cache",
+      "from": "cdn",
+      "to": "cache",
+      "label": "miss",
+      "mode": "sync"
+    },
+    {
+      "id": "cache-store",
+      "from": "cache",
+      "to": "store",
+      "label": "miss → one seek",
+      "mode": "sync"
+    },
+    {
+      "id": "dir-store",
+      "from": "dir",
+      "to": "store",
+      "label": "volume mapping",
+      "mode": "sync"
+    },
+    {
+      "id": "cdn-router",
+      "from": "cdn",
+      "to": "router",
+      "label": "miss (warm photo)",
+      "mode": "sync"
+    },
+    {
+      "id": "router-f4",
+      "from": "router",
+      "to": "f4",
+      "label": "read + decrypt",
+      "mode": "sync"
+    },
+    {
+      "id": "store-f4",
+      "from": "store",
+      "to": "f4",
+      "label": "migrate when cool",
+      "mode": "async"
+    },
+    {
+      "id": "web-dir",
+      "from": "web",
+      "to": "dir",
+      "label": "get write volume",
+      "mode": "sync"
+    },
+    {
+      "id": "web-store",
+      "from": "web",
+      "to": "store",
+      "label": "append to all replicas",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "upload",
+      "name": "Upload a photo (modern pattern)",
+      "steps": [
+        {
+          "edge": "c-api",
+          "caption": "The client asks to upload. The API creates a pending photo record."
+        },
+        {
+          "edge": "api-c",
+          "caption": "It returns a time-limited pre-signed URL. The URL is a bearer token, so keep expiry short."
+        },
+        {
+          "edge": "c-blob",
+          "caption": "The client uploads the bytes straight to blob storage, bypassing app servers. Large files use multipart upload."
+        },
+        {
+          "edge": "blob-w",
+          "caption": "Storage emits an event when the object lands."
+        },
+        {
+          "edge": "w-blob",
+          "caption": "A worker validates the file and writes derivative sizes, idempotently."
+        },
+        {
+          "edge": "w-graph",
+          "caption": "The photo is marked ready and its handle is stored with the owner's metadata."
+        }
+      ]
+    },
+    {
+      "id": "haystack-upload",
+      "name": "Upload in Haystack (2010)",
+      "steps": [
+        {
+          "edge": "web-dir",
+          "caption": "The web server asks the Directory for a write-enabled logical volume."
+        },
+        {
+          "edge": "web-store",
+          "caption": "It assigns a unique photo id, scales four sizes, and appends a needle for each to every physical volume of the logical volume. In-memory maps are updated."
+        }
+      ]
+    },
+    {
+      "id": "view-hot",
+      "name": "View a recent photo",
+      "steps": [
+        {
+          "edge": "c-cdn",
+          "caption": "The browser fetches the photo URL. The CDN serves popular photos directly."
+        },
+        {
+          "edge": "cdn-cache",
+          "caption": "On a CDN miss the request goes to the internal Cache, keyed by photo id."
+        },
+        {
+          "edge": "cache-store",
+          "caption": "On a Cache miss the Store looks up the photo's offset in memory, seeks once, reads the needle and verifies the checksum and cookie."
+        }
+      ]
+    },
+    {
+      "id": "view-warm",
+      "name": "View an old (warm) photo",
+      "steps": [
+        {
+          "edge": "c-cdn",
+          "caption": "Old photos are requested far less often, so most requests miss the CDN."
+        },
+        {
+          "edge": "cdn-router",
+          "caption": "The router tier hides which system holds the BLOB and fetches the decryption key in parallel."
+        },
+        {
+          "edge": "router-f4",
+          "caption": "f4 reads from its erasure-coded cell (reconstructing from parity when a block is unavailable). The router decrypts, so decryption scales independently."
+        }
+      ]
+    },
+    {
+      "id": "cooling",
+      "name": "Photo cools down",
+      "steps": [
+        {
+          "edge": "store-f4",
+          "caption": "Newly created BLOBs stay in hot storage until request and delete rates fall (about three months for Photos). Then their volume is locked and migrated to f4, cutting the effective replication factor from 3.6 toward 2.1."
+        }
+      ]
+    }
+  ]
+}
