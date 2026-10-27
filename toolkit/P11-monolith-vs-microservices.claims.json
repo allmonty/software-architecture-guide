@@ -1,0 +1,177 @@
+[
+  {
+    "quote": "an approach to developing a single application as a suite of small services, each running in its own process",
+    "url": "https://martinfowler.com/articles/microservices.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "These services are built around business capabilities and independently deployable by fully automated deployment machinery.",
+    "url": "https://martinfowler.com/articles/microservices.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "A modular monolith is a system where all of the code powers a single application and there are strictly enforced boundaries between different domains.",
+    "url": "https://shopify.engineering/deconstructing-monolith-designing-software-maximizes-developer-productivity",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "you have to work on automated deployment, monitoring, dealing with failure, eventual consistency, and other factors that a distributed system introduces",
+    "url": "https://martinfowler.com/bliki/MicroservicePremium.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "can slow down your development considerably",
+    "url": "https://martinfowler.com/bliki/MicroservicePremium.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "don't even consider microservices unless you have a system that's too complex to manage as a monolith",
+    "url": "https://martinfowler.com/bliki/MicroservicePremium.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "The majority of software systems should be built as a single monolithic application.",
+    "url": "https://martinfowler.com/bliki/MicroservicePremium.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Many of the problems ascribed to monoliths aren't essential to that style.",
+    "url": "https://martinfowler.com/bliki/MicroservicePremium.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "refactoring is much harder than with in-process libraries",
+    "url": "https://martinfowler.com/articles/microservices.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Distributed transactions are notoriously difficult to implement",
+    "url": "https://martinfowler.com/articles/microservices.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the downtime of your system becomes the product of the downtimes of the individual components",
+    "url": "https://martinfowler.com/articles/microservices.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "seen microservice systems vary from a team of 60 with 20 services to a team of 4 with 200 services",
+    "url": "https://martinfowler.com/bliki/MicroservicePremium.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Almost all the successful microservice stories have started with a monolith that got too big and was broken up",
+    "url": "https://martinfowler.com/bliki/MonolithFirst.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "it has ended up in serious trouble",
+    "url": "https://martinfowler.com/bliki/MonolithFirst.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "it is by no means unanimous",
+    "url": "https://martinfowler.com/bliki/MonolithFirst.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "You cannot assume that you can take an arbitrary system and break it into microservices",
+    "url": "https://martinfowler.com/bliki/MonolithFirst.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "one of the largest Ruby on Rails codebases in existence",
+    "url": "https://shopify.engineering/deconstructing-monolith-designing-software-maximizes-developer-productivity",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "The application was extremely fragile with new code having unexpected repercussions",
+    "url": "https://shopify.engineering/deconstructing-monolith-designing-software-maximizes-developer-productivity",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "We chose to evolve Shopify into a modular monolith, meaning that we would keep all of the code in one codebase, but ensure that boundaries were defined and respected between different components.",
+    "url": "https://shopify.engineering/deconstructing-monolith-designing-software-maximizes-developer-productivity",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a clean dedicated interface with domain boundaries expressed through a public API and took exclusive ownership of its associated data",
+    "url": "https://shopify.engineering/deconstructing-monolith-designing-software-maximizes-developer-productivity",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a good choice for building the service quickly",
+    "url": "https://web.archive.org/web/2023/https://www.primevideotech.com/video-streaming/scaling-up-the-prime-video-audio-video-monitoring-service-and-reducing-costs-by-90",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a hard scaling limit at around 5% of the expected load",
+    "url": "https://web.archive.org/web/2023/https://www.primevideotech.com/video-streaming/scaling-up-the-prime-video-audio-video-monitoring-service-and-reducing-costs-by-90",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Moving our service to a monolith reduced our infrastructure cost by over 90%.",
+    "url": "https://web.archive.org/web/2023/https://www.primevideotech.com/video-streaming/scaling-up-the-prime-video-audio-video-monitoring-service-and-reducing-costs-by-90",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "has to be made on a case-by-case basis",
+    "url": "https://web.archive.org/web/2023/https://www.primevideotech.com/video-streaming/scaling-up-the-prime-video-audio-video-monitoring-service-and-reducing-costs-by-90",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "organizations which design systems (in the broad sense used here) are constrained to produce designs which are copies of the communication structures of these organizations.",
+    "url": "http://www.melconway.com/Home/Committees_Paper.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  }
+]
