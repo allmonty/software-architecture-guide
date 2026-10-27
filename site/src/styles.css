@@ -170,7 +170,8 @@ button.linkish { border: 0; background: none; padding: 0; color: var(--accent); 
 .track-cards a { display: flex; flex-direction: column; gap: 6px; height: 100%; padding: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; text-decoration: none; color: var(--fg); }
 .track-cards a:hover, .cards a:hover { border-color: var(--accent); }
 .track-cards .meta { font-size: .8rem; color: var(--muted); }
-.bar-track { display: block; height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; min-width: 80px; flex: 1; }
+.bar-track { display: block; height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; min-width: 80px; flex: none; }
+.progress-row .bar-track { flex: 1; }
 .bar-track > span { display: block; height: 100%; background: var(--c-confirmed); }
 .method { list-style: none; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); }
 .method li { display: flex; gap: 10px; padding: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; }
