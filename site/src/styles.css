@@ -82,3 +82,7 @@ html, body { overflow-x: hidden; }
 .cards a { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; height: 128px; }
 .cards .num { margin: 0; }
 .cards small { margin-top: auto; }
+
+.tablewrap { overflow-x: auto; }
+.deadlink { border-bottom: 1px dotted var(--muted); cursor: help; }
+.notes pre { overflow: auto; }

@@ -33,10 +33,16 @@ export function DiagramView({
   const current = flow?.steps[step];
   const seen = new Set(flow?.steps.slice(0, step).map((s) => s.edge));
 
+  // Keep the URL in sync so the current step can be copied. replaceState does not fire hashchange.
+  useEffect(() => {
+    history.replaceState(null, "", `#${diagram.id}${flowId ? `?flow=${flowId}&step=${step + 1}` : ""}`);
+  }, [diagram.id, flowId, step]);
+
   // ← / → walk through the active flow.
   useEffect(() => {
     if (!flow) return;
     const on = (e: KeyboardEvent) => {
+      if (e.altKey || e.metaKey || e.ctrlKey || e.shiftKey) return; // leave browser shortcuts alone
       if (e.key === "ArrowRight") setStep((s) => Math.min(s + 1, flow.steps.length - 1));
       if (e.key === "ArrowLeft") setStep((s) => Math.max(s - 1, 0));
     };

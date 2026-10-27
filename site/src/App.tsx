@@ -27,10 +27,11 @@ export function App() {
       </header>
       {system ? (
         <SystemPage
-          key={system.id}
+          key={`${system.id}?${query}`}
           system={system}
+          initialTab={params.get("tab") === "notes" ? "notes" : "diagram"}
           initialFlow={params.get("flow")}
-          initialStep={Number(params.get("step") ?? 1) - 1}
+          initialStep={Number.isFinite(Number(params.get("step"))) ? Number(params.get("step")) - 1 : 0}
         />
       ) : (
         <Home />
@@ -41,7 +42,9 @@ export function App() {
 
 function toggleTheme() {
   const root = document.documentElement;
-  const next = root.dataset.theme === "dark" ? "light" : "dark";
+  // Before the first click no explicit theme is set, so start from the OS preference.
+  const current = root.dataset.theme ?? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const next = current === "dark" ? "light" : "dark";
   root.dataset.theme = next;
 }
 
