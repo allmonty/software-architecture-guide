@@ -13,6 +13,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { classifySource, type SourceClass } from "../schema/trust.ts";
 
 const root = resolve(fileURLToPath(import.meta.url), "../..");
 const dirs = [join(root, "systems"), join(root, "toolkit")].filter((d) => existsSync(d));
@@ -101,7 +102,8 @@ const urlsOf = (md: string) =>
   [...new Set([...md.matchAll(/https?:\/\/[^\s)>\]"`|]+/g)].map((m) => m[0].replace(/[.,;:]+$/, "")))]
     .filter((u) => !/[<>{}]|\.\.\./.test(u) && !u.includes("localhost"));
 
-interface Ledger { quote: string; url?: string; via?: string; status: "confirmed" | "manual" | "ignored" | "unverified"; note?: string }
+// sourceClass is a judgement by domain (see schema/trust.ts), not a check of the individual page.
+interface Ledger { quote: string; url?: string; via?: string; sourceClass?: SourceClass; status: "confirmed" | "manual" | "ignored" | "unverified"; note?: string }
 
 async function main() {
   const write = process.argv.includes("--write");
@@ -125,10 +127,12 @@ async function main() {
       const prior = old.find((l) => l.quote === q && l.status === "confirmed");
       // Re-check the recorded source first, then (when writing) every cited source.
       const candidates = prior?.url ? [prior.url, ...(write ? urlsOf(md) : [])] : write ? urlsOf(md) : [];
+      // A primary source that has the quote wins over a secondary one that also has it.
+      const ordered = [...new Set(candidates)].sort((a, b) => Number(classifySource(a) === "secondary") - Number(classifySource(b) === "secondary"));
       let hit: Ledger | undefined;
-      for (const u of candidates) {
+      for (const u of ordered) {
         const d = await get(u);
-        if (d && quoteIn(q, d.text)) { hit = { quote: q, url: u, via: d.via, status: "confirmed" }; break; }
+        if (d && quoteIn(q, d.text)) { hit = { quote: q, url: u, via: d.via, sourceClass: classifySource(u), status: "confirmed" }; break; }
       }
       if (hit) ledger.push(hit);
       else if (!write && !prior && !old.some((l) => l.quote === q)) { missing++; console.log(`${num}  NOT IN LEDGER  "${q.slice(0, 110)}"`); }
