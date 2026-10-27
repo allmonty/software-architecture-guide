@@ -4,7 +4,7 @@
 
 ## At a glance
 
-**In 60 seconds.** S3 stores immutable objects addressed by bucket and key. Metadata and data are separate systems. Data is split into erasure-coded shards across many drives and at least three availability zones, so durability comes from repair speed, not just copies. Since December 2020 reads are strongly consistent, achieved with a cache-coherence 'witness'.
+**In 60 seconds.** S3 stores immutable objects addressed by bucket and key. Metadata and data are separate systems. Data is split into erasure-coded shards across many drives, and AWS says objects are stored redundantly across at least three availability zones. How shards map to zones is not published, and the idea that durability comes from fast repair (not just copies) is our reading `[INDUSTRY PATTERN]`. Since December 2020 reads are strongly consistent, achieved with a cache-coherence 'witness'.
 
 **Key numbers**
 - Designed for 99.999999999% durability and 99.99% availability `[CONFIRMED]`.
@@ -41,8 +41,8 @@ How can it promise that while using cheap, slow, failure-prone hard drives?
 ## TL;DR for engineers
 
 - **Object storage:** flat namespace (`bucket` + `key`), immutable objects (an overwrite replaces the whole object, or adds a new version if versioning is on), HTTP API.
-- **Front end → metadata (index) → storage nodes.** Metadata is in a distributed KV store and cached. Data is on HDD storage nodes running **ShardStore** (an LSM-tree-based key-value engine) ([SOSP '21](https://jamesbornholt.com/papers/shardstore-sosp21.pdf)).
-- **Durability via erasure coding** (e.g., Reed–Solomon k data + m parity shards across AZs) ([Warfield](https://www.allthingsdistributed.com/2023/07/building-and-operating-a-pretty-big-storage-system.html)). Typical RS parameters give ~1.x× overhead instead of 3× (S3's actual k/m are not public), and S3 is designed for 11 nines of durability ([AWS docs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/DataDurability.html)).
+- **Front end → metadata (index) → storage nodes.** There is a metadata subsystem with a cache (Vogels, 2021); that it is a distributed key-value store is our reading `[INDUSTRY PATTERN]`. Data is on HDD storage nodes running **ShardStore** (an LSM-tree-based key-value engine) ([SOSP '21](https://jamesbornholt.com/papers/shardstore-sosp21.pdf)).
+- **Durability via erasure coding** (e.g., Reed–Solomon k data + m parity shards `[CONFIRMED]` in Warfield's account; whether the shards of one object are spread across zones is not stated, so treat that placement as `[INDUSTRY PATTERN]`) ([Warfield](https://www.allthingsdistributed.com/2023/07/building-and-operating-a-pretty-big-storage-system.html)). Typical RS parameters give ~1.x× overhead instead of 3× (S3's actual k/m are not public), and S3 is designed for 11 nines of durability ([AWS docs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/DataDurability.html)).
 - **Performance via parallelism.** Each HDD is slow (~120 IOPS), but spreading shards across millions of drives turns that into massive aggregate throughput and decorrelates hot spots ([Warfield](https://www.allthingsdistributed.com/2023/07/building-and-operating-a-pretty-big-storage-system.html)).
 - **Strong read-after-write consistency** since Dec 2020 ([AWS blog](https://aws.amazon.com/blogs/aws/amazon-s3-update-strong-read-after-write-consistency/)).
 
@@ -250,3 +250,4 @@ Encoding and the placement of many tiny shards cost more than they save, so smal
 - Corrected: "50 TB (48.8 TiB)" now explains the difference: the limits page says 48.8 TiB, which equals 10,000 × 5 GiB, and the announcement rounds to 50 TB.
 - Not re-verified (carried over): "200M+ requests/s on average" and "hundreds of exabytes" on the S3 product page, the Big Data Stream article, the checksum default CRC64NVME, S3 Select closure date, the repair-cost table and every interview-design item in section 6 (all `[INDUSTRY PATTERN]`).
 - Unchanged and unconfirmed by AWS: S3's real k and m, shard placement, and the front-end/metadata layout. The newsletter's diagrams of those layers are reconstructions.
+- Corrected (independent review, 2026-10-27): Warfield's post supports Reed-Solomon shards but does not mention availability zones, and AWS's durability page says objects are stored across at least three zones without saying how the shards of one object are placed; the note now keeps the two facts apart. The metadata-store line is reduced to what Vogels states.
