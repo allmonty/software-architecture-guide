@@ -28,10 +28,15 @@ export function TrustCard({ id, title, markdown, claims, diagram }: { id: string
       <ul className="trust-facts">
         {t.nodes && <li><b>Diagram:</b> {t.nodes.confirmed} elements confirmed by a source, {t.nodes.pattern} industry pattern{t.nodes.speculative ? `, ${t.nodes.speculative} speculative` : ""}.</li>}
         <li>
-          <b>Quotations:</b> {q.primary} found in a primary source{q.secondary > 0 && <>, <span className="warn">{q.secondary} only in a secondary source</span></>}
-          {q.manual > 0 && <>, {q.manual} checked by hand (page not machine-readable)</>}
-          {q.unverified > 0 && <>, <span className="warn">{q.unverified} not found</span></>}
-          {q.ignored > 0 && <>, {q.ignored} short phrase{q.ignored === 1 ? "" : "s"} in our own words</>}.
+          <b>Quotations:</b>{" "}
+          {t.quoteTotal === 0 ? "none in this page." : (
+            <>
+              {q.primary} found in a primary source{q.secondary > 0 && <>, <span className="warn">{q.secondary} only in a secondary source</span></>}
+              {q.manual > 0 && <>, {q.manual} checked by hand (page not machine-readable)</>}
+              {q.unverified > 0 && <>, <span className="warn">{q.unverified} not found</span></>}
+              {q.ignored > 0 && <>, {q.ignored} quoted phrase{q.ignored === 1 ? "" : "s"} not machine-checked (our own wording, or a claim attributed to a secondary source; the ledger gives each reason)</>}.
+            </>
+          )}
         </li>
       </ul>
       <p className="muted small">A found quotation means the words appear in the cited page. It does not prove that the claim built on them is right; the tags and the reviewer notes carry that judgement.</p>
@@ -46,7 +51,7 @@ export function TrustCard({ id, title, markdown, claims, diagram }: { id: string
       </details>
       {t.notVerified.length > 0 && (
         <details>
-          <summary>What this page says it did not verify ({t.notVerified.length})</summary>
+          <summary>What this page says it did not read, check or claim ({t.notVerified.length})</summary>
           <ul>{t.notVerified.map((b) => <li key={b}><ReactMarkdown>{b}</ReactMarkdown></li>)}</ul>
         </details>
       )}

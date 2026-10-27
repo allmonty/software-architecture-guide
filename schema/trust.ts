@@ -45,15 +45,28 @@ export function summarizeLedger(entries: LedgerEntry[]): QuoteTally {
   return t;
 }
 
-/** The bullets of the "Verification log" section that start with "Not" (not claimed, not sourced, not re-verified...). */
+const GAP = /\b(did not|not compared|not quoted|not re-read|not re-verified|not checked)\b/i;
+
+/**
+ * What a page says it did not read, check or claim: "Not read" lines anywhere (including blockquotes and numbered notes),
+ * and bullets of the "Verification log" that start with "Not" or say a check was not done.
+ */
 export function notVerified(md: string): string[] {
-  const start = md.search(/^## .*verification log/im);
-  if (start < 0) return [];
   const out: string[] = [];
-  for (const line of md.slice(start).split("\n").slice(1)) {
-    if (/^#{1,2} /.test(line)) break;
-    if (/^- /.test(line)) out.push(line.slice(2));
-    else if (/^\s+\S/.test(line) && out.length) out[out.length - 1] += " " + line.trim();
+  const add = (t: string) => { const x = t.trim(); if (x && !out.includes(x)) out.push(x); };
+  for (const line of md.split("\n")) {
+    const m = line.match(/^(?:>\s*)?(?:\d+\.\s+)?(\*\*Not (?:read|checked|re-verified|re-read)[^\n]*)/i);
+    if (m) add(m[1]);
   }
-  return out.filter((b) => /^\**not\b/i.test(b));
+  const start = md.search(/^## .*verification log/im);
+  if (start >= 0) {
+    const bullets: string[] = [];
+    for (const line of md.slice(start).split("\n").slice(1)) {
+      if (/^#{1,2} /.test(line)) break;
+      if (/^- /.test(line)) bullets.push(line.slice(2));
+      else if (/^\s+\S/.test(line) && bullets.length) bullets[bullets.length - 1] += " " + line.trim();
+    }
+    for (const b of bullets) if (/^\**not\b/i.test(b) || GAP.test(b)) add(b);
+  }
+  return out;
 }

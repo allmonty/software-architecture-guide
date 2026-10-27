@@ -36,8 +36,11 @@ test("ledger entries are tallied by status and source class", () => {
   assert.deepEqual(t, { primary: 1, secondary: 1, manual: 1, ignored: 1, unverified: 1 });
 });
 
-test("only the 'Not ...' bullets of the verification log are returned", () => {
-  const md = "# T\n\n- Not here\n\n## ✅ Verification log\n\n*date*\n- Verified in the paper: x\n- Not claimed: how it works\n  today at scale\n- **Not re-verified**: older parts\n\n## After\n- Not this one";
-  assert.deepEqual(notVerified(md), ["Not claimed: how it works today at scale", "**Not re-verified**: older parts"]);
+test("not-verified lines are collected from blockquotes, numbered notes and the verification log", () => {
+  const md = "# T\n\n> **Not read:** the TAO paper.\n\n4. **Not read:** Redis docs.\n\n## ✅ Verification log\n\n*date*\n- Verified in the paper: x\n- Not claimed: how it works\n  today at scale\n- **Not re-verified**: older parts\n- Method note: we did not compare them with the originals\n- Corrected: it was 5 not 6\n\n## After\n- Not this one";
+  assert.deepEqual(notVerified(md), [
+    "**Not read:** the TAO paper.", "**Not read:** Redis docs.",
+    "Not claimed: how it works today at scale", "**Not re-verified**: older parts", "Method note: we did not compare them with the originals",
+  ]);
   assert.deepEqual(notVerified("no log"), []);
 });
