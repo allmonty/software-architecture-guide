@@ -30,6 +30,8 @@ npm test           # validator tests (node:test via tsx); single file: npx tsx -
 - Blog rewrites (dev.to, Medium, Substack summaries), the System Design Primer and awesome-software-architecture are leads and "Further reading", never proof for a claim.
 - A number that is not stated in a primary source is labelled illustrative, or left out.
 - If a primary source cannot be fetched, downgrade the claim's tag instead of keeping `CONFIRMED`.
+- WebFetch answers through a summarising model. Use it for quotes and numbers you then check against the page, and treat "not found" as "not in the returned extract", never as proof the page lacks it. For papers (PDF), download with curl and extract text locally, then grep it.
+- Notes that restate an earlier note (the `neokim-post/` upgrades) re-check the key claims against primary sources and list what was **not** re-checked in the Verification log.
 - Where a popular article disagrees with the primary source, say so in a Reviewer notes section rather than silently choosing.
 
 ## Git
