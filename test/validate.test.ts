@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { REQUIRED_SECTIONS, validateDir } from "../scripts/validate.ts";
+import { REQUIRED_SECTIONS, validateDir, validateToolkit } from "../scripts/validate.ts";
 
 const md = `# 99 — Toy System\n\n${REQUIRED_SECTIONS.map((s) => `## ${s}\n`).join("\n")}`;
 const good = () => ({
@@ -65,3 +65,15 @@ test("component needs a container parent; non-components must not have one", () 
   const b = run((d) => ((d.nodes[0] as { parent?: string }).parent = "b"));
   assert.match(b.join("\n"), /only components have a parent/);
 });
+
+function toolkit(name: string, text: string) {
+  const dir = mkdtempSync(join(tmpdir(), "tk-"));
+  writeFileSync(join(dir, name), text);
+  return validateToolkit(dir);
+}
+const tkGood = "# P99 — Toy\n\n## Sources and provenance\n\n## ✅ Verification log\n";
+
+test("valid toolkit page passes", () => assert.deepEqual(toolkit("P99-toy.md", tkGood), []));
+test("toolkit page needs provenance sections", () => assert.match(toolkit("P99-toy.md", "# P99 — Toy\n").join("\n"), /missing section "Verification log"/));
+test("toolkit file names are checked", () => assert.match(toolkit("toy.md", tkGood).join("\n"), /file name must look like/));
+test("toolkit broken relative link fails", () => assert.match(toolkit("P99-toy.md", tkGood + "[x](nope.md)\n").join("\n"), /broken relative link/));

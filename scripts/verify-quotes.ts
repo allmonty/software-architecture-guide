@@ -15,7 +15,7 @@ import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(fileURLToPath(import.meta.url), "../..");
-const dir = join(root, "systems");
+const dirs = [join(root, "systems"), join(root, "toolkit")].filter((d) => existsSync(d));
 const cache = join(root, ".cache", "sources");
 mkdirSync(cache, { recursive: true });
 
@@ -105,10 +105,10 @@ interface Ledger { quote: string; url?: string; via?: string; status: "confirmed
 
 async function main() {
   const write = process.argv.includes("--write");
-  const only = process.argv.slice(2).filter((a) => /^\d\d$/.test(a));
+  const only = process.argv.slice(2).filter((a) => /^[PCW]?\d\d$/.test(a));
   let missing = 0, unverified = 0, total = 0;
-  for (const f of readdirSync(dir).filter((f) => f.endsWith(".md")).sort()) {
-    const num = f.slice(0, 2);
+  for (const dir of dirs) for (const f of readdirSync(dir).filter((f) => f.endsWith(".md") && f !== "README.md").sort()) {
+    const num = f.match(/^[PCW]?\d\d/)![0];
     if (only.length && !only.includes(num)) continue;
     const md = readFileSync(join(dir, f), "utf8");
     const ledgerPath = join(dir, f.replace(/\.md$/, ".claims.json"));

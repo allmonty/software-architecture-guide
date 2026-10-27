@@ -1,12 +1,12 @@
 // Checks every external link in the notes and README. Sites that block scripts (403, 406, 999) are reported as
 // "blocked", not broken, because the page may be fine in a browser. Exit code is 1 only for real failures.
 //   npm run links
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(fileURLToPath(import.meta.url), "../..");
-const files = [join(root, "README.md"), ...readdirSync(join(root, "systems")).filter((f) => f.endsWith(".md")).map((f) => join(root, "systems", f))];
+const files = [join(root, "README.md"), ...["systems", "toolkit"].filter((d) => existsSync(join(root, d))).flatMap((d) => readdirSync(join(root, d)).filter((f) => f.endsWith(".md")).map((f) => join(root, d, f)))];
 const urls = new Map<string, Set<string>>();
 for (const f of files) {
   for (const m of readFileSync(f, "utf8").matchAll(/https?:\/\/[^\s)>\]"`|]+/g)) {

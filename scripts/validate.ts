@@ -96,9 +96,35 @@ export function validateDir(dir: string): string[] {
   return errors;
 }
 
+// Toolkit pages (primers P, casebook C, workbook W) have no diagram: they need the provenance headings,
+// a unique H1, and relative links that resolve.
+export const TOOLKIT_SECTIONS = ["Sources and provenance", "Verification log"];
+
+export function validateToolkit(dir: string): string[] {
+  const errors: string[] = [];
+  if (!existsSync(dir)) return errors;
+  for (const f of readdirSync(dir).filter((f) => f.endsWith(".md")).sort()) {
+    const err = (m: string) => errors.push(`toolkit/${f}: ${m}`);
+    if (f === "README.md") continue;
+    if (!/^[PCW]\d\d-[a-z0-9-]+\.md$/.test(f)) err("file name must look like P01-slug.md, C01-slug.md or W01-slug.md");
+    const mdPath = join(dir, f);
+    const md = readFileSync(mdPath, "utf8");
+    const headings = md.split("\n").filter((l) => l.startsWith("#"));
+    if (!headings[0]?.startsWith("# ")) err("must start with an H1");
+    for (const s of TOOLKIT_SECTIONS) if (!headings.some((h) => h.startsWith("##") && h.includes(s))) err(`missing section "${s}"`);
+    for (const m of md.matchAll(/\]\(([^)\s]+)\)/g)) {
+      const target = m[1].split("#")[0];
+      if (!target || /^(https?:|mailto:)/.test(target)) continue;
+      if (!existsSync(resolve(dirname(mdPath), target))) err(`broken relative link: ${m[1]}`);
+    }
+  }
+  return errors;
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const dir = resolve(fileURLToPath(import.meta.url), "../../systems");
-  const errors = validateDir(dir);
+  const here = resolve(fileURLToPath(import.meta.url), "../..");
+  const dir = join(here, "systems");
+  const errors = [...validateDir(dir), ...validateToolkit(join(here, "toolkit"))];
   if (errors.length) {
     console.error(errors.map((e) => `✗ ${e}`).join("\n"));
     process.exit(1);
