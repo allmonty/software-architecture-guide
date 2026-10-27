@@ -1,10 +1,42 @@
-# System Design Atlas: 35 systems, explained and drawn
+# System Design Atlas
 
-Thirty-five systems chosen to teach system design for **interviews and beyond**, including AI systems, live streaming, observability, stream processing, caching, coordination, ranking and ID generation. Each has a deep note (`systems/NN-*.md`) and an **interactive diagram** (`systems/NN-*.diagram.json`) that the site in [`site/`](site/) renders: click a component for details and sources, and step through request flows. A companion [toolkit](toolkit/README.md) adds a casebook of real incidents, cross-cutting primers (estimation, storage engines, transactions, load balancing, APIs, security, SLOs, cost, decisions, migrations) and a practice workbook (mock interviews, flaw drills, estimation drills, decision exercises, flashcards).
+**35 system-design case studies with interactive diagrams, an incident casebook, primers and a practice workbook, for senior engineers preparing for interviews or an architect role. Every claim says how well it is sourced.**
 
-**Trust first.** Every note says what is a **verified fact from a primary source** (company engineering post, paper, standard or official docs), what is a **standard design pattern**, and what is our own reasoning. Each ends with a **Verification log** listing what was checked and what was **not**.
+[☕ Buy me a coffee](https://buymeacoffee.com/allmonty) · [Roadmap](ROADMAP.md) · [Report an error](https://github.com/allmonty/software-architecture-guide/issues/new) · Site: run it locally or [publish it on GitHub Pages](#publishing-on-github-pages)
 
----
+Each system has a deep note (`systems/NN-*.md`) and a structured diagram (`systems/NN-*.diagram.json`) that the site in [`site/`](site/) draws in the C4 model: click a component for its summary and sources, and step through request flows, including the ones where something fails. The systems cover storage, messaging, feeds, real-time, media, payments and exchanges, and also AI serving, retrieval, agents, training, live streaming, observability, stream processing, caching, coordination, ranking and ID generation.
+
+## Start here
+
+| If you have | Do this |
+|---|---|
+| **An interview in a couple of weeks** | Follow the *Interview in two weeks* track on the site's home page: the mock-interview protocol, estimation, then 01, 35, 02, 03, 32, 08, 11, 10, 04, 12, 15, 17, 16 with the primers and drills between. |
+| **Time to build foundations** | Read the [learning path](#suggested-learning-path) top to bottom, and the [estimation primer](toolkit/P01-estimation.md) first. |
+| **An architect role in view** | Read the [toolkit](toolkit/README.md): the [incident casebook](toolkit/README.md#casebook-learning-from-real-incidents-c) (what went wrong, and the questions a design review could have asked) and the primers on decisions, security, SLOs, cost and migrations. |
+| **One topic** | Use the [concept matrix](#concept--systems-matrix) to find every system that covers it, or search the site. |
+
+## What is inside
+
+| Path | What it holds |
+|---|---|
+| [`systems/`](systems/) | The 35 notes, one diagram (`.diagram.json`) and one quote ledger (`.claims.json`) each |
+| [`toolkit/`](toolkit/README.md) | Casebook of 6 real incidents (`C`), 10 cross-cutting primers (`P`), a workbook of 5 practice pages (`W`) |
+| [`site/`](site/) | The React + React Flow site: home page study tracks, diagrams, search, reading settings |
+| [`docs/`](docs/) | The built site, served by GitHub Pages |
+| [`schema/`](schema/), [`scripts/`](scripts/), [`test/`](test/) | The diagram schema, the validator, the quote verifier, the freshness and link checks, and their tests |
+| [`CLAUDE.md`](CLAUDE.md) | Conventions and sourcing rules, for contributors and for Claude Code |
+| [`ROADMAP.md`](ROADMAP.md) | What is not done yet, and why |
+
+## Why you can trust it, and where not to
+
+- **Primary sources only.** Facts come from company engineering posts, papers, standards and official documentation, read in full. Tutorials, newsletters and the System Design Primer are leads, never proof.
+- **Every claim is tagged** `[CONFIRMED]`, `[INDUSTRY PATTERN]` or `[SPECULATIVE]` (see the next section), and our own reasoning is labelled as ours.
+- **Quotations are machine-checked.** `npm run verify` looks up every quoted phrase in the pages the note cites and records where it found it, and whether that source is primary or secondary, in the note's ledger. A found quotation proves the words are on the page, not that the claim built on them is right.
+- **Each note ends with a verification log** that says what was checked and what was not.
+- **Independent review.** The notes were re-checked by separate read-only reviewers against the sources; findings were verified before anything was changed.
+- **How it was made.** The notes, diagrams and site were written with Claude Code under these rules, with the sources fetched and read during the work. Read the verification logs, not this sentence, to decide how far to rely on a claim.
+
+Known limits are at the end of this file and in the [roadmap](ROADMAP.md).
 
 ## How to read the notes
 
@@ -13,7 +45,7 @@ Thirty-five systems chosen to teach system design for **interviews and beyond**,
 | `[CONFIRMED]` | Stated by a primary source we read in full text (the source is linked) |
 | `[INDUSTRY PATTERN]` | Standard practice. Not stated by a source for the named company |
 | `[SPECULATIVE]` | Plausible, or an illustrative number or policy |
-| `[EARLIER PASS]` | Verified in the earlier neokim-post fact-check but not re-read in this folder |
+| `[EARLIER PASS]` | Verified in the earlier neokim-post fact-check but not re-read in this repository |
 
 - **Kind: real-system** means the company publishes enough to describe how it works. **Kind: reference-design** means the architecture is the standard interview design, built on verified building blocks. A reference design is **not** a claim about how the named company builds it.
 - **Dates matter.** Many sources are years old (a 2007 paper, a 2010 blog post). Each note says which.
@@ -132,7 +164,7 @@ The home page is a study guide: pick a goal (interview, building blocks, archite
 
 ```sh
 npm install && (cd site && npm install)   # once
-npm run dev      # from system-design/ or site/, http://localhost:5173
+npm run dev      # from the repository root or site/, http://localhost:5173
 npm run build    # static output in docs/ (see Publishing on GitHub Pages)
 ```
 
@@ -157,9 +189,9 @@ npm run freshness  # notes by the age of their last source read
 
 `npm run verify -- --write` fetches each note's cited sources (with an Internet Archive fallback) and updates the claims ledgers. PDFs need Python with `pypdf`: `PYTHON=/path/to/python npm run verify -- --write`.
 
-## References and relationship to other folders
+## References and related material
 
-- **Related:** [`neokim-post/`](https://github.com/allmonty/study/blob/main/architecture/neokim-post/README.md) is the earlier set of 15 case studies this one upgrades (systems 01, 04, 05, 08, 12, 14, 15, 16, 18, 19) and extends. Systems 22 to 35 are new to this folder. It also holds the shared glossary [`00-fundamentals.md`](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md). The architecture-lens sections use vocabulary from [`../fundamentals-of-software-architecture/`](https://github.com/allmonty/study/blob/main/architecture/fundamentals-of-software-architecture/summaries/README.md).
+- **Related:** [`neokim-post/`](https://github.com/allmonty/study/blob/main/architecture/neokim-post/README.md) is the earlier set of 15 case studies this one upgrades (systems 01, 04, 05, 08, 12, 14, 15, 16, 18, 19) and extends. Systems 22 to 35 are new to this repository. It also holds the shared glossary [`00-fundamentals.md`](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md). The architecture-lens sections use vocabulary from [`../fundamentals-of-software-architecture/`](https://github.com/allmonty/study/blob/main/architecture/fundamentals-of-software-architecture/summaries/README.md).
 - **Study resources used as leads (never as proof):** [System Design Primer](https://github.com/donnemartin/system-design-primer) (the interview-questions list was used as a coverage cross-check: Pastebin/Bit.ly, Twitter timeline, web crawler and key-value store are all covered here) and [awesome-software-architecture](https://github.com/mehdihadeli/awesome-software-architecture) (its case-study list confirmed the choice of systems and pointed to primary sources such as Discord's and Instagram's engineering posts).
 - **Sourcing rules and conventions:** see [`CLAUDE.md`](CLAUDE.md).
 
@@ -168,3 +200,7 @@ npm run freshness  # notes by the age of their last source read
 - Some primary sources could not be read (blocked or paywalled pages, PDFs that would not decode). The Verification log in each note lists them, and the affected claims are labelled or removed.
 - A reference design shows a defensible way to build the system. It does not say how the company builds it.
 - Figures age. Treat any number as "as of its source's date".
+
+## Support
+
+This is a free, unpaid project. If it helped you prepare, [buying me a coffee](https://buymeacoffee.com/allmonty) is appreciated and never expected. Corrections matter more: if a claim is wrong or out of date, [open an issue](https://github.com/allmonty/software-architecture-guide/issues/new) with the page and the source that says otherwise.
