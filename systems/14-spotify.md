@@ -9,7 +9,7 @@
 **Key numbers**
 - 2010: only 8.8% of data from servers, median playback latency 265 ms `[CONFIRMED]`.
 - About 39% of playbacks were random access `[CONFIRMED]` (2010).
-- Loudness normalisation target -14 dB LUFS applied at playback `[CONFIRMED]`.
+- Loudness normalisation: -14 dB LUFS by default, applied at playback; Premium listeners can choose Loud (-11) or Quiet (-19); not applied on the web player or on third-party devices such as TVs and speakers `[CONFIRMED]`.
 
 **Decisions and trade-offs**
 
@@ -21,7 +21,7 @@
 
 **Common mistakes**
 - Presenting the 2010 P2P design as the current architecture.
-- Attributing Ogg Vorbis to today's apps: the current support page names no codec.
+- Reading the 2010 paper's Ogg Vorbis as today's whole story: the current audio-quality page names no codec, while Spotify's loudness page for artists names Ogg/Vorbis and AAC as the lossy formats.
 - Forgetting that a stream counts only after at least 30 seconds.
 
 
@@ -285,3 +285,4 @@ Measure at upload, store the gain value, and apply it at playback so the audio f
 - Corrected: our codec statement. The current audio-quality page names no codec for the desktop and mobile levels and does not mention Ogg Vorbis, so Ogg Vorbis is attributed to the **2010 paper only**.
 - Not re-verified (carried over): the 1,000-streams royalty threshold (the page we fetched did not include it), the lossless launch date (September 2025, Spotify Newsroom), the TechCrunch report of the April 2014 P2P phase-out, Google Cloud migration dates and Backstage/CNCF dates, and the newsletter's capacity table (the ×2–3 and ~360 TB arithmetic was re-derived by hand in the earlier log).
 - Not claimed: anything about Spotify's current backend (databases, services, CDN vendors).
+- Corrected (independent review, 2026-10-27): the loudness line now includes the Premium levels and the web-player and third-party-device exception from the same page, and the common-mistakes line no longer says that no current Spotify page names Ogg Vorbis (the loudness page for artists does).
