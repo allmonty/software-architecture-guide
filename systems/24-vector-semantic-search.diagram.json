@@ -1,0 +1,340 @@
+{
+  "id": "24-vector-semantic-search",
+  "title": "Vector / Semantic Search",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "app",
+      "label": "Application (search or RAG service)",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Sends a query (already embedded, or text to embed) with k and an optional metadata filter, and uses the nearest items.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2401.08281"
+      ]
+    },
+    {
+      "id": "embedder",
+      "label": "Embedding model service",
+      "kind": "external",
+      "c4": "external-system",
+      "summary": "Turns text or images into vectors. The same model must be used for stored items and queries; changing it changes every vector.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2401.08281"
+      ]
+    },
+    {
+      "id": "source",
+      "label": "Source of truth",
+      "kind": "external",
+      "c4": "external-system",
+      "summary": "The catalogue, documents or media whose items are indexed. Owns ids and metadata.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2401.08281"
+      ]
+    },
+    {
+      "id": "coord",
+      "label": "Query coordinator",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Fans each query out to the shards (or a chosen subset), applies timeouts and replica retries, merges the per-shard top-K lists and returns the result. The Taobao example in the DiskANN paper routes queries to all shards and aggregates.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf"
+      ]
+    },
+    {
+      "id": "shard",
+      "label": "Index shard (replica set)",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Holds one partition of the vectors with an ANN index and answers top-K queries for it. Replicated for availability and throughput (replication is our design).",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/1603.09320",
+        "https://arxiv.org/pdf/2401.08281",
+        "https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf"
+      ],
+      "group": "Index shard (one of N, replicated)"
+    },
+    {
+      "id": "graph",
+      "label": "Graph index (HNSW or Vamana)",
+      "kind": "datastore",
+      "c4": "component",
+      "summary": "Proximity graph searched greedily. HNSW has layers chosen with exponentially decaying probability and logarithmic search scaling; DiskANN's Vamana graph is searched with a beam of W candidates.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/1603.09320",
+        "https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf"
+      ],
+      "parent": "shard",
+      "group": "Index shard (one of N, replicated)"
+    },
+    {
+      "id": "pq",
+      "label": "Compressed vectors (product quantization)",
+      "kind": "datastore",
+      "c4": "component",
+      "summary": "Short codes (for example 32 bytes per point) kept in memory to compute approximate distances. Lossy: compression-based indexes alone reach about 0.5 1-recall@1 in the DiskANN paper.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2401.08281",
+        "https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf"
+      ],
+      "parent": "shard",
+      "group": "Index shard (one of N, replicated)"
+    },
+    {
+      "id": "ssd",
+      "label": "Full vectors and graph on SSD (DiskANN)",
+      "kind": "datastore",
+      "c4": "component",
+      "summary": "The graph and full-precision vectors are stored on the SSD, so a billion points fit on one machine with 64 GB of RAM. Beam search batches reads to limit round trips.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf"
+      ],
+      "parent": "shard",
+      "group": "Index shard (one of N, replicated)"
+    },
+    {
+      "id": "filter",
+      "label": "Filter predicate",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Checks each candidate against a search-time criterion; Faiss supports a predicate on ids but does not store arbitrary metadata, so richer filters need a metadata lookup or packed id bits.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2401.08281"
+      ],
+      "parent": "shard",
+      "group": "Index shard (one of N, replicated)"
+    },
+    {
+      "id": "delta",
+      "label": "Fresh-writes index",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Small in-memory index of recent vectors, searched alongside the shards; deletes are tombstones until the next rebuild. Industry practice, not from the papers.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2401.08281"
+      ]
+    },
+    {
+      "id": "builder",
+      "label": "Index builder",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Batch job that builds index segments from the vectors, for example clustering the data, building graphs per cluster and merging them as DiskANN does.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf"
+      ]
+    },
+    {
+      "id": "snap",
+      "label": "Index segments (object storage)",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Built index segments that shards load. A new embedding model gets a new set built beside the old one.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf"
+      ]
+    },
+    {
+      "id": "bluegreen",
+      "label": "Alternative: blue/green index for a new embedding model",
+      "kind": "service",
+      "c4": "note",
+      "summary": "Build a full new index with the new model, check recall on a labelled query set, switch traffic, keep the old one for rollback.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2401.08281"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "app-embed",
+      "from": "app",
+      "to": "embedder",
+      "label": "text to embed",
+      "mode": "sync"
+    },
+    {
+      "id": "app-coord",
+      "from": "app",
+      "to": "coord",
+      "label": "query vector, k, filter",
+      "mode": "sync"
+    },
+    {
+      "id": "coord-graph",
+      "from": "coord",
+      "to": "graph",
+      "label": "search this shard",
+      "mode": "sync"
+    },
+    {
+      "id": "graph-pq",
+      "from": "graph",
+      "to": "pq",
+      "label": "approximate distances",
+      "mode": "sync"
+    },
+    {
+      "id": "graph-ssd",
+      "from": "graph",
+      "to": "ssd",
+      "label": "read neighbourhoods (beam)",
+      "mode": "sync"
+    },
+    {
+      "id": "graph-filter",
+      "from": "graph",
+      "to": "filter",
+      "label": "check candidate",
+      "mode": "sync"
+    },
+    {
+      "id": "graph-coord",
+      "from": "graph",
+      "to": "coord",
+      "label": "top-K for this shard",
+      "mode": "sync"
+    },
+    {
+      "id": "coord-delta",
+      "from": "coord",
+      "to": "delta",
+      "label": "search fresh vectors",
+      "mode": "sync"
+    },
+    {
+      "id": "src-embed",
+      "from": "source",
+      "to": "embedder",
+      "label": "new or changed items",
+      "mode": "sync"
+    },
+    {
+      "id": "embed-delta",
+      "from": "embedder",
+      "to": "delta",
+      "label": "new vectors with ids",
+      "mode": "async"
+    },
+    {
+      "id": "embed-builder",
+      "from": "embedder",
+      "to": "builder",
+      "label": "vectors for rebuild",
+      "mode": "async"
+    },
+    {
+      "id": "builder-snap",
+      "from": "builder",
+      "to": "snap",
+      "label": "write index segments",
+      "mode": "async"
+    },
+    {
+      "id": "snap-shard",
+      "from": "snap",
+      "to": "shard",
+      "label": "load segments",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "query",
+      "name": "A filtered nearest-neighbour query",
+      "steps": [
+        {
+          "edge": "app-embed",
+          "caption": "The query text is embedded with the same model used for the stored items."
+        },
+        {
+          "edge": "app-coord",
+          "caption": "The query vector, k and a metadata filter go to the coordinator."
+        },
+        {
+          "edge": "coord-graph",
+          "caption": "The coordinator sends the query to every shard (one replica each)."
+        },
+        {
+          "edge": "graph-pq",
+          "caption": "The shard walks its graph, using in-memory compressed codes for approximate distances."
+        },
+        {
+          "edge": "graph-ssd",
+          "caption": "For a disk-resident index it reads the neighbourhoods of a few candidates in one batch."
+        },
+        {
+          "edge": "graph-filter",
+          "caption": "Each candidate is checked against the filter."
+        },
+        {
+          "edge": "graph-coord",
+          "caption": "Each shard returns its top-K."
+        },
+        {
+          "edge": "coord-delta",
+          "caption": "The coordinator also searches the fresh-writes index and merges all lists into the final top-K."
+        }
+      ]
+    },
+    {
+      "id": "fresh-write",
+      "name": "A new item becomes searchable",
+      "steps": [
+        {
+          "edge": "src-embed",
+          "caption": "A new or changed item is sent to the embedding model."
+        },
+        {
+          "edge": "embed-delta",
+          "caption": "The vector goes into the small fresh-writes index, searchable at once."
+        },
+        {
+          "edge": "embed-builder",
+          "caption": "It is also queued for the next periodic build."
+        },
+        {
+          "edge": "builder-snap",
+          "caption": "The builder writes new index segments."
+        },
+        {
+          "edge": "snap-shard",
+          "caption": "Shards load the segments; the fresh-writes index can then drop those vectors."
+        }
+      ]
+    },
+    {
+      "id": "slow-shard",
+      "name": "A shard is slow or unavailable (failure)",
+      "steps": [
+        {
+          "edge": "coord-graph",
+          "caption": "The coordinator's request to one shard times out."
+        },
+        {
+          "edge": "coord-graph",
+          "caption": "It retries on another replica; if none answers in time it must choose between failing and returning results without that shard's partition (our design reasoning)."
+        },
+        {
+          "edge": "graph-coord",
+          "caption": "With a healthy replica, the shard's top-K arrives and the merge proceeds."
+        }
+      ]
+    }
+  ]
+}

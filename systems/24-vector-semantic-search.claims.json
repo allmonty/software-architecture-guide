@@ -1,0 +1,38 @@
+[
+  {
+    "quote": "it is often impossible to retrieve the exact nearest neighbors without essentially resorting to a linear scan of the data",
+    "url": "https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "may not be acceptable in many applications",
+    "url": "https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "does not provide concurrent write access, load balancing, sharding, transaction management or query optimization",
+    "url": "https://arxiv.org/pdf/2401.08281",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "does not store arbitrary metadata with the vectors",
+    "url": "https://arxiv.org/pdf/2401.08281",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the graph along with the full-precision vectors on the SSD",
+    "url": "https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the compressed vectors of all the data points in memory",
+    "url": "https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]
