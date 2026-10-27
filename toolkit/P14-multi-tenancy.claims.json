@@ -1,0 +1,163 @@
+[
+  {
+    "quote": "Selecting a tenancy model isn't only a technical decision. It's also a commercial decision.",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/considerations/tenancy-models",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "If you expect your business to scale to a large number of customers, it's important to deploy shared infrastructure.",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/considerations/tenancy-models",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "operating a solution that has shared components is less expensive than using individual resources for each tenant",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/considerations/tenancy-models",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "cost efficiency is low because you don't share infrastructure among your tenants",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/considerations/tenancy-models",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Instead of viewing isolation as a discrete property, consider it a spectrum",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/considerations/tenancy-models",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "In a siloed model, you have a distinct storage construct for each tenant with no co-mingled data",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/saas-architecture-fundamentals/data-partitioning.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "is co-mingled and partitioned based on a tenant identifier that determines which data is associated with each tenant",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/saas-architecture-fundamentals/data-partitioning.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "SaaS systems include explicit mechanisms that ensure that each tenant's resources—even if they run on shared infrastructure—are isolated.",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/saas-architecture-fundamentals/tenant-isolation.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the fact that a tenant user is authenticated does not mean that your system has achieved isolation.",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/saas-architecture-fundamentals/tenant-isolation.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a user could be authenticated and authorized, and still access the resources of another tenant.",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/saas-architecture-fundamentals/tenant-isolation.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Partitioning data does not ensure that the data is isolated.",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/saas-architecture-fundamentals/data-partitioning.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "A single shared multitenant database with a single schema that stores tenant-specific metadata and data",
+    "url": "https://developer.salesforce.com/wiki/multi_tenant_architecture",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the platform does not create an actual table in a database or compile any code",
+    "url": "https://developer.salesforce.com/wiki/multi_tenant_architecture",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "every org-specific record in shared database tables has an OrgID",
+    "url": "https://developer.salesforce.com/wiki/multi_tenant_architecture",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "When the kernel accesses the database, it uses this unique identifier to ensure that each org's activities are private.",
+    "url": "https://developer.salesforce.com/wiki/multi_tenant_architecture",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "To prevent malicious or unintentional monopolization of shared, multitenant system resources, the platform has an extensive set of governors and resource limits associated with platform code execution",
+    "url": "https://developer.salesforce.com/wiki/multi_tenant_architecture",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "throw a runtime exception to the caller",
+    "url": "https://developer.salesforce.com/wiki/multi_tenant_architecture",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "The noisy neighbor problem occurs when one tenant's performance is degraded because of the activities of another tenant.",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/antipatterns/noisy-neighbor/noisy-neighbor",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Sharing a single resource inherently carries the risk of noisy neighbor problems that you can't completely avoid",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/antipatterns/noisy-neighbor/noisy-neighbor",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "also often riskier because changes might affect your entire customer base",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/considerations/tenancy-models",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "more likely to reach Azure resource scale limits when you have a shared set of infrastructure",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/considerations/tenancy-models",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a commercial decision",
+    "url": "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/considerations/tenancy-models",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "historical reference only",
+    "url": "https://docs.aws.amazon.com/whitepapers/latest/saas-architecture-fundamentals/saas-architecture-fundamentals.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  }
+]
