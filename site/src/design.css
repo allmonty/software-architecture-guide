@@ -97,3 +97,9 @@
   .cards a, .track-cards a, .text-hits a { transition: none; }
   .cards a:hover, .track-cards a:hover, .text-hits a:hover { transform: none; }
 }
+
+/* ---- Top bar ---- */
+.top-actions { display: flex; align-items: center; gap: var(--s-2); }
+.coffee { display: inline-flex; align-items: center; gap: var(--s-1); padding: var(--s-1) var(--s-3); border: 1px solid var(--line); border-radius: var(--r-pill); background: var(--card); color: var(--fg); text-decoration: none; font-size: var(--t-sm); white-space: nowrap; }
+.coffee:hover { border-color: var(--accent); }
+@media (max-width: 520px) { .coffee-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } } /* raw: visually hidden, still read by screen readers */

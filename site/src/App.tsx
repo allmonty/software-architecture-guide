@@ -36,7 +36,12 @@ export function App() {
     <>
       <header className="top">
         <a href="#" className="brand">System Design Atlas</a>
-        <SettingsMenu />
+        <div className="top-actions">
+          <a className="coffee" href="https://buymeacoffee.com/allmonty" target="_blank" rel="noreferrer" title="Support this project on Buy Me a Coffee">
+            <span aria-hidden="true">☕</span> <span className="coffee-text">Buy me a coffee</span>
+          </a>
+          <SettingsMenu />
+        </div>
       </header>
       {id === "concepts" ? (
         <ConceptsPage focus={params.get("c")} />
