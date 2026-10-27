@@ -271,7 +271,7 @@ button.study { margin-left: auto; }
 .pill.src-primary { color: var(--c-confirmed); } .pill.src-secondary { color: var(--c-spec); }
 
 /* ---- Section navigation ---- */
-.sec { position: relative; scroll-margin-top: 12px; }
+.sec { position: relative; scroll-margin-top: 56px; }
 .anchor { font-size: .7em; margin-left: 8px; padding: 0 6px; border: 0; background: none; color: var(--muted); opacity: 0; cursor: pointer; vertical-align: middle; }
 .sec:hover .anchor, .anchor:focus-visible { opacity: 1; }
 @media (hover: none) { .anchor { opacity: .5; } }
