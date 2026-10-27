@@ -1,0 +1,56 @@
+[
+  {
+    "quote": "Photon must guarantee that a single click is never processed twice, since this leads to double-charging the advertisers",
+    "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Google loses money for every click which is not processed",
+    "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "stop trying to groom unbounded datasets into finite pools of information that eventually become complete",
+    "url": "https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "we will never know if or when we have seen all of our data",
+    "url": "https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "correctness, latency, and cost",
+    "url": "https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the time that each individual event occurred on its producing device",
+    "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "declares that event time has reached time t in that stream, meaning that there should be no more elements from the stream with a timestamp t' <= t",
+    "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "this places a limit on how deterministic event time applications can be",
+    "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "continuously draws snapshots of the distributed streaming data flow",
+    "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/stateful-stream-processing/",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]

@@ -1,0 +1,470 @@
+{
+  "id": "31-ad-click-aggregation",
+  "title": "Ad Click Aggregation and Stream Analytics",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "user",
+      "label": "User",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Sees an ad and clicks it; the click carries the id of the query or impression.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf"
+      ]
+    },
+    {
+      "id": "advertiser",
+      "label": "Advertiser",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Watches dashboards and is billed for valid clicks.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf"
+      ]
+    },
+    {
+      "id": "adserver",
+      "label": "Ad serving",
+      "kind": "external",
+      "c4": "external-system",
+      "summary": "Serves ads and logs the query or impression events that clicks later reference.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf"
+      ]
+    },
+    {
+      "id": "collector",
+      "label": "Click collector",
+      "kind": "edge",
+      "c4": "container",
+      "summary": "Receives clicks, assigns a unique click id, validates and writes to the replayable log. Industry practice.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf"
+      ]
+    },
+    {
+      "id": "clicklog",
+      "label": "Click log",
+      "kind": "queue",
+      "c4": "container",
+      "summary": "Partitioned, replayable log of raw clicks (kept so recovery can replay). Kafka-style systems let consumers rewind, which Flink's recovery needs.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/stateful-stream-processing/",
+        "https://raw.githubusercontent.com/apache/kafka/trunk/docs/design/design.md"
+      ]
+    },
+    {
+      "id": "querylog",
+      "label": "Query / impression log",
+      "kind": "queue",
+      "c4": "container",
+      "summary": "Events logged by the ad server; a click references its query id.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf"
+      ]
+    },
+    {
+      "id": "photon",
+      "label": "Dedup and join",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Joins each click with its query and guarantees no duplicates in the output (at-most-once), with near-exact real-time results and exactly-once eventually. Runs independently in at least two datacenters.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf"
+      ],
+      "group": "Photon-style dedup and join (per datacenter)"
+    },
+    {
+      "id": "dispatcher",
+      "label": "Dispatcher",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Reads clicks, skips ids already in the registry, sends the rest to a joiner and retries with backoff (at-least-once input).",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf"
+      ],
+      "parent": "photon",
+      "group": "Photon-style dedup and join (per datacenter)"
+    },
+    {
+      "id": "joiner",
+      "label": "Joiner",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Stateless server that looks up the query, registers the click id with a retry token, then writes the joined click to the output log.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf"
+      ],
+      "parent": "photon",
+      "group": "Photon-style dedup and join (per datacenter)"
+    },
+    {
+      "id": "idreg",
+      "label": "IdRegistry",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Replicated store of ids already joined in the last N days (3 in the paper's deployment); built on a Paxos-based key-value store with replicas in different regions, with server-side batching and sharding.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf"
+      ]
+    },
+    {
+      "id": "eventstore",
+      "label": "EventStore",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Looks up a query by id: an in-memory cache of recent queries backed by a log-based lookup.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf"
+      ]
+    },
+    {
+      "id": "joined",
+      "label": "Joined clicks log",
+      "kind": "queue",
+      "c4": "container",
+      "summary": "Deduplicated, enriched clicks used for billing and metrics.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf"
+      ]
+    },
+    {
+      "id": "agg",
+      "label": "Stream aggregator",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Counts clicks per ad per event-time window with a watermark, and checkpoints state with source offsets. Flink and Dataflow describe these mechanisms; the ad-specific job is our design.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf",
+        "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/stateful-stream-processing/",
+        "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/"
+      ],
+      "group": "Stream aggregator"
+    },
+    {
+      "id": "window",
+      "label": "Event-time windows",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Groups clicks by the time they happened rather than arrived; re-emits a window when late data arrives within the allowed lateness.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf",
+        "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/"
+      ],
+      "parent": "agg",
+      "group": "Stream aggregator"
+    },
+    {
+      "id": "wm",
+      "label": "Watermark and late data",
+      "kind": "service",
+      "c4": "component",
+      "summary": "A Watermark(t) declares that no more elements with timestamp up to t should arrive; most watermarks are heuristic, so later data is late and needs a policy.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf",
+        "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/"
+      ],
+      "parent": "agg",
+      "group": "Stream aggregator"
+    },
+    {
+      "id": "ckpt",
+      "label": "Checkpoints",
+      "kind": "datastore",
+      "c4": "component",
+      "summary": "Snapshots of operator state together with source positions, taken with barriers that flow in the stream; restart restores state and replays from the saved positions.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/stateful-stream-processing/"
+      ],
+      "parent": "agg",
+      "group": "Stream aggregator"
+    },
+    {
+      "id": "olap",
+      "label": "Aggregate store",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Stores totals by ad and window, written as upserts by (ad, window) so re-emitted windows replace rather than add. Industry practice.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf"
+      ]
+    },
+    {
+      "id": "batch",
+      "label": "Batch reconciliation",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Recomputes totals from the raw log, compares them with the stream results and corrects them before billing. Photon likewise runs a verification system that finds clicks present in the registry but missing from the output.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/41318.pdf"
+      ]
+    },
+    {
+      "id": "fastonly",
+      "label": "Alternative: stream-only (Kappa-style) pipeline",
+      "kind": "service",
+      "c4": "note",
+      "summary": "Rely on the replayable log and the stream engine alone, reprocessing the log for corrections instead of keeping a separate batch implementation. Trade-off depends on trust in replay and on logic differences.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "user-collector",
+      "from": "user",
+      "to": "collector",
+      "label": "click",
+      "mode": "sync"
+    },
+    {
+      "id": "collector-clicklog",
+      "from": "collector",
+      "to": "clicklog",
+      "label": "append click with unique id",
+      "mode": "async"
+    },
+    {
+      "id": "adserver-querylog",
+      "from": "adserver",
+      "to": "querylog",
+      "label": "log query / impression",
+      "mode": "async"
+    },
+    {
+      "id": "querylog-eventstore",
+      "from": "querylog",
+      "to": "eventstore",
+      "label": "populate cache and index",
+      "mode": "async"
+    },
+    {
+      "id": "clicklog-dispatcher",
+      "from": "clicklog",
+      "to": "dispatcher",
+      "label": "read clicks",
+      "mode": "sync"
+    },
+    {
+      "id": "disp-idreg",
+      "from": "dispatcher",
+      "to": "idreg",
+      "label": "already joined?",
+      "mode": "sync"
+    },
+    {
+      "id": "disp-joiner",
+      "from": "dispatcher",
+      "to": "joiner",
+      "label": "click to join (retry on failure)",
+      "mode": "sync"
+    },
+    {
+      "id": "joiner-eventstore",
+      "from": "joiner",
+      "to": "eventstore",
+      "label": "look up query",
+      "mode": "sync"
+    },
+    {
+      "id": "joiner-idreg",
+      "from": "joiner",
+      "to": "idreg",
+      "label": "register click id + token",
+      "mode": "sync"
+    },
+    {
+      "id": "joiner-joined",
+      "from": "joiner",
+      "to": "joined",
+      "label": "append joined click",
+      "mode": "async"
+    },
+    {
+      "id": "joined-window",
+      "from": "joined",
+      "to": "window",
+      "label": "joined clicks",
+      "mode": "async"
+    },
+    {
+      "id": "window-wm",
+      "from": "window",
+      "to": "wm",
+      "label": "window complete?",
+      "mode": "sync"
+    },
+    {
+      "id": "window-ckpt",
+      "from": "window",
+      "to": "ckpt",
+      "label": "snapshot state + offsets",
+      "mode": "async"
+    },
+    {
+      "id": "window-olap",
+      "from": "window",
+      "to": "olap",
+      "label": "upsert aggregate",
+      "mode": "async"
+    },
+    {
+      "id": "joined-batch",
+      "from": "joined",
+      "to": "batch",
+      "label": "raw joined log",
+      "mode": "async"
+    },
+    {
+      "id": "batch-olap",
+      "from": "batch",
+      "to": "olap",
+      "label": "correct totals",
+      "mode": "sync"
+    },
+    {
+      "id": "olap-adv",
+      "from": "olap",
+      "to": "advertiser",
+      "label": "dashboards and bills",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "click",
+      "name": "A click becomes an aggregate",
+      "steps": [
+        {
+          "edge": "user-collector",
+          "caption": "The click arrives at the collector, which assigns a unique click id."
+        },
+        {
+          "edge": "collector-clicklog",
+          "caption": "It is appended to the replayable click log."
+        },
+        {
+          "edge": "clicklog-dispatcher",
+          "caption": "The dispatcher reads it."
+        },
+        {
+          "edge": "disp-idreg",
+          "caption": "It checks the registry; an unseen id continues."
+        },
+        {
+          "edge": "disp-joiner",
+          "caption": "The click goes to a joiner."
+        },
+        {
+          "edge": "joiner-eventstore",
+          "caption": "The joiner finds the query the click refers to."
+        },
+        {
+          "edge": "joiner-idreg",
+          "caption": "It registers the click id (with a retry token); only one joiner can succeed for an id."
+        },
+        {
+          "edge": "joiner-joined",
+          "caption": "The joined click is appended to the output log."
+        },
+        {
+          "edge": "joined-window",
+          "caption": "The aggregator counts it in the event-time window of the click."
+        },
+        {
+          "edge": "window-olap",
+          "caption": "The window total is upserted into the aggregate store."
+        }
+      ]
+    },
+    {
+      "id": "duplicate",
+      "name": "The same click is seen twice (failure mode)",
+      "steps": [
+        {
+          "edge": "clicklog-dispatcher",
+          "caption": "A retry, or the pipeline in the second datacenter, reads the same click."
+        },
+        {
+          "edge": "disp-idreg",
+          "caption": "The registry already holds the id, so the dispatcher skips it; if a joiner races, only one registration succeeds and the other drops the event as a wasted join."
+        }
+      ]
+    },
+    {
+      "id": "joiner-crash",
+      "name": "A joiner crashes after registering the id (failure)",
+      "steps": [
+        {
+          "edge": "joiner-idreg",
+          "caption": "The id is registered but the joiner dies before writing output; no other joiner can write it."
+        },
+        {
+          "edge": "joiner-joined",
+          "caption": "The click is missing from the joined log."
+        },
+        {
+          "edge": "joined-batch",
+          "caption": "Verification compares inputs with outputs; for a click missing from the output whose joiner crashed, it deletes the id and re-injects the event."
+        }
+      ]
+    },
+    {
+      "id": "late",
+      "name": "A late click arrives after the watermark (failure mode)",
+      "steps": [
+        {
+          "edge": "joined-window",
+          "caption": "A click arrives for a window that the watermark has passed."
+        },
+        {
+          "edge": "window-wm",
+          "caption": "Within the allowed lateness the window is re-emitted with the corrected count; beyond it the event goes to a late stream (our design reasoning)."
+        },
+        {
+          "edge": "batch-olap",
+          "caption": "Batch reconciliation folds the late clicks into the final totals."
+        }
+      ]
+    },
+    {
+      "id": "worker-crash",
+      "name": "The aggregator crashes (failure)",
+      "steps": [
+        {
+          "edge": "window-ckpt",
+          "caption": "The latest checkpoint holds operator state and the positions in the sources."
+        },
+        {
+          "edge": "clicklog-dispatcher",
+          "caption": "After restart the job restores the state and the sources replay from the saved positions, so no click is lost or double counted in state."
+        },
+        {
+          "edge": "window-olap",
+          "caption": "Re-emitted windows overwrite the stored totals (upsert), so replayed output does not add twice."
+        }
+      ]
+    }
+  ]
+}
