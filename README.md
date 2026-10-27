@@ -133,7 +133,7 @@ The home page is a study guide: pick a goal (interview, building blocks, archite
 ```sh
 npm install && (cd site && npm install)   # once
 npm run dev      # from system-design/ or site/, http://localhost:5173
-npm run build    # static output in site/dist
+npm run build    # static output in docs/ (see Publishing on GitHub Pages)
 ```
 
 Each diagram follows the **C4 model**: switch between **1 · Context**, **2 · Containers** and **3 · Components** (the last only where the notes describe a container's internals). Higher levels roll relationships up from the lower ones. In a diagram: **click an element or a line** for its summary, confidence badge and sources. Pick a **flow** and use **← / →** (or the buttons) to step through it. Dashed borders mark `INDUSTRY PATTERN` components and dotted ones `SPECULATIVE`. Colours follow the C4 palette (person, external system, container, component) and each box shows a `[Type: technology]` line. Drag boxes to untangle lines (kept per view, with a Reset button). The views are **Graph**, **Split** (diagram and note side by side) and **Text**, and every page opens with a trust summary.
