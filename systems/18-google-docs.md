@@ -1,10 +1,29 @@
 # 18 — Google Docs (Real-Time Collaboration)
 
-> **Kind:** reference design with documented real parts. Google published a short 2010 series on how the new Docs editor syncs edits (operational transformation with a central server) but not a full architecture. The client/server protocol below follows the well-known **Jupiter-style client-server OT** as implemented in open-source `ot.js`, and is a design explanation, not a Google internals document.
-> **Basis:** upgraded from [`neokim-post/11`](../../neokim-post/11-how-google-docs-works.md), a summary of [How Does Google Docs Work](https://newsletter.systemdesign.one/p/how-does-google-docs-work) with reconstructed sections. Re-verified on 2026-10-27, see the log.
-> **Primary sources read in this session:** Neil Fraser, [*Differential Synchronization*](https://neil.fraser.name/writing/sync/) · Figma, [*How Figma's multiplayer technology works*](https://www.figma.com/blog/how-figmas-multiplayer-technology-works/) (2019-10-16) · Kleppmann et al., [*Interleaving anomalies in collaborative text editors*](https://martin.kleppmann.com/2019/03/25/papoc-interleaving-anomalies.html) (PaPoC 2019 page).
-> **Not re-read in this session:** Google's three September 2010 posts (their article bodies did not load in our fetches), the Wave OT whitepaper, Ellis & Gibbs and Nichols et al. (Jupiter), and the CRDT paper (HAL returned an access-denied page). Claims that depend on those were verified in the earlier pass (see the inherited log) and are marked accordingly.
-> **Tags:** `[CONFIRMED]` stated by a primary source we read now · `[EARLIER PASS]` verified in the neokim-post fact-check but not re-read now · `[INDUSTRY PATTERN]` standard design · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline.
+*A reference design built on verified building blocks. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** Real-time collaborative editing needs convergence, intention preservation and low latency. The classic client-server answer is operational transformation: one authority per document gives operations a total order, transforms concurrent ones against each other and broadcasts the result, while each client keeps one operation in flight plus a buffer. CRDTs reach convergence without a central server, at the cost of metadata and some anomalies.
+
+**Key numbers**
+- Fraser's differential sync is a symmetric diff-and-patch loop with fuzzy patching `[CONFIRMED]`.
+- Figma chose a server-authority design inspired by CRDTs, not OT `[CONFIRMED]` (2019).
+- Some published algorithms show interleaving anomalies `[CONFIRMED]` (Kleppmann et al.).
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Central authority per document | Simple total order and transformation | A single point per document and a server round trip |
+| One in-flight op plus a buffer | Simple client state machine | Latency under bursts |
+| OT vs CRDT | OT is proven for text with a server, CRDTs allow peer-to-peer and offline | CRDT metadata and anomaly care |
+
+**Common mistakes**
+- Calling differential sync manual: its patching is automatic but best effort.
+- Claiming Google Docs uses a specific CRDT: the sources describe client-server OT.
+- Forgetting presence and cursor transformation.
+
 
 ## Verified facts
 
@@ -168,6 +187,44 @@ stateDiagram-v2
 4. How do comments stay attached to the right text as it's edited?
 5. When would you pick a CRDT instead?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: text only or rich, offline, scale per doc.
+2. Estimate: concurrent editors per document.
+3. API: WebSocket with operations and revisions.
+4. Design: gateway, document server, revision log, presence.
+5. Deep dive: transform, client states, OT vs CRDT.
+6. Failure and scale: reconnects, large documents, offline edits.
+
+**If it grows 10×**
+- Large documents: snapshots to shorten log replay.
+- Many viewers: broadcast fan-out from a pub/sub layer.
+- Offline merges: queue operations and rebase on reconnect.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>Two people insert at the same position. Show how they converge.</summary>
+
+The server orders one first, then transforms the second against it so its insert shifts, and broadcasts the transformed operation. Each client transforms against its own pending edits.
+
+</details>
+
+<details><summary>Why one in-flight operation per client?</summary>
+
+It keeps the client-server protocol simple: the client only ever has to transform incoming operations against one outstanding op and a buffer.
+
+</details>
+
+<details><summary>When would you choose a CRDT?</summary>
+
+When you need offline or peer-to-peer editing without a central authority, accepting metadata overhead.
+
+</details>
+
 ## 📚 Further reading
 
 - Google Drive blog, John Day-Richter (Sept 2010), three-part series: [Working together, even apart](https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs_21.html) · [Conflict resolution](https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs_22.html) · [Making collaboration fast](https://drive.googleblog.com/2010/09/whats-different-about-new-google-docs.html)
@@ -178,6 +235,14 @@ stateDiagram-v2
 - Martin Kleppmann, [CRDTs: The hard parts (talk)](https://www.youtube.com/watch?v=x7drE24geUw)
 - [Yjs](https://yjs.dev/) · [Automerge](https://automerge.org/)
 - Figma, [How Figma's multiplayer technology works](https://www.figma.com/blog/how-figmas-multiplayer-technology-works/)
+
+## Sources and provenance
+
+> **Kind:** reference design with documented real parts. Google published a short 2010 series on how the new Docs editor syncs edits (operational transformation with a central server) but not a full architecture. The client/server protocol below follows the well-known **Jupiter-style client-server OT** as implemented in open-source `ot.js`, and is a design explanation, not a Google internals document.
+> **Basis:** upgraded from [`neokim-post/11`](../../neokim-post/11-how-google-docs-works.md), a summary of [How Does Google Docs Work](https://newsletter.systemdesign.one/p/how-does-google-docs-work) with reconstructed sections. Re-verified on 2026-10-27, see the log.
+> **Primary sources read in this session:** Neil Fraser, [*Differential Synchronization*](https://neil.fraser.name/writing/sync/) · Figma, [*How Figma's multiplayer technology works*](https://www.figma.com/blog/how-figmas-multiplayer-technology-works/) (2019-10-16) · Kleppmann et al., [*Interleaving anomalies in collaborative text editors*](https://martin.kleppmann.com/2019/03/25/papoc-interleaving-anomalies.html) (PaPoC 2019 page).
+> **Not re-read in this session:** Google's three September 2010 posts (their article bodies did not load in our fetches), the Wave OT whitepaper, Ellis & Gibbs and Nichols et al. (Jupiter), and the CRDT paper (HAL returned an access-denied page). Claims that depend on those were verified in the earlier pass (see the inherited log) and are marked accordingly.
+> **Tags:** `[CONFIRMED]` stated by a primary source we read now · `[EARLIER PASS]` verified in the neokim-post fact-check but not re-read now · `[INDUSTRY PATTERN]` standard design · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline.
 
 ---
 ## ✅ Verification log

@@ -1,9 +1,29 @@
 # 03 — Distributed Key-Value Store (Dynamo-style)
 
-> **Kind:** real-system. This is the design in Amazon's 2007 Dynamo paper, compared against what Apache Cassandra's docs say it kept and changed.
-> **Sources read on 2026-10-27:** [DeCandia et al., *Dynamo: Amazon's Highly Available Key-value Store*, SOSP 2007](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf) (full text, 16 pages) · [Apache Cassandra docs: Dynamo](https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html) · [USENIX ATC '22, *Amazon DynamoDB: A Scalable, Predictably Performant, and Fully Managed NoSQL Database Service*](https://www.usenix.org/conference/atc22/presentation/elhemali) (abstract only).
-> **Not the same thing:** *Dynamo* (the 2007 paper, an internal Amazon system) and *DynamoDB* (the AWS service launched in 2012 `[CONFIRMED]` by the ATC '22 abstract) are different systems that share a name and some ideas. This note describes the paper. We did not read the DynamoDB paper in full, so we claim nothing about how the two differ internally.
-> **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice, no single authority · `[SPECULATIVE]` plausible design choice.
+*A documented real system. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** Dynamo is an always-writeable key-value store. It places keys on a consistent-hash ring with virtual nodes, replicates each key to N nodes, and lets you tune R and W. Writes survive failures through a sloppy quorum and hinted handoff, conflicts are detected with vector clocks and reconciled on read, and replicas converge through read repair and Merkle-tree anti-entropy.
+
+**Key numbers**
+- Common (N,R,W) = (3,2,2) `[CONFIRMED]`.
+- 99.9th-percentile SLA example: 300 ms at 500 requests/s `[CONFIRMED]`.
+- 99.9995% successful responses over the first two years, with no data-loss event `[CONFIRMED]` (authors' own report).
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Sloppy quorum + hinted handoff | Writes succeed during failures | Weaker guarantees: a 'quorum' may include stand-ins |
+| Vector clocks, client reconciliation | No silent lost updates | The application must merge versions |
+| Zero-hop routing | No multi-hop latency variance | Every node must hold the ring map |
+
+**Common mistakes**
+- Saying 'DynamoDB' and then describing the 2007 paper's vector clocks: they are different systems.
+- Assuming R+W>N means strong consistency under a sloppy quorum.
+- Using last-write-wins without acknowledging that it drops one of two concurrent writes.
+
 
 ---
 
@@ -174,6 +194,44 @@ Each node has three components: **request coordination**, **membership and failu
 5. A node was down for a day. How does it catch up (hints, read repair, anti-entropy)?
 6. Why gossip, and what could go wrong with a ring that is "logically partitioned"?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: availability vs consistency, object size, scale.
+2. Estimate: keys, replication factor, node count.
+3. API: `get(key)` and `put(key, context, value)`.
+4. Design: ring with virtual nodes, preference list, coordinator.
+5. Deep dive: quorums, hinted handoff, vector clocks.
+6. Failure and scale: node loss, permanent divergence, adding nodes.
+
+**If it grows 10×**
+- More nodes means more gossip state: keep the membership data compact (equal-size partitions did this).
+- Hot keys: tune N, R and W per use and cache reads.
+- Multi-datacenter: spread the preference list across sites.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>Walk through put with N=3, W=2 and one replica down.</summary>
+
+The coordinator writes locally, sends to the other reachable nodes, and a stand-in node takes the down replica's copy with a hint. Two acks meet W, so the client gets success. The stand-in hands the replica back on recovery.
+
+</details>
+
+<details><summary>Why not always use last-write-wins?</summary>
+
+It silently drops one of two concurrent writes. A shopping cart merge needs both. Vector clocks detect the concurrency so the application can merge.
+
+</details>
+
+<details><summary>A node was down for a day. How does it catch up?</summary>
+
+Hinted replicas are delivered first, read repair fixes stale replicas opportunistically, and Merkle-tree anti-entropy repairs lasting divergence cheaply.
+
+</details>
+
 ## 📚 Further reading
 
 - [Dynamo paper (SOSP 2007)](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf)
@@ -181,6 +239,13 @@ Each node has three components: **request coordination**, **membership and failu
 - [Amazon DynamoDB, ATC '22](https://www.usenix.org/conference/atc22/presentation/elhemali) (the service, not the 2007 system)
 - [System Design Primer: key-value store for a search engine, and the real-world architecture list](https://github.com/donnemartin/system-design-primer) (secondary)
 - Related in this repo: [`neokim-post/04` Kafka](../../neokim-post/04-how-apache-kafka-works.md) for replication via ISR, a different approach to the same availability/consistency question.
+
+## Sources and provenance
+
+> **Kind:** real-system. This is the design in Amazon's 2007 Dynamo paper, compared against what Apache Cassandra's docs say it kept and changed.
+> **Sources read on 2026-10-27:** [DeCandia et al., *Dynamo: Amazon's Highly Available Key-value Store*, SOSP 2007](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf) (full text, 16 pages) · [Apache Cassandra docs: Dynamo](https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html) · [USENIX ATC '22, *Amazon DynamoDB: A Scalable, Predictably Performant, and Fully Managed NoSQL Database Service*](https://www.usenix.org/conference/atc22/presentation/elhemali) (abstract only).
+> **Not the same thing:** *Dynamo* (the 2007 paper, an internal Amazon system) and *DynamoDB* (the AWS service launched in 2012 `[CONFIRMED]` by the ATC '22 abstract) are different systems that share a name and some ideas. This note describes the paper. We did not read the DynamoDB paper in full, so we claim nothing about how the two differ internally.
+> **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice, no single authority · `[SPECULATIVE]` plausible design choice.
 
 ---
 ## ✅ Verification log

@@ -144,3 +144,8 @@ html, body { overflow-x: hidden; }
 .split.mode-text .notes { max-width: 960px; margin: 0 auto; }
 .notes.hidden { display: none; }
 .legend[hidden] { display: none; }
+
+.notes details { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin: 8px 0; background: var(--card); }
+.notes details > summary { cursor: pointer; font-weight: 600; }
+.notes details[open] > summary { margin-bottom: 6px; }
+.glance { border-left: 4px solid var(--accent); padding-left: 14px; }

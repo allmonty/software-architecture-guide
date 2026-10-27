@@ -1,8 +1,29 @@
 # 02 — Rate Limiter
 
-> **Kind:** mostly real-system. Stripe, Cloudflare and Envoy each document how they limit requests, and the claims below are tied to those texts. The combined "interview design" at the end is a synthesis `[INDUSTRY PATTERN]`.
-> **Sources read on 2026-10-27:** [Stripe, *Scaling your API with rate limiters*](https://stripe.com/blog/rate-limiters) (2017) · [Cloudflare, *Counting things, a lot of different things*](https://blog.cloudflare.com/counting-things-a-lot-of-different-things/) · Envoy docs: [global rate limiting](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/other_features/global_rate_limiting) and [rate limit filter](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/rate_limit_filter) · [Redis `INCR`](https://redis.io/docs/latest/commands/incr/) (rate limiter pattern) · [IETF RateLimit headers draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/).
-> **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice, no single authority · `[SPECULATIVE]` plausible design choice.
+*A documented real system. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** A rate limiter decides, per key, whether a request may proceed. The choice of algorithm (fixed window, sliding window counter, token bucket) matters less than doing the check atomically in a shared store, failing open when that store is down, and returning a clear 429. Stripe's four mechanisms show that fairness limits and load shedding are separate jobs.
+
+**Key numbers**
+- Cloudflare's sliding-window approximation: 0.003% of 400M requests wrongly allowed or limited, 6% average gap `[CONFIRMED]`.
+- Stripe's example concurrency limit is 20 requests in flight `[CONFIRMED]`.
+- IETF `RateLimit` headers are still an active Internet-Draft (version 11) `[CONFIRMED]`.
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Token bucket | Allows bursts above the steady rate | Two parameters to tune |
+| Sliding-window counter | Smooth, O(1) memory per key | An approximation of the true rate |
+| Fail open | The API stays up if the limiter breaks | Abuse gets through during an outage |
+
+**Common mistakes**
+- Doing read-then-write on the counter, which races. Use one atomic operation.
+- Failing closed by default so a Redis outage takes the whole API down.
+- Treating rate limiting as only a per-user algorithm and ignoring load shedding and concurrency limits.
+
 
 ---
 
@@ -152,6 +173,44 @@ Capacity is not worked out here because it depends entirely on the assumed traff
 5. How do you roll out a new, lower limit safely?
 6. How would you make limits fair across a multi-region deployment?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: key (user, IP, API key), hard or soft limit, one region or global.
+2. Estimate: requests/s and keys, which drive store size and round trips.
+3. API: `429` with a retry hint.
+4. Design: gateway filter, local bucket, shared counter store, config service.
+5. Deep dive: algorithm choice and atomic updates.
+6. Failure and scale: store outage (fail open), hot key, rollout with dark launch.
+
+**If it grows 10×**
+- One abusive key can overload one shard: cache the blocked decision locally.
+- Cross-region exactness gets expensive: count per site and accept approximation.
+- More rules need a config service with hot reload and a kill switch.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>Token bucket vs sliding-window counter?</summary>
+
+Token bucket permits a burst up to its capacity then a steady rate. The sliding counter weights the previous window by its overlap, so it is smooth but approximate. Choose by whether bursts are acceptable.
+
+</details>
+
+<details><summary>Two servers both read 9 of 10 and both allow. Fix?</summary>
+
+The check and update must be one atomic step on the store (a Lua script or an atomic increment), never read-then-write.
+
+</details>
+
+<details><summary>The Redis cluster is down. What happens?</summary>
+
+Fail open with an alert and a kill switch, as Stripe does. State the consequence: abusive traffic passes until recovery.
+
+</details>
+
 ## 📚 Further reading
 
 - [Stripe: Scaling your API with rate limiters](https://stripe.com/blog/rate-limiters)
@@ -160,6 +219,12 @@ Capacity is not worked out here because it depends entirely on the assumed traff
 - [Redis: INCR (rate limiter pattern)](https://redis.io/docs/latest/commands/incr/)
 - [IETF draft: RateLimit header fields](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/)
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (general background, secondary source)
+
+## Sources and provenance
+
+> **Kind:** mostly real-system. Stripe, Cloudflare and Envoy each document how they limit requests, and the claims below are tied to those texts. The combined "interview design" at the end is a synthesis `[INDUSTRY PATTERN]`.
+> **Sources read on 2026-10-27:** [Stripe, *Scaling your API with rate limiters*](https://stripe.com/blog/rate-limiters) (2017) · [Cloudflare, *Counting things, a lot of different things*](https://blog.cloudflare.com/counting-things-a-lot-of-different-things/) · Envoy docs: [global rate limiting](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/other_features/global_rate_limiting) and [rate limit filter](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/rate_limit_filter) · [Redis `INCR`](https://redis.io/docs/latest/commands/incr/) (rate limiter pattern) · [IETF RateLimit headers draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-ratelimit-headers/).
+> **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice, no single authority · `[SPECULATIVE]` plausible design choice.
 
 ---
 ## ✅ Verification log

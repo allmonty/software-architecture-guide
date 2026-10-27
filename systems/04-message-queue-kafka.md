@@ -1,8 +1,29 @@
 # 04 — Message Queue / Log (Apache Kafka)
 
-> **Kind:** real-system (open source, so the behaviour is documented).
-> **Basis:** upgraded from [`neokim-post/04`](../../neokim-post/04-how-apache-kafka-works.md), a summary of [How Kafka Works](https://newsletter.systemdesign.one/p/how-kafka-works) (guest author Stanislav Kozlovski). Re-verified on 2026-10-27 against the Apache Kafka docs and release announcements listed in the log at the end.
-> **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible choice. Claims about defaults and release status are `[CONFIRMED]` against the linked Kafka page unless marked otherwise. The "author's figure" notes mean the claim comes from the newsletter article and was not independently checked.
+*A documented real system. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** Kafka is a partitioned, replicated, append-only log. Producers append, consumers pull at their own pace, and retention is by time or size rather than consumption, so data can be replayed. Durability comes from replicating each partition and acknowledging only after the in-sync replicas have it. A Raft quorum (KRaft) manages cluster metadata.
+
+**Key numbers**
+- Defaults: `acks=all`, `min.insync.replicas=1`, `unclean.leader.election.enable=false`, `default.replication.factor=1` `[CONFIRMED]`.
+- Broker session timeout 9 s, heartbeat 2 s `[CONFIRMED]`.
+- Kafka 4.0 (2025-03-18) is the first release without ZooKeeper `[CONFIRMED]`.
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Partition as the unit of order | Parallelism and per-key ordering | No global order, and repartitioning breaks key ordering |
+| `acks=all` + `min.insync.replicas` | Acknowledged writes survive a broker loss | Higher latency, and writes rejected when the ISR shrinks |
+| Tiered storage | Cheap long retention | Remote reads are slower |
+
+**Common mistakes**
+- Assuming the default replication factor is 3 (the broker default is 1).
+- Expecting global ordering across partitions.
+- Claiming exactly-once for external side effects: it holds for Kafka-to-Kafka processing only.
+
 
 ---
 
@@ -233,6 +254,44 @@ No/low-code integration runtime. **Source connectors** (DB/CDC → Kafka) and **
 4. How many partitions should a topic have? What does over-partitioning cost?
 5. Compare the transactional outbox + CDC (Debezium) with dual writes to DB and Kafka.
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: ordering needs, retention, throughput, consumers.
+2. Estimate: bytes per second × retention × replication.
+3. API: produce with key, consume in a group.
+4. Design: topics, partitions, replicas, controller quorum.
+5. Deep dive: ISR, acks, consumer groups, idempotent producer.
+6. Failure and scale: leader loss, rebalancing, tiered storage.
+
+**If it grows 10×**
+- Storage cost grows with retention: use tiered storage.
+- Rebalances pause consumers: use the newer consumer protocol.
+- Hot partitions: change the partitioning key or add sub-keys.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>Per-customer ordering but one customer is 50% of traffic?</summary>
+
+Ordering holds only within a partition, so that customer's traffic lands on one partition and becomes a hot spot. Options: accept it, split by a finer key if order is only needed per entity, or shard that customer across partitions and give up a single order.
+
+</details>
+
+<details><summary>A partition leader's broker loses power?</summary>
+
+The controller notices missed heartbeats, fences the broker and elects a new leader from the ISR. Producers retry, and the idempotent producer's sequence numbers prevent duplicates.
+
+</details>
+
+<details><summary>Why does exactly-once break when the consumer writes to Postgres?</summary>
+
+Kafka's transactions cover Kafka reads and writes only. The database write is an external side effect, so use an idempotent write or an outbox to get effectively-once.
+
+</details>
+
 ## 📚 Further reading
 
 - Jay Kreps, [The Log: What every software engineer should know about real-time data's unifying abstraction](https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying)
@@ -242,6 +301,12 @@ No/low-code integration runtime. **Source connectors** (DB/CDC → Kafka) and **
 - [Raft consensus visualised](https://raft.github.io/)
 - [Martin Fowler: Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html)
 - Related in this folder: [19 Stock exchange](19-stock-exchange.md) (sequenced logs, deterministic replay)
+
+## Sources and provenance
+
+> **Kind:** real-system (open source, so the behaviour is documented).
+> **Basis:** upgraded from [`neokim-post/04`](../../neokim-post/04-how-apache-kafka-works.md), a summary of [How Kafka Works](https://newsletter.systemdesign.one/p/how-kafka-works) (guest author Stanislav Kozlovski). Re-verified on 2026-10-27 against the Apache Kafka docs and release announcements listed in the log at the end.
+> **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible choice. Claims about defaults and release status are `[CONFIRMED]` against the linked Kafka page unless marked otherwise. The "author's figure" notes mean the claim comes from the newsletter article and was not independently checked.
 
 ---
 ## ✅ Verification log

@@ -1,10 +1,29 @@
 # 19 — Stock Exchange (Order Matching)
 
-> **Kind:** reference design with documented real parts. Real exchanges publish **protocol specifications** (Nasdaq ITCH, OUCH, MoldUDP64, FIX) and market-structure rules, and the LMAX team published its **architecture** in detail. They do not publish a full internal design of a production exchange's matching engine, so the diagram below combines the standard design with LMAX's documented approach `[INDUSTRY PATTERN]`.
-> **Basis:** upgraded from [`neokim-post/14`](../../neokim-post/14-how-stock-exchange-works.md), a summary of [Stock Exchange System Design](https://newsletter.systemdesign.one/p/stock-exchange-system-design) with reconstructed sections. Re-verified on 2026-10-27, see the log.
-> **Primary sources read in this session:** Martin Fowler, [*The LMAX Architecture*](https://martinfowler.com/articles/lmax.html) (2011-07-12) · Thompson et al., [*Disruptor: High performance alternative to bounded queues*](https://lmax-exchange.github.io/disruptor/disruptor.html) · Nasdaq, [MoldUDP64 Protocol Specification V1.00](https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/moldudp64.pdf) (PDF text extracted locally).
-> **Dated material:** LMAX's figures come from a 2011 benchmark on Nehalem-era hardware, so treat them as design evidence, not current performance.
-> **Tags:** `[CONFIRMED]` stated by a primary source we read now · `[EARLIER PASS]` verified in the neokim-post fact-check but not re-read now · `[INDUSTRY PATTERN]` standard design · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline.
+*A reference design built on verified building blocks. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** An exchange stamps every inbound order, cancel and fill with a global sequence number and feeds them to a deterministic, single-threaded, in-memory matching engine using price-time priority. That makes fairness, replay and failover simple: replicas consume the same sequenced input. LMAX published this design, and exchanges publish multicast market-data protocols such as MoldUDP64 with sequence-number gap recovery.
+
+**Key numbers**
+- LMAX: 6 million orders/s on a single thread (2011 benchmark) `[CONFIRMED]`.
+- Full restart including a day's journal replay in under a minute `[CONFIRMED]`.
+- Disruptor: 3 orders of magnitude lower latency, ~8× throughput vs queues `[CONFIRMED]`.
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Single-threaded engine per shard | No locks, deterministic replay | A hot symbol cannot be split |
+| Sequence everything inbound | Fairness and replay | One total order per shard |
+| Multicast market data with sequence numbers | Everyone sees the same stream | Gap recovery through re-request servers |
+
+**Common mistakes**
+- Giving new orders and cancels independent inbound sequences: the engine then has no defined order.
+- Using wall-clock reads or unordered iteration in the matching path.
+- Saying 25M messages/s was single-threaded: the paper does not say so.
+
 
 ## Verified facts
 
@@ -226,6 +245,44 @@ flowchart LR
 4. A market-data subscriber misses packets 1,000,123–1,000,130. How does it recover?
 5. Compare sequencing via a central sequencer vs Kafka partitions. Where does each break down?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: order types, symbols, latency target.
+2. Estimate: orders/s and book size.
+3. API: new, cancel, execution report, market data.
+4. Design: gateway, risk, sequencer, engine, journal, publisher.
+5. Deep dive: matching, determinism, event sourcing.
+6. Failure and scale: failover, gap recovery, hot symbols.
+
+**If it grows 10×**
+- More symbols: shard by symbol.
+- Market-data fan-out: multicast plus snapshot service.
+- Audit: keep the journal as the source of truth.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>Why a single sequencer and a single-threaded engine?</summary>
+
+A total order makes matching deterministic and fair, and a single thread removes locks. Replicas replay the same input to stay identical.
+
+</details>
+
+<details><summary>How does failover work?</summary>
+
+A hot standby consumes the same sequenced input, so its state is identical, and traffic switches to it. Restarts replay the journal from a snapshot.
+
+</details>
+
+<details><summary>How does a subscriber recover a missed multicast packet?</summary>
+
+Detect the gap from sequence numbers and send a request to a re-request server, which resends by unicast.
+
+</details>
+
 ## 📚 Further reading
 
 - Martin Fowler, [The LMAX Architecture](https://martinfowler.com/articles/lmax.html) · [LMAX Disruptor](https://lmax-exchange.github.io/disruptor/)
@@ -235,6 +292,14 @@ flowchart LR
 - [Co-location strategies (QuestDB glossary)](https://questdb.com/glossary/exchange-co-location-strategies/)
 - Alex Xu, *System Design Interview Vol. 2*: "Stock Exchange" chapter
 - Related in this folder: [04 Message queue / log](04-message-queue-kafka.md)
+
+## Sources and provenance
+
+> **Kind:** reference design with documented real parts. Real exchanges publish **protocol specifications** (Nasdaq ITCH, OUCH, MoldUDP64, FIX) and market-structure rules, and the LMAX team published its **architecture** in detail. They do not publish a full internal design of a production exchange's matching engine, so the diagram below combines the standard design with LMAX's documented approach `[INDUSTRY PATTERN]`.
+> **Basis:** upgraded from [`neokim-post/14`](../../neokim-post/14-how-stock-exchange-works.md), a summary of [Stock Exchange System Design](https://newsletter.systemdesign.one/p/stock-exchange-system-design) with reconstructed sections. Re-verified on 2026-10-27, see the log.
+> **Primary sources read in this session:** Martin Fowler, [*The LMAX Architecture*](https://martinfowler.com/articles/lmax.html) (2011-07-12) · Thompson et al., [*Disruptor: High performance alternative to bounded queues*](https://lmax-exchange.github.io/disruptor/disruptor.html) · Nasdaq, [MoldUDP64 Protocol Specification V1.00](https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/moldudp64.pdf) (PDF text extracted locally).
+> **Dated material:** LMAX's figures come from a 2011 benchmark on Nehalem-era hardware, so treat them as design evidence, not current performance.
+> **Tags:** `[CONFIRMED]` stated by a primary source we read now · `[EARLIER PASS]` verified in the neokim-post fact-check but not re-read now · `[INDUSTRY PATTERN]` standard design · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline.
 
 ---
 ## ✅ Verification log

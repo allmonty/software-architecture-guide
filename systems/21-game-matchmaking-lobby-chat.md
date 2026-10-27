@@ -1,10 +1,29 @@
 # 21 — Online Game: Matchmaking + Lobby Chat
 
-> **Kind:** reference design built on verified components. Studios rarely publish how their matchmaker decides *who plays whom*, but there is good public material on the **pieces**: Google/Unity's open-source **Open Match** (matchmaking framework) and **Agones** (game-server fleets on Kubernetes), Microsoft's **TrueSkill** skill-rating paper, and Riot Games' engineering posts on its **chat service** and **messaging service**. The rest (queue tuning, party handling, latency weighting) is standard practice `[INDUSTRY PATTERN]`.
-> **Sources read on 2026-10-27:** Open Match docs: [Overview](https://open-match.dev/site/docs/overview/) and [Matchmaker guide](https://open-match.dev/site/docs/guides/matchmaker/) · Agones docs: [Overview](https://agones.dev/site/docs/overview/), [GameServerAllocation reference](https://agones.dev/site/docs/reference/gameserverallocation/), [Fleet reference](https://agones.dev/site/docs/reference/fleet/), [Create a GameServer](https://agones.dev/site/docs/getting-started/create-gameserver/) · Herbrich, Minka, Graepel, [*TrueSkill: A Bayesian Skill Rating System*](https://www.microsoft.com/en-us/research/publication/trueskilltm-a-bayesian-skill-rating-system/) (NIPS 2006; we read the Microsoft Research page's abstract, because the PDF's text would not decode) · Riot Games Tech Blog: [Chat Service Architecture: Servers](https://technology.riotgames.com/news/chat-service-architecture-servers) (2015-09-23) and [Riot Messaging Service](https://technology.riotgames.com/news/riot-messaging-service) (2017-02-28).
-> **Not read:** studio matchmaking internals, Blizzard/Valve/Epic material, netcode, anti-cheat, the Riot *Persistence* post (it appeared only in a search summary), and TrueSkill's formulas. We make no claims about those.
-> **Dated material:** the Riot posts are from 2015 and 2017. Open Match's docs show release 1.8.0 and were last modified 2025-06-17 (a newer "Open Match 2" is referenced).
-> **Tags:** `[CONFIRMED]` stated by a primary source we read · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible, or a tuning choice.
+*A reference design built on verified building blocks. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** Matchmaking collects waiting players as tickets, forms balanced groups with a match function, allocates a ready dedicated server, and writes the connection details back to every ticket. Open Match provides the framework, Agones the server fleets, and TrueSkill-style ratings track uncertainty. Lobby chat and push events run on regional shards, as in Riot's published designs.
+
+**Key numbers**
+- Agones allocation atomically moves a Ready server to Allocated `[CONFIRMED]`.
+- Riot chat clusters of 6–12 nodes per region, load-tested to 30+ servers `[CONFIRMED]` (2015).
+- TrueSkill tracks uncertainty and infers individual skill from team results `[CONFIRMED]`.
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Widening search windows over wait time | Bounded queues | Less balanced games for long waiters |
+| Warm server fleets | Fast allocation | Idle capacity |
+| Regional shards | Latency and isolation | No cross-region play by default |
+
+**Common mistakes**
+- Saying 'use Open Match' as if it chooses who plays whom: you write the match function.
+- Putting rating updates on the queue's critical path.
+- Claiming a named game's matchmaking from these building blocks.
+
 
 ---
 
@@ -161,11 +180,57 @@ After match: result ──► rating service (TrueSkill-style) ──► profile
 7. Why use regional shards for chat and matchmaking, and what do you lose?
 8. How would you update ratings after a team match, and where does that run?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: mode, team size, parties, regions, backfill.
+2. Estimate: concurrent queue size and match rate.
+3. API: queue, ready check, assignment.
+4. Design: frontend, ticket pool, match function, allocation, chat.
+5. Deep dive: rating, widening, parties, backfill.
+6. Failure and scale: no ready server, declines, disconnects.
+
+**If it grows 10×**
+- Queue size: partition by region and mode.
+- Server demand: autoscale the warm fleet on queue depth.
+- Chat: more nodes per shard with local session reads.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>A player has waited 90 seconds. What changes?</summary>
+
+The match function widens the acceptable rating and latency windows for that ticket, trading match quality for time.
+
+</details>
+
+<details><summary>How do you allocate a server in under a second?</summary>
+
+Keep a warm buffer of Ready servers per region and mode, and allocate atomically, treating an empty buffer as back-pressure.
+
+</details>
+
+<details><summary>How do parties queue?</summary>
+
+As one ticket with a representative rating and a rule against extreme skill gaps, matched as a unit.
+
+</details>
+
 ## 📚 Further reading
 
 - The sources listed at the top. Also the Open Match and Agones documentation home pages, and [Riot's *Chat Service Architecture: Protocol* and *Persistence*](https://technology.riotgames.com/news/chat-service-architecture-protocol) (the latter not read here).
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary).
 - Related in this repo: [08 Chat (WhatsApp)](08-chat-whatsapp.md), [09 Discord](09-discord.md) (voice and real-time fan-out), [10 Notification system](10-notification-system.md), [15 Uber](15-uber-proximity-dispatch.md) (matching in batches), [02 Rate limiter](02-rate-limiter.md).
+
+## Sources and provenance
+
+> **Kind:** reference design built on verified components. Studios rarely publish how their matchmaker decides *who plays whom*, but there is good public material on the **pieces**: Google/Unity's open-source **Open Match** (matchmaking framework) and **Agones** (game-server fleets on Kubernetes), Microsoft's **TrueSkill** skill-rating paper, and Riot Games' engineering posts on its **chat service** and **messaging service**. The rest (queue tuning, party handling, latency weighting) is standard practice `[INDUSTRY PATTERN]`.
+> **Sources read on 2026-10-27:** Open Match docs: [Overview](https://open-match.dev/site/docs/overview/) and [Matchmaker guide](https://open-match.dev/site/docs/guides/matchmaker/) · Agones docs: [Overview](https://agones.dev/site/docs/overview/), [GameServerAllocation reference](https://agones.dev/site/docs/reference/gameserverallocation/), [Fleet reference](https://agones.dev/site/docs/reference/fleet/), [Create a GameServer](https://agones.dev/site/docs/getting-started/create-gameserver/) · Herbrich, Minka, Graepel, [*TrueSkill: A Bayesian Skill Rating System*](https://www.microsoft.com/en-us/research/publication/trueskilltm-a-bayesian-skill-rating-system/) (NIPS 2006; we read the Microsoft Research page's abstract, because the PDF's text would not decode) · Riot Games Tech Blog: [Chat Service Architecture: Servers](https://technology.riotgames.com/news/chat-service-architecture-servers) (2015-09-23) and [Riot Messaging Service](https://technology.riotgames.com/news/riot-messaging-service) (2017-02-28).
+> **Not read:** studio matchmaking internals, Blizzard/Valve/Epic material, netcode, anti-cheat, the Riot *Persistence* post (it appeared only in a search summary), and TrueSkill's formulas. We make no claims about those.
+> **Dated material:** the Riot posts are from 2015 and 2017. Open Match's docs show release 1.8.0 and were last modified 2025-06-17 (a newer "Open Match 2" is referenced).
+> **Tags:** `[CONFIRMED]` stated by a primary source we read · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible, or a tuning choice.
 
 ---
 ## ✅ Verification log

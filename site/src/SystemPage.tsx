@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import type { System } from "./data.ts";
 import { DiagramView } from "./DiagramView.tsx";
 import { systems } from "./data.ts";
@@ -99,7 +100,7 @@ export function SystemPage({
           </div>
         )}
         <article className={`notes right${mode === "graph" ? " hidden" : ""}`}>
-          <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{system.markdown}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={components}>{system.markdown}</ReactMarkdown>
         </article>
       </div>
     </main>

@@ -1,9 +1,29 @@
 # 08 — Chat (WhatsApp)
 
-> **Kind:** reference design with a documented real-system layer. WhatsApp does **not** publish its server architecture. What is public and verified here: the encryption design (WhatsApp Encryption Overview, v9, 2026-02-25), the multi-device design (Meta Engineering, 2021), message retention (privacy policy) and old Erlang/FreeBSD scaling milestones (WhatsApp blog, 2012). The Redis/Kafka/Cassandra/Consul stack in the diagrams below is the standard interview design, **not** WhatsApp's actual stack.
-> **Basis:** upgraded from [`neokim-post/02`](../../neokim-post/02-how-whatsapp-works.md), a summary of [WhatsApp System Design](https://newsletter.systemdesign.one/p/whatsapp-system-design) (guest author Hayk Simonyan). Re-verified on 2026-10-27, see the log.
-> **Primary sources read:** [WhatsApp Encryption Overview whitepaper](https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf) (v9) · [Meta Engineering: multi-device](https://engineering.fb.com/2021/07/14/security/whatsapp-multi-device/) · [WhatsApp privacy policy](https://www.whatsapp.com/legal/privacy-policy) · [WhatsApp blog: 1 million is so 2011](https://blog.whatsapp.com/1-million-is-so-2011).
-> **Tags:** `[CONFIRMED]` stated by a WhatsApp/Meta primary source · `[INDUSTRY PATTERN]` standard design, not stated for WhatsApp · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline: content beyond the newsletter's public half.
+*A reference design built on verified building blocks. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** A chat system keeps one persistent connection per device, routes ciphertext between the sender's and recipient's servers, and stores undelivered messages until the recipient reconnects. WhatsApp's published facts are the encryption design (Signal protocol, per-device client fan-out, Noise transport), the 30-day retention of undelivered messages and old connection-scaling milestones. Everything else here is the standard interview design.
+
+**Key numbers**
+- Undelivered messages kept encrypted for up to 30 days, deleted after delivery `[CONFIRMED]` (privacy policy).
+- Over 2 million TCP connections on one FreeBSD/Erlang server in early 2012 `[CONFIRMED]`.
+- A 2021 multi-device beta allowed up to four non-phone devices `[CONFIRMED]`.
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Persistent connection per device | Low-latency push | Stateful servers and a connection registry |
+| Store-and-forward inbox | Offline delivery without keeping history | Retention and storage limits |
+| Client-side fan-out for E2EE | The server never sees plaintext | Sender work grows with devices and group size |
+
+**Common mistakes**
+- Describing Redis, Kafka and Cassandra as WhatsApp's actual stack: they are interview-design choices.
+- Forgetting offline delivery, which is the hard requirement.
+- Treating a push notification as a delivery receipt.
+
 
 ---
 
@@ -293,6 +313,44 @@ sequenceDiagram
 4. A user has 4 devices, and one is offline for 3 weeks. Walk through delivery.
 5. Why Cassandra for messages but Postgres for users and groups?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: 1:1 or groups, media, offline, E2EE, multi-device.
+2. Estimate: connections, messages/s, storage.
+3. API: connect, send with a client message ID, ack.
+4. Design: gateways, registry, queue, inbox, push.
+5. Deep dive: delivery states, E2EE key setup, groups.
+6. Failure and scale: server crash, reconnect storms, large groups.
+
+**If it grows 10×**
+- Connection count: more gateway servers and a sharded registry.
+- Group fan-out: use sender keys and bounded group sizes.
+- Presence traffic can dominate: fan out only to interested contacts.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>Walk through sending to an online and then an offline recipient.</summary>
+
+The sender encrypts per recipient device and sends over its connection. The server acks, looks up the recipient's server in the registry and forwards. If offline it stores the ciphertext in the inbox and sends a push to wake the device, which drains the inbox on reconnect.
+
+</details>
+
+<details><summary>How do groups work with end-to-end encryption?</summary>
+
+A sender key is distributed through pairwise sessions, messages are encrypted once with it, and the server fans out the single ciphertext. When a member leaves, members reset their sender keys.
+
+</details>
+
+<details><summary>How do you make retries safe?</summary>
+
+Clients generate message IDs so the server can drop duplicates, and acknowledgements move the message state forward.
+
+</details>
+
 ## 📚 Further reading
 
 - [The WhatsApp Architecture Facebook Bought for $19 Billion (HighScalability)](http://highscalability.com/blog/2014/2/26/the-whatsapp-architecture-facebook-bought-for-19-billion.html)
@@ -301,6 +359,13 @@ sequenceDiagram
 - [Signal: X3DH & Double Ratchet specs](https://signal.org/docs/)
 - [Discord: How Discord stores trillions of messages](https://discord.com/blog/how-discord-stores-trillions-of-messages), a related chat-storage case study
 - Related: [`neokim-post/13` Slack](../../neokim-post/13-how-slack-works.md), [09 Discord](09-discord.md)
+
+## Sources and provenance
+
+> **Kind:** reference design with a documented real-system layer. WhatsApp does **not** publish its server architecture. What is public and verified here: the encryption design (WhatsApp Encryption Overview, v9, 2026-02-25), the multi-device design (Meta Engineering, 2021), message retention (privacy policy) and old Erlang/FreeBSD scaling milestones (WhatsApp blog, 2012). The Redis/Kafka/Cassandra/Consul stack in the diagrams below is the standard interview design, **not** WhatsApp's actual stack.
+> **Basis:** upgraded from [`neokim-post/02`](../../neokim-post/02-how-whatsapp-works.md), a summary of [WhatsApp System Design](https://newsletter.systemdesign.one/p/whatsapp-system-design) (guest author Hayk Simonyan). Re-verified on 2026-10-27, see the log.
+> **Primary sources read:** [WhatsApp Encryption Overview whitepaper](https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf) (v9) · [Meta Engineering: multi-device](https://engineering.fb.com/2021/07/14/security/whatsapp-multi-device/) · [WhatsApp privacy policy](https://www.whatsapp.com/legal/privacy-policy) · [WhatsApp blog: 1 million is so 2011](https://blog.whatsapp.com/1-million-is-so-2011).
+> **Tags:** `[CONFIRMED]` stated by a WhatsApp/Meta primary source · `[INDUSTRY PATTERN]` standard design, not stated for WhatsApp · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline: content beyond the newsletter's public half.
 
 ---
 ## ✅ Verification log

@@ -1,8 +1,29 @@
 # 05 — Object Storage (Amazon S3)
 
-> **Kind:** real-system, but only partly public. AWS publishes the guarantees (docs), the storage-node design (the ShardStore SOSP '21 paper) and some architecture (Warfield's FAST '23 keynote, Vogels on consistency). The exact erasure-coding parameters and the internal front-end/metadata layout are **not** public, so those parts are `[INDUSTRY PATTERN]`.
-> **Basis:** upgraded from [`neokim-post/07`](../../neokim-post/07-how-amazon-s3-works.md) (a summary of [S3 Architecture](https://newsletter.systemdesign.one/p/s3-architecture), which itself says it is "based on research, may differ from real implementation"). Re-verified on 2026-10-27, see the log.
-> **Tags:** `[CONFIRMED]` stated by an AWS primary source · `[INDUSTRY PATTERN]` standard practice or illustrative, not stated by AWS for S3 · `[SPECULATIVE]` plausible. The 🔧 marker carries over from the baseline: content reconstructed beyond the newsletter's public half.
+*A documented real system. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** S3 stores immutable objects addressed by bucket and key. Metadata and data are separate systems. Data is split into erasure-coded shards across many drives and at least three availability zones, so durability comes from repair speed, not just copies. Since December 2020 reads are strongly consistent, achieved with a cache-coherence 'witness'.
+
+**Key numbers**
+- Designed for 99.999999999% durability and 99.99% availability `[CONFIRMED]`.
+- About 120 random operations per second per drive, millions of drives `[CONFIRMED]` (Warfield).
+- At least 3,500 write and 5,500 read requests/s per prefix `[CONFIRMED]`.
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Erasure coding instead of 3 copies | Lower storage overhead for similar durability | Repair traffic, CPU and small-object latency |
+| Separate metadata and data | Each scales independently | Commit ordering matters: metadata last |
+| Spread across many drives | Decorrelates hot spots | Needs placement and rebalancing machinery |
+
+**Common mistakes**
+- Quoting S3's exact k and m. They are not public.
+- Claiming S3 is eventually consistent (it has not been since December 2020).
+- Forgetting that durability depends on how fast lost shards are repaired.
+
 
 ---
 
@@ -161,6 +182,44 @@ Lose ANY 3 → still recoverable.     Overhead = 8/5 = 1.6× (vs 3.0× for repli
 4. Why is erasure coding a bad fit for 1 KB objects?
 5. How does spreading data across more drives *improve* tail latency?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: object sizes, durability, consistency, access patterns.
+2. Estimate: objects, bytes, request rate.
+3. API: PUT, GET, DELETE, LIST, multipart.
+4. Design: front end, metadata index, storage nodes, placement.
+5. Deep dive: erasure coding, strong consistency, durability.
+6. Failure and scale: drive loss and repair, hot prefixes, listing.
+
+**If it grows 10×**
+- Hot prefixes: spread keys across prefixes.
+- Repair load grows with drive count: parallel and prioritised repair.
+- Metadata growth needs a partitioned, cached index.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>Why commit metadata after writing data?</summary>
+
+An object should become visible only when its data is durable. If metadata were written first, a reader could find an object whose shards do not exist yet.
+
+</details>
+
+<details><summary>How does LIST with prefixes work over a hash-partitioned index?</summary>
+
+A hash-partitioned key-value store cannot range-scan, so keep a separate ordered index per bucket for listing.
+
+</details>
+
+<details><summary>Why is erasure coding bad for 1 KB objects?</summary>
+
+Encoding and the placement of many tiny shards cost more than they save, so small or hot objects are usually replicated and large cold ones erasure coded.
+
+</details>
+
 ## 📚 Further reading
 
 - Andy Warfield (FAST '23 keynote, blog version): [Building and operating a pretty big storage system called S3](https://www.allthingsdistributed.com/2023/07/building-and-operating-a-pretty-big-storage-system.html)
@@ -170,6 +229,12 @@ Lose ANY 3 → still recoverable.     Overhead = 8/5 = 1.6× (vs 3.0× for repli
 - [How AWS S3 scales with tens of millions of hard drives (Big Data Stream)](https://bigdata.2minutestreaming.com/p/how-aws-s3-scales-with-tens-of-millions-of-hard-drives)
 - [Erasure code (Wikipedia)](https://en.wikipedia.org/wiki/Erasure_code) · [LSM tree (Wikipedia)](https://en.wikipedia.org/wiki/Log-structured_merge-tree)
 - Alex Xu, *System Design Interview Vol. 2*: "Design S3-like Object Storage"
+
+## Sources and provenance
+
+> **Kind:** real-system, but only partly public. AWS publishes the guarantees (docs), the storage-node design (the ShardStore SOSP '21 paper) and some architecture (Warfield's FAST '23 keynote, Vogels on consistency). The exact erasure-coding parameters and the internal front-end/metadata layout are **not** public, so those parts are `[INDUSTRY PATTERN]`.
+> **Basis:** upgraded from [`neokim-post/07`](../../neokim-post/07-how-amazon-s3-works.md) (a summary of [S3 Architecture](https://newsletter.systemdesign.one/p/s3-architecture), which itself says it is "based on research, may differ from real implementation"). Re-verified on 2026-10-27, see the log.
+> **Tags:** `[CONFIRMED]` stated by an AWS primary source · `[INDUSTRY PATTERN]` standard practice or illustrative, not stated by AWS for S3 · `[SPECULATIVE]` plausible. The 🔧 marker carries over from the baseline: content reconstructed beyond the newsletter's public half.
 
 ---
 ## ✅ Verification log

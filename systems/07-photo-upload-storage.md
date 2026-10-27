@@ -1,9 +1,29 @@
 # 07 — Photo Upload & Storage
 
-> **Kind:** real-system for the storage half, reference design for the upload half. Facebook's **Haystack** (OSDI 2010) and **f4** (OSDI 2014) papers describe how a very large photo store was actually built. How a modern app accepts uploads (pre-signed direct upload, derivative pipeline) is a standard pattern, documented by object-store vendors but not by a single "photo app" company, so it is tagged `[INDUSTRY PATTERN]`.
-> **Sources read on 2026-10-27 in full text:** [Beaver et al., *Finding a needle in Haystack: Facebook's photo storage*, OSDI '10](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf) · [Muralidhar et al., *f4: Facebook's Warm BLOB Storage System*, OSDI '14](https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf) · [AWS docs: presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html).
-> **Dated material:** the papers are from 2010 and 2014. The figures describe those years, and Facebook's current system has evolved since. We did not read newer Facebook or Instagram posts for this note.
-> **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice, not stated for a named company · `[SPECULATIVE]` plausible.
+*A documented real system. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** Storing billions of photos is a metadata problem as much as a data problem. Facebook's Haystack packed many photos into huge files with an in-memory index so a read costs about one disk seek, and f4 later moved cooling photos to Reed-Solomon (10,4) storage to cut the effective replication factor from 3.6 to 2.1. Modern uploads go straight to blob storage with a short-lived pre-signed URL.
+
+**Key numbers**
+- Haystack: about 10 bytes of memory per photo versus 536 bytes for an xfs inode `[CONFIRMED]`.
+- f4: effective replication 3.6 → 2.8 → 2.1 `[CONFIRMED]`.
+- Facebook stored over 400 billion photos in February 2014 `[CONFIRMED]`.
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Many photos per big file | Keeps all file metadata in memory | Append-only, so deletes need compaction |
+| Hot/warm tiers by age | Warm photos can use cheaper storage | A router tier and migration machinery |
+| Direct-to-blob upload | App servers stay out of the data path | Pre-signed URLs are bearer tokens |
+
+**Common mistakes**
+- Presenting Haystack as how Instagram stores photos.
+- Proposing 'S3 plus CDN' without saying why the metadata and replication pressures do or do not apply.
+- Using long-lived or guessable pre-signed upload URLs.
+
 
 ---
 
@@ -144,12 +164,57 @@ Each photo was a separate file on NAS appliances over NFS. Reading one needed se
 5. Why would you migrate old photos to erasure-coded storage? What do you give up?
 6. How do you stop people from guessing photo URLs?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: sizes, privacy, derivatives, retention.
+2. Estimate: photos per day, sizes, storage growth.
+3. API: start upload, complete, get photo URL.
+4. Design: upload path, blob store, derivative workers, CDN.
+5. Deep dive: Haystack needles and f4 erasure coding.
+6. Failure and scale: abandoned uploads, hot photos, deletes.
+
+**If it grows 10×**
+- Per-photo files break first: pack photos and index in memory.
+- Storage cost dominates: tier by age and erasure code warm data.
+- Origin load: size the CDN for the long tail.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>Why is one file per photo a bad idea at billions of photos?</summary>
+
+Reading a photo needed several disk operations for metadata alone. Packing photos into big files with an in-memory index cut a read to about one seek.
+
+</details>
+
+<details><summary>Design the upload path for 20 MB photos on flaky networks.</summary>
+
+Create a pending record, hand out a short-lived pre-signed multipart URL, let the client resume per part, then process asynchronously. A sweeper cleans up uploads that never complete.
+
+</details>
+
+<details><summary>How do you delete promptly when space reclamation is lazy?</summary>
+
+f4 encrypts each blob with its own key and deletes the key, which makes the data unreadable immediately.
+
+</details>
+
 ## 📚 Further reading
 
 - [Haystack, OSDI '10](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf) · [f4, OSDI '14](https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf)
 - [AWS: presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html)
 - [System Design Primer: scaling to millions of users, CDN and object storage topics](https://github.com/donnemartin/system-design-primer) (secondary)
 - Related in this repo: [05 Object storage](05-object-storage-s3.md) (erasure coding and durability), [06 File sync](06-file-sync-dropbox.md) (content-addressed blocks), [`neokim-post/03` YouTube](../../neokim-post/03-how-youtube-works.md) (a similar upload-then-transcode flow).
+
+## Sources and provenance
+
+> **Kind:** real-system for the storage half, reference design for the upload half. Facebook's **Haystack** (OSDI 2010) and **f4** (OSDI 2014) papers describe how a very large photo store was actually built. How a modern app accepts uploads (pre-signed direct upload, derivative pipeline) is a standard pattern, documented by object-store vendors but not by a single "photo app" company, so it is tagged `[INDUSTRY PATTERN]`.
+> **Sources read on 2026-10-27 in full text:** [Beaver et al., *Finding a needle in Haystack: Facebook's photo storage*, OSDI '10](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf) · [Muralidhar et al., *f4: Facebook's Warm BLOB Storage System*, OSDI '14](https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf) · [AWS docs: presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html).
+> **Dated material:** the papers are from 2010 and 2014. The figures describe those years, and Facebook's current system has evolved since. We did not read newer Facebook or Instagram posts for this note.
+> **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice, not stated for a named company · `[SPECULATIVE]` plausible.
 
 ---
 ## ✅ Verification log

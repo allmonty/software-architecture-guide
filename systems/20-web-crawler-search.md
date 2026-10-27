@@ -1,9 +1,29 @@
 # 20 — Web Crawler + Search
 
-> **Kind:** real-system for the *design ideas*, with 1990s and early-2000s evidence. The two foundational public descriptions are Google's original paper (Brin & Page, 1998) and the Mercator crawler report (Najork & Heydon, 2001). Neither describes today's Google or Bing. The robots.txt behaviour is from the current IETF standard (RFC 9309). Search-index specifics for a modern engine come from Elasticsearch's docs (only a small part was readable). So this note explains *how a crawler and a search index fit together*, with dated numbers, and it does not claim how any current search engine works.
-> **Sources read on 2026-10-27:** Brin & Page, [*The Anatomy of a Large-Scale Hypertextual Web Search Engine*](https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf) (WWW7, 1998; read from an Internet Archive copy of the web version, plus the paper PDF extracted locally) · Najork & Heydon, [*High-Performance Web Crawling*](https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf) (Compaq SRC Research Report 173, 2001-09-26; PDF extracted locally) · IETF [RFC 9309: Robots Exclusion Protocol](https://www.rfc-editor.org/rfc/rfc9309) (text) · Elastic docs: [Near real-time search](https://www.elastic.co/docs/manage-data/data-store/near-real-time-search).
-> **Not read:** current Google/Bing documentation, Lucene's file-format docs, Common Crawl, Scrapy, or any crawl-budget guidance. We make no claims about those.
-> **Tags:** `[CONFIRMED]` stated by a primary source read now · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible, or an illustrative estimate.
+*A documented real system. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** A crawler is a URL frontier, asynchronous fetchers and two dedup tests (URL seen, content seen), constrained by politeness and robots.txt. A search engine turns the stored pages into an inverted index, sorted from per-document hits, and ranks with text match plus link signals like PageRank. The numbers in the sources are from 1998 and 2001.
+
+**Key numbers**
+- Mercator waits 10× the download time before revisiting a host `[CONFIRMED]`.
+- 1998 Google: ~300 connections per crawler, 100+ pages/s at peak `[CONFIRMED]`.
+- RFC 9309: 5xx on robots.txt means assume complete disallow; cache at most 24 hours `[CONFIRMED]`.
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Per-host politeness queues | Never overload a site | Less global ordering of URLs |
+| Fingerprint set for URL-seen | Bounded memory | A tiny collision probability |
+| Disk-backed frontier | Scales past memory | Slower scheduling |
+
+**Common mistakes**
+- Saying 4xx on robots.txt means disallow: it means the crawler MAY access anything.
+- Citing `Crawl-delay` from RFC 9309: it is not in it.
+- Presenting a Bloom filter as what Mercator used.
+
 
 ---
 
@@ -150,11 +170,56 @@ Query ─► front end ─► fan-out to shards ─► merge + rank ─► resul
 6. Sketch the inverted index and the query path. How do you shard it, and what happens to a query that spans all shards?
 7. How fresh should the index be, and what does refreshing more often cost?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: scale, freshness, content types, politeness.
+2. Estimate: pages/s and storage.
+3. API: seeds in, ranked results out.
+4. Design: frontier, fetchers, dedup, repository, indexer, shards.
+5. Deep dive: politeness, robots, inverted index, PageRank.
+6. Failure and scale: spider traps, DNS cost, shard fan-out.
+
+**If it grows 10×**
+- Frontier size: partition by host and keep it on disk.
+- Index size: shard by document and replicate.
+- Freshness: prioritise recrawls by change rate.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>1 billion pages in a month: bottlenecks?</summary>
+
+About 386 pages/s: DNS lookups, politeness limits and disk-backed URL state dominate, not CPU.
+
+</details>
+
+<details><summary>How do you avoid fetching the same URL twice?</summary>
+
+Check a fingerprint set before enqueueing. A Bloom filter saves memory but admits false positives that skip new pages.
+
+</details>
+
+<details><summary>A site returns 503 for robots.txt. What do you do?</summary>
+
+Treat it as unreachable and assume complete disallow, per RFC 9309. A 404 means unavailable, which allows crawling.
+
+</details>
+
 ## 📚 Further reading
 
 - The four sources listed at the top. The original 1998 web version is at infolab.stanford.edu/~backrub/google.html (unreachable from our network, so we read an Internet Archive copy).
 - [System Design Primer: Design a web crawler](https://github.com/donnemartin/system-design-primer) (secondary; interview framing).
 - Related in this repo: [11 News feed](11-news-feed.md) (caches and fan-out), [03 Distributed KV store](03-distributed-kv-store.md) (partitioning), [02 Rate limiter](02-rate-limiter.md) (per-host politeness is a rate limit), [01 URL shortener](01-url-shortener.md) (Bloom filters).
+
+## Sources and provenance
+
+> **Kind:** real-system for the *design ideas*, with 1990s and early-2000s evidence. The two foundational public descriptions are Google's original paper (Brin & Page, 1998) and the Mercator crawler report (Najork & Heydon, 2001). Neither describes today's Google or Bing. The robots.txt behaviour is from the current IETF standard (RFC 9309). Search-index specifics for a modern engine come from Elasticsearch's docs (only a small part was readable). So this note explains *how a crawler and a search index fit together*, with dated numbers, and it does not claim how any current search engine works.
+> **Sources read on 2026-10-27:** Brin & Page, [*The Anatomy of a Large-Scale Hypertextual Web Search Engine*](https://snap.stanford.edu/class/cs224w-readings/Brin98Anatomy.pdf) (WWW7, 1998; read from an Internet Archive copy of the web version, plus the paper PDF extracted locally) · Najork & Heydon, [*High-Performance Web Crawling*](https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf) (Compaq SRC Research Report 173, 2001-09-26; PDF extracted locally) · IETF [RFC 9309: Robots Exclusion Protocol](https://www.rfc-editor.org/rfc/rfc9309) (text) · Elastic docs: [Near real-time search](https://www.elastic.co/docs/manage-data/data-store/near-real-time-search).
+> **Not read:** current Google/Bing documentation, Lucene's file-format docs, Common Crawl, Scrapy, or any crawl-budget guidance. We make no claims about those.
+> **Tags:** `[CONFIRMED]` stated by a primary source read now · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible, or an illustrative estimate.
 
 ---
 ## ✅ Verification log

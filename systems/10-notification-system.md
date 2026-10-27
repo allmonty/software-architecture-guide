@@ -1,9 +1,29 @@
 # 10 — Notification System
 
-> **Kind:** reference design. No company publishes a full notification-platform architecture that we could verify, so the platform in the middle is the standard interview design `[INDUSTRY PATTERN]`. What **is** sourced to primary documents is the edge of the system: how Apple's APNs and Google's FCM behave (priority, expiry, collapsing, errors, token hygiene) and what a standard queue like Amazon SQS does and does not guarantee.
-> **Sources read on 2026-10-27:** Apple, [Sending notification requests to APNs](https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns) and [Handling notification responses from APNs](https://developer.apple.com/documentation/usernotifications/handling-notification-responses-from-apns) (fetched from Apple's documentation JSON) · Firebase: [Setting the lifespan of a message](https://firebase.google.com/docs/cloud-messaging/customize-messages/setting-message-lifespan), [Message priority](https://firebase.google.com/docs/cloud-messaging/android-message-priority), [Manage FCM registration tokens](https://firebase.google.com/docs/cloud-messaging/manage-tokens) · AWS: [SQS standard queues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html), [SQS dead-letter queues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html).
-> **Not read:** email and SMS provider documentation, so claims about those channels are `[INDUSTRY PATTERN]` only.
-> **Tags:** `[CONFIRMED]` stated by a vendor doc · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible.
+*A reference design built on verified building blocks. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** A notification platform accepts requests, deduplicates them, checks preferences, renders content, queues per channel and priority, and calls providers such as APNs and FCM. Its design is shaped by the providers' behaviour: priority, expiry, collapsing, token hygiene and rate limits, and by queues that deliver at least once, so every stage must be idempotent.
+
+**Key numbers**
+- APNs payload limit 4 KB (5 KB VoIP), `apns-priority` 10/5/1 `[CONFIRMED]`.
+- FCM TTL 0–28 days, default 4 weeks; tokens stale after a month `[CONFIRMED]`.
+- SQS standard queues are at-least-once with possible reordering `[CONFIRMED]`.
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Separate queues by channel and priority | A marketing blast cannot starve a security alert | More queues and workers to run |
+| Idempotency key at ingest | Producer retries do not duplicate sends | A dedup store with a TTL |
+| Fail toward a rare duplicate | No distributed transactions with a provider | Occasional repeated notification |
+
+**Common mistakes**
+- Claiming exactly-once delivery: the provider edge is best effort.
+- Retrying errors that cannot succeed (APNs `BadDeviceToken`, `Unregistered`).
+- Reporting 'delivered' when the provider only accepted the request.
+
 
 ---
 
@@ -163,11 +183,56 @@ Deliveries are write-heavy and time-ordered, so a wide-column or time-partitione
 5. How do you implement per-user quiet hours across time zones for a broadcast?
 6. How would you prove to support why a user did not get a notification?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: channels, volume, priorities, preferences, scheduling.
+2. Estimate: notifications/day and burst size.
+3. API: send with an idempotency key.
+4. Design: ingest, preferences, queues, workers, providers.
+5. Deep dive: retries, dedup, token cleanup, TTL and collapse keys.
+6. Failure and scale: provider outage, broadcasts, DLQ.
+
+**If it grows 10×**
+- Broadcasts: page through the audience and throttle to provider limits.
+- Hot users: per-user frequency caps and APNs 429 handling.
+- Provider outage: circuit-break and fail over where possible.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>Send 50M notifications in an hour without delaying OTPs?</summary>
+
+Use separate priority queues and worker pools with reserved capacity for the urgent class, and throttle the bulk queue to provider limits.
+
+</details>
+
+<details><summary>A producer retries and a worker crashes after the provider call. How do you avoid sending twice?</summary>
+
+Dedup at ingest on an idempotency key and record the send per notification and channel. Accept a rare duplicate rather than a lost notification.
+
+</details>
+
+<details><summary>What TTL and collapse key for 'driver arriving'?</summary>
+
+A short TTL (or APNs expiration 0) and a collapse key, because a stale arrival notice has no value and newer ones should replace older ones.
+
+</details>
+
 ## 📚 Further reading
 
 - The vendor docs listed at the top.
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary; asynchronism and message-queue topics).
 - Related in this repo: [04 Message queue / log](04-message-queue-kafka.md), [02 Rate limiter](02-rate-limiter.md), [08 Chat](08-chat-whatsapp.md) (APNs/FCM wake-ups for offline users).
+
+## Sources and provenance
+
+> **Kind:** reference design. No company publishes a full notification-platform architecture that we could verify, so the platform in the middle is the standard interview design `[INDUSTRY PATTERN]`. What **is** sourced to primary documents is the edge of the system: how Apple's APNs and Google's FCM behave (priority, expiry, collapsing, errors, token hygiene) and what a standard queue like Amazon SQS does and does not guarantee.
+> **Sources read on 2026-10-27:** Apple, [Sending notification requests to APNs](https://developer.apple.com/documentation/usernotifications/sending-notification-requests-to-apns) and [Handling notification responses from APNs](https://developer.apple.com/documentation/usernotifications/handling-notification-responses-from-apns) (fetched from Apple's documentation JSON) · Firebase: [Setting the lifespan of a message](https://firebase.google.com/docs/cloud-messaging/customize-messages/setting-message-lifespan), [Message priority](https://firebase.google.com/docs/cloud-messaging/android-message-priority), [Manage FCM registration tokens](https://firebase.google.com/docs/cloud-messaging/manage-tokens) · AWS: [SQS standard queues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html), [SQS dead-letter queues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html).
+> **Not read:** email and SMS provider documentation, so claims about those channels are `[INDUSTRY PATTERN]` only.
+> **Tags:** `[CONFIRMED]` stated by a vendor doc · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible.
 
 ---
 ## ✅ Verification log

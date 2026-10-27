@@ -1,8 +1,29 @@
 # 01 — URL Shortener (TinyURL / Bitly)
 
-> **Kind:** reference design. Bitly, TinyURL and others do not publish their internals, so the architecture below is the standard interview design, not a claim about how any company builds it. What *is* sourced to primary documents: HTTP redirect semantics (RFC 9110/9111), the Snowflake ID layout, and Bitly's observed redirect headers.
-> **Basis:** upgraded from [`neokim-post/05`](../../neokim-post/05-how-url-shortener-works.md), itself a paraphrase of [systemdesign.one](https://systemdesign.one/url-shortening-system-design/) (CC BY-NC-ND 4.0). Re-verified on 2026-10-27 (see the log at the end).
-> **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice, no single authority · `[SPECULATIVE]` plausible design choice. Untagged arithmetic can be checked by hand.
+*A reference design built on verified building blocks. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** A URL shortener maps a short key to a long URL and redirects. Reads outnumber writes about 100 to 1, so the redirect path is a cache-and-CDN problem, and the hard part of the write path is generating unique, hard-to-guess keys without a database check per write. The design below uses leased counter ranges, base62 encoding and a Bloom filter in front of the store.
+
+**Key numbers**
+- 7 base62 characters give 62⁷ ≈ 3.5 trillion keys (arithmetic).
+- 301 is heuristically cacheable and 302 is not, so the status code decides whether every click reaches you `[CONFIRMED]` (RFC 9110).
+- Interview assumptions: 100M new links/day ≈ 1.2k writes/s and ~100k reads/s `[SPECULATIVE]`.
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Token-range key generation | Collision-free, O(1), no per-write DB check | A crash wastes the unused part of a range |
+| 301 vs 302 | 301 cuts origin traffic | Browsers hide repeat clicks from your analytics |
+| Bloom filter before the store | Cheap 404s for keys that never existed | False positives still reach the store, and it cannot delete |
+
+**Common mistakes**
+- Hashing and truncating to 7 characters, which makes collisions likely (truncation, not the hash length, is the cause).
+- Using a unique index on the long URL to enforce 1:1 without asking whether 1:1 is required.
+- Forgetting that 301 responses are cached by browsers when promising per-click analytics.
+
 
 ---
 
@@ -236,6 +257,44 @@ All `[INDUSTRY PATTERN]`.
 4. How would you support custom aliases without races?
 5. How would analytics change if you needed real-time click counts?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: custom aliases, expiry, analytics, 1:1 or not, scale.
+2. Estimate: writes/s, reads/s, storage for 5 years.
+3. API: `PUT/POST /url` and `GET /:key` with 301 or 302.
+4. Design: KGS with leased ranges, key-value store, cache, CDN.
+5. Deep dive: key generation, caching and the Bloom filter.
+6. Failure and scale: KGS crash, hot link, enumeration scans, cleanup of expired links.
+
+**If it grows 10×**
+- A viral link becomes one hot key: add edge caching and request coalescing.
+- Storage grows linearly: partition the store by key and archive cold links.
+- Analytics volume needs a stream (Kafka) into a warehouse, off the redirect path.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>Why is token-range better than hashing?</summary>
+
+No collision handling is needed because ranges never overlap. Each generator serves keys from memory. A dead generator only wastes the rest of its range, which is acceptable out of 3.5 trillion keys.
+
+</details>
+
+<details><summary>How do you stop people enumerating links?</summary>
+
+Make keys non-sequential (shuffled ranges or a reversible scramble), reject unknown keys cheaply with a Bloom filter, and rate-limit by key and IP.
+
+</details>
+
+<details><summary>A celebrity posts a short link. First second of traffic?</summary>
+
+The CDN absorbs repeat reads. Concurrent misses collapse into one origin request. The cache and store see only that one miss, and the click event goes to a stream asynchronously.
+
+</details>
+
 ## 📚 Further reading
 
 - [Knowledge test: URL shortening (systemdesign.one)](https://systemdesign.one/knowledge-test-url-shortening-system-design/)
@@ -244,6 +303,12 @@ All `[INDUSTRY PATTERN]`.
 - [Consistent hashing explained](https://systemdesign.one/consistent-hashing-explained/) · [Bloom filters explained](https://systemdesign.one/bloom-filters-explained/)
 - [MDN: HTTP redirections](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Redirections) · [MDN: Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control)
 - [System Design Primer: Pastebin/Bit.ly](https://github.com/donnemartin/system-design-primer/tree/master/solutions/system_design/pastebin)
+
+## Sources and provenance
+
+> **Kind:** reference design. Bitly, TinyURL and others do not publish their internals, so the architecture below is the standard interview design, not a claim about how any company builds it. What *is* sourced to primary documents: HTTP redirect semantics (RFC 9110/9111), the Snowflake ID layout, and Bitly's observed redirect headers.
+> **Basis:** upgraded from [`neokim-post/05`](../../neokim-post/05-how-url-shortener-works.md), itself a paraphrase of [systemdesign.one](https://systemdesign.one/url-shortening-system-design/) (CC BY-NC-ND 4.0). Re-verified on 2026-10-27 (see the log at the end).
+> **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice, no single authority · `[SPECULATIVE]` plausible design choice. Untagged arithmetic can be checked by hand.
 
 ---
 ## ✅ Verification log

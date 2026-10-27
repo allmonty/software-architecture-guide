@@ -5,11 +5,14 @@ import { Diagram } from "../schema/diagram.schema.ts";
 
 // Every system .md must contain these headings (substring match on `##` lines).
 export const REQUIRED_SECTIONS = [
+  "At a glance",
   "Non-technical explanation",
   "TL;DR",
   "Architecture lens",
   "Interview questions",
+  "Interview practice",
   "Further reading",
+  "Sources and provenance",
   "Verification log",
 ];
 

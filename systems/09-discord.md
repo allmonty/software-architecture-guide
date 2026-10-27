@@ -1,9 +1,29 @@
 # 09 — Discord
 
-> **Kind:** real-system. Discord's engineering blog documents its real-time layer (Elixir sessions and guild processes), its Rust components, its message storage (Cassandra → ScyllaDB) and its voice servers. It does **not** publish a single full architecture diagram, so the picture below is assembled from five posts and has gaps.
-> **Sources read on 2026-10-27 (all Discord Engineering):** [How Discord Scaled Elixir to 5,000,000 Concurrent Users](https://discord.com/blog/how-discord-scaled-elixir-to-5-000-000-concurrent-users) (2017-07-06) · [Using Rust to Scale Elixir for 11 Million Concurrent Users](https://discord.com/blog/using-rust-to-scale-elixir-for-11-million-concurrent-users) (2019-05-17) · [How Discord Handles Two and Half Million Concurrent Voice Users using WebRTC](https://discord.com/blog/how-discord-handles-two-and-half-million-concurrent-voice-users-using-webrtc) (2018-09-10) · [Why Discord is switching from Go to Rust](https://discord.com/blog/why-discord-is-switching-from-go-to-rust) (2020-02-04) · [How Discord Stores Trillions of Messages](https://discord.com/blog/how-discord-stores-trillions-of-messages) (2023-03-06).
-> **Dated material:** each post describes Discord at its publication date. The architecture has probably evolved since. Do not read 2017 numbers as current.
-> **Tags:** `[CONFIRMED]` stated in a Discord post · `[INDUSTRY PATTERN]` standard practice, not stated for Discord · `[SPECULATIVE]` plausible.
+*A documented real system. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** Discord's real-time core is Elixir: a session process per connected user and a process per guild, with the guild publishing events to every connected session. Large guilds made fan-out the bottleneck, which Manifold, Rust components and a coalescing data-services layer address. Messages moved from Cassandra to ScyllaDB, and voice runs on separate servers with an SFU.
+
+**Key numbers**
+- Nearly 5 million concurrent users in 2017; up to 500,000 sessions per Erlang VM `[CONFIRMED]`.
+- Cassandra 177 nodes → ScyllaDB 72 nodes; p99 reads 40–125 ms → ~15 ms `[CONFIRMED]` (2023).
+- 2.6 million+ concurrent voice users on 850+ voice servers (2018) `[CONFIRMED]`.
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| A process per guild | Simple, consistent fan-out | A single process is a bottleneck for large guilds |
+| Request coalescing in data services | One query for many identical reads | An extra hop and consistent-hash routing |
+| Client-server voice with an SFU | Cheaper than peer-to-peer at scale, hides IPs | Server fleet and regional capacity |
+
+**Common mistakes**
+- Quoting '11 million concurrent users' as a stated figure from the 2019 post body.
+- Stating a literal `(channel_id, bucket)` key when the post says 'channel plus a bucket'.
+- Applying 2017 numbers to today's system.
+
 
 ---
 
@@ -134,11 +154,56 @@ Sending a message, as far as the posts support: the client's **WebSocket** reach
 5. Voice: why client-server instead of peer-to-peer? What does an SFU do?
 6. Cassandra → ScyllaDB: what did the garbage collector have to do with p99 latency?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: text, voice, large servers, history.
+2. Estimate: concurrent users, events/s.
+3. API: WebSocket gateway plus REST.
+4. Design: sessions, guilds, data services, message store.
+5. Deep dive: fan-out, hot partitions, coalescing.
+6. Failure and scale: large guilds, GC pauses, voice failover.
+
+**If it grows 10×**
+- Fan-out cost: batch sends per node and offload hot paths to Rust.
+- Hot channels: coalesce reads and route by channel.
+- Storage ops: avoid GC-heavy databases for latency-critical data.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>A guild has 30,000 online members. Walk through one message.</summary>
+
+The API accepts and stores it, the guild process publishes the event, and Manifold groups recipient sessions by node so each node gets one message and fans out locally.
+
+</details>
+
+<details><summary>Why partition messages by channel and time bucket?</summary>
+
+It keeps one channel's recent messages together for fast reads while bounding partition size over time.
+
+</details>
+
+<details><summary>Why did coalescing need consistent-hash routing?</summary>
+
+Requests for the same channel must reach the same service instance for identical concurrent reads to be merged into one query.
+
+</details>
+
 ## 📚 Further reading
 
 - The five Discord posts listed at the top.
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (background on caching and consistency, secondary).
 - Related in this repo: [03 Distributed KV store](03-distributed-kv-store.md) (the Cassandra lineage), [08 Chat (WhatsApp)](08-chat-whatsapp.md) (1:1 chat and store-and-forward), and [`neokim-post/13` Slack](../../neokim-post/13-how-slack-works.md).
+
+## Sources and provenance
+
+> **Kind:** real-system. Discord's engineering blog documents its real-time layer (Elixir sessions and guild processes), its Rust components, its message storage (Cassandra → ScyllaDB) and its voice servers. It does **not** publish a single full architecture diagram, so the picture below is assembled from five posts and has gaps.
+> **Sources read on 2026-10-27 (all Discord Engineering):** [How Discord Scaled Elixir to 5,000,000 Concurrent Users](https://discord.com/blog/how-discord-scaled-elixir-to-5-000-000-concurrent-users) (2017-07-06) · [Using Rust to Scale Elixir for 11 Million Concurrent Users](https://discord.com/blog/using-rust-to-scale-elixir-for-11-million-concurrent-users) (2019-05-17) · [How Discord Handles Two and Half Million Concurrent Voice Users using WebRTC](https://discord.com/blog/how-discord-handles-two-and-half-million-concurrent-voice-users-using-webrtc) (2018-09-10) · [Why Discord is switching from Go to Rust](https://discord.com/blog/why-discord-is-switching-from-go-to-rust) (2020-02-04) · [How Discord Stores Trillions of Messages](https://discord.com/blog/how-discord-stores-trillions-of-messages) (2023-03-06).
+> **Dated material:** each post describes Discord at its publication date. The architecture has probably evolved since. Do not read 2017 numbers as current.
+> **Tags:** `[CONFIRMED]` stated in a Discord post · `[INDUSTRY PATTERN]` standard practice, not stated for Discord · `[SPECULATIVE]` plausible.
 
 ---
 ## ✅ Verification log

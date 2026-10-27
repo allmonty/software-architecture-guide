@@ -33,10 +33,11 @@ Deep links: `site/#07-photo-upload-storage?flow=upload&step=2` opens a flow at a
 ## Adding or changing a system
 
 1. Read the primary sources first (see Sourcing rules), then write `systems/NN-<slug>.md` and `.diagram.json` together. Use an existing note as the template (e.g. `systems/13-netflix.md`).
-2. Every note has a **Kind** line (`real-system` or `reference-design`), a **Sources read on <date>** line, and a **Verification log** that lists what was checked **and what was not**.
-3. `npm run validate` must pass, then update `README.md` (index, learning path, matrix) and the `PATH` list in `site/src/App.tsx` if the learning order changes.
-4. Commit the pair as one commit. Notes that upgrade a `neokim-post/` note re-check its key claims and say what was not re-checked.
-5. Before finishing, audit quotations: every phrase in double quotes should appear verbatim in the cited source. Reword paraphrases without quotation marks, especially for sources read in another language.
+2. Note structure: title, a one-line kind, **At a glance** (60-second summary, key numbers, decisions and trade-offs, common mistakes), then the body, then **Interview practice** (45-minute walkthrough, 10× growth, collapsible answer outlines, all labelled as our reasoning), **Further reading**, **Sources and provenance** (the sources-read header and tags) and the **Verification log**. The validator requires these headings.
+3. Every note has a **Kind** line (`real-system` or `reference-design`), a **Sources read on <date>** line, and a **Verification log** that lists what was checked **and what was not**.
+4. `npm run validate` must pass, then update `README.md` (index, learning path, matrix) and the `PATH` list in `site/src/App.tsx` if the learning order changes.
+5. Commit the pair as one commit. Notes that upgrade a `neokim-post/` note re-check its key claims and say what was not re-checked.
+6. Before finishing, run `npm run verify -- --write <NN>` (PDFs need `PYTHON=` pointing at Python with pypdf). Every phrase in double quotes should be confirmed in its ledger (`systems/NN-*.claims.json`). Reword paraphrases without quotation marks. Quotes that cannot be fetched are recorded as `manual` (with a dated note) or `ignored` (with a reason), never silently dropped.
 
 Extra tag used in upgraded notes: `[EARLIER PASS]` means verified in the earlier neokim-post fact-check but not re-read here.
 

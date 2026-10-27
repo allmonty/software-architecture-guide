@@ -45,6 +45,19 @@ Twenty-one systems chosen to teach system design for **interviews and beyond**. 
 | 20 | [Web crawler + search](systems/20-web-crawler-search.md) | real (dated) | frontier, politeness, dedup, inverted index, PageRank | Brin & Page (1998), Mercator (2001), RFC 9309 |
 | 21 | [Online game matchmaking + lobby chat](systems/21-game-matchmaking-lobby-chat.md) | reference | tickets and match functions, server fleets, rating, chat shards | Open Match, Agones, TrueSkill abstract, Riot posts |
 
+## How to answer a system-design question
+
+Each note's **Interview practice** section follows this outline, so you can rehearse the same steps on every system:
+
+1. **Clarify** the requirements and what is out of scope. Ask about scale, consistency, latency and failure expectations.
+2. **Estimate** with round numbers: requests per second, storage, bandwidth. State your assumptions.
+3. **Define the interface**: the main API calls and the core data model.
+4. **Sketch the design** at container level (the C4 Containers view in the site), then walk the main flow.
+5. **Go deep** on the one or two hard problems (the note's At a glance lists them) and name the trade-offs.
+6. **Test it**: failure scenarios (every diagram has one or more flows), then what changes at 10× scale.
+
+The answer outlines in each note are our own reasoning and are labelled as such.
+
 ## Suggested learning path
 
 1. **Foundations:** 01 URL shortener → 02 Rate limiter → 03 Key-value store.
@@ -98,7 +111,12 @@ Each diagram follows the **C4 model**: switch between **1 · Context**, **2 · C
 npm install
 npm run validate   # schema, references, required sections, relative links, sources on every non-speculative node
 npm test           # tests for the validator
+npm run verify     # re-check every quotation against the sources recorded in systems/*.claims.json
+npm run links      # external link check (separates bot-blocked pages from broken ones)
+npm run freshness  # notes by the age of their last source read
 ```
+
+`npm run verify -- --write` fetches each note's cited sources (with an Internet Archive fallback) and updates the claims ledgers. PDFs need Python with `pypdf`: `PYTHON=/path/to/python npm run verify -- --write`.
 
 ## References and relationship to other folders
 

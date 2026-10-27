@@ -1,13 +1,29 @@
 # 11 — News Feed (Twitter / Instagram)
 
-> **Kind:** reference design anchored by real-system facts. Neither Twitter/X nor Instagram publishes one complete "how the feed works" document. This note combines what each *did* publish and verify: Twitter's infrastructure post (2017) and its open-sourced recommendation code (2023), and Instagram's sharding-and-IDs post (2012). The fan-out strategies are the standard design `[INDUSTRY PATTERN]`.
-> **Sources read on 2026-10-27:**
-> · Twitter Engineering, *The Infrastructure Behind Twitter: Scale* (2017-01-19; [original URL](https://blog.x.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale) returned 403, so we read the Internet Archive copy of the same page)
-> · [twitter/the-algorithm README](https://github.com/twitter/the-algorithm) and [Home Mixer README](https://github.com/twitter/the-algorithm/tree/main/home-mixer) (2023 open-source release)
-> · Instagram Engineering, [*Sharding & IDs at Instagram*](https://instagram-engineering.com/sharding-ids-at-instagram-1cf5a71e5a5c) (2012-12-30; the live site refused our connection, so we read the Internet Archive copy)
-> **Not read:** Instagram's *Thundering Herds & Promises* post (blocked with 403), Raffi Krikorian's *Timelines at Scale* talk (the InfoQ page had a summary, no transcript), Facebook's TAO paper. Claims that depend on them are `[INDUSTRY PATTERN]`.
-> **Dated material:** 2012 Instagram, 2017 Twitter infrastructure, 2023 Twitter ranking code. All have since changed.
-> **Tags:** `[CONFIRMED]` stated by the primary source · `[INDUSTRY PATTERN]` standard practice, not stated by the source · `[SPECULATIVE]` plausible.
+*A reference design built on verified building blocks. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** A news feed has two jobs: finding candidate posts and ranking them. Candidate generation is a fan-out problem: pushing each post into followers' timeline caches (fan-out on write) makes reads fast but amplifies writes for large accounts, so real systems mix it with pull-on-read. Twitter's published pipeline then hydrates features, scores, filters and mixes. IDs must sort by time and encode the shard.
+
+**Key numbers**
+- Twitter timeline cache (Haplo) on Redis: 40M–100M commands/s aggregate (2017) `[CONFIRMED]`.
+- About 50% of For You posts come from the in-network search-index source; ~6,000 features are hydrated `[CONFIRMED]` (2023 code).
+- Instagram IDs: 41 bits time + 13 bits shard + 10 bits sequence `[CONFIRMED]` (2012).
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Fan-out on write | Very fast reads | Write amplification for large accounts |
+| Hybrid for very large accounts | Bounds both costs | Two code paths and a tuned threshold |
+| Store post IDs in timelines | Edits and deletes need no fan-out | Hydration on every read |
+
+**Common mistakes**
+- Stating a follower threshold for Twitter's hybrid: the sources we read do not give one.
+- Using offset pagination on a feed that changes constantly.
+- Treating the ranking model as the only 'feed' problem and ignoring candidate retrieval.
+
 
 ---
 
@@ -147,12 +163,61 @@ Choices to state: **cursor pagination** (not offset) since new posts arrive cons
 5. Where does ranking fit? What are candidate sources, and why more than one?
 6. A user deletes a post. How does it disappear from followers' cached timelines?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: follow graph, ranking, freshness, media.
+2. Estimate: posts/s × average followers.
+3. API: post, home feed with a cursor.
+4. Design: post store, fan-out service, timeline cache, hydration.
+5. Deep dive: push vs pull vs hybrid, ranking pipeline.
+6. Failure and scale: celebrity posts, cache loss, inactive users.
+
+**If it grows 10×**
+- Celebrity accounts: skip fan-out and merge at read time.
+- Cache memory: bound timeline length and skip inactive users.
+- Ranking cost: use a light ranker before the heavy one.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>A user with 20M followers posts. What happens?</summary>
+
+Do not fan out to all followers. Mark the account as pull-on-read and merge its recent posts into each reader's feed at read time, so one post does not create a 20M-write burst.
+
+</details>
+
+<details><summary>Why cursor pagination?</summary>
+
+New posts arrive while scrolling, so offsets shift and duplicate or skip items. A cursor anchors on an item or ID.
+
+</details>
+
+<details><summary>How does a delete disappear from cached timelines?</summary>
+
+Timelines hold IDs only. Hydration checks the post store, so a deleted post drops out at read time without fan-out.
+
+</details>
+
 ## 📚 Further reading
 
 - The three sources listed at the top.
 - [Facebook TAO paper](https://www.usenix.org/conference/atc13/technical-sessions/presentation/bronson) and Raffi Krikorian's *Timelines at Scale* (not read in this session).
 - [System Design Primer: Twitter timeline and search](https://github.com/donnemartin/system-design-primer) (secondary; interview framing).
 - Related in this repo: [`neokim-post/10` Twitter timeline (front-end)](../../neokim-post/10-how-twitter-timeline-works.md) (client side of the same product), [01 URL shortener](01-url-shortener.md) (Snowflake IDs), [03 Distributed KV store](03-distributed-kv-store.md) (consistent hashing, replication).
+
+## Sources and provenance
+
+> **Kind:** reference design anchored by real-system facts. Neither Twitter/X nor Instagram publishes one complete "how the feed works" document. This note combines what each *did* publish and verify: Twitter's infrastructure post (2017) and its open-sourced recommendation code (2023), and Instagram's sharding-and-IDs post (2012). The fan-out strategies are the standard design `[INDUSTRY PATTERN]`.
+> **Sources read on 2026-10-27:**
+> · Twitter Engineering, *The Infrastructure Behind Twitter: Scale* (2017-01-19; [original URL](https://blog.x.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale) returned 403, so we read the Internet Archive copy of the same page)
+> · [twitter/the-algorithm README](https://github.com/twitter/the-algorithm) and [Home Mixer README](https://github.com/twitter/the-algorithm/tree/main/home-mixer) (2023 open-source release)
+> · Instagram Engineering, [*Sharding & IDs at Instagram*](https://instagram-engineering.com/sharding-ids-at-instagram-1cf5a71e5a5c) (2012-12-30; the live site refused our connection, so we read the Internet Archive copy)
+> **Not read:** Instagram's *Thundering Herds & Promises* post (blocked with 403), Raffi Krikorian's *Timelines at Scale* talk (the InfoQ page had a summary, no transcript), Facebook's TAO paper. Claims that depend on them are `[INDUSTRY PATTERN]`.
+> **Dated material:** 2012 Instagram, 2017 Twitter infrastructure, 2023 Twitter ranking code. All have since changed.
+> **Tags:** `[CONFIRMED]` stated by the primary source · `[INDUSTRY PATTERN]` standard practice, not stated by the source · `[SPECULATIVE]` plausible.
 
 ---
 ## ✅ Verification log

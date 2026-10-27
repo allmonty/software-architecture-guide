@@ -1,9 +1,29 @@
 # 06 — File Sync (Dropbox)
 
-> **Kind:** real-system, partly public. Dropbox's engineering blog documents the block storage layer (Magic Pocket), the block/blocklist upload protocol, the Nucleus sync engine and the Edgestore metadata store. It does **not** publish the full client/server change-notification protocol, so that part is a design sketch `[INDUSTRY PATTERN]`.
-> **Sources read on 2026-10-27 (all Dropbox Tech Blog):** [Inside the Magic Pocket](https://dropbox.tech/infrastructure/inside-the-magic-pocket) · [Scaling to exabytes and beyond](https://dropbox.tech/infrastructure/magic-pocket-infrastructure) (2016-03-14) · [Improving storage efficiency in Magic Pocket](https://dropbox.tech/infrastructure/improving-storage-efficiency-in-magic-pocket-our-immutable-blob-store) · [Streaming File Synchronization](https://dropbox.tech/infrastructure/streaming-file-synchronization) · [Rewriting the heart of our sync engine](https://dropbox.tech/infrastructure/rewriting-the-heart-of-our-sync-engine) · [Testing sync at Dropbox](https://dropbox.tech/infrastructure/-testing-our-new-sync-engine) · [(Re)Introducing Edgestore](https://dropbox.tech/infrastructure/reintroducing-edgestore).
-> **Dated material:** the blog posts span years. Scale figures are as of each post, not current.
-> **Tags:** `[CONFIRMED]` stated by a Dropbox post · `[INDUSTRY PATTERN]` standard practice, not stated for Dropbox · `[SPECULATIVE]` plausible.
+*A documented real system. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** Dropbox splits files into 4 MB blocks identified by SHA-256 and uploads only blocks the server lacks. Content lives in Magic Pocket, an in-house immutable block store separate from the Edgestore metadata store. The client's Nucleus sync engine keeps three trees (remote, local, synced) and plans operations to converge them, tested with deterministic simulation.
+
+**Key numbers**
+- Blocks up to 4 MB, SHA-256 `[CONFIRMED]`.
+- Magic Pocket cells of about 50 PB, every block in at least two zones `[CONFIRMED]`.
+- Streaming sync: up to 2× faster multi-client sync `[CONFIRMED]`.
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Content-addressed blocks | Skip blocks already stored, resumable uploads | A fixed boundary shifts if bytes are inserted |
+| Blocks separate from metadata | Different workloads scale independently | Two systems to keep consistent via commit order |
+| Three-tree client sync | Tells which side changed | A complex client, hence the simulation testing |
+
+**Common mistakes**
+- Calling it deduplication across users: the posts only describe 'need blocks'.
+- Assuming Dropbox still runs on S3 for user content.
+- Treating a timeout as failure and re-uploading, instead of retrying the same commit.
+
 
 ---
 
@@ -150,11 +170,56 @@ Sync is complete when all three match. The **planner** takes the three trees and
 5. How would you notify other devices of a change without polling?
 6. How would you test a sync engine whose bugs only appear under rare interleavings?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: file sizes, sharing, offline edits, conflicts.
+2. Estimate: files, edits per day, bandwidth.
+3. API: commit blocklist, upload blocks, list changes.
+4. Design: block servers, metadata store, notification, client engine.
+5. Deep dive: blocklists, three trees, conflicts.
+6. Failure and scale: dropped uploads, concurrent edits, notification fan-out.
+
+**If it grows 10×**
+- Metadata becomes the bottleneck: shard and cache it.
+- Large files: stream blocks to other devices before the commit.
+- Storage efficiency: erasure code cold blocks.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>Why fixed-size blocks, and what goes wrong when a byte is inserted at the front?</summary>
+
+Fixed blocks are simple and resumable, but inserting a byte shifts every later boundary, so every later block hash changes. Content-defined chunking avoids that.
+
+</details>
+
+<details><summary>Why is the final metadata commit separate from the block upload?</summary>
+
+Blocks can arrive in any order and be retried. The commit atomically makes the new version visible only when all its blocks are present.
+
+</details>
+
+<details><summary>Two devices edit offline. What does the synced tree tell you?</summary>
+
+It is the last agreed state, so comparing it with each side shows who changed what. If both changed the same path you need a conflict policy such as keeping both.
+
+</details>
+
 ## 📚 Further reading
 
 - The Dropbox posts listed at the top. Also [Alki, cold metadata](https://dropbox.tech/infrastructure/alki--or-how-we-learned-to-stop-worrying-and-love-cold-metadata) and [Cross-shard transactions at 10M requests per second](https://dropbox.tech/infrastructure/cross-shard-transactions-at-10-million-requests-per-second) (appear in search, not read here).
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary background on caching, replication and consistency).
 - Related in this repo: [05 Object storage](05-object-storage-s3.md) for erasure coding, and [`neokim-post/11` Google Docs](../../neokim-post/11-how-google-docs-works.md) for real-time merge.
+
+## Sources and provenance
+
+> **Kind:** real-system, partly public. Dropbox's engineering blog documents the block storage layer (Magic Pocket), the block/blocklist upload protocol, the Nucleus sync engine and the Edgestore metadata store. It does **not** publish the full client/server change-notification protocol, so that part is a design sketch `[INDUSTRY PATTERN]`.
+> **Sources read on 2026-10-27 (all Dropbox Tech Blog):** [Inside the Magic Pocket](https://dropbox.tech/infrastructure/inside-the-magic-pocket) · [Scaling to exabytes and beyond](https://dropbox.tech/infrastructure/magic-pocket-infrastructure) (2016-03-14) · [Improving storage efficiency in Magic Pocket](https://dropbox.tech/infrastructure/improving-storage-efficiency-in-magic-pocket-our-immutable-blob-store) · [Streaming File Synchronization](https://dropbox.tech/infrastructure/streaming-file-synchronization) · [Rewriting the heart of our sync engine](https://dropbox.tech/infrastructure/rewriting-the-heart-of-our-sync-engine) · [Testing sync at Dropbox](https://dropbox.tech/infrastructure/-testing-our-new-sync-engine) · [(Re)Introducing Edgestore](https://dropbox.tech/infrastructure/reintroducing-edgestore).
+> **Dated material:** the blog posts span years. Scale figures are as of each post, not current.
+> **Tags:** `[CONFIRMED]` stated by a Dropbox post · `[INDUSTRY PATTERN]` standard practice, not stated for Dropbox · `[SPECULATIVE]` plausible.
 
 ---
 ## ✅ Verification log

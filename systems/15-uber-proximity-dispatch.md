@@ -1,9 +1,29 @@
 # 15 — Uber (Proximity + Dispatch)
 
-> **Kind:** reference design with documented real parts. Uber publishes the design of **H3** (its hexagonal spatial index, open source) and a public description of how **batched matching** works. It does not publish its current dispatch and location-storage architecture, so the ingestion, storage and sharding sections are the standard design plus a 2015-era description from a secondary summary `[INDUSTRY PATTERN]`.
-> **Basis:** upgraded from [`neokim-post/06`](../../neokim-post/06-how-uber-finds-nearby-drivers.md), a summary of [How Does Uber Find Nearby Drivers at 1 Million Requests per Second](https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers) (paywalled half reconstructed). Re-verified on 2026-10-27, see the log.
-> **Primary sources read:** [H3 resolution table](https://h3geo.org/docs/core-library/restable/) · [Uber Engineering: H3](https://www.uber.com/blog/h3/) (2018-06-27) · [Uber: how matching works](https://www.uber.com/us/en/marketplace/matching/).
-> **Tags:** `[CONFIRMED]` stated by an Uber or H3 primary source · `[INDUSTRY PATTERN]` standard design or secondary-source claim · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline (content beyond the newsletter's public half).
+*A reference design built on verified building blocks. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** Nearest-driver search is turned into key lookups by indexing locations into hexagonal cells (H3). A rider's cell plus its neighbouring ring covers the search area, an in-memory index sharded by cell holds the latest drivers, and candidates are ranked by arrival time. Uber's public matching description batches requests over a few seconds to reduce average wait instead of taking the closest driver immediately.
+
+**Key numbers**
+- H3 has 16 resolutions; resolution 9 cells average 0.105 km², resolution 8 0.737 km² `[CONFIRMED]`.
+- Every resolution has exactly 12 pentagons; each finer resolution has one-seventh the area `[CONFIRMED]`.
+- About 4,357,449 km² average cell area at resolution 0 `[CONFIRMED]`.
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Hexagonal grid | One distance to every neighbour, even search growth | Pentagons and approximate parent/child containment |
+| Shard the index by cell | Locality for neighbour queries | Hot cells in dense areas |
+| Batch matching | Lower average wait | A few seconds of added latency |
+
+**Common mistakes**
+- Using lat/lng range queries on a B-tree: they do not map to a single key lookup.
+- Assuming a k-ring has 19 cells at a pentagon.
+- Matching the closest driver instantly and calling it optimal.
+
 
 ## Verified facts
 
@@ -171,6 +191,44 @@ Driver location is **ephemeral** state. If a node dies, the index rebuilds withi
 4. How would you design surge pricing per area using H3?
 5. Your stadium cell has 3,000 riders and 50 drivers. What breaks?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: scale, matching rules, ETAs.
+2. Estimate: drivers, update rate, queries/s.
+3. API: location update, request ride, offer.
+4. Design: ingestion, cell index, matching, ETA.
+5. Deep dive: H3, k-ring search, batching.
+6. Failure and scale: hot cells, stale locations, shard loss.
+
+**If it grows 10×**
+- Dense cities: use finer cells and split hot shards.
+- Ping volume: coalesce updates and keep the latest in memory.
+- Matching latency: batch smaller windows in busy zones.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>Why not store lat/lng and query a range?</summary>
+
+A range query on two coordinates scans many rows. A cell ID turns 'nearby' into a few key lookups over a cell and its neighbours.
+
+</details>
+
+<details><summary>How do you find drivers near a rider?</summary>
+
+Convert the pickup to a cell, take the cell plus a ring of neighbours, read the drivers in those cells, filter and rank by ETA.
+
+</details>
+
+<details><summary>Why batch for a few seconds?</summary>
+
+The closest driver is not always the quickest, and pairing several riders and drivers together can lower the average wait.
+
+</details>
+
 ## 📚 Further reading
 
 - [Uber Engineering: H3, Uber's Hexagonal Hierarchical Spatial Index](https://www.uber.com/blog/h3/)
@@ -180,6 +238,13 @@ Driver location is **ephemeral** state. If a node dies, the index rebuilds withi
 - [Neo Kim: How Uber computes ETA](https://newsletter.systemdesign.one/p/uber-eta)
 - [Google S2 geometry](https://s2geometry.io/) · [Geohash (Wikipedia)](https://en.wikipedia.org/wiki/Geohash)
 - Alex Xu, *System Design Interview Vol. 2*: "Proximity Service" and "Nearby Friends" chapters
+
+## Sources and provenance
+
+> **Kind:** reference design with documented real parts. Uber publishes the design of **H3** (its hexagonal spatial index, open source) and a public description of how **batched matching** works. It does not publish its current dispatch and location-storage architecture, so the ingestion, storage and sharding sections are the standard design plus a 2015-era description from a secondary summary `[INDUSTRY PATTERN]`.
+> **Basis:** upgraded from [`neokim-post/06`](../../neokim-post/06-how-uber-finds-nearby-drivers.md), a summary of [How Does Uber Find Nearby Drivers at 1 Million Requests per Second](https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers) (paywalled half reconstructed). Re-verified on 2026-10-27, see the log.
+> **Primary sources read:** [H3 resolution table](https://h3geo.org/docs/core-library/restable/) · [Uber Engineering: H3](https://www.uber.com/blog/h3/) (2018-06-27) · [Uber: how matching works](https://www.uber.com/us/en/marketplace/matching/).
+> **Tags:** `[CONFIRMED]` stated by an Uber or H3 primary source · `[INDUSTRY PATTERN]` standard design or secondary-source claim · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline (content beyond the newsletter's public half).
 
 ---
 ## ✅ Verification log

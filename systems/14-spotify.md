@@ -1,10 +1,29 @@
 # 14 — Spotify (Music Streaming)
 
-> **Kind:** reference design plus a documented history. Spotify has published its **2010 hybrid peer-to-peer streaming design** in an academic paper, plus support pages on audio quality, loudness and stream counting. Its current server-side architecture is **not** published end to end, so the blob-storage + CDN + stateless-API design below is the standard interview design `[INDUSTRY PATTERN]`.
-> **Basis:** upgraded from [`neokim-post/09`](../../neokim-post/09-how-spotify-works.md), a summary of [Spotify System Design](https://newsletter.systemdesign.one/p/spotify-system-design) (guest author Hayk Simonyan) whose paywalled halves were reconstructed. Re-verified on 2026-10-27, see the log.
-> **Primary sources read:** Kreitz & Niemelä, [*Spotify – Large Scale, Low Latency, P2P Music-on-Demand Streaming*, IEEE P2P 2010](https://people.cs.umass.edu/~phillipa/CSE390/spotify-p2p10.pdf) (text extracted locally) · Spotify Support: [Audio quality](https://support.spotify.com/us/article/audio-quality/), [How we count streams](https://support.spotify.com/us/artists/article/how-we-count-streams/), [Loudness normalization](https://support.spotify.com/us/artists/article/loudness-normalization/).
-> **Dated material:** the paper describes Spotify in 2010 (over 8 million tracks). The client has since dropped P2P, so do not present the paper as the current architecture.
-> **Tags:** `[CONFIRMED]` stated by a Spotify primary source · `[INDUSTRY PATTERN]` standard design · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline (content beyond the newsletter's public half).
+*A reference design built on verified building blocks. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** Audio dominates storage and egress while metadata is tiny, so the standard design serves audio through signed URLs and a CDN from blob storage and keeps a stateless API in front of a read-mostly catalogue. Spotify's 2010 paper is documented evidence that only 8.8% of played data came from Spotify's servers then, the rest from clients' caches and peers, and its support pages document audio tiers and playback-time loudness normalisation.
+
+**Key numbers**
+- 2010: only 8.8% of data from servers, median playback latency 265 ms `[CONFIRMED]`.
+- About 39% of playbacks were random access `[CONFIRMED]` (2010).
+- Loudness normalisation target -14 dB LUFS applied at playback `[CONFIRMED]`.
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Signed URLs from a stateless API | Audio bytes skip the API | Short-lived tokens to manage |
+| Several quality tiers | Fits different networks and plans | Storage multiplies |
+| Prefetch the next track | Gapless playback | Wasted bytes on skips |
+
+**Common mistakes**
+- Presenting the 2010 P2P design as the current architecture.
+- Attributing Ogg Vorbis to today's apps: the current support page names no codec.
+- Forgetting that a stream counts only after at least 30 seconds.
+
 
 ## Verified facts about the real Spotify
 
@@ -200,6 +219,44 @@ plays(user_id, song_id, played_at, ms_played)          -- → event stream / war
 4. How do you count streams for royalties accurately and resistant to fraud?
 5. How would offline downloads work with licensing restrictions?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: catalogue size, offline, quality tiers.
+2. Estimate: tracks, plays/s, egress.
+3. API: get track returns a signed URL.
+4. Design: API, catalogue, blob storage, CDN.
+5. Deep dive: prefetching, range requests, loudness.
+6. Failure and scale: CDN miss, popular releases, uploads.
+
+**If it grows 10×**
+- Release-day spikes: pre-warm the CDN.
+- Catalogue growth: replicate and cache the read-mostly database.
+- Uploads: asynchronous transcoding and analysis.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>Why serve audio through a CDN instead of the API?</summary>
+
+Audio is large and cacheable. The API only authorises and returns a signed URL, which keeps it small and stateless.
+
+</details>
+
+<details><summary>How does playback start in under a second?</summary>
+
+A cache or prefetched data plays immediately. Otherwise the client asks for the first ~15 seconds over an open connection.
+
+</details>
+
+<details><summary>How would you apply loudness normalisation?</summary>
+
+Measure at upload, store the gain value, and apply it at playback so the audio files stay untouched.
+
+</details>
+
 ## 📚 Further reading
 
 - [Spotify Engineering blog](https://engineering.atspotify.com/)
@@ -208,6 +265,14 @@ plays(user_id, song_id, played_at, ms_played)          -- → event stream / war
 - [MDN: HTTP range requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Range_requests)
 - [Hayk Simonyan (YouTube)](https://youtube.com/@hayk.simonyan)
 - Related in this folder: [12 YouTube](12-youtube.md) (same blob + CDN + ABR pattern for video), [13 Netflix](13-netflix.md)
+
+## Sources and provenance
+
+> **Kind:** reference design plus a documented history. Spotify has published its **2010 hybrid peer-to-peer streaming design** in an academic paper, plus support pages on audio quality, loudness and stream counting. Its current server-side architecture is **not** published end to end, so the blob-storage + CDN + stateless-API design below is the standard interview design `[INDUSTRY PATTERN]`.
+> **Basis:** upgraded from [`neokim-post/09`](../../neokim-post/09-how-spotify-works.md), a summary of [Spotify System Design](https://newsletter.systemdesign.one/p/spotify-system-design) (guest author Hayk Simonyan) whose paywalled halves were reconstructed. Re-verified on 2026-10-27, see the log.
+> **Primary sources read:** Kreitz & Niemelä, [*Spotify – Large Scale, Low Latency, P2P Music-on-Demand Streaming*, IEEE P2P 2010](https://people.cs.umass.edu/~phillipa/CSE390/spotify-p2p10.pdf) (text extracted locally) · Spotify Support: [Audio quality](https://support.spotify.com/us/article/audio-quality/), [How we count streams](https://support.spotify.com/us/artists/article/how-we-count-streams/), [Loudness normalization](https://support.spotify.com/us/artists/article/loudness-normalization/).
+> **Dated material:** the paper describes Spotify in 2010 (over 8 million tracks). The client has since dropped P2P, so do not present the paper as the current architecture.
+> **Tags:** `[CONFIRMED]` stated by a Spotify primary source · `[INDUSTRY PATTERN]` standard design · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline (content beyond the newsletter's public half).
 
 ---
 ## ✅ Verification log

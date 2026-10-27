@@ -1,9 +1,29 @@
 # 17 — Payment System
 
-> **Kind:** reference design with its important mechanisms sourced to primary documents. The usual interview question is "design a payment service" for a merchant or marketplace that takes card and bank payments through a payment service provider (PSP). Real PSP internals are not published in a way we could verify, so the architecture is the standard design `[INDUSTRY PATTERN]`. What **is** verified: Stripe's documented behaviour for **idempotency**, **PaymentIntent states** and **webhooks**, and Square's published design of an **immutable double-entry ledger** (Books).
-> **Sources read on 2026-10-27:** Stripe docs: [Idempotent requests](https://docs.stripe.com/api/idempotent_requests), [PaymentIntents lifecycle](https://docs.stripe.com/payments/paymentintents/lifecycle), [Webhooks](https://docs.stripe.com/webhooks) (our fetches of the last two returned Portuguese-locale pages. We read them in that language and translate the quoted facts) · Square Engineering, [*Books, an immutable double-entry accounting database service*](https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/) (2019-10-16) · [Stripe's rate-limiter post](https://stripe.com/blog/rate-limiters), read for [02 Rate limiter](02-rate-limiter.md).
-> **Not read:** card-network rules, PCI DSS text, bank settlement file formats, the Airbnb post on idempotency (paywalled, returned only its introduction), and any PSP's internal architecture. Claims about those are `[INDUSTRY PATTERN]` or left out.
-> **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible.
+*A reference design built on verified building blocks. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** A payment service never moves money without an idempotency key, models each payment as a state machine, treats provider webhooks as at-least-once and unordered, and records every movement in an immutable double-entry ledger. A nightly reconciliation against the provider catches drift. Stripe's documented behaviour and Square's Books ledger are the verified building blocks.
+
+**Key numbers**
+- Stripe v1 saves the first response including 500s; keys pruned after at least 24 hours `[CONFIRMED]`.
+- Webhook retries up to three days with exponential back-off; no ordering guarantee `[CONFIRMED]`.
+- Square's Books: about 20 TB, built and run by three people `[CONFIRMED]` (2019).
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Idempotency keys | A retry cannot charge twice | The key must be stable and survive restarts |
+| Webhook as source of truth | Handles async methods and redirects | Duplicates and reordering to handle |
+| Immutable double-entry ledger | Audit trail, safe corrections | More storage and code than a balance column |
+
+**Common mistakes**
+- Treating a timeout as failure and creating a new payment.
+- Fulfilling on the browser redirect instead of a confirmed state.
+- Updating a balance in place instead of appending a journal entry.
+
 
 ---
 
@@ -181,12 +201,57 @@ Checkout (browser/app) ──► Order service ──► Payment service ──�
 6. How would you support authorise-now, capture-later (like a hotel or ride)? Which states change?
 7. How would you let a marketplace split one payment between three sellers?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: methods, refunds, marketplace splits, regions.
+2. Estimate: payments/s and ledger rows.
+3. API: create intent with an idempotency key, webhook.
+4. Design: payment service, PSP, queue, ledger, reconciliation.
+5. Deep dive: state machine, retries, webhook handling.
+6. Failure and scale: timeouts, duplicates, mismatches.
+
+**If it grows 10×**
+- Webhook spikes: acknowledge fast and process from a queue.
+- Ledger growth: partition by account and keep entries append-only.
+- More providers: put an adapter layer behind one intent model.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>The PSP call times out. What now?</summary>
+
+Retry with the same idempotency key, or fetch the intent's status. Never create a fresh payment.
+
+</details>
+
+<details><summary>Why double-entry instead of a balance column?</summary>
+
+Every transaction balances to zero, entries are append-only and corrections are new entries, giving an audit trail and consistency.
+
+</details>
+
+<details><summary>How do you handle duplicate and out-of-order webhooks?</summary>
+
+Record event IDs under a unique constraint, enqueue, return 2xx, and have the worker read the current object state.
+
+</details>
+
 ## 📚 Further reading
 
 - The sources listed at the top.
 - [Stripe: Scaling your API with rate limiters](https://stripe.com/blog/rate-limiters) (see also [02 Rate limiter](02-rate-limiter.md)).
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary).
 - Related in this repo: [16 Reservation scheduler](16-reservation-scheduler.md), [04 Message queue](04-message-queue-kafka.md), [`neokim-post/12` Airbnb](../../neokim-post/12-how-airbnb-works.md) (payments section and the `Idempotency-Key` discussion).
+
+## Sources and provenance
+
+> **Kind:** reference design with its important mechanisms sourced to primary documents. The usual interview question is "design a payment service" for a merchant or marketplace that takes card and bank payments through a payment service provider (PSP). Real PSP internals are not published in a way we could verify, so the architecture is the standard design `[INDUSTRY PATTERN]`. What **is** verified: Stripe's documented behaviour for **idempotency**, **PaymentIntent states** and **webhooks**, and Square's published design of an **immutable double-entry ledger** (Books).
+> **Sources read on 2026-10-27:** Stripe docs: [Idempotent requests](https://docs.stripe.com/api/idempotent_requests), [PaymentIntents lifecycle](https://docs.stripe.com/payments/paymentintents/lifecycle), [Webhooks](https://docs.stripe.com/webhooks) (our fetches of the last two returned Portuguese-locale pages. We read them in that language and translate the quoted facts) · Square Engineering, [*Books, an immutable double-entry accounting database service*](https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/) (2019-10-16) · [Stripe's rate-limiter post](https://stripe.com/blog/rate-limiters), read for [02 Rate limiter](02-rate-limiter.md).
+> **Not read:** card-network rules, PCI DSS text, bank settlement file formats, the Airbnb post on idempotency (paywalled, returned only its introduction), and any PSP's internal architecture. Claims about those are `[INDUSTRY PATTERN]` or left out.
+> **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible.
 
 ---
 ## ✅ Verification log

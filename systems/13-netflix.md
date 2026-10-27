@@ -1,10 +1,29 @@
 # 13 — Netflix (Video Delivery)
 
-> **Kind:** real-system, for the part Netflix documents: **how video is delivered**. Netflix publishes a lot about its CDN, **Open Connect**, and the playback steering that points each client at a nearby appliance. It publishes far less on the rest (catalog, recommendations, encoding pipeline), so this note covers delivery and explicitly leaves out what we could not source.
-> **Sources read on 2026-10-27:** [Open Connect Overview (PDF)](https://openconnect.netflix.com/Open-Connect-Overview.pdf) (copyright dates 2016, 2019, 2026; text extracted locally) · [Open Connect home page](https://openconnect.netflix.com/en/) · Netflix TechBlog: [*Distributing Content to Open Connect*](https://netflixtechblog.com/distributing-content-to-open-connect-3e3e391d4dc9) (2017-12-12) and [*Driving Content Delivery Efficiency Through Classifying Cache Misses*](https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c). Both blog posts blocked direct fetches, so we read the Internet Archive copies of the pages.
-> **Not read:** Netflix's encoding (per-title) posts, its API/gateway and microservice posts, chaos-engineering material, and the Open Connect deployment requirements (blocked). Those topics are **not** covered here.
-> **Dated material:** the Overview is a living document. The 2017 placement post and the cache-miss post describe the systems at those dates.
-> **Tags:** `[CONFIRMED]` stated by a Netflix primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible.
+*A documented real system. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** Netflix splits control from data. A control plane in AWS authenticates, picks the files for a device and steers it to a nearby Open Connect appliance, while the appliances inside ISPs and exchange points serve the video. Content is pre-positioned overnight from predicted popularity, so the network carries far less traffic than a demand-driven cache would.
+
+**Key numbers**
+- Over a thousand ISP partners and 60+ data centers `[CONFIRMED]`.
+- Each server is hashed onto the ring 1000 times for placement `[CONFIRMED]` (2017).
+- Storage servers ~40 Gbps and 200 TB+, flash up to ~100 Gbps and 18 TB `[CONFIRMED]` (2017).
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Proactive pre-positioning | Predictable demand cuts upstream traffic | Misses when predictions are wrong (content miss) |
+| Embedded appliances in ISPs | Traffic stays local | Hardware to ship and operate |
+| Ranked URLs from a central steering service | Client can pick the best site | Control plane must stay available |
+
+**Common mistakes**
+- Saying the video comes from AWS: the control plane is in AWS, the bytes come from Open Connect.
+- Claiming OCAs stop serving without AWS: we could not verify it.
+- Treating the 2017 hardware figures as current.
+
 
 ---
 
@@ -140,11 +159,57 @@ Interview points: separate **control plane** (small, stateful, in a cloud region
 5. Why can proactive caching beat demand-driven caching for Netflix but not for YouTube?
 6. How do you measure whether your CDN is serving bytes from the right place?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: catalog size, regions, devices, ISP relations.
+2. Estimate: peak egress and storage per site.
+3. API: play request returns ranked URLs.
+4. Design: control plane, steering, appliances, fill.
+5. Deep dive: placement with consistent hashing and heterogeneous hardware.
+6. Failure and scale: saturated site (health miss), missing content, measuring efficiency.
+
+**If it grows 10×**
+- Peak egress: more embedded appliances and peering.
+- Heterogeneous fleets: weight placement by storage and throughput.
+- Measurement: log steering decisions to find misses.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>Where does Netflix video come from, and what does AWS do?</summary>
+
+Video comes from Open Connect appliances in ISPs and IXPs. AWS runs the control plane: playback authorisation, file selection, steering and cache control.
+
+</details>
+
+<details><summary>How would you decide which titles go on which servers?</summary>
+
+Rank by predicted popularity per region, place with consistent hashing, and weight servers by storage and throughput so no content holes appear.
+
+</details>
+
+<details><summary>Why can proactive caching work for Netflix but not YouTube?</summary>
+
+A finite catalogue with predictable demand can be pre-positioned. Newly uploaded user videos cannot be predicted in advance.
+
+</details>
+
 ## 📚 Further reading
 
 - The sources listed at the top, plus the [Open Connect briefing paper](https://openconnect.netflix.com/Open-Connect-Briefing-Paper.pdf) and Netflix's "Serving 100 Gbps from an Open Connect Appliance" post (both surfaced in search, not read here).
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (CDN section, secondary).
 - Related in this repo: [12 YouTube](12-youtube.md) (on-demand upload/transcode contrast), [03 Distributed KV store](03-distributed-kv-store.md) (consistent hashing).
+
+## Sources and provenance
+
+> **Kind:** real-system, for the part Netflix documents: **how video is delivered**. Netflix publishes a lot about its CDN, **Open Connect**, and the playback steering that points each client at a nearby appliance. It publishes far less on the rest (catalog, recommendations, encoding pipeline), so this note covers delivery and explicitly leaves out what we could not source.
+> **Sources read on 2026-10-27:** [Open Connect Overview (PDF)](https://openconnect.netflix.com/Open-Connect-Overview.pdf) (copyright dates 2016, 2019, 2026; text extracted locally) · [Open Connect home page](https://openconnect.netflix.com/en/) · Netflix TechBlog: [*Distributing Content to Open Connect*](https://netflixtechblog.com/distributing-content-to-open-connect-3e3e391d4dc9) (2017-12-12) and [*Driving Content Delivery Efficiency Through Classifying Cache Misses*](https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c). Both blog posts blocked direct fetches, so we read the Internet Archive copies of the pages.
+> **Not read:** Netflix's encoding (per-title) posts, its API/gateway and microservice posts, chaos-engineering material, and the Open Connect deployment requirements (blocked). Those topics are **not** covered here.
+> **Dated material:** the Overview is a living document. The 2017 placement post and the cache-miss post describe the systems at those dates.
+> **Tags:** `[CONFIRMED]` stated by a Netflix primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible.
 
 ---
 ## ✅ Verification log

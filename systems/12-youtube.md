@@ -1,8 +1,29 @@
 # 12 — YouTube
 
-> **Kind:** reference design with a few documented real-system facts. YouTube does not publish its architecture end to end. What we verified in primary sources: the upload limits (YouTube Help), the resumable-upload protocol (YouTube API docs), the custom transcoding chip (YouTube blog, 2021), Vitess's origin at YouTube (Vitess docs) and the HLS playlist format (RFC 8216). Everything else, including the pipeline stages, store choices and CDN strategy, is the standard interview design `[INDUSTRY PATTERN]`.
-> **Basis:** upgraded from [`neokim-post/03`](../../neokim-post/03-how-youtube-works.md), a summary of [YouTube System Design](https://newsletter.systemdesign.one/p/youtube-system-design) whose paywalled deep dives were reconstructed from public sources. Re-verified on 2026-10-27, see the log.
-> **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice, not stated for YouTube · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline (content beyond the newsletter's public half).
+*A reference design built on verified building blocks. How it was sourced and what was not checked is under **Sources and provenance** near the end.*
+
+## At a glance
+
+**In 60 seconds.** A video platform separates heavy bytes from metadata. Uploads go straight to blob storage in resumable parts, a queue triggers an asynchronous transcoding DAG that produces many renditions and HLS or DASH segments, and viewers pull immutable segments from a CDN with adaptive bitrate. The documented real facts are the upload limits and protocol, the transcoding chip and Vitess's origin.
+
+**Key numbers**
+- Upload limit: 256 GB or 12 hours, whichever is less `[CONFIRMED]`.
+- Custom transcoding chip: up to 20–33× compute-efficiency improvement `[CONFIRMED]`.
+- Vitess was created at YouTube in 2010 `[CONFIRMED]`.
+
+**Decisions and trade-offs**
+
+| Decision | Why | Cost |
+|---|---|---|
+| Resumable direct upload | App servers stay out of the data path | Session handling and cleanup of abandoned uploads |
+| Async chunked transcoding | Wall-clock time follows the slowest chunk | A workflow engine and idempotent tasks |
+| Immutable segments | CDN-friendly | Many files per video |
+
+**Common mistakes**
+- Presenting the baseline's chunk length or bitrate ladder as YouTube's.
+- Updating a view counter row on every view.
+- Forgetting that new videos are only eventually consistent in search.
+
 
 ## Verified facts about the real YouTube
 
@@ -204,6 +225,44 @@ Don't `UPDATE videos SET views = views+1` per view. Instead, emit view events to
 4. A video goes viral 1 minute after upload. What breaks first?
 5. How do you count views accurately enough for monetisation?
 
+## Interview practice
+
+These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from the cited sources.
+
+**A 45-minute walkthrough**
+
+1. Clarify: size limits, formats, latency to publish, live or not.
+2. Estimate: uploads/day, storage, egress.
+3. API: start resumable upload, complete, playback manifest.
+4. Design: blob store, queue, transcoding DAG, CDN.
+5. Deep dive: ABR, renditions, resumable upload protocol.
+6. Failure and scale: failed chunk retry, viral video, view counts.
+
+**If it grows 10×**
+- Egress dominates: ISP and edge caches.
+- Encoding cost: hardware acceleration and per-title encoding.
+- View counts: windowed aggregation from a stream.
+
+**Answer outlines** (try the questions above first)
+
+<details><summary>Why do uploads bypass the application servers?</summary>
+
+Large bytes would consume app capacity. A session URI or pre-signed URL lets the client write straight to storage and resume after drops.
+
+</details>
+
+<details><summary>How does adaptive bitrate work?</summary>
+
+The player fetches a manifest listing renditions, starts low, and picks the next segment's rendition from measured throughput and buffer.
+
+</details>
+
+<details><summary>How do you count views at scale?</summary>
+
+Emit events to a stream, aggregate in windows and flush periodically. Use sharded counters for hot videos and filter fraud in the stream.
+
+</details>
+
 ## 📚 Further reading
 
 - [Vitess history: born at YouTube](https://vitess.io/docs/overview/history/)
@@ -213,6 +272,12 @@ Don't `UPDATE videos SET views = views+1` per view. Instead, emit view events to
 - [Apple HLS spec (RFC 8216)](https://datatracker.ietf.org/doc/html/rfc8216) · [MPEG-DASH overview](https://dashif.org/)
 - [AWS S3 multipart upload](https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html)
 - Related in this folder: [14 Spotify](14-spotify.md), [05 Object storage](05-object-storage-s3.md), [13 Netflix](13-netflix.md)
+
+## Sources and provenance
+
+> **Kind:** reference design with a few documented real-system facts. YouTube does not publish its architecture end to end. What we verified in primary sources: the upload limits (YouTube Help), the resumable-upload protocol (YouTube API docs), the custom transcoding chip (YouTube blog, 2021), Vitess's origin at YouTube (Vitess docs) and the HLS playlist format (RFC 8216). Everything else, including the pipeline stages, store choices and CDN strategy, is the standard interview design `[INDUSTRY PATTERN]`.
+> **Basis:** upgraded from [`neokim-post/03`](../../neokim-post/03-how-youtube-works.md), a summary of [YouTube System Design](https://newsletter.systemdesign.one/p/youtube-system-design) whose paywalled deep dives were reconstructed from public sources. Re-verified on 2026-10-27, see the log.
+> **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice, not stated for YouTube · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline (content beyond the newsletter's public half).
 
 ---
 ## ✅ Verification log
