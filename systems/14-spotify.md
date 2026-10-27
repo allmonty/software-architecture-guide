@@ -207,7 +207,7 @@ plays(user_id, song_id, played_at, ms_played)          -- → event stream / war
 - [Spotify: Loudness normalization](https://support.spotify.com/us/artists/article/loudness-normalization/)
 - [MDN: HTTP range requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Range_requests)
 - [Hayk Simonyan (YouTube)](https://youtube.com/@hayk.simonyan)
-- Related in this folder: [03-how-youtube-works.md](03-how-youtube-works.md) (same blob + CDN + ABR pattern for video)
+- Related in this folder: [12 YouTube](12-youtube.md) (same blob + CDN + ABR pattern for video), [13 Netflix](13-netflix.md)
 
 ---
 ## ✅ Verification log

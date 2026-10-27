@@ -234,7 +234,7 @@ flowchart LR
 - [Nasdaq TotalView-ITCH spec](https://www.nasdaqtrader.com/Trader.aspx?id=Totalview2)
 - [Co-location strategies (QuestDB glossary)](https://questdb.com/glossary/exchange-co-location-strategies/)
 - Alex Xu, *System Design Interview Vol. 2*: "Stock Exchange" chapter
-- Related in this folder: [04-how-apache-kafka-works.md](04-how-apache-kafka-works.md)
+- Related in this folder: [04 Message queue / log](04-message-queue-kafka.md)
 
 ---
 ## ✅ Verification log

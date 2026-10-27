@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, existsSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Diagram } from "../schema/diagram.schema.ts";
 
@@ -53,6 +53,13 @@ export function validateDir(dir: string): string[] {
 
     if (d.id !== stem) err(`diagram id "${d.id}" must equal file stem`);
     if (!headings[0]?.includes(d.title)) err(`md H1 must contain diagram title "${d.title}"`);
+
+    // Relative links must point at files that exist (anchors and URLs are skipped).
+    for (const m of md.matchAll(/\]\(([^)\s]+)\)/g)) {
+      const target = m[1].split("#")[0];
+      if (!target || /^(https?:|mailto:)/.test(target)) continue;
+      if (!existsSync(resolve(dirname(mdPath), target))) err(`broken relative link: ${m[1]}`);
+    }
 
     const nodeIds = d.nodes.map((n) => n.id);
     for (const x of dupes(nodeIds)) err(`duplicate node id ${x}`);

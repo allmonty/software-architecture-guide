@@ -212,7 +212,7 @@ Don't `UPDATE videos SET views = views+1` per view. Instead, emit view events to
 - [Netflix Open Connect](https://openconnect.netflix.com/en/)
 - [Apple HLS spec (RFC 8216)](https://datatracker.ietf.org/doc/html/rfc8216) · [MPEG-DASH overview](https://dashif.org/)
 - [AWS S3 multipart upload](https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html)
-- Related in this folder: [09-how-spotify-works.md](09-how-spotify-works.md), [07-how-amazon-s3-works.md](07-how-amazon-s3-works.md)
+- Related in this folder: [14 Spotify](14-spotify.md), [05 Object storage](05-object-storage-s3.md), [13 Netflix](13-netflix.md)
 
 ---
 ## ✅ Verification log

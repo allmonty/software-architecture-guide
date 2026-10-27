@@ -53,3 +53,8 @@ test("id must match file stem", () => {
   const e = run((d) => (d.id = "98-toy"));
   assert.match(e.join("\n"), /must equal file stem/);
 });
+
+test("broken relative link fails, existing ones pass", () => {
+  const e = run(() => {}, md + "\n[gone](./nope.md) [ok](./99-toy.md#x) [web](https://example.com)\n");
+  assert.deepEqual(e.filter((m) => m.includes("broken relative link")), ["99-toy: broken relative link: ./nope.md"]);
+});

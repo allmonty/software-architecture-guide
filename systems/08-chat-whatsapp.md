@@ -277,7 +277,7 @@ sequenceDiagram
 > 🔧 Extension. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **reliability** (no message loss), **availability**, **scalability** (tens of millions of concurrent sockets), **performance** (< 500 ms delivery), plus the cross-cutting **privacy/security** pair (E2EE). Presence is the implicit **elasticity** problem: mass reconnects after an outage.
-- **Style (Ch 14):** an **event-driven broker topology**. The chat server accepts, persists and ACKs, and storage, notification and presence react independently. The book's "preventing data loss" recipe ([Ch 14 summary](../fundamentals-of-software-architecture/summaries/14-event-driven-architecture.md)) maps one-to-one: persistent queue + synchronous send (ACK after a durable write), client-acknowledge mode (delete from the inbox only after `delivery_ack`), and an ACID commit before the message leaves the queue.
+- **Style (Ch 14):** an **event-driven broker topology**. The chat server accepts, persists and ACKs, and storage, notification and presence react independently. The book's "preventing data loss" recipe ([Ch 14 summary](../../fundamentals-of-software-architecture/summaries/14-event-driven-architecture.md)) maps one-to-one: persistent queue + synchronous send (ACK after a durable write), client-acknowledge mode (delete from the inbox only after `delivery_ack`), and an ACID commit before the message leaves the queue.
 - **Quanta (Ch 7):** at least three. (1) The connection tier (chat servers + registry), which must scale with *connections*. (2) Message storage behind the queue, which scales with *writes*. (3) Notification/push, which depends on APNs/FCM availability. The queue is what lets them differ. Presence could be a fourth.
 - **Trade-off (Ch 14, responsiveness vs performance):** the single grey tick is *responsiveness* (the request was accepted), not end-to-end delivery. The price is the book's main async cost, **error handling**: retries, idempotent receive and per-device inbox state.
 - **ADR sketch (Ch 19):** *"We will acknowledge a send only after the message is in a durable queue. We accept extra write latency to guarantee no loss."*
@@ -300,7 +300,7 @@ sequenceDiagram
 - [Meta Engineering: WhatsApp multi-device](https://engineering.fb.com/2021/07/14/security/whatsapp-multi-device/)
 - [Signal: X3DH & Double Ratchet specs](https://signal.org/docs/)
 - [Discord: How Discord stores trillions of messages](https://discord.com/blog/how-discord-stores-trillions-of-messages), a related chat-storage case study
-- Related in this folder: [13-how-slack-works.md](13-how-slack-works.md)
+- Related: [`neokim-post/13` Slack](../../neokim-post/13-how-slack-works.md), [09 Discord](09-discord.md)
 
 ---
 ## ✅ Verification log

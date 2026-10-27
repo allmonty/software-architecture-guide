@@ -241,7 +241,7 @@ No/low-code integration runtime. **Source connectors** (DB/CDC → Kafka) and **
 - [2 Minute Streaming newsletter](https://blog.2minutestreaming.com/) · [Big Data Stream](https://bigdata.2minutestreaming.com/)
 - [Raft consensus visualised](https://raft.github.io/)
 - [Martin Fowler: Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html)
-- Related in this folder: [14-how-stock-exchange-works.md](14-how-stock-exchange-works.md) (sequenced logs, deterministic replay)
+- Related in this folder: [19 Stock exchange](19-stock-exchange.md) (sequenced logs, deterministic replay)
 
 ---
 ## ✅ Verification log
