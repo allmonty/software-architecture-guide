@@ -76,6 +76,12 @@ Reported effects on GPT-3 175B: trainable parameters down by 10,000 times and GP
 
 **What this means for design:** one base model plus many small adapters (per customer or task), versioned like code.
 
+### 3.1b QLoRA: fine-tuning a large model on one GPU `[CONFIRMED]` (Dettmers et al., 2023)
+
+QLoRA extends LoRA to cut memory further so large models can be tuned on modest hardware. The abstract says it is efficient enough "to finetune a 65B parameter model on a single 48GB GPU while preserving full 16-bit finetuning task performance". It "backpropagates gradients through a frozen, 4-bit quantized pretrained language model into Low Rank Adapters". Three memory savings: **4-bit NormalFloat (NF4)**, a data type the authors call information-theoretically optimal for normally distributed weights; **Double Quantization**, quantizing the quantization constants; and **Paged Optimizers** to manage memory spikes. Their Guanaco model family reached 99.3% of ChatGPT's performance on the Vicuna benchmark with 24 hours of fine-tuning on one GPU (the authors' claim on that benchmark and period).
+
+Two findings matter for the evaluation section below: fine-tuning on a small, high-quality dataset gave state-of-the-art results even with smaller models, and the authors found that GPT-4 evaluations are "a cheap and reasonable alternative to human evaluation" while "current chatbot benchmarks are not trustworthy to accurately evaluate the performance levels of chatbots". For system design: LoRA-style adapters can sit on a quantized base, lowering the GPU needed for training; whether quantization is acceptable for serving quality is a separate evaluation question the paper does not settle.
+
 ### 3.2 Aligning with human feedback: InstructGPT `[CONFIRMED]` (Ouyang et al., 2022)
 
 The recipe: collect labeler-written and API prompts, collect human **demonstrations** and fine-tune with supervised learning; collect **rankings** of model outputs, train a reward model; then fine-tune with reinforcement learning (PPO) against the reward model. The paper reports hiring a team of 40 contractors; the datasets were about 13k prompts for supervised fine-tuning, 33k for the reward model and 31k for PPO.
@@ -171,7 +177,7 @@ production feedback ─► data pipeline (filter, dedup, quality score, version)
 2. **DPO versus PPO is not settled by one result.** Llama 3 reports DPO better for them; the DPO paper reports parity or better on its tasks. We do not claim DPO always wins.
 3. **LLM-judge agreement was measured on MT-Bench and Chatbot Arena data,** with GPT-4 as judge. It need not hold for your task or judge.
 4. **The release pipeline (gate, shadow, canary, rollback) is industry practice,** not sourced.
-5. **Not read:** QLoRA and other adapter variants, RLHF safety datasets in detail, evaluation platforms, data-licensing guidance, and vendor fine-tuning service documentation.
+5. **Not read:** other adapter variants (QLoRA is covered in section 3.1b), RLHF safety datasets in detail, evaluation platforms, data-licensing guidance, and vendor fine-tuning service documentation.
 
 ---
 
@@ -247,9 +253,9 @@ Register the model, pass the gate, run in shadow, then a small canary, ramp whil
 ## Sources and provenance
 
 > **Kind:** reference design with real parts. The methods are published; how any company runs its own improvement pipeline is not, apart from the Llama 3 recipe. The release pipeline in section 6 is the standard design `[INDUSTRY PATTERN]`.
-> **Sources read on 2026-10-27 (PDF text extracted locally):** Hu et al., [*LoRA: Low-Rank Adaptation of Large Language Models*](https://arxiv.org/pdf/2106.09685) (2021) · Ouyang et al., [*Training language models to follow instructions with human feedback*](https://arxiv.org/pdf/2203.02155) (2022) · Rafailov et al., [*Direct Preference Optimization*](https://arxiv.org/pdf/2305.18290) (2023) · Sheng et al., [*S-LoRA: Serving Thousands of Concurrent LoRA Adapters*](https://arxiv.org/pdf/2311.03285) (2023) · Zheng et al., [*Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena*](https://arxiv.org/pdf/2306.05685) (2023) · Llama Team, Meta, [*The Llama 3 Herd of Models*](https://arxiv.org/pdf/2407.21783) (2024; Section 4 post-training, parts of Sections 5 and 6) · and, for the anchor in section 2, Anthropic, [*Building effective agents*](https://www.anthropic.com/engineering/building-effective-agents) (2024).
+> **Sources read on 2026-10-27 (PDF text extracted locally):** Hu et al., [*LoRA: Low-Rank Adaptation of Large Language Models*](https://arxiv.org/pdf/2106.09685) (2021) · Ouyang et al., [*Training language models to follow instructions with human feedback*](https://arxiv.org/pdf/2203.02155) (2022) · Rafailov et al., [*Direct Preference Optimization*](https://arxiv.org/pdf/2305.18290) (2023) · Dettmers et al., [*QLoRA: Efficient Finetuning of Quantized LLMs*](https://arxiv.org/pdf/2305.14314) (2023) · Sheng et al., [*S-LoRA: Serving Thousands of Concurrent LoRA Adapters*](https://arxiv.org/pdf/2311.03285) (2023) · Zheng et al., [*Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena*](https://arxiv.org/pdf/2306.05685) (2023) · Llama Team, Meta, [*The Llama 3 Herd of Models*](https://arxiv.org/pdf/2407.21783) (2024; Section 4 post-training, parts of Sections 5 and 6) · and, for the anchor in section 2, Anthropic, [*Building effective agents*](https://www.anthropic.com/engineering/building-effective-agents) (2024).
 > **Dated material:** papers from 2021–2024; recipes and best practice change quickly.
-> **Not read:** QLoRA, vendor fine-tuning services, other evaluation frameworks, the Llama 3 sections on pre-training data beyond what is cited here.
+> **Not read:** vendor fine-tuning services, other evaluation frameworks, the Llama 3 sections on pre-training data beyond what is cited here.
 > **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible or illustrative.
 
 ---
@@ -259,6 +265,7 @@ Register the model, pass the gate, run in shadow, then a small canary, ramp whil
 - Verified in LoRA: abstract claims (10,000 times, 3 times, no additional inference latency), W0 + BA with rank r, 1.2 TB to 350 GB VRAM, 350 GB to 35 MB checkpoint with r = 4 on query and value matrices, task switching by swapping matrices.
 - Verified in InstructGPT: recipe, 40 contractors, 13k, 33k and 31k prompt counts, 1.3B versus 175B preference, 85 ± 3% preference, 21% versus 41% closed-domain hallucination, about 25% fewer toxic outputs when prompted to be respectful, no significant bias improvement, alignment tax and PPO-ptx, the statement on whose preferences.
 - Verified in DPO: description of RLHF, simple classification loss, no sampling during fine-tuning, comparison claims.
+- Verified in QLoRA (abstract): the 65B on a single 48 GB GPU claim, frozen 4-bit base with LoRA, NF4, Double Quantization, Paged Optimizers, the Guanaco 99.3% claim, and the statements about GPT-4 evaluation and benchmarks. The paper's experiments were not reviewed.
 - Verified in S-LoRA: adapters in main memory, Unified Paging, custom kernels and tensor parallelism, thousands of adapters, up to 4 times throughput.
 - Verified in the MT-Bench paper: benchmark discrepancy statement, over 80% agreement, bias list.
 - Verified in Llama 3: rounds of SFT then DPO, six rounds, rejection sampling with K between 10 and 30, PagedAttention over 2 times throughput, DPO versus PPO statement, learning rate and β, model averaging, data cleaning and pruning list, contamination analysis, violation and false refusal rates, Llama Guard.

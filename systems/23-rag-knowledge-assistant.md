@@ -108,6 +108,7 @@ user ─► permission scope ─► hybrid retrieve ─► rerank ─► build p
 **Query**
 - **Identity first:** resolve who the user is and which documents they may read, and apply that as a filter in the retrieval query. Never retrieve then filter in the prompt.
 - **Hybrid retrieval and reranking:** as in section 3. Cap how many chunks reach the prompt.
+- **Context placement:** more retrieved text is not always better. Liu et al. (*Lost in the Middle*, 2023) tested multi-document question answering and key-value retrieval and found that performance "can degrade significantly when changing the position of relevant information": it is often highest when the relevant information is at the beginning or end of the input and degrades when models must use information in the middle, even for explicitly long-context models `[CONFIRMED]`. Design consequences (ours): rerank so the best chunks sit first, keep the number of chunks bounded, and test your own model rather than assuming long context is used evenly. This agrees with Anthropic's finding that passing 20 chunks beat 10 or 5 in their tests, which shows the optimum is task- and model-specific.
 - **Generation:** instruct the model to answer only from the supplied passages, cite them, and say when they are insufficient. See [22 LLM inference serving](22-llm-inference-serving.md) for serving the model.
 - **Streaming and fallbacks:** stream the answer; if retrieval returns nothing relevant, answer that, rather than guess.
 
@@ -145,7 +146,7 @@ user ─► permission scope ─► hybrid retrieve ─► rerank ─► build p
 2. **The RAG paper's system trains the retriever and generator together** (fine-tuning the query encoder and generator). Most enterprise "RAG" does not; it assembles a prompt at query time. The shared idea is the retrieval step, not the training recipe.
 3. **The 200,000-token threshold** is from the Anthropic post and tied to that model's context window then; it moves as context windows grow.
 4. **Access control, sync, evaluation and prompt-injection guidance are industry practice,** not sourced claims.
-5. **Not read:** other chunking studies, reranker papers, graph-based or agentic retrieval, ColBERT-style multi-vector retrieval, and vendor vector database documentation.
+5. **Not read:** other chunking studies, reranker papers (long-context position effects are covered from the *Lost in the Middle* abstract only), graph-based or agentic retrieval, ColBERT-style multi-vector retrieval, and vendor vector database documentation.
 
 ---
 
@@ -221,7 +222,7 @@ Build a labelled question set. Measure retrieval recall in the top k first, then
 ## Sources and provenance
 
 > **Kind:** reference design. RAG (the method) and Contextual Retrieval (a technique and its measurements) are published. How any particular company builds its internal assistant is not, so the platform in section 4 is the standard design `[INDUSTRY PATTERN]`.
-> **Sources read on 2026-10-27:** Lewis et al., [*Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks*](https://arxiv.org/pdf/2005.11401) (arXiv 2005.11401, 2020; PDF text extracted locally) · Anthropic, [*Introducing Contextual Retrieval*](https://www.anthropic.com/news/contextual-retrieval) (19 September 2024; read through an Internet Archive copy).
+> **Sources read on 2026-10-27:** Lewis et al., [*Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks*](https://arxiv.org/pdf/2005.11401) (arXiv 2005.11401, 2020; PDF text extracted locally) · Anthropic, [*Introducing Contextual Retrieval*](https://www.anthropic.com/news/contextual-retrieval) (19 September 2024; read through an Internet Archive copy) · Liu et al., [*Lost in the Middle: How Language Models Use Long Contexts*](https://arxiv.org/pdf/2307.03172) (2023; abstract and introduction).
 > **Dated material:** the RAG paper is from 2020 and the Anthropic post from 2024. Models, context windows and prices have changed since.
 > **Not read:** the Anthropic cookbook, other chunking and reranking papers, vendor documentation for vector databases or enterprise search products.
 > **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible or illustrative.
@@ -232,5 +233,6 @@ Build a labelled question set. Measure retrieval recall in the top k first, then
 *Fact-check, 2026-10-27, by reading both sources in full. Quotations are confirmed by `npm run verify`.*
 - Verified in the RAG paper: the parametric and non-parametric memory definition, BART-large with 400M parameters, DPR bi-encoder with BERT-base encoders, MIPS in sub-linear time, FAISS with HNSW, December 2018 dump in 100-word chunks giving 21M documents, k in 5 or 10 for training, hallucination statement, Jeopardy factuality percentages (42.7% and 7.1%), index hot-swapping results (70%, 68%, 12%, 4%).
 - Verified in the Anthropic post: 200,000-token threshold, chunk size wording, BM25 description and error-code example, context length of 50–100 tokens, $1.02 per million document tokens and its assumptions, the 35%, 49% and 67% figures with 5.7% to 1.9%, top-150 to top-20 reranking, 20 chunks versus 10 or 5, the limited gains from generic summaries, "always run evals", datasets used.
+- Verified in the Lost in the Middle abstract: the two tasks, the position effect (best at beginning or end, worse in the middle, even for long-context models). The models and quantitative results in the paper were not reviewed.
 - Labelled industry pattern, not sourced: ingestion and sync design, permission filtering, evaluation metrics and monitoring, cost control, prompt-injection advice, capacity figures.
 - Not claimed: results on any dataset other than those in the cited sources.

@@ -42,6 +42,30 @@
     "status": "confirmed"
   },
   {
+    "quote": "to finetune a 65B parameter model on a single 48GB GPU while preserving full 16-bit finetuning task performance",
+    "url": "https://arxiv.org/pdf/2305.14314",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "backpropagates gradients through a frozen, 4-bit quantized pretrained language model into Low Rank Adapters",
+    "url": "https://arxiv.org/pdf/2305.14314",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a cheap and reasonable alternative to human evaluation",
+    "url": "https://arxiv.org/pdf/2305.14314",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "current chatbot benchmarks are not trustworthy to accurately evaluate the performance levels of chatbots",
+    "url": "https://arxiv.org/pdf/2305.14314",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "without compromising labeler preference scores",
     "url": "https://arxiv.org/pdf/2203.02155",
     "via": "direct",

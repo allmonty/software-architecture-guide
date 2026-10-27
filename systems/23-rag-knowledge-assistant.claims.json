@@ -64,5 +64,11 @@
     "url": "https://www.anthropic.com/news/contextual-retrieval",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "can degrade significantly when changing the position of relevant information",
+    "url": "https://arxiv.org/pdf/2307.03172",
+    "via": "direct",
+    "status": "confirmed"
   }
 ]

@@ -103,7 +103,7 @@ Prometheus "fundamentally stores all data as time series: streams of timestamped
 
 **Alertmanager.** It "takes care of deduplicating, grouping, and routing" alerts to receivers such as email, PagerDuty or OpsGenie, and handles silencing and inhibition:
 - **Grouping:** many similar alerts become one notification. The documentation's example: a network partition makes hundreds of instances unable to reach the database; the operator wants a single page while still seeing which instances are affected, so alerts are grouped by cluster and alert name.
-- **Inhibition:** suppress notifications for some alerts if certain other alerts are already firing (for example, mute everything about a cluster when "cluster unreachable" fires).
+- **Inhibition:** suppress notifications for some alerts if certain other alerts are already firing (for example, mute everything about a cluster when a cluster-unreachable alert fires).
 - **Silences:** mute alerts matching given matchers for a time.
 - **High availability:** Alertmanager can run as a cluster. The documentation warns not to load-balance between Prometheus and its Alertmanagers; point Prometheus at the full list of them.
 
