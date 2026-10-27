@@ -291,3 +291,4 @@ button.study { margin-left: auto; }
 .text-hits a { display: flex; flex-direction: column; gap: var(--s-1); }
 .hit-snippet { font-size: var(--t-sm); color: var(--muted); }
 .hit-snippet mark { background: color-mix(in srgb, var(--accent) 28%, transparent); color: var(--fg); border-radius: var(--r-sm); padding: 0 0; }
+.notes h2.note-title { margin-top: 0; font-size: var(--t-xl); }

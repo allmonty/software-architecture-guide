@@ -140,6 +140,8 @@ export function SystemPage({
             rehypePlugins={mode === "split" ? [rehypeRaw, refPlugin] : [rehypeRaw]}
             components={{
               ...components, ...headings,
+              // The page title above is the h1; the note's own title becomes a second-level heading.
+              h1: ({ children }) => <h2 className="note-title">{children}</h2>,
               span: refSpan,
             }}
           >{system.markdown}</ReactMarkdown>
