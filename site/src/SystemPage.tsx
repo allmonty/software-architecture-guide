@@ -58,13 +58,16 @@ export function SystemPage({
 }) {
   const headings = useHeadingComponents(system.markdown);
   const [request, setRequest] = useState<{ id: string; n: number } | null>(null);
-  const ask = (id: string) => setRequest((r) => ({ id, n: (r?.n ?? 0) + 1 }));
-  const refSpan: Components["span"] = ({ className, children, ...rest }) => {
-    const id = (rest as { "data-node"?: string })["data-node"];
-    return className === "node-ref" && id
-      ? <span className="node-ref" role="button" tabIndex={0} title="Show in the diagram" onClick={() => ask(id)} onKeyDown={(e) => { if (e.key === "Enter") ask(id); }}>{children}</span>
-      : <span className={className}>{children}</span>;
-  };
+  // Defined once: a new component type on every render would remount every span in the note and drop keyboard focus.
+  const refSpan = useMemo<Components["span"]>(() => {
+    const ask = (id: string) => setRequest((r) => ({ id, n: (r?.n ?? 0) + 1 }));
+    return ({ className, children, ...rest }) => {
+      const id = (rest as { "data-node"?: string })["data-node"];
+      return className === "node-ref" && id
+        ? <span className="node-ref" role="button" tabIndex={0} title="Show in the diagram" onClick={() => ask(id)} onKeyDown={(e) => { if (e.key === "Enter") ask(id); }}>{children}</span>
+        : <span className={className}>{children}</span>;
+    };
+  }, []);
   const refPlugin = useMemo(() => rehypeNodeRefs(system.diagram), [system.diagram]);
   // A shared link can point at a section; wait for the note to render, then scroll.
   useEffect(() => { if (initialSection) scrollToSection(initialSection, false); }, [initialSection]);

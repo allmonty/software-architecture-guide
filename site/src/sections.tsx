@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Components } from "react-markdown";
-import { dedupe, sectionsOf, slugify } from "./text.ts";
+import { sectionsOf, slugify } from "./text.ts";
 export { mentionsOf, sectionsOf, slugify } from "./text.ts";
 export type { Section } from "./text.ts";
 
@@ -15,7 +15,8 @@ function rememberSection(slug: string | null) {
   const [id, q = ""] = location.hash.slice(1).split("?");
   const p = new URLSearchParams(q);
   if (slug) p.set("section", slug); else p.delete("section");
-  history.replaceState(null, "", `#${id}${p.size ? `?${p}` : ""}`);
+  const qs = p.toString();
+  history.replaceState(null, "", `#${id}${qs ? `?${qs}` : ""}`);
 }
 
 export function scrollToSection(slug: string, remember = true) {
@@ -40,13 +41,15 @@ function Heading({ level, id, children }: { level: 2 | 3 | 4; id: string; childr
   );
 }
 
-/** Heading overrides that add ids and copy-link buttons. Create one per note so duplicate headings get stable suffixes. */
+/** Heading overrides that add ids and copy-link buttons. The id comes from the heading's source line, so it is the same on every render. */
 export function useHeadingComponents(markdown: string): Components {
   return useMemo(() => {
-    const unique = dedupe();
-    const make = (level: 2 | 3 | 4) => ({ children }: { children?: ReactNode }) => <Heading level={level} id={unique(slugify(textOf(children)))}>{children}</Heading>;
+    const byLine = new Map(sectionsOf(markdown).map((s) => [s.line, s.slug]));
+    const make = (level: 2 | 3 | 4) => ({ node, children }: { node?: { position?: { start: { line: number } } }; children?: ReactNode }) => {
+      const line = node?.position?.start.line;
+      return <Heading level={level} id={(line !== undefined && byLine.get(line)) || slugify(textOf(children))}>{children}</Heading>;
+    };
     return { h2: make(2), h3: make(3), h4: make(4) } as Components;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [markdown]);
 }
 

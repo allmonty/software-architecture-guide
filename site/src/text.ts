@@ -9,20 +9,20 @@ export function dedupe() {
   return (slug: string) => { const n = (seen.get(slug) ?? 0) + 1; seen.set(slug, n); return n === 1 ? slug : `${slug}-${n}`; };
 }
 
-export interface Section { slug: string; text: string; level: number }
+export interface Section { slug: string; text: string; level: number; line: number }
 
 /** The h2 and h3 headings of a Markdown note, outside code fences. */
 export function sectionsOf(md: string): Section[] {
   const unique = dedupe();
   let code = false;
   const out: Section[] = [];
-  for (const line of md.split("\n")) {
-    if (line.startsWith("```")) { code = !code; continue; }
+  md.split("\n").forEach((line, i) => {
+    if (line.startsWith("```")) { code = !code; return; }
     const m = !code && line.match(/^(#{2,4}) (.+)/);
-    if (!m) continue;
+    if (!m) return;
     const text = m[2].replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[`*]/g, "").trim();
-    out.push({ slug: unique(slugify(m[2])), text, level: m[1].length });
-  }
+    out.push({ slug: unique(slugify(m[2])), text, level: m[1].length, line: i + 1 });
+  });
   return out;
 }
 
@@ -49,11 +49,12 @@ export function splitSections(md: string): Chunk[] {
 export function mentionsOf(md: string, term: string, limit = 3): Section[] {
   const t = term.trim();
   if (t.length < 4) return [];
-  const re = new RegExp(`(^|[^\\p{L}\\p{N}])${t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\p{L}\\p{N}])`, "giu");
+  // A one-word name (Room, Push, Database) also appears as an ordinary word, so it must match its capitalisation.
+  const re = new RegExp(`(^|[^\\p{L}\\p{N}])${t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\p{L}\\p{N}])`, /\s/.test(t) ? "giu" : "gu");
   return splitSections(md).filter((c) => c.slug)
     .map((c) => ({ c, n: (c.body.match(re) ?? []).length }))
     .filter((x) => x.n > 0).sort((a, b) => b.n - a.n).slice(0, limit)
-    .map(({ c }) => ({ slug: c.slug, text: c.heading, level: 2 }));
+    .map(({ c }) => ({ slug: c.slug, text: c.heading, level: 2, line: 0 }));
 }
 
 // ---- Full-text search ---------------------------------------------------------------------------------------

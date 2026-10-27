@@ -119,6 +119,8 @@ export function DiagramView({
     if (!flow) return;
     const on = (e: KeyboardEvent) => {
       if (e.altKey || e.metaKey || e.ctrlKey || e.shiftKey) return; // leave browser shortcuts alone
+      const t = e.target as HTMLElement | null;
+      if (t && (/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName) || t.isContentEditable)) return; // arrows belong to the control being used
       if (e.key === "ArrowRight") setStep((s) => Math.min(s + 1, flow.steps.length - 1));
       if (e.key === "ArrowLeft") setStep((s) => Math.max(s - 1, 0));
     };
