@@ -109,6 +109,18 @@ Prometheus "fundamentally stores all data as time series: streams of timestamped
 
 ---
 
+## 5b. Long-term storage and a global view: Thanos `[CONFIRMED]` (Thanos design documentation)
+
+Prometheus's local storage is single-node (section 2). Thanos, an open-source set of components, is the documented way to add durable long-term storage and a cross-server query layer without changing the data model. Its design page says its goals are "operation simplicity and retaining of Prometheus's reliability properties".
+- **Sources:** a **sidecar** next to each Prometheus server exposes its data over a gRPC Store API, and **rule nodes** evaluate rules; both advertise what data they hold.
+- **Backup to object storage:** the Prometheus storage engine periodically produces **immutable blocks** for a fixed time range (a directory with chunk files, an index and a `meta.json`); sidecars upload them to an object storage bucket as they are created, adding external labels to the metadata so blocks can later be filtered "without accessing their data files".
+- **Store nodes:** a gateway to the blocks in the bucket that implements the same Store API, synchronises which blocks exist, filters relevant blocks by time range and labels, and caches index lookups. Because sample data for a series is laid out sequentially, a request is translated into a minimal number of object-storage reads, each fetching up to hundreds of thousands of chunks. Chunk data is not cached because, as the design page puts it, fetching it "already only accounts for a small fraction of end-to-end latency".
+- **Queriers:** stateless, horizontally scalable instances that implement PromQL on top of the Store APIs, minimising fan-out using each node's metadata.
+- **Compactor:** a singleton that merges small blocks into larger ones, reducing storage size and the number of requests per query, and also performs **downsampling and retention**.
+- **Scaling:** "none of the Thanos components provides any means of sharding"; only queriers are explicitly scalable, with capacity scaling through the external object store.
+
+This is a different answer to the same problem Gorilla and Monarch solve. Gorilla and Monarch keep the hot window in distributed memory with built-in replication and regions; Thanos keeps Prometheus's simple single-server collectors and adds a bucket for history and a query tier for a global view, trading query-time speed for simplicity. It fits the retention-tier bullet in section 6, and its downsampling and retention live in the compactor.
+
 ## 6. Reference design `[INDUSTRY PATTERN]` (combining the above)
 
 ```
@@ -156,7 +168,7 @@ dashboards/query API ─────► TSDB (closest healthy replica)
 2. **The figures are dated.** Gorilla's numbers are Spring 2015; Monarch's are from the 2020 paper. Both companies' systems have certainly changed.
 3. **Prometheus documentation is version-specific and evolving** (for example UTF-8 names arrived in v3.0). We read the pages as of 2026-10-27.
 4. **Alert design guidance (symptom alerts, runbooks, dead man's switch) is industry practice,** not from these sources.
-5. **Not read:** Facebook's later Beringei or Scuba papers, Thanos, Cortex or Mimir designs, VictoriaMetrics, OpenTelemetry, logging and tracing systems, and anomaly detection.
+5. **Not read:** Facebook's later Beringei or Scuba papers, Cortex or Mimir designs (Thanos is covered from its design page, section 5b), VictoriaMetrics, OpenTelemetry, logging and tracing systems, and anomaly detection.
 
 ---
 
@@ -231,9 +243,9 @@ Alert on symptoms, group related alerts into one notification, inhibit lower-lev
 ## Sources and provenance
 
 > **Kind:** reference design with real parts. Gorilla and Monarch describe real production systems at Facebook and Google; Prometheus is an open-source toolkit with public documentation. The combined design in section 6 is ours `[INDUSTRY PATTERN]`.
-> **Sources read on 2026-10-27:** Pelkonen et al., [*Gorilla: A Fast, Scalable, In-Memory Time Series Database*](https://www.vldb.org/pvldb/vol8/p1816-teller.pdf) (VLDB 2015) · Adams et al., [*Monarch: Google's Planet-Scale In-Memory Time Series Database*](https://www.vldb.org/pvldb/vol13/p3181-adams.pdf) (VLDB 2020) · Prometheus documentation: [Overview](https://prometheus.io/docs/introduction/overview/), [Data model](https://prometheus.io/docs/concepts/data_model/), [Storage](https://prometheus.io/docs/prometheus/latest/storage/), [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/), [Alerting rules](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/) and [Metric and label naming](https://prometheus.io/docs/practices/naming/). PDF text extracted locally.
+> **Sources read on 2026-10-27:** Pelkonen et al., [*Gorilla: A Fast, Scalable, In-Memory Time Series Database*](https://www.vldb.org/pvldb/vol8/p1816-teller.pdf) (VLDB 2015) · Adams et al., [*Monarch: Google's Planet-Scale In-Memory Time Series Database*](https://www.vldb.org/pvldb/vol13/p3181-adams.pdf) (VLDB 2020) · Prometheus documentation: [Overview](https://prometheus.io/docs/introduction/overview/), [Data model](https://prometheus.io/docs/concepts/data_model/), [Storage](https://prometheus.io/docs/prometheus/latest/storage/), [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/), [Alerting rules](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/) and [Metric and label naming](https://prometheus.io/docs/practices/naming/) · Thanos [design documentation](https://thanos.io/tip/thanos/design.md/). PDF text extracted locally.
 > **Dated material:** Gorilla figures are from Spring 2015; Monarch from 2020; Prometheus documentation as of this date.
-> **Not read:** Thanos, Cortex, Mimir, VictoriaMetrics, OpenTelemetry, Facebook's follow-up work, tracing and logging systems.
+> **Not read:** Cortex, Mimir, VictoriaMetrics, OpenTelemetry, Facebook's follow-up work, tracing and logging systems.
 > **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible or illustrative.
 
 ---
@@ -243,5 +255,6 @@ Alert on symptoms, group related alerts into one notification, inhibit lower-lev
 - Verified in the Gorilla paper: abstract claims (10 times, 73 times, 14 times), requirements, 85% of queries within 26 hours, Spring 2015 scale (2 billion series, 12 million points per second, over 1 trillion per day), 16 bytes to 1.37 bytes (12 times), 1.3 TB on 20 machines growing to 80 machines, delta-of-delta (96% of timestamps to one bit) and XOR (51% of values to one bit), log that is not a write-ahead log (64 kB buffer), two-hour blocks with checkpoint file, two regions without consistency, ShardManager (Paxos-based), one-minute write buffers, thirty-second shard movement, 26-hour region recovery rule.
 - Verified in the Monarch paper: abstract and scale claims, consistency-for-availability principle, circular-dependency argument, zonal autonomy, component list, standing queries and the 95% zone-level figure, three-level query tree.
 - Verified in the Prometheus documentation: data model and label rule, cardinality warning, architecture and components, pull model and push gateway, autonomy and non-fit statement, two-hour blocks and WAL, non-clustered storage limitation, pending and firing states and `keep_firing_for`, Alertmanager grouping, inhibition, silences and high-availability guidance.
+- Verified in the Thanos design page: sidecar and rule sources, immutable blocks uploaded to object storage with external labels, store nodes filtering by metadata and caching only index data, stateless queriers, the compactor's merging, downsampling and retention, and the no-sharding scaling statement.
 - Labelled industry pattern, not sourced: the combined reference design, series limits, retention tiers, meta-monitoring, alert-quality advice, capacity arithmetic.
 - Not claimed: how any specific current monitoring product works.

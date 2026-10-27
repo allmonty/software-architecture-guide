@@ -70,5 +70,29 @@
     "url": "https://prometheus.io/docs/alerting/latest/alertmanager/",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "operation simplicity and retaining of Prometheus's reliability properties",
+    "url": "https://thanos.io/tip/thanos/design.md/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "without accessing their data files",
+    "url": "https://thanos.io/tip/thanos/design.md/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "already only accounts for a small fraction of end-to-end latency",
+    "url": "https://thanos.io/tip/thanos/design.md/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "none of the Thanos components provides any means of sharding",
+    "url": "https://thanos.io/tip/thanos/design.md/",
+    "via": "direct",
+    "status": "confirmed"
   }
 ]
