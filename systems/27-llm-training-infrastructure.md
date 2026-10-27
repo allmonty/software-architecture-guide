@@ -9,7 +9,7 @@
 **Key numbers** (as published, with the year)
 - Llama 3 405B trained on up to 16K H100 GPUs (80 GB each, eight per server), scheduled by Meta's MAST scheduler, with checkpoints on a 240 PB Tectonic file system sustaining 2 TB/s `[CONFIRMED]` (2024).
 - Reported model FLOPs utilisation (MFU) of 38–43% for Llama 3's configurations `[CONFIRMED]`; MegaScale reached 55.2% MFU on a 175B model with 12,288 GPUs, 1.34 times Megatron-LM `[CONFIRMED]`.
-- Over a 54-day snapshot Llama 3 saw 466 job interruptions, 419 of them unexpected; about 78% of the unexpected ones were attributed to hardware, GPUs being 58.7% of the total `[CONFIRMED]`. Effective training time stayed above 90% `[CONFIRMED]`.
+- Over a 54-day snapshot Llama 3 saw 466 job interruptions, 419 of them unexpected; about 78% of the unexpected ones were attributed to hardware, the paper states GPUs as 58.7% of the total, although the table's own counts give about 64% (Reviewer note 1) `[CONFIRMED]` as the paper's stated figure. Effective training time stayed above 90% `[CONFIRMED]`.
 - ZeRO: mixed-precision training with Adam needs 16 bytes per parameter for weights, gradients and optimizer state; partitioning all three over 64 GPUs gives a 64 times reduction in per-GPU model-state memory `[CONFIRMED]`.
 
 **Decisions and trade-offs**
@@ -100,7 +100,7 @@ This is the origin of the placement rule in section 3, and the 52% figure is a u
 
 ## 5. Reliability: failures are the normal case `[CONFIRMED]`
 
-**Llama 3 numbers.** "The complexity and potential failure scenarios of 16K GPU training surpass those of much larger CPU clusters", and "a single GPU failure may require a restart of the entire job". Even so, Llama 3 achieved "higher than 90% effective training time" while also performing automated maintenance. In a 54-day period there were 466 interruptions: 47 planned (maintenance, configuration or dataset updates) and 419 unexpected. About 78% of the unexpected were attributed to confirmed or suspected hardware. GPU causes (faulty GPUs, HBM3 and SRAM memory, processors, thermal and silent data corruption) were 58.7% of the total; other large categories were software bugs, network switch or cable faults, and unplanned host maintenance. Manual intervention was needed only three times; automation handled the rest.
+**Llama 3 numbers.** "The complexity and potential failure scenarios of 16K GPU training surpass those of much larger CPU clusters", and "a single GPU failure may require a restart of the entire job". Even so, Llama 3 achieved "higher than 90% effective training time" while also performing automated maintenance. In a 54-day period there were 466 interruptions: 47 planned (maintenance, configuration or dataset updates) and 419 unexpected. About 78% of the unexpected were attributed to confirmed or suspected hardware. GPU causes (faulty GPUs, HBM3 and SRAM memory, processors, thermal and silent data corruption) were 58.7% of the total according to the paper (its own counts give about 64%, see Reviewer note 1); other large categories were software bugs, network switch or cable faults, and unplanned host maintenance. Manual intervention was needed only three times; automation handled the rest.
 
 **Operational tools.** The team used PyTorch's NCCL flight recorder (a ring buffer of collective metadata and stack traces dumped on watchdog timeout), faster job startup and checkpointing, and selective, live-enabled heavier tracing without a restart. Stalls on NVLink often show as hung CUDA kernels without an error, so the communication library monitors state and times out. **Stragglers** are still-functioning but slow hardware; "even a single straggler can slow down thousands of other GPUs", found by prioritising suspicious communications.
 
@@ -139,7 +139,7 @@ data store ─► data loaders ─► training job (TP · CP · PP · FSDP) ─�
 
 ## ⚠️ Reviewer notes
 
-1. **The Llama 3 interruption table does not add up in one cell.** It lists 148 faulty-GPU interruptions at 30.1%, but 148 of 419 is 35.3%; the other rows and the 58.7% GPU total are consistent with the percentages. We quote the percentages and the text, and do not rely on the 148.
+1. **The Llama 3 interruption table is internally inconsistent, and the 58.7% GPU total inherits it.** The counts sum to exactly 419, but the first row lists 148 faulty-GPU interruptions at 30.1%, while 148 of 419 is 35.3%; the other rows' percentages match their counts. The paper's 58.7% is the sum of the percentage column over the GPU rows (30.1 + 17.2 + 4.5 + 4.1 + 1.4 + 1.4), so it carries the same error: computed from the counts, the GPU rows (148 + 72 + 19 + 17 + 6 + 6 = 268) are 268 of 419, about 64.0%. We report the paper's figure as the paper's and do not rely on it; the share of GPU causes is about 58.7% to 64%, depending on which column is right (found by an independent review and checked by arithmetic on the paper's Table 5).
 2. **MFU figures come from different models and definitions.** Llama 3's 38–43% and MegaScale's 55.2% use different models, hardware and baselines; do not compare them as if from one benchmark.
 3. **These are two companies' clusters.** The sources do not describe Google, OpenAI or Anthropic training systems, and we make no claim about them.
 4. **ZeRO is a 2020 paper.** FSDP is a later implementation of the same idea; Llama 3 modifies how it reshards model weights.
