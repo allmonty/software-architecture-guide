@@ -19,7 +19,7 @@
       "label": "Post API",
       "kind": "service",
       "summary": "Assigns a time-sortable ID (Instagram: 41-bit time + 13-bit shard + 10-bit sequence), writes the post, and enqueues fan-out.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://web.archive.org/web/2023/https://instagram-engineering.com/sharding-ids-at-instagram-1cf5a71e5a5c"
       ],
@@ -65,7 +65,7 @@
       "label": "Fanout Service",
       "kind": "service",
       "summary": "Looks up followers and writes the new post's ID into their timeline caches. Idempotent so retries do not duplicate. Very-high-follower accounts are typically skipped and merged at read time.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://web.archive.org/web/2023/https://blog.twitter.com/engineering/en_us/topics/infrastructure/2017/the-infrastructure-behind-twitter-scale"
       ],
@@ -90,7 +90,7 @@
       "label": "Timeline / Home Mixer",
       "kind": "service",
       "summary": "Builds the feed: candidate generation, feature hydration (~6,000 features), ML scoring, filters and heuristics, mixing with ads and modules, then serving.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://github.com/twitter/the-algorithm/tree/main/home-mixer",
         "https://github.com/twitter/the-algorithm"

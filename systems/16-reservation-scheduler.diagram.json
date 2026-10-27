@@ -30,7 +30,7 @@
       "label": "Booking service",
       "kind": "service",
       "summary": "Runs hold, confirm, extend and cancel. Retries on serialization failures (SQLSTATE 40001) and on exclusion-constraint conflicts.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.postgresql.org/docs/current/transaction-iso.html"
       ],
@@ -42,7 +42,7 @@
       "label": "Inventory DB (PostgreSQL)",
       "kind": "datastore",
       "summary": "One row per booking with a time range. An exclusion constraint on (unit WITH =, period WITH &&) rejects overlaps. Room types use per-night counters with sold < capacity. Sharded by property or lot.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.postgresql.org/docs/current/rangetypes.html",
         "https://www.postgresql.org/docs/current/ddl-constraints.html"
@@ -67,7 +67,7 @@
       "label": "Payment service",
       "kind": "external",
       "summary": "Charges with an idempotency key derived from booking and attempt. A retry with the same key returns the saved response, and different parameters on the same key error.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://docs.stripe.com/api/idempotent_requests"
       ],

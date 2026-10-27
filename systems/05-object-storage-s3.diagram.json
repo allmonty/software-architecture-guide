@@ -95,7 +95,7 @@
       "label": "Scrubber / repair",
       "kind": "service",
       "summary": "Background processes verify checksums and quickly repair lost redundancy. Durability depends on repair speed versus drive failure rate.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://docs.aws.amazon.com/AmazonS3/latest/userguide/DataDurability.html"
       ],

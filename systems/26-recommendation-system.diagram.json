@@ -30,7 +30,7 @@
       "label": "Candidate generation",
       "kind": "service",
       "c4": "container",
-      "summary": "Narrows millions of items to hundreds using a learned user embedding and nearest-neighbour search, and can blend other candidate sources.",
+      "summary": "(YouTube, 2016) Narrows millions of items to hundreds using a learned user embedding and nearest-neighbour search, and can blend other candidate sources.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf"
@@ -81,7 +81,7 @@
       "label": "Ranking model",
       "kind": "service",
       "c4": "container",
-      "summary": "Deep network scoring each impression of a few hundred candidates with hundreds of features, trained for expected watch time per impression rather than clicks.",
+      "summary": "(YouTube, 2016) Deep network scoring each impression of a few hundred candidates with hundreds of features, trained for expected watch time per impression rather than clicks.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/45530.pdf"
@@ -125,7 +125,7 @@
       "label": "Event log (Kafka)",
       "kind": "queue",
       "c4": "container",
-      "summary": "One Kafka queue for user actions and another for features, so a streaming job can join them.",
+      "summary": "(Monolith, ByteDance) One Kafka queue for user actions and another for features, so a streaming job can join them.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://arxiv.org/pdf/2209.07663"
@@ -137,7 +137,7 @@
       "label": "Online joiner (Flink)",
       "kind": "service",
       "c4": "container",
-      "summary": "Joins features with labels from user actions into training examples, using a unique key per request and an on-disk store for late actions; applies negative sampling with log-odds correction at serving.",
+      "summary": "(Monolith, ByteDance) Joins features with labels from user actions into training examples, using a unique key per request and an on-disk store for late actions; applies negative sampling with log-odds correction at serving.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://arxiv.org/pdf/2209.07663"
@@ -149,7 +149,7 @@
       "label": "Training (batch and online)",
       "kind": "service",
       "c4": "container",
-      "summary": "Batch training over history, then online training on real-time examples; the training parameter servers are snapshotted daily.",
+      "summary": "(Monolith, ByteDance) Batch training over history, then online training on real-time examples; the training parameter servers are snapshotted daily.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://arxiv.org/pdf/2209.07663",
@@ -161,7 +161,7 @@
       "label": "Serving parameters",
       "kind": "datastore",
       "c4": "container",
-      "summary": "Parameters the serving path uses. Changed sparse embeddings are synchronised from training at about a minute-level interval; dense parameters about daily.",
+      "summary": "(Monolith, ByteDance) Parameters the serving path uses. Changed sparse embeddings are synchronised from training at about a minute-level interval; dense parameters about daily.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://arxiv.org/pdf/2209.07663"

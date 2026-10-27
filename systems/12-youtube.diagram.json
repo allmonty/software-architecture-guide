@@ -78,7 +78,7 @@
       "label": "Segments + manifests",
       "kind": "datastore",
       "summary": "Immutable segments and HLS/DASH manifests in object storage. A master playlist lists renditions (EXT-X-STREAM-INF).",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://datatracker.ietf.org/doc/html/rfc8216"
       ],
@@ -102,7 +102,7 @@
       "label": "Metadata DB (Vitess / MySQL)",
       "kind": "datastore",
       "summary": "Sharded relational store for videos and channels. Vitess was created at YouTube in 2010 to solve MySQL scalability, moving shard routing out of application code.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://vitess.io/docs/overview/history/"
       ],

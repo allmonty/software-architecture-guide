@@ -67,7 +67,7 @@
       "label": "Peer clients (2010)",
       "kind": "client",
       "summary": "In 2010, clients also served cached chunks to each other. Only 8.8% of played music data came from Spotify's servers. Spotify later removed P2P from the desktop client, and mobile and web never used it.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://people.cs.umass.edu/~phillipa/CSE390/spotify-p2p10.pdf"
       ],

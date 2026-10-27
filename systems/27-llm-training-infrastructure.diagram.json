@@ -30,7 +30,7 @@
       "label": "Job scheduler (MAST)",
       "kind": "service",
       "c4": "container",
-      "summary": "Meta's global-scale training scheduler. Placement is aware of network topology to minimise cross-pod traffic.",
+      "summary": "(Llama 3, Meta) Meta's global-scale training scheduler. Placement is aware of network topology to minimise cross-pod traffic.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://arxiv.org/pdf/2407.21783"
@@ -81,7 +81,7 @@
       "label": "Collective library (NCCLX)",
       "kind": "service",
       "c4": "component",
-      "summary": "A fork of NCCL tuned for high-latency networks; carries FSDP all-gather and reduce-scatter and pipeline point-to-point traffic. Includes tracing and a flight recorder for hangs.",
+      "summary": "(Llama 3, Meta) A fork of NCCL tuned for high-latency networks; carries FSDP all-gather and reduce-scatter and pipeline point-to-point traffic. Includes tracing and a flight recorder for hangs.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://arxiv.org/pdf/2407.21783"
@@ -134,7 +134,7 @@
       "label": "Distributed file system (Tectonic)",
       "kind": "datastore",
       "c4": "container",
-      "summary": "240 PB across 7,500 SSD servers, 2 TB/s sustained and 7 TB/s peak throughput. Bursty checkpoint writes saturate it for short periods.",
+      "summary": "(Llama 3, Meta) 240 PB across 7,500 SSD servers, 2 TB/s sustained and 7 TB/s peak throughput. Bursty checkpoint writes saturate it for short periods.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://arxiv.org/pdf/2407.21783"
@@ -146,7 +146,7 @@
       "label": "Fault detection and diagnostics",
       "kind": "service",
       "c4": "container",
-      "summary": "Heartbeats from every node's daemon, watchdog timeouts, NCCL flight recorder and straggler hunting tools.",
+      "summary": "(MegaScale, ByteDance) Heartbeats from every node's daemon, watchdog timeouts, NCCL flight recorder and straggler hunting tools.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://arxiv.org/pdf/2407.21783",
@@ -158,7 +158,7 @@
       "label": "Automated recovery",
       "kind": "service",
       "c4": "container",
-      "summary": "On a fault, suspends training, runs self-check diagnostics, evicts bad nodes, requests healthy replacements and resumes from the latest checkpoint. MegaScale fixed over 90% of faults automatically.",
+      "summary": "(MegaScale, ByteDance) On a fault, suspends training, runs self-check diagnostics, evicts bad nodes, requests healthy replacements and resumes from the latest checkpoint. MegaScale fixed over 90% of faults automatically.",
       "confidence": "CONFIRMED",
       "sources": [
         "https://arxiv.org/pdf/2402.15627"

@@ -30,7 +30,7 @@
       "label": "Payment service",
       "kind": "service",
       "summary": "Creates one payment intent per order, stores your own intent and attempt records before calling the provider, and calls it with an idempotency key.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://docs.stripe.com/api/idempotent_requests",
         "https://docs.stripe.com/payments/paymentintents/lifecycle"
@@ -90,7 +90,7 @@
       "label": "Ledger (immutable double-entry)",
       "kind": "datastore",
       "summary": "Every transaction is a journal entry that balances to zero, as book entries with debits and credits. Append-only: corrections are new entries. Money is integers in minor units.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/"
       ],

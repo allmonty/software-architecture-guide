@@ -54,7 +54,7 @@
       "label": "Preferences + tokens",
       "kind": "datastore",
       "summary": "Per-user opt-ins and quiet hours, and device tokens with a last-seen timestamp. Stale tokens (FCM: not connected for a month) are pruned.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://firebase.google.com/docs/cloud-messaging/manage-tokens"
       ],

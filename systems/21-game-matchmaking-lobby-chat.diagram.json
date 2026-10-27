@@ -141,7 +141,7 @@
       "label": "Lobby chat cluster (per region)",
       "kind": "service",
       "summary": "XMPP-style chat with one session process per player. 6–12 nodes per regional shard sharing only a few fully replicated in-memory tables, so session lookups are local reads.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://technology.riotgames.com/news/chat-service-architecture-servers"
       ],

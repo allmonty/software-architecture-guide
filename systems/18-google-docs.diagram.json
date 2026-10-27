@@ -83,7 +83,7 @@
       "label": "Alternative: differential sync",
       "kind": "service",
       "summary": "Fraser's algorithm: a symmetric loop of diff and fuzzy patch with shadow copies. Conflicts resolve automatically, but a patch whose context changed too much fails and is dropped.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://neil.fraser.name/writing/sync/"
       ],
@@ -95,7 +95,7 @@
       "label": "Alternative: CRDT",
       "kind": "service",
       "summary": "Yjs/Automerge-style data types that converge without a central server. Figma is CRDT-inspired but keeps a central authority and last-writer-wins per property.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.figma.com/blog/how-figmas-multiplayer-technology-works/",
         "https://martin.kleppmann.com/2019/03/25/papoc-interleaving-anomalies.html"

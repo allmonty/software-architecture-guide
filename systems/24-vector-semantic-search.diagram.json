@@ -121,7 +121,7 @@
       "kind": "datastore",
       "c4": "container",
       "summary": "Small in-memory index of recent vectors, searched alongside the shards; deletes are tombstones until consolidation. FreshDiskANN describes this shape: a short-term in-memory index merged into a long-term SSD index by a background StreamingMerge, with lazy deletes in a DeleteList.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://arxiv.org/pdf/2105.09613"
       ]

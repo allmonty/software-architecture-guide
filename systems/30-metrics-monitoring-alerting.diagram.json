@@ -68,7 +68,7 @@
       "kind": "datastore",
       "c4": "component",
       "summary": "Compressed recent points (delta-of-delta timestamps, XOR values: 16 bytes to 1.37 bytes). 85% of queries in the predecessor system were for the last 26 hours.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf"
       ],
@@ -81,7 +81,7 @@
       "kind": "datastore",
       "c4": "component",
       "summary": "Append-only log of recent data. Gorilla buffers up to 64 kB so a crash can lose a second or two for higher write availability; Prometheus uses a write-ahead log to protect the in-memory block.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf",
         "https://prometheus.io/docs/prometheus/latest/storage/"

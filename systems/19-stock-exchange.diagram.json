@@ -67,7 +67,7 @@
       "label": "Matching engine (single thread)",
       "kind": "service",
       "summary": "A deterministic state machine over the sequenced input: price-time priority, trades at the resting order's price. All state is in memory with no database. LMAX ran 6 million orders/s on one thread (2011 benchmark).",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://martinfowler.com/articles/lmax.html"
       ],
@@ -105,7 +105,7 @@
       "label": "Market-data publisher",
       "kind": "service",
       "summary": "Publishes trades and book updates with sequence numbers over UDP multicast so every subscriber sees the same stream. MoldUDP64 packets carry a session and the first message's sequence number.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/moldudp64.pdf"
       ],
@@ -116,7 +116,7 @@
       "label": "Re-request server",
       "kind": "service",
       "summary": "Answers unicast Request messages for missed packets. Snapshots come from a separate service (GLIMPSE in Nasdaq's case).",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/moldudp64.pdf"
       ],
@@ -128,7 +128,7 @@
       "label": "Market-data subscribers",
       "kind": "client",
       "summary": "Detects gaps from sequence numbers, requests retransmission, and rebuilds the book from the stream.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/moldudp64.pdf"
       ],
@@ -140,7 +140,7 @@
       "kind": "service",
       "c4": "container",
       "summary": "The sequenced, single-threaded core: sequencer and input journaling, the deterministic engine and the in-memory order book.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://martinfowler.com/articles/lmax.html",
         "https://lmax-exchange.github.io/disruptor/disruptor.html",

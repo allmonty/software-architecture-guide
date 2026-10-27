@@ -106,7 +106,7 @@
       "label": "Blob store + CDN",
       "kind": "datastore",
       "summary": "Encrypted media bytes. The sender uploads the encrypted file, then sends a normal message carrying the key, HMAC key, SHA256 hash and pointer.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf"
       ],

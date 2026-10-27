@@ -33,7 +33,7 @@
       "kind": "service",
       "c4": "component",
       "summary": "The replica that serves all requests; elected by consensus. In Chubby it needs a majority vote plus promises not to elect another master for the master lease; a new one is typically elected in a few seconds.",
-      "confidence": "CONFIRMED",
+      "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf",
         "https://raft.github.io/raft.pdf"
