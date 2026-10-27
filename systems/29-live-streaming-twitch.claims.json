@@ -6,6 +6,12 @@
     "status": "confirmed"
   },
   {
+    "quote": "low-latency HTTP live streaming",
+    "url": "https://blog.twitch.tv/en/2021/10/25/low-latency-high-reach-creating-an-unparalleled-live-video-streaming-network-at-twitch/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "over 10 billion messages a day",
     "url": "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
     "via": "archive",
@@ -139,12 +145,6 @@
   },
   {
     "quote": "buffers can increase latency",
-    "url": "https://blog.twitch.tv/en/2021/10/25/low-latency-high-reach-creating-an-unparalleled-live-video-streaming-network-at-twitch/",
-    "via": "direct",
-    "status": "confirmed"
-  },
-  {
-    "quote": "low-latency HTTP live streaming",
     "url": "https://blog.twitch.tv/en/2021/10/25/low-latency-high-reach-creating-an-unparalleled-live-video-streaming-network-at-twitch/",
     "via": "direct",
     "status": "confirmed"

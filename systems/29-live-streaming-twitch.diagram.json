@@ -182,10 +182,10 @@
       "label": "Alternative: low-latency HLS",
       "kind": "service",
       "c4": "note",
-      "summary": "Partial segments, blocking playlist reload and preload hints let a player learn of new media at once instead of polling every target duration. Twitch says it cut delay from about 10 s to about 3 s with low-latency HLS; the exact mechanism in use is not described, so this is from the specification.",
+      "summary": "Partial segments, blocking playlist reload and preload hints let a player learn of new media at once instead of polling every target duration. Twitch says it cut delay from about 10 s to about 3 s with its own 'low-latency HTTP live streaming'; its mechanism is not described, so this note shows Apple's LL-HLS draft as the standard approach, not as Twitch's implementation.",
       "confidence": "CONFIRMED",
       "sources": [
-        "https://www.ietf.org/archive/id/draft-pantos-hls-rfc8216bis-17.txt",
+        "https://www.ietf.org/archive/id/draft-pantos-hls-rfc8216bis-22.txt",
         "https://www.rfc-editor.org/rfc/rfc8216",
         "https://blog.twitch.tv/en/2021/10/25/low-latency-high-reach-creating-an-unparalleled-live-video-streaming-network-at-twitch/"
       ]
