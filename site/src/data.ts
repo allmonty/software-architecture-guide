@@ -1,13 +1,16 @@
 import { Diagram } from "../../schema/diagram.schema.ts";
+import { ageInDays, lastReadDate, notVerified, STALE_DAYS, summarizeLedger, type LedgerEntry, type QuoteTally } from "../../schema/trust.ts";
 
 export interface System {
   id: string;
   diagram: Diagram;
   markdown: string;
+  claims: LedgerEntry[];
 }
 
 const diagrams = import.meta.glob("../../systems/*.diagram.json", { eager: true, import: "default" });
 const notes = import.meta.glob("../../systems/*.md", { eager: true, query: "?raw", import: "default" });
+const ledgers = import.meta.glob("../../systems/*.claims.json", { eager: true, import: "default" });
 
 // Parsing at load time means a malformed file fails loudly in the browser console and is skipped,
 // while `npm run validate` is the gate that keeps it from being committed.
@@ -19,18 +22,20 @@ export const systems: System[] = Object.entries(diagrams)
       return [];
     }
     const md = notes[path.replace(".diagram.json", ".md")] as string | undefined;
-    return [{ id: parsed.data.id, diagram: parsed.data, markdown: md ?? "" }];
+    const claims = (ledgers[path.replace(".diagram.json", ".claims.json")] as LedgerEntry[] | undefined) ?? [];
+    return [{ id: parsed.data.id, diagram: parsed.data, markdown: md ?? "", claims }];
   })
   .sort((a, b) => a.id.localeCompare(b.id));
 
 // Toolkit pages (primers P, casebook C, workbook W, README) are plain Markdown without a diagram.
-export interface ToolkitPage { id: string; title: string; markdown: string }
+export interface ToolkitPage { id: string; title: string; markdown: string; claims: LedgerEntry[] }
 const toolkit = import.meta.glob("../../toolkit/*.md", { eager: true, query: "?raw", import: "default" });
+const toolkitLedgers = import.meta.glob("../../toolkit/*.claims.json", { eager: true, import: "default" });
 export const toolkitPages: ToolkitPage[] = Object.entries(toolkit)
   .map(([path, md]) => {
     const id = path.split("/").pop()!.replace(/\.md$/, "");
     const title = (md as string).split("\n")[0].replace(/^#\s*/, "");
-    return { id, title, markdown: md as string };
+    return { id, title, markdown: md as string, claims: (toolkitLedgers[path.replace(/\.md$/, ".claims.json")] as LedgerEntry[] | undefined) ?? [] };
   })
   .sort((a, b) => a.id.localeCompare(b.id));
 
@@ -58,4 +63,28 @@ export function resolveRef(ref: string): Item | undefined {
   if (!p) return undefined;
   const type: ItemType = ref[0] === "P" ? "Primer" : ref[0] === "C" ? "Incident" : "Exercise";
   return { ref, type, title: p.title.replace(/^[PCW]\d\d — /, ""), href: `#toolkit/${p.id}`, minutes: minutes(p.markdown) };
+}
+
+// ---- Trust summary ------------------------------------------------------------------------------------------
+export interface Trust {
+  lastRead?: string; ageDays?: number; stale: boolean;
+  quotes: QuoteTally; quoteTotal: number;
+  nodes?: { confirmed: number; pattern: number; speculative: number };
+  notVerified: string[];
+}
+/** What the reader needs to judge a page: how fresh, how its quotes were checked, what it says it did not verify. */
+export function trustOf(markdown: string, claims: LedgerEntry[], diagram?: Diagram): Trust {
+  const lastRead = lastReadDate(markdown);
+  const ageDays = lastRead ? ageInDays(lastRead) : undefined;
+  const quotes = summarizeLedger(claims);
+  return {
+    lastRead, ageDays, stale: ageDays === undefined || ageDays > STALE_DAYS,
+    quotes, quoteTotal: claims.length,
+    nodes: diagram && {
+      confirmed: diagram.nodes.filter((n) => n.confidence === "CONFIRMED").length,
+      pattern: diagram.nodes.filter((n) => n.confidence === "INDUSTRY PATTERN").length,
+      speculative: diagram.nodes.filter((n) => n.confidence === "SPECULATIVE").length,
+    },
+    notVerified: notVerified(markdown),
+  };
 }

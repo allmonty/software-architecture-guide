@@ -7,6 +7,7 @@ import { Home } from "./Home.tsx";
 import { TrackPage } from "./TrackPage.tsx";
 import { StudyToggle } from "./StudyToggle.tsx";
 import { SystemPage, components } from "./SystemPage.tsx";
+import { TrustCard } from "./TrustCard.tsx";
 import { SettingsMenu } from "./SettingsMenu.tsx";
 
 // Hash routing keeps the build deployable on any static host.
@@ -39,6 +40,7 @@ export function App() {
       ) : page ? (
         <main className="notes toolkit">
           <p className="crumbs"><a href="#">← Home</a> · <a href="#toolkit/README">Toolkit index</a>{page.id !== "README" && <StudyToggle refId={page.id.slice(0, 3)} />}</p>
+          {page.id !== "README" && !page.id.startsWith("W") && <TrustCard title={page.title} markdown={page.markdown} claims={page.claims} />}
           <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={components}>{page.markdown}</ReactMarkdown>
         </main>
       ) : system ? (

@@ -24,3 +24,20 @@ test("the newest read date in a note is found", () => {
 });
 
 test("age counts whole days", () => assert.equal(ageInDays("2026-01-01", Date.parse("2026-01-11T12:00:00Z")), 10));
+
+import { notVerified, summarizeLedger } from "../schema/trust.ts";
+
+test("ledger entries are tallied by status and source class", () => {
+  const t = summarizeLedger([
+    { quote: "a", url: "https://arxiv.org/x", sourceClass: "primary", status: "confirmed" },
+    { quote: "b", url: "https://en.wikipedia.org/wiki/X", status: "confirmed" },
+    { quote: "c", status: "manual" }, { quote: "d", status: "ignored" }, { quote: "e", status: "unverified" },
+  ]);
+  assert.deepEqual(t, { primary: 1, secondary: 1, manual: 1, ignored: 1, unverified: 1 });
+});
+
+test("only the 'Not ...' bullets of the verification log are returned", () => {
+  const md = "# T\n\n- Not here\n\n## ✅ Verification log\n\n*date*\n- Verified in the paper: x\n- Not claimed: how it works\n  today at scale\n- **Not re-verified**: older parts\n\n## After\n- Not this one";
+  assert.deepEqual(notVerified(md), ["Not claimed: how it works today at scale", "**Not re-verified**: older parts"]);
+  assert.deepEqual(notVerified("no log"), []);
+});

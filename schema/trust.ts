@@ -30,3 +30,30 @@ export function lastReadDate(md: string): string | undefined {
 
 export const STALE_DAYS = 180;
 export const ageInDays = (date: string, now = Date.now()) => Math.floor((now - Date.parse(date)) / 864e5);
+
+export interface LedgerEntry { quote: string; url?: string; via?: string; sourceClass?: SourceClass; status: "confirmed" | "manual" | "ignored" | "unverified"; note?: string }
+
+export interface QuoteTally { primary: number; secondary: number; manual: number; ignored: number; unverified: number }
+
+/** Counts ledger entries. "primary" and "secondary" are both confirmed: the words were found in a cited page of that class. */
+export function summarizeLedger(entries: LedgerEntry[]): QuoteTally {
+  const t: QuoteTally = { primary: 0, secondary: 0, manual: 0, ignored: 0, unverified: 0 };
+  for (const e of entries) {
+    if (e.status === "confirmed") t[e.sourceClass ?? (e.url ? classifySource(e.url) : "secondary")]++;
+    else t[e.status]++;
+  }
+  return t;
+}
+
+/** The bullets of the "Verification log" section that start with "Not" (not claimed, not sourced, not re-verified...). */
+export function notVerified(md: string): string[] {
+  const start = md.search(/^## .*verification log/im);
+  if (start < 0) return [];
+  const out: string[] = [];
+  for (const line of md.slice(start).split("\n").slice(1)) {
+    if (/^#{1,2} /.test(line)) break;
+    if (/^- /.test(line)) out.push(line.slice(2));
+    else if (/^\s+\S/.test(line) && out.length) out[out.length - 1] += " " + line.trim();
+  }
+  return out.filter((b) => /^\**not\b/i.test(b));
+}

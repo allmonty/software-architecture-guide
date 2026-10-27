@@ -260,3 +260,12 @@ button.study { margin-left: auto; }
 .card-head { display: flex; align-items: center; gap: 10px; }
 .home section > h2, .home .stage h3, .home .stage h4, .track-title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .home .stage h3 .muted { flex-basis: 100%; margin-left: 36px; }
+
+/* ---- Trust summary ---- */
+.trust { border: 1px solid var(--line); border-left: 4px solid var(--c-confirmed); border-radius: 10px; background: var(--card); padding: 10px 14px; margin: 0 0 16px; font-size: .9rem; }
+.trust-head { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; }
+.trust .fresh { color: var(--c-confirmed); } .trust .stale, .trust .warn { color: var(--c-spec); font-weight: 600; }
+.trust-facts { margin: 6px 0; padding-left: 18px; } .trust-facts li { margin: 3px 0; }
+.trust p { margin: 6px 0; } .trust details { margin: 6px 0; padding: 4px 10px; } .trust details ul { padding-left: 18px; } .trust details li p { margin: 0; }
+.evidence { width: 100%; font-size: .85rem; } .evidence th { text-align: left; }
+.pill.src-primary { color: var(--c-confirmed); } .pill.src-secondary { color: var(--c-spec); }
