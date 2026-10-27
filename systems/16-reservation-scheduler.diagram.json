@@ -1,0 +1,247 @@
+{
+  "id": "16-reservation-scheduler",
+  "title": "Reservation Scheduler (Hotel Rooms & Parking Spaces)",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "user",
+      "label": "Guest / driver",
+      "kind": "client",
+      "summary": "Searches, holds a unit, pays and receives a confirmation or access code.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.postgresql.org/docs/current/rangetypes.html"
+      ]
+    },
+    {
+      "id": "search",
+      "label": "Search service + index",
+      "kind": "service",
+      "summary": "Eventually consistent view of availability by location, dates and filters. Fast, may be seconds stale, and is never trusted for the final answer.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.postgresql.org/docs/current/rangetypes.html"
+      ]
+    },
+    {
+      "id": "booking",
+      "label": "Booking service",
+      "kind": "service",
+      "summary": "Runs hold, confirm, extend and cancel. Retries on serialization failures (SQLSTATE 40001) and on exclusion-constraint conflicts.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.postgresql.org/docs/current/transaction-iso.html"
+      ],
+      "details": "PostgreSQL: applications using Serializable or Repeatable Read must be prepared to retry the whole transaction."
+    },
+    {
+      "id": "inventory",
+      "label": "Inventory DB (PostgreSQL)",
+      "kind": "datastore",
+      "summary": "One row per booking with a time range. An exclusion constraint on (unit WITH =, period WITH &&) rejects overlaps. Room types use per-night counters with sold < capacity. Sharded by property or lot.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.postgresql.org/docs/current/rangetypes.html",
+        "https://www.postgresql.org/docs/current/ddl-constraints.html"
+      ],
+      "details": "UNIQUE is usually unsuitable for ranges. Exclusion constraints need btree_gist for scalar equality. tstzrange bounds are not canonicalised, so pass '[)' explicitly."
+    },
+    {
+      "id": "holds",
+      "label": "Hold sweeper",
+      "kind": "service",
+      "summary": "Marks expired HELD bookings CANCELLED so the range is free again. Expiry is also checked at query time so a slow sweeper does not hide inventory.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.postgresql.org/docs/current/rangetypes.html"
+      ]
+    },
+    {
+      "id": "pay",
+      "label": "Payment service",
+      "kind": "external",
+      "summary": "Charges with an idempotency key derived from booking and attempt. A retry with the same key returns the saved response, and different parameters on the same key error.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://docs.stripe.com/api/idempotent_requests"
+      ]
+    },
+    {
+      "id": "outbox",
+      "label": "Outbox / event stream",
+      "kind": "queue",
+      "summary": "Confirmed bookings are published reliably so email, access codes and search-index updates are not lost if the process dies after commit.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.postgresql.org/docs/current/rangetypes.html"
+      ]
+    },
+    {
+      "id": "notify",
+      "label": "Notifications",
+      "kind": "service",
+      "summary": "Sends confirmations, reminders and receipts. See the notification system note.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.postgresql.org/docs/current/rangetypes.html"
+      ]
+    },
+    {
+      "id": "access",
+      "label": "Gate / access control (parking)",
+      "kind": "external",
+      "summary": "Reads a QR code or plate at entry and exit. Detects overstays, and no-shows free the space after a grace period.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.postgresql.org/docs/current/rangetypes.html"
+      ],
+      "details": "Physical state (occupied) can differ from the booked state, so a pure calendar model is not enough."
+    },
+    {
+      "id": "pricing",
+      "label": "Pricing service",
+      "kind": "service",
+      "summary": "Computes price by demand, time and duration. The price is stored with the booking so later changes do not alter it.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.postgresql.org/docs/current/rangetypes.html"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "u-search",
+      "from": "user",
+      "to": "search",
+      "label": "find availability",
+      "mode": "sync"
+    },
+    {
+      "id": "u-book",
+      "from": "user",
+      "to": "booking",
+      "label": "hold / confirm",
+      "mode": "sync"
+    },
+    {
+      "id": "book-inv",
+      "from": "booking",
+      "to": "inventory",
+      "label": "INSERT booking (period)",
+      "mode": "sync"
+    },
+    {
+      "id": "book-price",
+      "from": "booking",
+      "to": "pricing",
+      "label": "quote",
+      "mode": "sync"
+    },
+    {
+      "id": "book-pay",
+      "from": "booking",
+      "to": "pay",
+      "label": "charge (idempotency key)",
+      "mode": "sync"
+    },
+    {
+      "id": "book-outbox",
+      "from": "booking",
+      "to": "outbox",
+      "label": "booking confirmed",
+      "mode": "async"
+    },
+    {
+      "id": "outbox-search",
+      "from": "outbox",
+      "to": "search",
+      "label": "update availability",
+      "mode": "async"
+    },
+    {
+      "id": "outbox-notify",
+      "from": "outbox",
+      "to": "notify",
+      "label": "email / access code",
+      "mode": "async"
+    },
+    {
+      "id": "sweep-inv",
+      "from": "holds",
+      "to": "inventory",
+      "label": "expire holds",
+      "mode": "async"
+    },
+    {
+      "id": "access-book",
+      "from": "access",
+      "to": "booking",
+      "label": "entry / exit events",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "book",
+      "name": "Book the last slot (two users race)",
+      "steps": [
+        {
+          "edge": "u-search",
+          "caption": "The user searches. The index says the unit is free for these dates. It may be a few seconds stale."
+        },
+        {
+          "edge": "u-book",
+          "caption": "The user chooses it. Two users do this at the same moment."
+        },
+        {
+          "edge": "book-price",
+          "caption": "The booking service quotes a price, to be stored with the booking."
+        },
+        {
+          "edge": "book-inv",
+          "caption": "Both transactions INSERT a HELD booking with the same unit and an overlapping period. The exclusion constraint lets one commit and rejects the other, whatever the application does."
+        },
+        {
+          "edge": "book-pay",
+          "caption": "The winner pays with an idempotency key. A network retry returns the saved result instead of charging twice."
+        },
+        {
+          "edge": "book-outbox",
+          "caption": "On success the booking is marked CONFIRMED and an event is written to the outbox in the same transaction."
+        },
+        {
+          "edge": "outbox-notify",
+          "caption": "The outbox publishes the event, so the confirmation and access code are sent even if the process crashes after commit."
+        }
+      ]
+    },
+    {
+      "id": "expire",
+      "name": "Hold expires",
+      "steps": [
+        {
+          "edge": "sweep-inv",
+          "caption": "If payment never completes, the sweeper marks the hold CANCELLED after its TTL. The partial exclusion constraint stops counting it, so the range is free."
+        },
+        {
+          "edge": "outbox-search",
+          "caption": "The change flows to the search index so the unit shows as available again."
+        }
+      ]
+    },
+    {
+      "id": "parking",
+      "name": "Parking: overstay or no-show",
+      "steps": [
+        {
+          "edge": "access-book",
+          "caption": "The gate reports entry and exit events. A car still present after its period is an overstay, so apply the penalty policy and hold the next booking until the space is empty."
+        },
+        {
+          "edge": "book-inv",
+          "caption": "If nobody arrives within the grace period, the booking is marked NO_SHOW and the range is released for walk-ins, per policy."
+        }
+      ]
+    }
+  ]
+}
