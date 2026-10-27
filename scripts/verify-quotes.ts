@@ -41,7 +41,7 @@ async function fetchText(url: string): Promise<{ text: string; via: "direct" | "
   const attempt = async (u: string) => {
     try {
       if (apple && u === url) {
-        const r = await fetch(`https://developer.apple.com/tutorials/data/documentation/${apple[1]}.json`, { signal: AbortSignal.timeout(30000), headers: { "user-agent": "Mozilla/5.0" } });
+        const r = await fetch(`https://developer.apple.com/tutorials/data/documentation/${apple[1]}.json`, { signal: AbortSignal.timeout(30000), headers: { "user-agent": "Mozilla/5.0", "accept-language": "en-US,en;q=0.9" } });
         if (r.ok) {
           const parts: string[] = [];
           const walk = (x: unknown): void => {
@@ -52,7 +52,7 @@ async function fetchText(url: string): Promise<{ text: string; via: "direct" | "
           return parts.join(" ");
         }
       }
-      const r = await fetch(u, { redirect: "follow", signal: AbortSignal.timeout(30000), headers: { "user-agent": "Mozilla/5.0" } });
+      const r = await fetch(u, { redirect: "follow", signal: AbortSignal.timeout(30000), headers: { "user-agent": "Mozilla/5.0", "accept-language": "en-US,en;q=0.9" } });
       if (!r.ok) return null;
       const type = r.headers.get("content-type") ?? "";
       if (type.includes("pdf") || u.toLowerCase().endsWith(".pdf")) {
