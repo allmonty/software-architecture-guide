@@ -88,22 +88,22 @@ For interviews, practise each note's **Interview questions**, and walk the **flo
 |---|---|
 | Caching and request coalescing | 01, 09, 11, 12, 13, 14, 29 |
 | CDN and edge delivery | 07, 12, 13, 14, 29 |
-| Sharding / partitioning / consistent hashing | 01, 03, 09, 11, 13, 16, 20 |
-| Replication, quorums, erasure coding | 03, 05, 06, 07, 30, 31 |
-| Consistency models and trade-offs | 03, 05, 06, 16, 18 |
+| Sharding / partitioning / consistent hashing | 01, 03, 04, 09, 11, 13, 15, 16, 20, 24, 30, 31 |
+| Replication, quorums, erasure coding | 03, 04, 05, 06, 07, 30, 31 |
+| Consistency models and trade-offs | 03, 04, 05, 06, 16, 18, 30 |
 | Queues, logs and event-driven design | 04, 08, 10, 17, 19, 31 |
 | Idempotency and retries | 01, 10, 16, 17, 25, 31 |
 | Event sourcing and immutable logs | 04, 17, 19 |
 | Concurrency control (constraints, locks, OT, single writer) | 16, 18, 19 |
 | Real-time push and WebSockets | 08, 09, 18, 21, 29 |
-| Rate limiting and back-pressure | 02, 10, 17, 20, 22, 25 |
+| Rate limiting and back-pressure | 02, 10, 17, 20, 22, 25, 29, 30 |
 | Fail-open and failure handling | 02, 10, 17, 19, 27, 30 |
 | Pre-signed URLs and blob storage | 05, 06, 07, 12, 14 |
-| Control plane vs data plane, steering | 13, 09, 21 |
+| Control plane vs data plane, steering | 13, 09, 21, 29 |
 | ID generation | 01, 11 |
 | Geospatial and time-range indexing | 15, 16 |
 | Search and inverted indexes | 20, 23, 24 |
-| Ranking and recommendation pipelines | 11, 20, 21, 23, 26 |
+| Ranking and recommendation pipelines | 11, 20, 23, 26 |
 | End-to-end encryption and privacy | 08 |
 | Matching and scheduling | 15, 16, 19, 21, 27 |
 | LLM serving: KV cache, continuous batching, prefill/decode | 22, 28 |
