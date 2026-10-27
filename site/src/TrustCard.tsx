@@ -31,7 +31,7 @@ export function TrustCard({ id, title, markdown, claims, diagram }: { id: string
           <b>Quotations:</b> {q.primary} found in a primary source{q.secondary > 0 && <>, <span className="warn">{q.secondary} only in a secondary source</span></>}
           {q.manual > 0 && <>, {q.manual} checked by hand (page not machine-readable)</>}
           {q.unverified > 0 && <>, <span className="warn">{q.unverified} not found</span></>}
-          {q.ignored > 0 && <>, {q.ignored} short phrases in our own words</>}.
+          {q.ignored > 0 && <>, {q.ignored} short phrase{q.ignored === 1 ? "" : "s"} in our own words</>}.
         </li>
       </ul>
       <p className="muted small">A found quotation means the words appear in the cited page. It does not prove that the claim built on them is right; the tags and the reviewer notes carry that judgement.</p>
