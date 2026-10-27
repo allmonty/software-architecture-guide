@@ -1,0 +1,293 @@
+{
+  "id": "12-youtube",
+  "title": "YouTube",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "creator",
+      "label": "Creator client",
+      "kind": "client",
+      "summary": "Starts a resumable upload (POST returns a session URI, then PUT bytes) and can resume after a drop with Content-Range: bytes */N and a 308 response.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://developers.google.com/youtube/v3/guides/using_resumable_upload_protocol"
+      ],
+      "details": "Limits: 256 GB or 12 hours, whichever is less (15 minutes by default for unverified accounts)."
+    },
+    {
+      "id": "api",
+      "label": "Upload / metadata API",
+      "kind": "service",
+      "summary": "Creates the video record and the upload session. Keeps heavy bytes off application servers.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/youtube-system-design",
+        "https://developers.google.com/youtube/v3/guides/using_resumable_upload_protocol"
+      ]
+    },
+    {
+      "id": "raw",
+      "label": "Raw upload store",
+      "kind": "datastore",
+      "summary": "Object storage holding the original file. Kept so videos can be re-encoded with future codecs.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/youtube-system-design"
+      ]
+    },
+    {
+      "id": "queue",
+      "label": "Job queue",
+      "kind": "queue",
+      "summary": "An object-created event triggers transcoding. Eventual consistency is fine: a new video may take minutes to become watchable.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/youtube-system-design"
+      ]
+    },
+    {
+      "id": "orch",
+      "label": "Transcoding orchestrator (DAG)",
+      "kind": "service",
+      "summary": "Splits the source into chunks, schedules encodes per chunk × rendition, then packaging, thumbnails and moderation. Tasks are idempotent and retryable per chunk.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/youtube-system-design"
+      ],
+      "details": "Chunk length and ladder rungs in the baseline are illustrative. YouTube has not published them."
+    },
+    {
+      "id": "vcu",
+      "label": "Transcoding workers + VCU chips",
+      "kind": "service",
+      "summary": "YouTube built a custom Video (trans)Coding Unit and the software to coordinate it, reporting up to 20–33× compute-efficiency improvement over its previous optimised system. The next chip adds AV1.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://blog.youtube/inside-youtube/new-era-video-infrastructure/"
+      ],
+      "details": "Blog dated 2021-04-21. Whether every YouTube encode runs on the VCU is not stated."
+    },
+    {
+      "id": "segments",
+      "label": "Segments + manifests",
+      "kind": "datastore",
+      "summary": "Immutable segments and HLS/DASH manifests in object storage. A master playlist lists renditions (EXT-X-STREAM-INF).",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://datatracker.ietf.org/doc/html/rfc8216"
+      ],
+      "details": "Segments are static, cacheable files, ideal for CDNs."
+    },
+    {
+      "id": "cdn",
+      "label": "CDN / ISP caches",
+      "kind": "edge",
+      "summary": "Serves most playback bytes from the edge. Request coalescing stops a cache-miss stampede on viral uploads.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/youtube-system-design"
+      ],
+      "details": "Google and Netflix both run ISP-embedded caches (Google Global Cache, Open Connect)."
+    },
+    {
+      "id": "meta",
+      "label": "Metadata DB (Vitess / MySQL)",
+      "kind": "datastore",
+      "summary": "Sharded relational store for videos and channels. Vitess was created at YouTube in 2010 to solve MySQL scalability, moving shard routing out of application code.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://vitess.io/docs/overview/history/"
+      ]
+    },
+    {
+      "id": "search",
+      "label": "Search index",
+      "kind": "datastore",
+      "summary": "Inverted index fed from metadata by change-data-capture. A new video may take seconds to appear.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/youtube-system-design"
+      ]
+    },
+    {
+      "id": "viewer",
+      "label": "Viewer client",
+      "kind": "client",
+      "summary": "Fetches the manifest, starts on a low rendition and adapts per segment from measured throughput and buffer.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://datatracker.ietf.org/doc/html/rfc8216",
+        "https://newsletter.systemdesign.one/p/youtube-system-design"
+      ]
+    },
+    {
+      "id": "views",
+      "label": "View-event stream",
+      "kind": "queue",
+      "summary": "View events go to a stream and are aggregated in windows rather than UPDATE views = views+1, with fraud filtering in the stream.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/youtube-system-design"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "c-api",
+      "from": "creator",
+      "to": "api",
+      "label": "start upload session",
+      "mode": "sync"
+    },
+    {
+      "id": "c-raw",
+      "from": "creator",
+      "to": "raw",
+      "label": "PUT bytes (resumable)",
+      "mode": "sync"
+    },
+    {
+      "id": "raw-q",
+      "from": "raw",
+      "to": "queue",
+      "label": "object created",
+      "mode": "async"
+    },
+    {
+      "id": "q-orch",
+      "from": "queue",
+      "to": "orch",
+      "label": "job",
+      "mode": "async"
+    },
+    {
+      "id": "orch-vcu",
+      "from": "orch",
+      "to": "vcu",
+      "label": "encode chunk × rendition",
+      "mode": "sync"
+    },
+    {
+      "id": "vcu-seg",
+      "from": "vcu",
+      "to": "segments",
+      "label": "write segments",
+      "mode": "sync"
+    },
+    {
+      "id": "orch-meta",
+      "from": "orch",
+      "to": "meta",
+      "label": "status = READY",
+      "mode": "sync"
+    },
+    {
+      "id": "meta-search",
+      "from": "meta",
+      "to": "search",
+      "label": "CDC",
+      "mode": "async"
+    },
+    {
+      "id": "v-api",
+      "from": "viewer",
+      "to": "api",
+      "label": "GET /videos/id",
+      "mode": "sync"
+    },
+    {
+      "id": "api-meta",
+      "from": "api",
+      "to": "meta",
+      "label": "metadata",
+      "mode": "sync"
+    },
+    {
+      "id": "v-cdn",
+      "from": "viewer",
+      "to": "cdn",
+      "label": "segments",
+      "mode": "sync"
+    },
+    {
+      "id": "cdn-seg",
+      "from": "cdn",
+      "to": "segments",
+      "label": "cache miss",
+      "mode": "sync"
+    },
+    {
+      "id": "v-views",
+      "from": "viewer",
+      "to": "views",
+      "label": "view events",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "upload",
+      "name": "Upload and publish",
+      "steps": [
+        {
+          "edge": "c-api",
+          "caption": "The creator starts a resumable session. The API returns a session URI."
+        },
+        {
+          "edge": "c-raw",
+          "caption": "The file bytes are PUT to storage. After a dropped connection, an empty PUT with Content-Range: bytes */N returns 308 and the offset to resume from."
+        },
+        {
+          "edge": "raw-q",
+          "caption": "The finished upload triggers a transcoding job."
+        },
+        {
+          "edge": "q-orch",
+          "caption": "The orchestrator splits the video into chunks and plans encodes per chunk and rendition."
+        },
+        {
+          "edge": "orch-vcu",
+          "caption": "Workers encode in parallel, so wall-clock time follows the slowest chunk, not the video length. YouTube reports custom VCU chips doing this work."
+        },
+        {
+          "edge": "vcu-seg",
+          "caption": "Encoded segments and manifests are written as immutable files."
+        },
+        {
+          "edge": "orch-meta",
+          "caption": "When the pipeline completes, the video is marked READY."
+        },
+        {
+          "edge": "meta-search",
+          "caption": "Change-data-capture updates the search index shortly after."
+        }
+      ]
+    },
+    {
+      "id": "watch",
+      "name": "Watch a video",
+      "steps": [
+        {
+          "edge": "v-api",
+          "caption": "The player asks for the video's metadata and manifest URL."
+        },
+        {
+          "edge": "api-meta",
+          "caption": "Metadata comes from the sharded relational store."
+        },
+        {
+          "edge": "v-cdn",
+          "caption": "The player fetches segments from the CDN, starting on a low rendition and adapting up or down per segment."
+        },
+        {
+          "edge": "cdn-seg",
+          "caption": "Only cache misses reach origin storage. Segments are immutable, so they cache well."
+        },
+        {
+          "edge": "v-views",
+          "caption": "View events are streamed and aggregated in windows instead of updating a counter on every view."
+        }
+      ]
+    }
+  ]
+}
