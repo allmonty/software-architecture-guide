@@ -1,0 +1,50 @@
+[
+  {
+    "quote": "intended to provide coarse-grained locking as well as reliable (though low-volume) storage for a loosely-coupled distributed system",
+    "url": "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the design emphasis is on availability and reliability, as opposed to high performance",
+    "url": "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a small set of servers (typically five) known as replicas",
+    "url": "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "an opaque byte-string that describes the state of the lock immediately after acquisition",
+    "url": "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "protects unmodified servers and clients from everyday problems caused by message delays and restarts",
+    "url": "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "to provide a simple and high performance kernel for building more complex coordination primitives at the client",
+    "url": "https://www.usenix.org/legacy/event/atc10/tech/full_papers/Hunt.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "wait-free aspects of shared registers with an event-driven mechanism similar to cache invalidations",
+    "url": "https://www.usenix.org/legacy/event/atc10/tech/full_papers/Hunt.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the key elements of consensus, such as leader election, log replication, and safety",
+    "url": "https://raft.github.io/raft.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]

@@ -1,0 +1,245 @@
+{
+  "id": "33-distributed-coordination-locks",
+  "title": "Distributed Coordination, Locks and Leader Election",
+  "kind": "real-system",
+  "nodes": [
+    {
+      "id": "app",
+      "label": "Client applications",
+      "kind": "client",
+      "c4": "external-system",
+      "summary": "Services that need a leader, a lock or shared configuration. They hold a session with the cluster and must handle losing it.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf"
+      ]
+    },
+    {
+      "id": "cluster",
+      "label": "Coordination cluster",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "A small replicated service (typically five replicas in Chubby) that stores small files or nodes, locks and sessions, and notifies clients of changes. Emphasis on availability and reliability, not throughput.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf",
+        "https://www.usenix.org/legacy/event/atc10/tech/full_papers/Hunt.pdf"
+      ],
+      "group": "Coordination cluster"
+    },
+    {
+      "id": "master",
+      "label": "Master / leader",
+      "kind": "service",
+      "c4": "component",
+      "summary": "The replica that serves all requests; elected by consensus. In Chubby it needs a majority vote plus promises not to elect another master for the master lease; a new one is typically elected in a few seconds.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf",
+        "https://raft.github.io/raft.pdf"
+      ],
+      "parent": "cluster",
+      "group": "Coordination cluster"
+    },
+    {
+      "id": "replicas",
+      "label": "Replicas (majority quorum)",
+      "kind": "datastore",
+      "c4": "component",
+      "summary": "Copies of the small database; writes are acknowledged when they reach a majority. Raft's election safety: at most one leader per term.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf",
+        "https://raft.github.io/raft.pdf"
+      ],
+      "parent": "cluster",
+      "group": "Coordination cluster"
+    },
+    {
+      "id": "sessions",
+      "label": "Sessions and watches",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Clients keep a session through KeepAlives; ephemeral nodes vanish when it ends; watches or events notify clients of changes.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf",
+        "https://www.usenix.org/legacy/event/atc10/tech/full_papers/Hunt.pdf"
+      ],
+      "parent": "cluster",
+      "group": "Coordination cluster"
+    },
+    {
+      "id": "locks",
+      "label": "Locks and sequencers",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Advisory reader-writer locks; a holder can obtain a sequencer (lock name, mode, generation number) to present to the resource it protects. A lock-delay protects servers that cannot check sequencers.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf"
+      ],
+      "parent": "cluster",
+      "group": "Coordination cluster"
+    },
+    {
+      "id": "resource",
+      "label": "Protected resource",
+      "kind": "service",
+      "c4": "container",
+      "summary": "A storage or job server that checks the sequencer or fencing token of each request and rejects stale ones. The checking is our design; Chubby describes the mechanism.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf"
+      ]
+    },
+    {
+      "id": "election",
+      "label": "Alternative: lock row in a database",
+      "kind": "datastore",
+      "c4": "note",
+      "summary": "For low-stakes or single-tenant cases a conditional update on a database row can serve as a lease. It gives up consensus guarantees and notifications.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "app-sessions",
+      "from": "app",
+      "to": "sessions",
+      "label": "open session, KeepAlive",
+      "mode": "sync"
+    },
+    {
+      "id": "app-locks",
+      "from": "app",
+      "to": "locks",
+      "label": "acquire lock, get sequencer",
+      "mode": "sync"
+    },
+    {
+      "id": "locks-master",
+      "from": "locks",
+      "to": "master",
+      "label": "lock state changes",
+      "mode": "sync"
+    },
+    {
+      "id": "master-replicas",
+      "from": "master",
+      "to": "replicas",
+      "label": "replicate by consensus",
+      "mode": "sync"
+    },
+    {
+      "id": "app-resource",
+      "from": "app",
+      "to": "resource",
+      "label": "request with sequencer",
+      "mode": "sync"
+    },
+    {
+      "id": "resource-locks",
+      "from": "resource",
+      "to": "locks",
+      "label": "validate sequencer (optional)",
+      "mode": "sync"
+    },
+    {
+      "id": "sessions-app",
+      "from": "sessions",
+      "to": "app",
+      "label": "events, watch notifications",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "lock",
+      "name": "Acquire a lock and use it",
+      "steps": [
+        {
+          "edge": "app-sessions",
+          "caption": "The client opens a session and keeps it alive."
+        },
+        {
+          "edge": "app-locks",
+          "caption": "It acquires the lock and asks for a sequencer."
+        },
+        {
+          "edge": "locks-master",
+          "caption": "The master records the lock state."
+        },
+        {
+          "edge": "master-replicas",
+          "caption": "The change is replicated to a majority before it is acknowledged."
+        },
+        {
+          "edge": "app-resource",
+          "caption": "The client sends its requests to the protected resource, attaching the sequencer."
+        },
+        {
+          "edge": "resource-locks",
+          "caption": "The resource checks the sequencer is still valid (or compares it with the highest it has seen)."
+        }
+      ]
+    },
+    {
+      "id": "paused-holder",
+      "name": "A lock holder pauses and wakes up late (failure)",
+      "steps": [
+        {
+          "edge": "app-sessions",
+          "caption": "The holder stops sending KeepAlives; its session expires and the lock is released."
+        },
+        {
+          "edge": "app-locks",
+          "caption": "Another client acquires the lock with a higher generation."
+        },
+        {
+          "edge": "app-resource",
+          "caption": "The first client resumes and sends a request with its old sequencer."
+        },
+        {
+          "edge": "resource-locks",
+          "caption": "The resource sees the old sequencer is no longer valid and rejects the request."
+        }
+      ]
+    },
+    {
+      "id": "master-failure",
+      "name": "The master fails (failure)",
+      "steps": [
+        {
+          "edge": "master-replicas",
+          "caption": "The other replicas stop hearing from the master."
+        },
+        {
+          "edge": "locks-master",
+          "caption": "When the master lease expires they run an election; a new master is typically elected in a few seconds (values up to 30 s were reported), during which requests wait or fail."
+        },
+        {
+          "edge": "sessions-app",
+          "caption": "Clients are told their session is in jeopardy and use a grace period before giving up (our summary of Chubby's session design)."
+        }
+      ]
+    },
+    {
+      "id": "herd",
+      "name": "Release without a herd (ZooKeeper recipe)",
+      "steps": [
+        {
+          "edge": "app-locks",
+          "caption": "Each waiter creates an ephemeral sequential node and watches only its predecessor."
+        },
+        {
+          "edge": "sessions-app",
+          "caption": "When the holder releases or crashes, only the next waiter is notified."
+        }
+      ]
+    }
+  ]
+}
