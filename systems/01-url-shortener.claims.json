@@ -11,16 +11,16 @@
   },
   {
     "quote": "accessed only once",
-    "url": "https://systemdesign.one/url-shortening-system-design/",
+    "url": "https://people.cs.umass.edu/~ramesh/Site/HOME_files/CCRpaper_1.pdf",
     "via": "direct",
-    "sourceClass": "secondary",
+    "sourceClass": "primary",
     "status": "confirmed"
   },
   {
     "quote": "one-hit wonders",
-    "url": "https://en.wikipedia.org/wiki/Bloom_filter",
+    "url": "https://people.cs.umass.edu/~ramesh/Site/HOME_files/CCRpaper_1.pdf",
     "via": "direct",
-    "sourceClass": "secondary",
+    "sourceClass": "primary",
     "status": "confirmed"
   }
 ]

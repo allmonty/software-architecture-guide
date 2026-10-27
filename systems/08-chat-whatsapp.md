@@ -147,7 +147,7 @@ Chat servers are ephemeral: they crash, deploy, and autoscale. **Don't hardcode 
 
 1. **Register:** on boot, a server registers `{name: chat-server, id, ip:port, health: /health, metadata: {region, capacity}}` with **Consul** (or AWS Cloud Map / etcd).
 2. **Heartbeat:** every 10 s. Marked unhealthy after ~30 s of silence, or after 3 failed checks.
-3. **Discover:** the LB and other services query "all healthy chat-server instances" and *watch* for changes.
+3. **Discover:** the LB and other services ask the registry for all healthy chat-server instances and *watch* for changes. `[INDUSTRY PATTERN]` (a generic service-discovery recipe; WhatsApp has not published how it does this).
 
 Trade-off: the registry is another highly-available cluster to run. The alternative is manual config, which is how outages happen.
 

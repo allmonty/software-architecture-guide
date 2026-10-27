@@ -185,7 +185,7 @@ flowchart LR
 
 - **Cache-aside + LRU**, TTL ~1 day. Partition the cache by short URL, with leader-follower replicas for reads.
 - **Bloom filter on short URLs** returns 404 for non-existent keys without touching cache or DB (protects against enumeration/scan traffic). 🔧 A standard Bloom filter can't delete, so expired links still answer "maybe" and fall through to the lookup.
-- **Avoid cache thrashing** from "accessed only once" links: only cache on the **second** access (track the first access with a Bloom filter). Akamai does the same for "one-hit wonders" ([Bloom filter § examples](https://en.wikipedia.org/wiki/Bloom_filter#Examples)).
+- **Avoid cache thrashing** from "accessed only once" links: only cache on the **second** access (track the first access with a Bloom filter). Akamai does the same for "one-hit wonders": on a typical CDN server cluster, 74% of the roughly 400 million cached objects were accessed once, and its cache-filtering rule is to cache an object only when it is accessed a second time, tracked in a Bloom filter ([Maggs and Sitaraman, SIGCOMM CCR 2015](https://people.cs.umass.edu/~ramesh/Site/HOME_files/CCRpaper_1.pdf)) `[CONFIRMED]`.
 - **Collapsed forwarding / request coalescing** at the proxy/cache: 10k simultaneous cache misses on a viral link → 1 origin request `[CONFIRMED]` that Squid supports it (a reviewer found Squid's docs say the directive is unavailable in Squid v8 and off by default, so check your version) ([Squid `collapsed_forwarding`](https://www.squid-cache.org/Doc/config/collapsed_forwarding/)).
 - **Separate read and write paths** (different services/fleets) so redirect traffic never starves shortening.
 
@@ -319,7 +319,7 @@ The CDN absorbs repeat reads. Concurrent misses collapse into one origin request
 - Corrected: the Highscalability link was presented as Bitly design material. The fetched article says it is not about Bitly's architecture, so it is labelled as a talk summary.
 - Softened: "Bitly uses 301s … accepting some unseen clicks" now separates the observed header (`[CONFIRMED]`) from the motive (`[SPECULATIVE]`).
 - Softened: the "Bitly's actual choice" ADR line now says it mirrors the observed header.
-- Not re-verified here (carried over from the earlier log): Fetch spec POST→GET behaviour, Squid `collapsed_forwarding`, Google 301 guidance, Akamai one-hit-wonder claim, birthday-bound arithmetic. The arithmetic was rechecked by hand (1.18·√(62⁷) ≈ 2.2M).
+- Not re-verified here (carried over from the earlier log): Fetch spec POST→GET behaviour, Squid `collapsed_forwarding`, Google 301 guidance, birthday-bound arithmetic. The arithmetic was rechecked by hand (1.18·√(62⁷) ≈ 2.2M).
 - Corrected: Status table: 301/308 "cached" → "heuristically cacheable" and 302 "method may change" → "a POST may become GET" (RFC 9110 §15.4).
 - Corrected: Reviewer note 2: `public` is an explicit cacheable marker, not the thing that enables browser caching; `private, max-age=0` forces revalidation, so `no-store` is the stronger option (RFC 9111 §5.2.2).
 - Corrected: Reviewer note 1: birthday-bound threshold made precise (≈2.2M, not exactly 2^21).
@@ -329,3 +329,4 @@ The CDN absorbs repeat reads. Concurrent misses collapse into one origin request
 - Softened/removed: "losing a range is acceptable" → "usually acceptable" (the article treats it as a downside and suggests an external cache).
 - Softened/removed: Feistel scramble, Safe Browsing and "most shorteners don't enforce 1:1" marked 🔧 (not in the original article).
 - Added: Reviewer notes 5–7 (301/302 → GET only for POST; 6 vs 5.95 bits; Snowflake collision claim).
+- Verified (review follow-up, 2026-10-27): the Akamai figures and the "cache on the second access, tracked in a Bloom filter" rule against the Maggs and Sitaraman paper (Figure 5: 74% of about 400 million objects accessed once; 90% fewer than four times). The note now cites the paper instead of Wikipedia.

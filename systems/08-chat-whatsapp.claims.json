@@ -34,13 +34,6 @@
     "note": "Carried from the earlier verification pass; the secondary newsletter page could not be re-read in full on 2026-10-27."
   },
   {
-    "quote": "all healthy chat-server instances",
-    "url": "https://newsletter.systemdesign.one/p/whatsapp-system-design",
-    "via": "direct",
-    "sourceClass": "secondary",
-    "status": "confirmed"
-  },
-  {
     "quote": "up to four other nonphone devices",
     "url": "https://engineering.fb.com/2021/07/14/security/whatsapp-multi-device/",
     "via": "direct",
