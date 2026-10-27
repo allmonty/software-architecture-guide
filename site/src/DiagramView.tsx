@@ -5,7 +5,9 @@ import {
 } from "@xyflow/react";
 import ReactMarkdown from "react-markdown";
 import type { Diagram } from "../../schema/diagram.schema.ts";
+import { classifySource, type LedgerEntry } from "../../schema/trust.ts";
 import { layout, NODE_H, NODE_W } from "./layout.ts";
+import { mentionsOf, scrollToSection } from "./sections.tsx";
 import { buildView, containersWithComponents, SYSTEM_ID, typeLine, type Element, type Level } from "./c4.ts";
 
 type C4Data = { el: Element; lit: boolean; dir: "LR" | "TB" };
@@ -38,8 +40,12 @@ export function DiagramView({
   initialStep = 0,
   initialLevel = "container",
   initialFocus = null,
+  claims = [],
+  markdown = "",
 }: {
   diagram: Diagram;
+  claims?: LedgerEntry[];
+  markdown?: string;
   initialFlow?: string | null;
   initialStep?: number;
   initialLevel?: Level;
@@ -140,6 +146,8 @@ export function DiagramView({
   const selEl = sel?.kind === "el" ? view.elements.find((e) => e.id === sel.id) : undefined;
   const selRel = sel?.kind === "rel" ? view.rels.find((r) => r.id === sel.id) : undefined;
   const label = (id: string) => view.elements.find((e) => e.id === id)?.label ?? id;
+  const nodeQuotes = selEl?.node ? claims.filter((c) => c.status === "confirmed" && c.url && selEl.node!.sources.includes(c.url)) : [];
+  const mentions = selEl && selEl.id !== SYSTEM_ID ? mentionsOf(markdown, selEl.label.replace(/\s*\(.*$/, "")) : [];
   const kids = selEl?.node ? diagram.nodes.filter((n) => n.parent === selEl.node!.id) : [];
 
   return (
@@ -232,9 +240,19 @@ export function DiagramView({
               {selEl.node && selEl.node.sources.length > 0 && (
                 <ul className="sources">
                   {selEl.node.sources.map((s) => (
-                    <li key={s}><a href={s} target="_blank" rel="noreferrer">{new URL(s).hostname}</a></li>
+                    <li key={s}><a href={s} target="_blank" rel="noreferrer">{new URL(s).hostname}</a> <span className={`pill src-${classifySource(s)}`}>{classifySource(s)}</span></li>
                   ))}
                 </ul>
+              )}
+              {nodeQuotes.length > 0 && (
+                <details>
+                  <summary>Quotations from these sources ({nodeQuotes.length})</summary>
+                  <p className="muted small">Words from this element's sources that the note quotes and the verifier found in the page. They may support nearby claims rather than this element alone.</p>
+                  <ul>{nodeQuotes.map((c) => <li key={c.quote}>“{c.quote}”</li>)}</ul>
+                </details>
+              )}
+              {mentions.length > 0 && (
+                <p className="small">Discussed in: {mentions.map((m, i) => <span key={m.slug}>{i > 0 && " · "}<button className="linkish" onClick={() => scrollToSection(m.slug)}>{m.text}</button></span>)}</p>
               )}
             </>
           ) : selRel ? (

@@ -105,6 +105,8 @@ export function SystemPage({
             <DiagramView
               key={system.id}
               diagram={system.diagram}
+              claims={system.claims}
+              markdown={system.markdown}
               initialFlow={live.get("flow") ?? initialFlow}
               initialStep={Number.isFinite(liveStep) && live.get("step") ? liveStep - 1 : initialStep}
               initialLevel={liveLevel}

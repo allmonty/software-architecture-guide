@@ -130,3 +130,26 @@ export function Outline({ markdown, variant, remount }: { markdown: string; vari
     </nav>
   );
 }
+
+/** The h2 sections of a note with their text, for finding where a term is discussed. Same slugs as the headings. */
+export function mentionsOf(md: string, term: string, limit = 3): Section[] {
+  if (term.trim().length < 4) return [];
+  const unique = dedupe();
+  const re = new RegExp(`(^|[^\\p{L}\\p{N}])${term.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\p{L}\\p{N}])`, "giu");
+  const found: { s: Section; n: number }[] = [];
+  let cur: { s: Section; body: string[] } | null = null;
+  const close = () => { if (cur) { const n = (cur.body.join("\n").match(re) ?? []).length; if (n) found.push({ s: cur.s, n }); } };
+  let code = false;
+  for (const line of md.split("\n")) {
+    if (line.startsWith("```")) code = !code;
+    const m = !code && line.match(/^(#{2,4}) (.+)/);
+    if (m && m[1].length > 2) { unique(slugify(m[2])); cur?.body.push(line); } // consume the slug so suffixes match the headings
+    else if (m) {
+      close();
+      const text = m[2].replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[`*]/g, "").trim();
+      cur = { s: { slug: unique(slugify(m[2])), text, level: 2 }, body: [] };
+    } else if (cur) cur.body.push(line);
+  }
+  close();
+  return found.sort((a, b) => b.n - a.n).slice(0, limit).map((f) => f.s);
+}
