@@ -1,0 +1,279 @@
+{
+  "id": "03-distributed-kv-store",
+  "title": "Distributed Key-Value Store",
+  "kind": "real-system",
+  "nodes": [
+    {
+      "id": "client",
+      "label": "Client",
+      "kind": "client",
+      "summary": "Calls get(key) and put(key, context, object). The context carries the vector-clock version it read.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
+      ],
+      "details": "Paper §4.1: get returns one object or a list of conflicting versions plus a context. Keys and objects are opaque byte arrays; an MD5 hash of the key picks the ring position."
+    },
+    {
+      "id": "coord",
+      "label": "Coordinator node",
+      "kind": "service",
+      "summary": "Any of the top-N nodes in the key's preference list. Runs a per-request state machine, writes locally, fans out to replicas, waits for W (or R) replies.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
+      ],
+      "details": "Paper §4.5, §5: the write coordinator is chosen as the node that replied fastest to the previous read, to avoid overloading the first node and improve 99.9th-percentile latency."
+    },
+    {
+      "id": "rep1",
+      "label": "Replica 2 (successor)",
+      "kind": "service",
+      "summary": "Second of the N=3 owners: next clockwise node on the ring.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
+      ],
+      "details": "N−1 clockwise successors, skipping positions so every replica is a distinct physical node (§4.3)."
+    },
+    {
+      "id": "rep2",
+      "label": "Replica 3 (successor)",
+      "kind": "service",
+      "summary": "Third of the N=3 owners.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
+      ]
+    },
+    {
+      "id": "down",
+      "label": "Replica down (A)",
+      "kind": "service",
+      "summary": "An owner that is temporarily unreachable.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
+      ],
+      "details": "With a sloppy quorum, its replica goes to the next healthy node instead (§4.6)."
+    },
+    {
+      "id": "hint",
+      "label": "Stand-in node + hint store",
+      "kind": "datastore",
+      "summary": "Next healthy node on the ring holds the replica with a hint naming the intended owner, in a separate local database scanned periodically, and hands it back on recovery.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
+      ],
+      "details": "§4.6 hinted handoff. Works best when churn is low. If the stand-in disappears first, anti-entropy has to repair."
+    },
+    {
+      "id": "clock",
+      "label": "Vector clocks",
+      "kind": "datastore",
+      "summary": "(node, counter) pairs per version. Detect ancestors (discardable) versus concurrent versions (both kept for reconciliation).",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
+      ],
+      "details": "§4.4. Truncated when the clock exceeds a threshold (\"say 10\") by dropping the oldest pair. Cassandra instead uses per-mutation timestamps and last-write-wins (Cassandra docs)."
+    },
+    {
+      "id": "merkle",
+      "label": "Merkle-tree anti-entropy",
+      "kind": "service",
+      "summary": "Per-key-range hash trees compared between replicas to find and fix lasting divergence with little data transfer.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
+        "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html"
+      ],
+      "details": "Paper §4.7. Cassandra also uses Merkle trees and adds sub-range and incremental repair."
+    },
+    {
+      "id": "gossip",
+      "label": "Gossip membership",
+      "kind": "service",
+      "summary": "Each node contacts a random peer every second and reconciles membership history and token ownership, so every node can route a key directly (zero-hop). Seeds prevent logical partitions.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
+        "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html"
+      ],
+      "details": "Paper §4.8. Failure detection is local to each node. Cassandra: Phi Accrual detector on every node."
+    },
+    {
+      "id": "engine",
+      "label": "Local storage engine",
+      "kind": "datastore",
+      "summary": "Pluggable per node: Berkeley DB (most production instances), BDB Java Edition, MySQL, or an in-memory buffer with a persistent backing store.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "c-coord",
+      "from": "client",
+      "to": "coord",
+      "label": "put/get",
+      "mode": "sync"
+    },
+    {
+      "id": "coord-r1",
+      "from": "coord",
+      "to": "rep1",
+      "label": "replicate (W / R)",
+      "mode": "sync"
+    },
+    {
+      "id": "coord-r2",
+      "from": "coord",
+      "to": "rep2",
+      "label": "replicate (W / R)",
+      "mode": "sync"
+    },
+    {
+      "id": "coord-down",
+      "from": "coord",
+      "to": "down",
+      "label": "unreachable",
+      "mode": "sync"
+    },
+    {
+      "id": "coord-hint",
+      "from": "coord",
+      "to": "hint",
+      "label": "hinted replica",
+      "mode": "sync"
+    },
+    {
+      "id": "hint-down",
+      "from": "hint",
+      "to": "down",
+      "label": "hand back on recovery",
+      "mode": "async"
+    },
+    {
+      "id": "coord-engine",
+      "from": "coord",
+      "to": "engine",
+      "label": "local write",
+      "mode": "sync"
+    },
+    {
+      "id": "coord-clock",
+      "from": "coord",
+      "to": "clock",
+      "label": "stamp / compare versions",
+      "mode": "sync"
+    },
+    {
+      "id": "rep1-merkle",
+      "from": "rep1",
+      "to": "merkle",
+      "label": "compare trees",
+      "mode": "async"
+    },
+    {
+      "id": "rep2-merkle",
+      "from": "rep2",
+      "to": "merkle",
+      "label": "compare trees",
+      "mode": "async"
+    },
+    {
+      "id": "gossip-coord",
+      "from": "gossip",
+      "to": "coord",
+      "label": "ring + token map",
+      "mode": "async"
+    },
+    {
+      "id": "coord-c",
+      "from": "coord",
+      "to": "client",
+      "label": "reply, with context",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "put",
+      "name": "Write with all replicas up",
+      "steps": [
+        {
+          "edge": "c-coord",
+          "caption": "The client sends put(key, context, object). Any node can receive it, and routes it to a coordinator among the key's top N owners without extra hops."
+        },
+        {
+          "edge": "gossip-coord",
+          "caption": "Routing works because gossip has already told every node which tokens its peers own (zero-hop)."
+        },
+        {
+          "edge": "coord-clock",
+          "caption": "The coordinator builds the new version's vector clock from the context the client supplied."
+        },
+        {
+          "edge": "coord-engine",
+          "caption": "It writes the new version to its own storage engine."
+        },
+        {
+          "edge": "coord-r1",
+          "caption": "It sends the version and clock to the other N−1 replicas."
+        },
+        {
+          "edge": "coord-r2",
+          "caption": "With (N,R,W)=(3,2,2), success needs W−1 more acks. It can reply as soon as one replica answers."
+        },
+        {
+          "edge": "coord-c",
+          "caption": "The coordinator acknowledges. The slowest replica may still be catching up (eventual consistency)."
+        }
+      ]
+    },
+    {
+      "id": "failure",
+      "name": "A replica is down (sloppy quorum)",
+      "steps": [
+        {
+          "edge": "c-coord",
+          "caption": "A put arrives while one owner (A) is unreachable."
+        },
+        {
+          "edge": "coord-down",
+          "caption": "The coordinator cannot reach A."
+        },
+        {
+          "edge": "coord-hint",
+          "caption": "Sloppy quorum: the replica goes to the next healthy node on the ring, tagged with a hint that it belongs to A."
+        },
+        {
+          "edge": "coord-c",
+          "caption": "The write still meets W, so the client gets success."
+        },
+        {
+          "edge": "hint-down",
+          "caption": "When A recovers, the stand-in node delivers the hinted replica and can then delete its copy."
+        }
+      ]
+    },
+    {
+      "id": "repair",
+      "name": "Permanent divergence (anti-entropy)",
+      "steps": [
+        {
+          "edge": "rep1-merkle",
+          "caption": "Replicas build a Merkle tree for each key range they share."
+        },
+        {
+          "edge": "rep2-merkle",
+          "caption": "Two replicas exchange tree roots and descend only into branches whose hashes differ, then copy just the out-of-sync keys."
+        }
+      ]
+    }
+  ]
+}
