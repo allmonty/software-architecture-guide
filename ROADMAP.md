@@ -1,0 +1,37 @@
+# Roadmap
+
+What is left after the 35 systems, the toolkit and the site. Each item says what is missing and why it was not done. Status is as of 2026-10-27.
+
+| # | Item | Status |
+|---|---|---|
+| 1 | Browser testing beyond headless Chrome | Partly done: automated sweep (see below). A real phone, a screen reader and a real print dialog are still untested. |
+| 2 | Check the whole site in the new design | Done by an automated sweep of every page, three themes and two widths. |
+| 3 | Fresh independent source review of notes 01-31 and workbook answer keys W01-W04 | Deferred. The last review covered 32-35, the toolkit and the site code. |
+| 4 | Find a primary source for "dispatch optimization" in note 15 | Deferred. It rests on a summary of Uber's talk. |
+| 5 | Confidence tags on diagram edges | Deferred. Needs a schema change and hand-tagging a few hundred edges. |
+| 6 | Per-element alias for clickable names in the note | Deferred. Names are matched by text, so an ambiguous name can occasionally link to the wrong element. |
+| 7 | One source for the learning order | Done: `site/src/stages.json` is the order; a test checks it against the atlas track and the README. |
+| 8 | Content not yet written | Deferred (below). |
+
+## 1 and 2: what the browser sweep covers and what it cannot
+
+`scripts/` has no browser tool, so the sweep drives headless Chrome over its DevTools protocol (the recipe is in the commit that added it). It cannot stand in for a real phone, a screen reader or the print dialog; those stay open.
+
+## 8. Content not yet written
+
+Each of these needs primary sources read in full first (see `CLAUDE.md`, "Sourcing rules").
+
+- Typeahead / autocomplete
+- Distributed job scheduler (cron at scale)
+- A standalone CDN
+- Maps, routing and ETA
+- Video conferencing
+- Content moderation and fraud detection with ML
+- Multi-region disaster recovery (a primer)
+- Monolith vs microservices (a primer)
+- Event sourcing and CQRS (a primer)
+- Authorization at scale (Zanzibar) and identity
+- Multi-tenancy
+- Privacy by design
+
+Sources that could not be fetched so far: the Count-Min Sketch paper (note 34) and the Instagram engineering post on IDs (note 35, read from an Internet Archive copy only where noted).
