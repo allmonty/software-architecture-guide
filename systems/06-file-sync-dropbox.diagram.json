@@ -1,0 +1,256 @@
+{
+  "id": "06-file-sync-dropbox",
+  "title": "File Sync (Dropbox)",
+  "kind": "real-system",
+  "nodes": [
+    {
+      "id": "dev-a",
+      "label": "Device A (Nucleus)",
+      "kind": "client",
+      "summary": "Sync engine in Rust. Keeps Remote, Local and Synced trees and a planner that outputs operations to converge them.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://dropbox.tech/infrastructure/rewriting-the-heart-of-our-sync-engine",
+        "https://dropbox.tech/infrastructure/-testing-our-new-sync-engine"
+      ],
+      "details": "Deterministic Control thread, fuzzed with seeded randomized simulation (CanopyCheck for the planner, Trinity for concurrency). Moves are atomic and shared items have globally unique IDs.",
+      "group": "clients"
+    },
+    {
+      "id": "dev-b",
+      "label": "Device B (Nucleus)",
+      "kind": "client",
+      "summary": "Another client of the same account, running the same engine.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://dropbox.tech/infrastructure/rewriting-the-heart-of-our-sync-engine",
+        "https://dropbox.tech/infrastructure/-testing-our-new-sync-engine"
+      ],
+      "group": "clients"
+    },
+    {
+      "id": "meta",
+      "label": "Metadata servers",
+      "kind": "service",
+      "summary": "Commit a file's blocklist and answer \"need blocks\" for the ones the store lacks. Backed by Edgestore.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://dropbox.tech/infrastructure/streaming-file-synchronization",
+        "https://dropbox.tech/infrastructure/reintroducing-edgestore"
+      ],
+      "details": "The post describes the commit call returning \"need blocks\". The server component's name and layout beyond that are not given."
+    },
+    {
+      "id": "edge",
+      "label": "Edgestore (metadata)",
+      "kind": "datastore",
+      "summary": "Sharded-MySQL metadata store with Entities and Associations, stateless Cores routing to shard masters, a replicated cache layer, strong consistency by default.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://dropbox.tech/infrastructure/reintroducing-edgestore"
+      ],
+      "details": "As of that post: several trillion entries, millions of queries per second, 5–9s availability. Older figures."
+    },
+    {
+      "id": "block",
+      "label": "Block servers",
+      "kind": "service",
+      "summary": "Accept uploaded blocks directly from clients. Streaming sync lets a downloader prefetch blocks of an uncommitted file from server memory.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://dropbox.tech/infrastructure/streaming-file-synchronization"
+      ],
+      "details": "Blocks are up to 4 MB, SHA-256 hashed. The downloader aims to stay \"just one blockserver network call behind the uploading client\"."
+    },
+    {
+      "id": "bindex",
+      "label": "Block Index",
+      "kind": "datastore",
+      "summary": "Maps block hash to cell, bucket and checksum. A giant sharded MySQL cluster behind an RPC layer.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://dropbox.tech/infrastructure/inside-the-magic-pocket"
+      ],
+      "group": "Magic Pocket"
+    },
+    {
+      "id": "cell",
+      "label": "Magic Pocket cells",
+      "kind": "datastore",
+      "summary": "Self-contained clusters of about 50 PB raw. Blocks live in 1 GB buckets on volumes of storage nodes, replicated first and then erasure coded.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://dropbox.tech/infrastructure/inside-the-magic-pocket",
+        "https://dropbox.tech/infrastructure/improving-storage-efficiency-in-magic-pocket-our-immutable-blob-store",
+        "https://dropbox.tech/infrastructure/magic-pocket-infrastructure"
+      ],
+      "details": "The erasure-coding scheme and parameters are not given in the posts. Blocks are immutable. Repair starts when a node is offline for 15 minutes.",
+      "group": "Magic Pocket"
+    },
+    {
+      "id": "zones",
+      "label": "Second zone",
+      "kind": "datastore",
+      "summary": "Every block is stored in at least two zones, and is written to the remote zone within about a second of the local upload.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://dropbox.tech/infrastructure/inside-the-magic-pocket"
+      ],
+      "details": "Zones: western, central and eastern US (as of the post).",
+      "group": "Magic Pocket"
+    },
+    {
+      "id": "notify",
+      "label": "Change notification",
+      "kind": "edge",
+      "summary": "How device B learns that something changed (push or long-poll). The standard design. The mechanism is not described in the posts we read.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://dropbox.tech/infrastructure/streaming-file-synchronization"
+      ],
+      "details": "Treat as a design placeholder, not a statement about Dropbox's implementation."
+    }
+  ],
+  "edges": [
+    {
+      "id": "a-meta",
+      "from": "dev-a",
+      "to": "meta",
+      "label": "commit blocklist",
+      "mode": "sync"
+    },
+    {
+      "id": "meta-a",
+      "from": "meta",
+      "to": "dev-a",
+      "label": "need blocks: [h3, h7]",
+      "mode": "sync"
+    },
+    {
+      "id": "a-block",
+      "from": "dev-a",
+      "to": "block",
+      "label": "upload missing blocks",
+      "mode": "sync",
+      "protocol": "HTTPS"
+    },
+    {
+      "id": "block-cell",
+      "from": "block",
+      "to": "cell",
+      "label": "store block",
+      "mode": "sync"
+    },
+    {
+      "id": "block-index",
+      "from": "block",
+      "to": "bindex",
+      "label": "hash → cell, bucket",
+      "mode": "sync"
+    },
+    {
+      "id": "cell-zone",
+      "from": "cell",
+      "to": "zones",
+      "label": "replicate to 2nd zone",
+      "mode": "async"
+    },
+    {
+      "id": "meta-edge",
+      "from": "meta",
+      "to": "edge",
+      "label": "record new blocklist",
+      "mode": "sync"
+    },
+    {
+      "id": "meta-notify",
+      "from": "meta",
+      "to": "notify",
+      "label": "something changed",
+      "mode": "async"
+    },
+    {
+      "id": "notify-b",
+      "from": "notify",
+      "to": "dev-b",
+      "label": "wake up",
+      "mode": "async"
+    },
+    {
+      "id": "b-meta",
+      "from": "dev-b",
+      "to": "meta",
+      "label": "fetch changes",
+      "mode": "sync"
+    },
+    {
+      "id": "b-block",
+      "from": "dev-b",
+      "to": "block",
+      "label": "download blocks",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "upload",
+      "name": "Edit a file on device A",
+      "steps": [
+        {
+          "edge": "a-meta",
+          "caption": "Nucleus hashes the file into 4 MB SHA-256 blocks and tries to commit the blocklist."
+        },
+        {
+          "edge": "meta-a",
+          "caption": "The server replies \"need blocks\" listing only the blocks it does not already have."
+        },
+        {
+          "edge": "a-block",
+          "caption": "The client uploads just those blocks straight to a block server, not through the metadata path."
+        },
+        {
+          "edge": "block-cell",
+          "caption": "Blocks are stored in Magic Pocket: immutable, hash-keyed and aggregated into buckets."
+        },
+        {
+          "edge": "block-index",
+          "caption": "The Block Index records where each hash lives (cell, bucket, checksum)."
+        },
+        {
+          "edge": "cell-zone",
+          "caption": "Each block is copied to a second zone within about a second."
+        },
+        {
+          "edge": "a-meta",
+          "caption": "The client commits the blocklist again. This time nothing is missing."
+        },
+        {
+          "edge": "meta-edge",
+          "caption": "The file's metadata now points at the new blocklist in Edgestore."
+        }
+      ]
+    },
+    {
+      "id": "download",
+      "name": "See the change on device B",
+      "steps": [
+        {
+          "edge": "meta-notify",
+          "caption": "After the commit, the change is announced. The mechanism is a standard design, not a documented Dropbox detail."
+        },
+        {
+          "edge": "notify-b",
+          "caption": "Device B wakes up and updates its Remote Tree."
+        },
+        {
+          "edge": "b-meta",
+          "caption": "B asks the metadata servers for the new state. Its planner diffs Remote, Local and Synced trees to decide what to download."
+        },
+        {
+          "edge": "b-block",
+          "caption": "B fetches only the blocks it lacks. With streaming sync it can start before the uploader's final commit."
+        }
+      ]
+    }
+  ]
+}
