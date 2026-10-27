@@ -4,6 +4,7 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import type { System } from "./data.ts";
 import { DiagramView } from "./DiagramView.tsx";
+import { StudyToggle } from "./StudyToggle.tsx";
 import { systems, toolkitPages } from "./data.ts";
 import type { Components } from "react-markdown";
 
@@ -63,6 +64,7 @@ export function SystemPage({
   const liveStep = Number(live.get("step"));
   return (
     <main className="system">
+      <p className="crumbs"><a href="#">← Home</a><StudyToggle refId={system.id.slice(0, 2)} /></p>
       <div className="bar">
         <h1>
           {system.diagram.title}{" "}

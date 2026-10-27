@@ -128,6 +128,8 @@ For interviews, practise each note's **Interview questions**, and walk the **flo
 
 ## The site
 
+The home page is a study guide: pick a goal (interview, building blocks, architect, AI, or the whole atlas in order) and follow an ordered track with a reason for each step; tick pages as you finish them (saved only in your browser); or browse by stage and search. Tracks live in `site/src/tracks.json`, and `npm run validate` checks that every step points at a real page.
+
 ```sh
 npm install && (cd site && npm install)   # once
 npm run dev      # from system-design/ or site/, http://localhost:5173
