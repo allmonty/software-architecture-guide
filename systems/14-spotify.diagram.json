@@ -1,0 +1,254 @@
+{
+  "id": "14-spotify",
+  "title": "Spotify (Music Streaming)",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "client",
+      "label": "Spotify client",
+      "kind": "client",
+      "summary": "Plays audio, prefetches the next track, keeps an encrypted local cache of partial tracks (up to 10% of free disk, 50 MB–10 GB in 2010) and reports a stream after 30 seconds of playback.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://people.cs.umass.edu/~phillipa/CSE390/spotify-p2p10.pdf",
+        "https://support.spotify.com/us/artists/article/how-we-count-streams/"
+      ],
+      "details": "Random access (user picks a track) is ~39% of playbacks. On a cache miss the 2010 client asked the server for ~15 seconds of audio over its open TCP connection."
+    },
+    {
+      "id": "api",
+      "label": "Stateless API tier",
+      "kind": "service",
+      "summary": "Authenticates the user, serves catalog and playlist metadata, and returns signed URLs for audio files. Horizontally scalable behind a load balancer.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/spotify-system-design"
+      ]
+    },
+    {
+      "id": "catalog",
+      "label": "Catalog / user DB (SQL)",
+      "kind": "datastore",
+      "summary": "Tracks, albums, playlists and users. Read-mostly, so replicas absorb the load.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/spotify-system-design"
+      ]
+    },
+    {
+      "id": "cdn",
+      "label": "CDN",
+      "kind": "edge",
+      "summary": "Serves audio files near the listener using signed URLs and HTTP range requests.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/spotify-system-design"
+      ]
+    },
+    {
+      "id": "blob",
+      "label": "Audio blob storage",
+      "kind": "datastore",
+      "summary": "Encoded audio at several quality tiers. Audio dominates storage and egress, while metadata is tiny.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/spotify-system-design",
+        "https://support.spotify.com/us/article/audio-quality/"
+      ],
+      "details": "Current app tiers (Spotify Support): Low ≈24, Normal ≈96, High ≈160, Very high ≈320 kbit/s, Lossless up to 24-bit/44.1 kHz FLAC. Web player AAC 128/256 kbit/s."
+    },
+    {
+      "id": "peers",
+      "label": "Peer network (2010)",
+      "kind": "client",
+      "summary": "In 2010, clients also served cached chunks to each other. Only 8.8% of played music data came from Spotify's servers. Spotify later removed P2P from the desktop client, and mobile and web never used it.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://people.cs.umass.edu/~phillipa/CSE390/spotify-p2p10.pdf"
+      ],
+      "details": "Peers do no re-encoding: a peer holding the q9 (≈320 kbps) version cannot serve a q5 (≈160 kbps) request."
+    },
+    {
+      "id": "artist",
+      "label": "Artist / label upload",
+      "kind": "client",
+      "summary": "Uploads masters through a pre-signed URL (standard design).",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/spotify-system-design"
+      ],
+      "group": "upload"
+    },
+    {
+      "id": "transcode",
+      "label": "Transcode + loudness measure",
+      "kind": "service",
+      "summary": "Asynchronously encodes the quality tiers and measures loudness. The gain is applied at playback toward -14 dB LUFS (ITU 1770), and the audio files are left untouched.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://support.spotify.com/us/artists/article/loudness-normalization/",
+        "https://newsletter.systemdesign.one/p/spotify-system-design"
+      ],
+      "details": "The loudness behaviour is from Spotify Support. The async transcoding pipeline is the standard design.",
+      "group": "upload"
+    },
+    {
+      "id": "search",
+      "label": "Search index",
+      "kind": "datastore",
+      "summary": "Updated from the catalog after publishing, so new tracks become searchable.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/spotify-system-design"
+      ],
+      "group": "upload"
+    }
+  ],
+  "edges": [
+    {
+      "id": "c-api",
+      "from": "client",
+      "to": "api",
+      "label": "GET track + auth",
+      "mode": "sync"
+    },
+    {
+      "id": "api-cat",
+      "from": "api",
+      "to": "catalog",
+      "label": "metadata",
+      "mode": "sync"
+    },
+    {
+      "id": "api-c",
+      "from": "api",
+      "to": "client",
+      "label": "signed URL",
+      "mode": "sync"
+    },
+    {
+      "id": "c-cdn",
+      "from": "client",
+      "to": "cdn",
+      "label": "range requests",
+      "mode": "sync"
+    },
+    {
+      "id": "cdn-blob",
+      "from": "cdn",
+      "to": "blob",
+      "label": "miss",
+      "mode": "sync"
+    },
+    {
+      "id": "c-peers",
+      "from": "client",
+      "to": "peers",
+      "label": "chunks from peers (2010)",
+      "mode": "async"
+    },
+    {
+      "id": "art-blob",
+      "from": "artist",
+      "to": "blob",
+      "label": "upload master",
+      "mode": "sync"
+    },
+    {
+      "id": "blob-tc",
+      "from": "blob",
+      "to": "transcode",
+      "label": "object created",
+      "mode": "async"
+    },
+    {
+      "id": "tc-blob",
+      "from": "transcode",
+      "to": "blob",
+      "label": "write tiers",
+      "mode": "sync"
+    },
+    {
+      "id": "tc-cat",
+      "from": "transcode",
+      "to": "catalog",
+      "label": "publish",
+      "mode": "sync"
+    },
+    {
+      "id": "cat-search",
+      "from": "catalog",
+      "to": "search",
+      "label": "index",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "play",
+      "name": "Play a track (standard design)",
+      "steps": [
+        {
+          "edge": "c-api",
+          "caption": "The client sends an authenticated request for a track. The API tier is stateless."
+        },
+        {
+          "edge": "api-cat",
+          "caption": "Metadata comes from the read-mostly catalog database."
+        },
+        {
+          "edge": "api-c",
+          "caption": "The API returns a time-limited signed URL, so audio bytes never pass through the API."
+        },
+        {
+          "edge": "c-cdn",
+          "caption": "The client fetches the audio with HTTP range requests, so it can seek and prefetch."
+        },
+        {
+          "edge": "cdn-blob",
+          "caption": "Only CDN misses reach blob storage. Streams are counted after 30 seconds of playback."
+        }
+      ]
+    },
+    {
+      "id": "p2p",
+      "name": "How 2010 Spotify offloaded servers",
+      "steps": [
+        {
+          "edge": "c-peers",
+          "caption": "While asking the server for the first ~15 seconds, the client also searched the peer network for the rest of the track. By the paper's measurements only 8.8% of played data came from servers, and the median start latency was 265 ms."
+        },
+        {
+          "edge": "c-cdn",
+          "caption": "Today's clients stream from servers and CDNs instead. Spotify removed P2P from desktop, and mobile and web never used it."
+        }
+      ]
+    },
+    {
+      "id": "upload",
+      "name": "Publish a new track",
+      "steps": [
+        {
+          "edge": "art-blob",
+          "caption": "The artist's master goes straight to blob storage via a pre-signed URL."
+        },
+        {
+          "edge": "blob-tc",
+          "caption": "An object-created event starts transcoding and loudness measurement."
+        },
+        {
+          "edge": "tc-blob",
+          "caption": "Quality tiers are written back. Loudness is measured now, but the gain is applied at playback (-14 LUFS target)."
+        },
+        {
+          "edge": "tc-cat",
+          "caption": "The track is published to the catalog."
+        },
+        {
+          "edge": "cat-search",
+          "caption": "The search index is updated shortly after."
+        }
+      ]
+    }
+  ]
+}
