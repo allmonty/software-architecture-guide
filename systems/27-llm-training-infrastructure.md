@@ -78,6 +78,16 @@ Llama 3 405B used "4D parallelism": **tensor parallelism** (split weight tensors
 
 ---
 
+## 3b. Why the combination is needed: Megatron-LM scaling `[CONFIRMED]` (Narayanan et al., 2021)
+
+The Llama 3 configuration builds on an earlier NVIDIA paper that explains why each parallelism technique runs out and how to compose them. (Only the abstract and introduction of this PDF could be extracted as text, so this section uses those parts only.)
+- **The two problems:** the parameters of large models no longer fit in even the largest GPU's memory, and the compute is huge; the paper's example is that training GPT-3 175B "would require approximately 288 years with a single V100 NVIDIA GPU". Data parallelism alone stops scaling because per-GPU batch size becomes too small and the maximum number of devices is the batch size.
+- **Tensor parallelism breaks past one server.** Splitting matrix multiplications over GPUs works for models up to about 20 billion parameters on 8-GPU A100 servers, but beyond that the all-reduce traffic "needs to go through inter-server links", which are slower than the high-bandwidth NVLink inside a multi-GPU server, and heavy splitting creates small matrix multiplications that lower utilisation. This is why tensor parallelism is placed innermost, inside a server, in Llama 3's [TP, CP, PP, DP] order.
+- **Pipeline parallelism has a bubble.** Layers are striped over GPUs and a batch is split into microbatches; to preserve strict optimizer semantics the pipeline is flushed at the end of every batch, and "as much as 50% of time can be spent flushing the pipeline" depending on the number of microbatches. A larger ratio of microbatches to pipeline size shrinks the flush, so high efficiency needs a larger batch. The paper introduces an **interleaved pipelining schedule** that improves throughput by "10+%" with comparable memory.
+- **Composition (PTD-P):** pipeline parallelism across servers, tensor parallelism within a server, and data parallelism on top. The paper reports training a model with 1 trillion parameters at 502 petaFLOP/s on 3072 GPUs, a per-GPU throughput of 52% of theoretical peak.
+
+This is the origin of the placement rule in section 3, and the 52% figure is a useful reference point next to Llama 3's 38 to 43% and MegaScale's 55.2% (different models, hardware and definitions, so not directly comparable).
+
 ## 4. The cluster: compute, storage, network `[CONFIRMED]` (Llama 3)
 
 - **Compute:** up to 16K H100 GPUs at 700 W each with 80 GB HBM3, in Grand Teton servers with eight GPUs and two CPUs, linked by NVLink within a server. Jobs are scheduled by **MAST**, Meta's global training scheduler.
@@ -133,7 +143,7 @@ data store ─► data loaders ─► training job (TP · CP · PP · FSDP) ─�
 2. **MFU figures come from different models and definitions.** Llama 3's 38–43% and MegaScale's 55.2% use different models, hardware and baselines; do not compare them as if from one benchmark.
 3. **These are two companies' clusters.** The sources do not describe Google, OpenAI or Anthropic training systems, and we make no claim about them.
 4. **ZeRO is a 2020 paper.** FSDP is a later implementation of the same idea; Llama 3 modifies how it reshards model weights.
-5. **Not read:** Llama 3 pre-training data sections, Megatron-LM, GPipe and PipeDream papers, mixture-of-experts training, TPU-based systems, and cost or power analyses.
+5. **Not read:** Llama 3 pre-training data sections, the body of the Megatron-LM scaling paper (its PDF text did not extract), GPipe and PipeDream papers, mixture-of-experts training, TPU-based systems, and cost or power analyses.
 
 ---
 
@@ -209,9 +219,9 @@ Tensor parallelism exchanges data every layer and needs the fastest links, so it
 ## Sources and provenance
 
 > **Kind:** real system. The Llama 3 report and the MegaScale paper describe real production clusters; ZeRO describes a published method. The reference view in section 6 is our summary shape.
-> **Sources read on 2026-10-27 (PDF text extracted locally):** Llama Team, Meta, [*The Llama 3 Herd of Models*](https://arxiv.org/pdf/2407.21783) (2024; Section 3.3 Infrastructure, Scaling and Efficiency) · Jiang et al., [*MegaScale: Scaling Large Language Model Training to More Than 10,000 GPUs*](https://arxiv.org/pdf/2402.15627) (ByteDance, 2024) · Rajbhandari et al., [*ZeRO: Memory Optimizations Toward Training Trillion Parameter Models*](https://arxiv.org/pdf/1910.02054) (2020).
+> **Sources read on 2026-10-27 (PDF text extracted locally):** Llama Team, Meta, [*The Llama 3 Herd of Models*](https://arxiv.org/pdf/2407.21783) (2024; Section 3.3 Infrastructure, Scaling and Efficiency) · Jiang et al., [*MegaScale: Scaling Large Language Model Training to More Than 10,000 GPUs*](https://arxiv.org/pdf/2402.15627) (ByteDance, 2024) · Rajbhandari et al., [*ZeRO: Memory Optimizations Toward Training Trillion Parameter Models*](https://arxiv.org/pdf/1910.02054) (2020) · Narayanan et al., [*Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM*](https://arxiv.org/pdf/2104.04473) (2021; abstract and introduction only).
 > **Dated material:** 2020–2024. Hardware and practice move quickly.
-> **Not read:** Llama 3 data and training recipe sections, Megatron-LM and pipeline papers, TPU-based training, mixture-of-experts.
+> **Not read:** Llama 3 data and training recipe sections, the body of the Megatron-LM scaling paper and other pipeline papers, TPU-based training, mixture-of-experts.
 > **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible or illustrative.
 
 ---
@@ -220,6 +230,7 @@ Tensor parallelism exchanges data every layer and needs the fastest links, so it
 *Fact-check, 2026-10-27, by extracting each paper's text and checking numbers and quotations. Quotations are confirmed by `npm run verify`.*
 - Verified in the Llama 3 report: 16K H100s, 700 W, 80 GB HBM3, eight GPUs per server with NVLink, MAST, Tectonic (240 PB, 7,500 servers, 2 TB/s sustained, 7 TB/s peak), checkpoint sizes 1 MB to 4 GB per GPU, RoCE and InfiniBand at 400 Gbps, the 24K Clos topology and 1:7 oversubscription, load balancing and congestion control, 4D parallelism and ordering, Table 4 MFU values, pipeline changes, NCCLX, 466 interruptions (47 planned, 419 unexpected), 78% hardware, 58.7% GPU, more than 90% effective training time, three manual interventions, straggler and environment observations. The table cell inconsistency is noted in the reviewer notes.
 - Verified in MegaScale: 55.2% MFU on 12,288 GPUs and 1.34 times Megatron-LM, heartbeat and diagnostics workflow, two-stage checkpointing, shared read of data-parallel partitions, more than 100 restarts and over 90% automatic fixes in a multi-week run.
+- Verified in the Megatron-LM scaling paper (abstract and introduction): the 288-year single-GPU example, the tensor-parallelism limit beyond one server, the up-to-50% pipeline flush, the interleaved schedule's 10+% gain, and 502 petaFLOP/s on 3072 GPUs at 52% of peak. Its experiments and recommendations in the body were not read.
 - Verified in ZeRO: 16Ψ bytes with K = 12, the 24 GB and 60 GB / 8 GB examples, three stages with 4 times, 8 times and Nd times reductions, 50% extra communication, the trillion-parameter example on 1,024 GPUs.
 - Labelled industry pattern, not sourced: the reference diagram, data-loader and evaluation practices, cost framing, and the arithmetic in section 7.
 - Not claimed: the training systems of any company other than those in the sources.

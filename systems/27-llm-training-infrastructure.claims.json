@@ -6,6 +6,24 @@
     "status": "confirmed"
   },
   {
+    "quote": "would require approximately 288 years with a single V100 NVIDIA GPU",
+    "url": "https://arxiv.org/pdf/2104.04473",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "needs to go through inter-server links",
+    "url": "https://arxiv.org/pdf/2104.04473",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "as much as 50% of time can be spent flushing the pipeline",
+    "url": "https://arxiv.org/pdf/2104.04473",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "The complexity and potential failure scenarios of 16K GPU training surpass those of much larger CPU clusters",
     "url": "https://arxiv.org/pdf/2407.21783",
     "via": "direct",
