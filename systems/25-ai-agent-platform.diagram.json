@@ -1,0 +1,392 @@
+{
+  "id": "25-ai-agent-platform",
+  "title": "AI Agent Platform",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "user",
+      "label": "User or calling system",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Submits a task and watches progress; may cancel.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.anthropic.com/engineering/building-effective-agents"
+      ]
+    },
+    {
+      "id": "approver",
+      "label": "Human approver",
+      "kind": "client",
+      "c4": "person",
+      "summary": "Reviews and approves or denies risky tool calls. MCP says there should always be a human in the loop with the ability to deny tool invocations.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://modelcontextprotocol.io/specification/2025-06-18/server/tools",
+        "https://www.anthropic.com/engineering/building-effective-agents"
+      ]
+    },
+    {
+      "id": "llm",
+      "label": "LLM service",
+      "kind": "external",
+      "c4": "external-system",
+      "summary": "Chooses the next step from the history and the tool descriptions. See note 22 for serving.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.anthropic.com/engineering/building-effective-agents",
+        "https://arxiv.org/pdf/2210.03629"
+      ]
+    },
+    {
+      "id": "mcp",
+      "label": "Tool servers (MCP or internal APIs)",
+      "kind": "external",
+      "c4": "external-system",
+      "summary": "Expose tools to the host over a stateful JSON-RPC session; can be local processes or remote services. They must validate inputs, apply access control, rate limit and sanitise outputs.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://modelcontextprotocol.io/specification/2025-06-18/architecture",
+        "https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle",
+        "https://modelcontextprotocol.io/specification/2025-06-18/server/tools"
+      ]
+    },
+    {
+      "id": "api",
+      "label": "Session API",
+      "kind": "edge",
+      "c4": "container",
+      "summary": "Accepts tasks, streams progress, handles cancel, approvals and trace fetch. Industry practice.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.anthropic.com/engineering/building-effective-agents"
+      ]
+    },
+    {
+      "id": "orch",
+      "label": "Orchestrator",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Runs the agent loop for each run: ask the model, call tools, observe, repeat until done or stopped. Persists each step so another worker can resume.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.anthropic.com/engineering/building-effective-agents",
+        "https://arxiv.org/pdf/2210.03629"
+      ],
+      "group": "Orchestrator"
+    },
+    {
+      "id": "loop",
+      "label": "Agent loop",
+      "kind": "service",
+      "c4": "component",
+      "summary": "LLMs using tools based on environmental feedback in a loop; ReAct interleaves reasoning, action and observation.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.anthropic.com/engineering/building-effective-agents",
+        "https://arxiv.org/pdf/2210.03629"
+      ],
+      "parent": "orch",
+      "group": "Orchestrator"
+    },
+    {
+      "id": "guard",
+      "label": "Budget and stop guard",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Caps steps, tokens, time and money, and detects repeated identical actions. Anthropic notes stopping conditions such as a maximum number of iterations; ReAct documents repetition loops. The exact guard is our design.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.anthropic.com/engineering/building-effective-agents",
+        "https://arxiv.org/pdf/2210.03629"
+      ],
+      "parent": "orch",
+      "group": "Orchestrator"
+    },
+    {
+      "id": "toolgw",
+      "label": "Tool gateway",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Single place to authenticate tools, use the end user's delegated credentials, enforce schemas, timeouts and rate limits, and log calls. Speaks MCP to tool servers.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://modelcontextprotocol.io/specification/2025-06-18/architecture",
+        "https://modelcontextprotocol.io/specification/2025-06-18/server/tools"
+      ]
+    },
+    {
+      "id": "sandbox",
+      "label": "Sandbox pool",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Isolated, short-lived environments where model-written code or commands run: no platform secrets, restricted network, resource limits. Anthropic recommends extensive testing in sandboxed environments; the design is ours.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.anthropic.com/engineering/building-effective-agents"
+      ]
+    },
+    {
+      "id": "state",
+      "label": "Run state store",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Messages, tool results and checkpoints per run, so a crashed run resumes from its last step. Industry practice.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.anthropic.com/engineering/building-effective-agents"
+      ]
+    },
+    {
+      "id": "approvals",
+      "label": "Approval service",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Holds a pending risky action until a human approves or denies it. Anthropic notes agents can pause for human feedback at checkpoints.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.anthropic.com/engineering/building-effective-agents",
+        "https://modelcontextprotocol.io/specification/2025-06-18/server/tools"
+      ]
+    },
+    {
+      "id": "trace",
+      "label": "Trace store",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Every model call, tool call, result, cost and latency for each run; replayable for debugging and evaluation. MCP clients should log tool use for audit.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://modelcontextprotocol.io/specification/2025-06-18/server/tools"
+      ]
+    },
+    {
+      "id": "evalh",
+      "label": "Evaluation harness",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Runs a task suite with automatic success checks (tests for coding) before models, prompts or tools change. Anthropic stresses measuring performance and iterating.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.anthropic.com/engineering/building-effective-agents"
+      ]
+    },
+    {
+      "id": "wf",
+      "label": "Alternative: fixed workflow",
+      "kind": "service",
+      "c4": "note",
+      "summary": "When the steps are known, use prompt chaining, routing, parallelization, orchestrator-workers or evaluator-optimizer instead of a free-running agent: more predictable and cheaper.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.anthropic.com/engineering/building-effective-agents"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "user-api",
+      "from": "user",
+      "to": "api",
+      "label": "task",
+      "mode": "sync"
+    },
+    {
+      "id": "api-user",
+      "from": "api",
+      "to": "user",
+      "label": "stream progress",
+      "mode": "async"
+    },
+    {
+      "id": "api-loop",
+      "from": "api",
+      "to": "loop",
+      "label": "start or resume run",
+      "mode": "sync"
+    },
+    {
+      "id": "loop-guard",
+      "from": "loop",
+      "to": "guard",
+      "label": "check budget and repetition",
+      "mode": "sync"
+    },
+    {
+      "id": "loop-llm",
+      "from": "loop",
+      "to": "llm",
+      "label": "history + tool descriptions",
+      "mode": "sync"
+    },
+    {
+      "id": "loop-tools",
+      "from": "loop",
+      "to": "toolgw",
+      "label": "tool call",
+      "mode": "sync"
+    },
+    {
+      "id": "toolgw-mcp",
+      "from": "toolgw",
+      "to": "mcp",
+      "label": "tools/call",
+      "mode": "sync",
+      "protocol": "MCP (JSON-RPC)"
+    },
+    {
+      "id": "toolgw-sandbox",
+      "from": "toolgw",
+      "to": "sandbox",
+      "label": "run code or command",
+      "mode": "sync"
+    },
+    {
+      "id": "loop-state",
+      "from": "loop",
+      "to": "state",
+      "label": "checkpoint each step",
+      "mode": "sync"
+    },
+    {
+      "id": "loop-approval",
+      "from": "loop",
+      "to": "approvals",
+      "label": "request approval for risky action",
+      "mode": "sync"
+    },
+    {
+      "id": "approval-human",
+      "from": "approvals",
+      "to": "approver",
+      "label": "ask for decision",
+      "mode": "sync"
+    },
+    {
+      "id": "loop-trace",
+      "from": "loop",
+      "to": "trace",
+      "label": "log every step",
+      "mode": "async"
+    },
+    {
+      "id": "eval-trace",
+      "from": "evalh",
+      "to": "trace",
+      "label": "score runs",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "run",
+      "name": "A run with tool calls",
+      "steps": [
+        {
+          "edge": "user-api",
+          "caption": "The task arrives at the session API."
+        },
+        {
+          "edge": "api-loop",
+          "caption": "The orchestrator starts the agent loop."
+        },
+        {
+          "edge": "loop-llm",
+          "caption": "The model gets the history and the available tool descriptions and chooses an action."
+        },
+        {
+          "edge": "loop-tools",
+          "caption": "The loop sends the chosen tool call to the tool gateway."
+        },
+        {
+          "edge": "toolgw-sandbox",
+          "caption": "If the tool runs code, it executes in a sandbox."
+        },
+        {
+          "edge": "loop-state",
+          "caption": "The result is added to the history and the step is checkpointed."
+        },
+        {
+          "edge": "loop-trace",
+          "caption": "The step is logged to the trace store."
+        },
+        {
+          "edge": "api-user",
+          "caption": "Progress is streamed to the user; the loop repeats until the model finishes."
+        }
+      ]
+    },
+    {
+      "id": "crash-resume",
+      "name": "A worker crashes mid-run (failure)",
+      "steps": [
+        {
+          "edge": "loop-state",
+          "caption": "Each completed step was checkpointed before the crash."
+        },
+        {
+          "edge": "api-loop",
+          "caption": "Another worker resumes the run from the last checkpoint."
+        },
+        {
+          "edge": "loop-tools",
+          "caption": "A tool call that may have executed before the crash is retried; idempotent tools or stored results prevent a repeated side effect (our design reasoning)."
+        }
+      ]
+    },
+    {
+      "id": "runaway",
+      "name": "The agent loops without progress (failure)",
+      "steps": [
+        {
+          "edge": "loop-llm",
+          "caption": "The model keeps proposing the same thought and action; ReAct documents this repetition pattern."
+        },
+        {
+          "edge": "loop-guard",
+          "caption": "The guard sees the step cap, budget or repetition and stops the run."
+        },
+        {
+          "edge": "api-user",
+          "caption": "The user is told why the run stopped and what was done."
+        }
+      ]
+    },
+    {
+      "id": "risky-action",
+      "name": "A risky action needs approval",
+      "steps": [
+        {
+          "edge": "loop-approval",
+          "caption": "The model proposes an irreversible action such as sending money; the loop pauses and asks for approval."
+        },
+        {
+          "edge": "approval-human",
+          "caption": "A person sees the exact tool and inputs and decides."
+        },
+        {
+          "edge": "loop-tools",
+          "caption": "If approved, the call proceeds through the tool gateway; if denied, the denial is returned to the model as the result."
+        }
+      ]
+    },
+    {
+      "id": "tool-injection",
+      "name": "A tool result contains injected instructions (failure)",
+      "steps": [
+        {
+          "edge": "toolgw-mcp",
+          "caption": "A tool returns text that tries to instruct the agent."
+        },
+        {
+          "edge": "loop-llm",
+          "caption": "The text enters the model's context as data. Narrow permissions limit what it can do."
+        },
+        {
+          "edge": "loop-approval",
+          "caption": "A sensitive action it provokes still needs human approval (our design reasoning)."
+        }
+      ]
+    }
+  ]
+}

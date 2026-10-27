@@ -1,0 +1,134 @@
+[
+  {
+    "quote": "Building effective agents",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "orchestrated through predefined code paths",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "dynamically direct their own processes and tool usage",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "often trade latency and cost for better task performance",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "higher costs, and the potential for compounding errors",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "draw an important architectural distinction",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the simplest solution possible, and only increasing complexity when needed",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "might mean not building agentic systems at all",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "optimizing single LLM calls with retrieval and in-context examples is usually enough",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "where it's difficult or impossible to predict the required number of steps",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "are typically just LLMs using tools based on environmental feedback in a loop",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "stopping conditions (such as a maximum number of iterations)",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "extensive testing in sandboxed environments, along with the appropriate guardrails",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "often create extra layers of abstraction that can obscure the underlying prompts and responses",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "human review remains crucial for ensuring solutions align with broader system requirements",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "reasoning traces and task-specific actions in an interleaved manner",
+    "url": "https://arxiv.org/pdf/2210.03629",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "induce, track, and update action plans as well as handle exceptions",
+    "url": "https://arxiv.org/pdf/2210.03629",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "including failing to recover from repetitive steps",
+    "url": "https://arxiv.org/pdf/2210.03629",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the model repetitively generates the previous thoughts and actions",
+    "url": "https://arxiv.org/pdf/2210.03629",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "follows a client-host-server architecture where each host can run multiple client instances",
+    "url": "https://modelcontextprotocol.io/specification/2025-06-18/architecture",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "should not be able to read the whole conversation, nor 'see into' other servers",
+    "url": "https://modelcontextprotocol.io/specification/2025-06-18/architecture",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "SHOULD establish timeouts for all sent requests",
+    "url": "https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]
