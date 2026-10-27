@@ -53,6 +53,7 @@ function toggleTheme() {
 // Learning order from the hub README. Systems not listed here still appear under "More".
 const PATH: { title: string; ids: string[] }[] = [
   { title: "Foundations", ids: ["01", "02", "03"] },
+  { title: "Building blocks", ids: ["35", "32", "33", "34"] },
   { title: "Storage and data infrastructure", ids: ["05", "04", "07", "06"] },
   { title: "Real-time communication", ids: ["08", "09", "18", "21"] },
   { title: "Media delivery", ids: ["14", "12", "13", "29"] },
