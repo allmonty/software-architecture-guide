@@ -1,0 +1,285 @@
+{
+  "id": "19-stock-exchange",
+  "title": "Stock Exchange (Order Matching)",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "broker",
+      "label": "Broker / trader",
+      "kind": "client",
+      "summary": "Sends orders and receives execution reports. Orders are limit or market, buy or sell.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/stock-exchange-system-design"
+      ]
+    },
+    {
+      "id": "gateway",
+      "label": "Order gateway",
+      "kind": "edge",
+      "summary": "Authenticates the session (FIX or a binary protocol), validates messages and checks sequence numbers. Retransmits missed messages on request.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/stock-exchange-system-design"
+      ],
+      "details": "FIX uses MsgSeqNum and ResendRequest for session recovery (checked in the earlier pass)."
+    },
+    {
+      "id": "risk",
+      "label": "Pre-trade risk",
+      "kind": "service",
+      "summary": "Checks limits, credit and wallet before an order may reach the book.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/stock-exchange-system-design"
+      ]
+    },
+    {
+      "id": "sequencer",
+      "label": "Sequencer + input disruptor",
+      "kind": "queue",
+      "summary": "Stamps every inbound event with a global sequence number. The input stage does unmarshalling, replication and journaling in parallel, since those tasks are independent.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://martinfowler.com/articles/lmax.html",
+        "https://lmax-exchange.github.io/disruptor/disruptor.html"
+      ],
+      "details": "LMAX: input disruptor, business logic processor, output disruptors. The Disruptor ring buffer follows a single-writer principle and reports 3 orders of magnitude lower mean latency and ~8× throughput versus queues."
+    },
+    {
+      "id": "journal",
+      "label": "Journal (event log)",
+      "kind": "datastore",
+      "summary": "Durable log of sequenced inputs. State is rebuilt by replaying it, with snapshots to shorten recovery. A full restart including a day of journals took less than a minute at LMAX.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://martinfowler.com/articles/lmax.html"
+      ]
+    },
+    {
+      "id": "engine",
+      "label": "Matching engine (single thread)",
+      "kind": "service",
+      "summary": "A deterministic state machine over the sequenced input: price-time priority, trades at the resting order's price. All state is in memory with no database. LMAX ran 6 million orders/s on one thread (2011 benchmark).",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://martinfowler.com/articles/lmax.html"
+      ],
+      "details": "Sharded by symbol in the standard design, so each shard stays single-threaded."
+    },
+    {
+      "id": "book",
+      "label": "Order book (in memory)",
+      "kind": "datastore",
+      "summary": "Per symbol: bids and asks as price levels, each a FIFO list, plus a hash map from order ID to node for O(1) cancel. Best bid and ask are tracked.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/stock-exchange-system-design"
+      ],
+      "details": "Reading the best price is O(1). Finding the next level when one empties costs O(log P) or a tick scan (earlier pass)."
+    },
+    {
+      "id": "standby",
+      "label": "Hot standby (replica)",
+      "kind": "service",
+      "summary": "Runs the same deterministic engine on the same sequenced input. LMAX reports switching between processors in a matter of micro-seconds.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://martinfowler.com/articles/lmax.html"
+      ]
+    },
+    {
+      "id": "md",
+      "label": "Market-data publisher",
+      "kind": "service",
+      "summary": "Publishes trades and book updates with sequence numbers over UDP multicast so every subscriber sees the same stream. MoldUDP64 packets carry a session and the first message's sequence number.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/moldudp64.pdf"
+      ]
+    },
+    {
+      "id": "rerequest",
+      "label": "Re-request server",
+      "kind": "service",
+      "summary": "Answers unicast Request messages for missed packets. Snapshots come from a separate service (GLIMPSE in Nasdaq's case).",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/moldudp64.pdf"
+      ],
+      "details": "The GLIMPSE snapshot service was verified in the earlier pass."
+    },
+    {
+      "id": "subscriber",
+      "label": "Market-data subscriber",
+      "kind": "client",
+      "summary": "Detects gaps from sequence numbers, requests retransmission, and rebuilds the book from the stream.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/moldudp64.pdf"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "b-gw",
+      "from": "broker",
+      "to": "gateway",
+      "label": "new order",
+      "mode": "sync"
+    },
+    {
+      "id": "gw-risk",
+      "from": "gateway",
+      "to": "risk",
+      "label": "validate",
+      "mode": "sync"
+    },
+    {
+      "id": "risk-seq",
+      "from": "risk",
+      "to": "sequencer",
+      "label": "accepted order",
+      "mode": "sync"
+    },
+    {
+      "id": "seq-journal",
+      "from": "sequencer",
+      "to": "journal",
+      "label": "journal",
+      "mode": "async"
+    },
+    {
+      "id": "seq-standby",
+      "from": "sequencer",
+      "to": "standby",
+      "label": "replicate",
+      "mode": "async"
+    },
+    {
+      "id": "seq-engine",
+      "from": "sequencer",
+      "to": "engine",
+      "label": "sequenced event",
+      "mode": "sync"
+    },
+    {
+      "id": "eng-book",
+      "from": "engine",
+      "to": "book",
+      "label": "match / rest",
+      "mode": "sync"
+    },
+    {
+      "id": "eng-gw",
+      "from": "engine",
+      "to": "gateway",
+      "label": "execution report",
+      "mode": "sync"
+    },
+    {
+      "id": "gw-b",
+      "from": "gateway",
+      "to": "broker",
+      "label": "fill / ack",
+      "mode": "sync"
+    },
+    {
+      "id": "eng-md",
+      "from": "engine",
+      "to": "md",
+      "label": "trades + book changes",
+      "mode": "async"
+    },
+    {
+      "id": "md-sub",
+      "from": "md",
+      "to": "subscriber",
+      "label": "UDP multicast",
+      "mode": "async",
+      "protocol": "UDP multicast"
+    },
+    {
+      "id": "sub-rr",
+      "from": "subscriber",
+      "to": "rerequest",
+      "label": "request missed packets",
+      "mode": "sync"
+    },
+    {
+      "id": "journal-eng",
+      "from": "journal",
+      "to": "engine",
+      "label": "replay on restart",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "order",
+      "name": "New order → trade",
+      "steps": [
+        {
+          "edge": "b-gw",
+          "caption": "A broker sends a limit order. The gateway checks the session and message sequence."
+        },
+        {
+          "edge": "gw-risk",
+          "caption": "Pre-trade risk checks limits before the order can touch the book."
+        },
+        {
+          "edge": "risk-seq",
+          "caption": "The sequencer gives the order the next global sequence number, which fixes fairness and ordering."
+        },
+        {
+          "edge": "seq-journal",
+          "caption": "In parallel with replication and unmarshalling, the input is journaled so state can be rebuilt by replay."
+        },
+        {
+          "edge": "seq-engine",
+          "caption": "The single-threaded deterministic engine processes events strictly in sequence."
+        },
+        {
+          "edge": "eng-book",
+          "caption": "It matches against the best opposite price while prices cross, trading at the resting order's price with FIFO at each level. Any remainder rests in the book."
+        },
+        {
+          "edge": "eng-gw",
+          "caption": "Execution reports go back through the gateway."
+        },
+        {
+          "edge": "eng-md",
+          "caption": "The same events are published as market data."
+        }
+      ]
+    },
+    {
+      "id": "gap",
+      "name": "Market-data gap recovery",
+      "steps": [
+        {
+          "edge": "md-sub",
+          "caption": "Subscribers receive sequenced multicast packets. Each packet carries the sequence number of its first message."
+        },
+        {
+          "edge": "sub-rr",
+          "caption": "A subscriber that sees a gap sends a Request for the missing packets to a re-request server, and gets them back by unicast."
+        }
+      ]
+    },
+    {
+      "id": "failover",
+      "name": "Engine failover",
+      "steps": [
+        {
+          "edge": "seq-standby",
+          "caption": "A standby engine consumes the same sequenced input, so its state is identical."
+        },
+        {
+          "edge": "journal-eng",
+          "caption": "After a restart, state is rebuilt by replaying the journal (with snapshots). LMAX reports full restarts in under a minute and processor switchover in micro-seconds."
+        }
+      ]
+    }
+  ]
+}
