@@ -97,7 +97,7 @@ preference list for k = [B, C, D, + extra nodes in case of failures]
 
 ### Sloppy quorum and hinted handoff `[CONFIRMED]` (§4.6)
 
-Operations go to "the first N healthy nodes from the preference list", which may not be the first N on the ring. With N=3, if A is down, the replica meant for A goes to D with a **hint** naming A. D keeps hinted replicas in a separate store, scans it periodically and hands the data back when A returns. This keeps reads and writes from failing on temporary faults, at the price of weaker guarantees, because the "quorum" can include nodes that are not the usual owners.
+Operations go to "the first N healthy nodes from the preference list", which may not be the first N on the ring. With N=3, the paper's Figure 2 example is that if node A is down during a write, the replica that would normally have lived on A goes to D with a **hint** naming A. (In general the stand-in is the next healthy node after the first N on the preference list: with copies on B, C and D as in our ring example above, a failure of C would send its replica to E with a hint naming C.) D keeps hinted replicas in a separate store, scans it periodically and hands the data back when A returns. This keeps reads and writes from failing on temporary faults, at the price of weaker guarantees, because the "quorum" can include nodes that are not the usual owners.
 
 ### Anti-entropy with Merkle trees `[CONFIRMED]` (§4.7)
 
