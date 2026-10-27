@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "validate": "tsx scripts/validate.ts",
-    "test": "tsx --test test/*.test.ts"
+    "test": "tsx --test test/*.test.ts",
+    "dev": "npm --prefix site run dev",
+    "build": "npm --prefix site run build"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

@@ -85,9 +85,8 @@ For interviews, practise each note's **Interview questions**, and walk the **flo
 ## The site
 
 ```sh
-cd site
-npm install
-npm run dev      # http://localhost:5173
+npm install && (cd site && npm install)   # once
+npm run dev      # from system-design/ or site/, http://localhost:5173
 npm run build    # static output in site/dist
 ```
 
