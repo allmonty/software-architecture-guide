@@ -149,7 +149,7 @@ data store ─► data loaders ─► training job (TP · CP · PP · FSDP) ─�
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance** (utilisation), **reliability/recoverability**, **observability**, **cost efficiency**, **scalability**.
 - **Style (Ch 13):** a **tightly coupled, synchronous compute fabric** managed by a control plane (scheduler, fault detection, recovery).
@@ -212,7 +212,7 @@ Tensor parallelism exchanges data every layer and needs the fastest links, so it
 ## 📚 Further reading
 
 - The three sources listed under Sources and provenance.
-- [`neokim-post/01` How LLMs work](../../neokim-post/01-how-llms-work.md) for model and training basics.
+- [`neokim-post/01` How LLMs work](https://github.com/allmonty/study/blob/main/architecture/neokim-post/01-how-llms-work.md) for model and training basics.
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary).
 - Related in this repo: [22 LLM inference serving](22-llm-inference-serving.md), [28 LLM fine-tuning and evaluation](28-llm-finetuning-evaluation.md), [04 Kafka](04-message-queue-kafka.md) and [05 S3](05-object-storage-s3.md) for storage and replication ideas.
 

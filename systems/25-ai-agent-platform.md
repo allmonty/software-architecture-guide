@@ -194,7 +194,7 @@ Anthropic's diagram of a coding agent shows the loop of reading the task, editin
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **security**, **reliability** of long runs, **cost control**, **observability**, **extensibility**.
 - **Style (Ch 13):** **orchestration-driven service-based:** a central orchestrator coordinating tool, model and sandbox services.
@@ -257,7 +257,7 @@ Assume tool and web content is hostile. Keep the agent's permissions narrow so a
 ## 📚 Further reading
 
 - The three sources listed under Sources and provenance.
-- [`neokim-post/01` How LLMs work](../../neokim-post/01-how-llms-work.md) for tool use basics.
+- [`neokim-post/01` How LLMs work](https://github.com/allmonty/study/blob/main/architecture/neokim-post/01-how-llms-work.md) for tool use basics.
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary).
 - Related in this repo: [22 LLM inference serving](22-llm-inference-serving.md), [23 RAG knowledge assistant](23-rag-knowledge-assistant.md), [10 Notification system](10-notification-system.md) and [17 Payment system](17-payment-system.md) for idempotency and retries.
 

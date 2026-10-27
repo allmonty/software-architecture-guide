@@ -162,7 +162,7 @@ user ─► recommendation API ─► candidate generation ─► ranking ─►
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance** (latency), **scalability**, **freshness/data currency**, **experimentability**, **availability** (degrade, do not fail).
 - **Style (Ch 13):** a **pipeline** for serving (retrieve, rank, re-rank) on top of an **event-driven** learning loop.

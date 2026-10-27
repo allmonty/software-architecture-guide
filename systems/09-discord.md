@@ -134,7 +134,7 @@ Sending a message, as far as the posts support: the client's **WebSocket** reach
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the posts. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the posts. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **scalability** (millions of concurrent sessions), **performance/latency** (fan-out, p99 reads), **availability**, **elasticity** around events, **operability** (the gossip-dance pain was an operability failure).
 - **Style (Ch 13/17):** **service-based**, with a monolithic API tier in front of specialised services: gateway/guilds (Elixir), data services (Rust), voice (Elixir + C++), storage (ScyllaDB). Within the real-time tier it is an **actor-model**, pub/sub design.
@@ -196,7 +196,7 @@ Requests for the same channel must reach the same service instance for identical
 
 - The five Discord posts listed at the top.
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (background on caching and consistency, secondary).
-- Related in this repo: [03 Distributed KV store](03-distributed-kv-store.md) (the Cassandra lineage), [08 Chat (WhatsApp)](08-chat-whatsapp.md) (1:1 chat and store-and-forward), and [`neokim-post/13` Slack](../../neokim-post/13-how-slack-works.md).
+- Related in this repo: [03 Distributed KV store](03-distributed-kv-store.md) (the Cassandra lineage), [08 Chat (WhatsApp)](08-chat-whatsapp.md) (1:1 chat and store-and-forward), and [`neokim-post/13` Slack](https://github.com/allmonty/study/blob/main/architecture/neokim-post/13-how-slack-works.md).
 
 ## Sources and provenance
 

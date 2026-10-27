@@ -238,7 +238,7 @@ All `[INDUSTRY PATTERN]`.
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Extension. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Extension. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance** (redirect latency), **availability**, **scalability** (100k reads/s) and **elasticity** (a celebrity tweets a link). Write-side **reliability** means collision-free keys. Security (unguessable keys, malicious-URL scanning) is mostly *design* hygiene, not structure.
 - **Style (Ch 13):** a **service-based architecture**: a handful of coarse services (shorten, redirect, KGS, analytics) that the article calls microservices. It fits the book's 4–12 domain-service profile, and the redirect and write services share one URL store.
@@ -307,7 +307,7 @@ The CDN absorbs repeat reads. Concurrent misses collapse into one origin request
 ## Sources and provenance
 
 > **Kind:** reference design. Bitly, TinyURL and others do not publish their internals, so the architecture below is the standard interview design, not a claim about how any company builds it. What *is* sourced to primary documents: HTTP redirect semantics (RFC 9110/9111), the Snowflake ID layout, and Bitly's observed redirect headers.
-> **Basis:** upgraded from [`neokim-post/05`](../../neokim-post/05-how-url-shortener-works.md), itself a paraphrase of [systemdesign.one](https://systemdesign.one/url-shortening-system-design/) (CC BY-NC-ND 4.0). Re-verified on 2026-10-27 (see the log at the end).
+> **Basis:** upgraded from [`neokim-post/05`](https://github.com/allmonty/study/blob/main/architecture/neokim-post/05-how-url-shortener-works.md), itself a paraphrase of [systemdesign.one](https://systemdesign.one/url-shortening-system-design/) (CC BY-NC-ND 4.0). Re-verified on 2026-10-27 (see the log at the end).
 > **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice, no single authority · `[SPECULATIVE]` plausible design choice. Untagged arithmetic can be checked by hand.
 
 ---

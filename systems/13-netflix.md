@@ -139,7 +139,7 @@ Interview points: separate **control plane** (small, stateful, in a cloud region
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from Netflix. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from Netflix. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance/latency** (start time and rebuffering), **scalability** and **elasticity** (global events), **availability**, **cost efficiency** (backbone and transit), **evolvability** (new hardware coexists with old).
 - **Style (Ch 9, 17):** a **distributed, two-plane** architecture: a microservices control plane and a purpose-built edge data plane. The "intelligence at the control plane, dumb fast edge" split is the key idea.

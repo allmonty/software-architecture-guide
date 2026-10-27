@@ -174,7 +174,7 @@ Each node has three components: **request coordination**, **membership and failu
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the paper. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the paper. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **availability** (always writeable), **scalability** (incremental), **performance at the tail** (99.9th percentile), **durability**. **Consistency** is the one deliberately traded away.
 - **Style (Ch 9–10):** **peer-to-peer / shared-nothing**, with **no coordinator tier**. Closest of the book's styles is **space-based** thinking (data partitioned and replicated across processing units, Ch 15), minus a central data grid.
@@ -238,7 +238,7 @@ Hinted replicas are delivered first, read repair fixes stale replicas opportunis
 - [Cassandra docs: Dynamo](https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html)
 - [Amazon DynamoDB, ATC '22](https://www.usenix.org/conference/atc22/presentation/elhemali) (the service, not the 2007 system)
 - [System Design Primer: key-value store for a search engine, and the real-world architecture list](https://github.com/donnemartin/system-design-primer) (secondary)
-- Related in this repo: [`neokim-post/04` Kafka](../../neokim-post/04-how-apache-kafka-works.md) for replication via ISR, a different approach to the same availability/consistency question.
+- Related in this repo: [`neokim-post/04` Kafka](https://github.com/allmonty/study/blob/main/architecture/neokim-post/04-how-apache-kafka-works.md) for replication via ISR, a different approach to the same availability/consistency question.
 
 ## Sources and provenance
 

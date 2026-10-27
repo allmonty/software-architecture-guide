@@ -31,7 +31,7 @@ These are open scenarios with no single correct answer. For each, write a one-pa
 
 <details><summary>What a strong answer covers</summary>
 
-- Starts from the problem (deployment coupling, team contention) and the driving characteristics, not the style ([book summaries 17 and 18](../../fundamentals-of-software-architecture/summaries/18-choosing-architecture-style.md), [17 Microservices](../../fundamentals-of-software-architecture/summaries/17-microservices-architecture.md)).
+- Starts from the problem (deployment coupling, team contention) and the driving characteristics, not the style ([book summaries 17 and 18](https://github.com/allmonty/study/blob/main/architecture/fundamentals-of-software-architecture/summaries/18-choosing-architecture-style.md), [17 Microservices](https://github.com/allmonty/study/blob/main/architecture/fundamentals-of-software-architecture/summaries/17-microservices-architecture.md)).
 - Considers intermediate options: a modular monolith, service-based architecture, extracting one high-churn capability.
 - Proposes an incremental path with a seam, a façade and data ownership ([P10](P10-changing-systems-safely.md)).
 - Names costs: distributed transactions ([P03](P03-distributed-transactions.md)), operations, observability, team structure (Conway's law).
@@ -110,7 +110,7 @@ These are open scenarios with no single correct answer. For each, write a one-pa
 
 
 
-**Related:** [P09 Decisions and design docs](P09-decisions-and-design-docs.md), [P10 Changing systems safely](P10-changing-systems-safely.md), the book summaries on [architecture decisions](../../fundamentals-of-software-architecture/summaries/19-architecture-decisions.md) and [choosing an architecture style](../../fundamentals-of-software-architecture/summaries/18-choosing-architecture-style.md).
+**Related:** [P09 Decisions and design docs](P09-decisions-and-design-docs.md), [P10 Changing systems safely](P10-changing-systems-safely.md), the book summaries on [architecture decisions](https://github.com/allmonty/study/blob/main/architecture/fundamentals-of-software-architecture/summaries/19-architecture-decisions.md) and [choosing an architecture style](https://github.com/allmonty/study/blob/main/architecture/fundamentals-of-software-architecture/summaries/18-choosing-architecture-style.md).
 
 ## Sources and provenance
 

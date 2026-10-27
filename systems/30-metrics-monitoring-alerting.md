@@ -181,7 +181,7 @@ dashboards/query API ─────► TSDB (closest healthy replica)
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **availability** (above its customers), **performance** (ingest and query), **scalability**, **cost efficiency**, **data currency**.
 - **Style (Ch 13):** a **pipeline** (collect, store, evaluate, notify) on a **share-nothing sharded** store, with regional autonomy.

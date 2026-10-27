@@ -163,7 +163,7 @@ Lose ANY 3 → still recoverable.     Overhead = 8/5 = 1.6× (vs 3.0× for repli
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Extension. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Extension. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **durability** (11 nines), which maps onto the book's *reliability/recoverability* (the book has no separate durability entry), **availability**, **scalability** (hundreds of exabytes, 200M+ req/s on average per the [S3 product page](https://aws.amazon.com/s3/), up from 100M+ at FAST '23) and **performance** via parallelism. **Data consistency** has been an explicit characteristic since 2020's strong read-after-write. Cost is a first-class constraint, which is why there's erasure coding instead of 3× replicas.
 - **Style (Ch 17):** internally **microservices**: "hundreds of microservices" ([Warfield](https://www.allthingsdistributed.com/2023/07/building-and-operating-a-pretty-big-storage-system.html)) behind API contracts, each owning its data (front end, index, placement, ShardStore nodes, background repair). The metadata/data split is the book's **bounded context** applied to storage. The two tiers share no schema, so each can scale and evolve on its own.
@@ -233,7 +233,7 @@ Encoding and the placement of many tiny shards cost more than they save, so smal
 ## Sources and provenance
 
 > **Kind:** real-system, but only partly public. AWS publishes the guarantees (docs), the storage-node design (the ShardStore SOSP '21 paper) and some architecture (Warfield's FAST '23 keynote, Vogels on consistency). The exact erasure-coding parameters and the internal front-end/metadata layout are **not** public, so those parts are `[INDUSTRY PATTERN]`.
-> **Basis:** upgraded from [`neokim-post/07`](../../neokim-post/07-how-amazon-s3-works.md) (a summary of [S3 Architecture](https://newsletter.systemdesign.one/p/s3-architecture), which itself says it is "based on research, may differ from real implementation"). Re-verified on 2026-10-27, see the log.
+> **Basis:** upgraded from [`neokim-post/07`](https://github.com/allmonty/study/blob/main/architecture/neokim-post/07-how-amazon-s3-works.md) (a summary of [S3 Architecture](https://newsletter.systemdesign.one/p/s3-architecture), which itself says it is "based on research, may differ from real implementation"). Re-verified on 2026-10-27, see the log.
 > **Tags:** `[CONFIRMED]` stated by an AWS primary source · `[INDUSTRY PATTERN]` standard practice or illustrative, not stated by AWS for S3 · `[SPECULATIVE]` plausible. The 🔧 marker carries over from the baseline: content reconstructed beyond the newsletter's public half.
 
 ---

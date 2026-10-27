@@ -164,7 +164,7 @@ model weights store ──► replicas (slow cold start)
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the papers. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the papers. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance** (TTFT, TPOT), **elasticity** (bursty demand on scarce GPUs), **cost efficiency**, **availability**, **fairness** between tenants.
 - **Style (Ch 13):** **service-based**: a stateless gateway and router in front of stateful GPU replicas. Inside a replica the scheduler, memory manager and executor are tightly coupled by design.
@@ -226,7 +226,7 @@ Chat needs a low time to first token so the reply starts quickly and a steady to
 ## 📚 Further reading
 
 - The three papers listed under Sources and provenance.
-- [`neokim-post/01` How LLMs work](../../neokim-post/01-how-llms-work.md) for tokens, embeddings and the product-level serving design.
+- [`neokim-post/01` How LLMs work](https://github.com/allmonty/study/blob/main/architecture/neokim-post/01-how-llms-work.md) for tokens, embeddings and the product-level serving design.
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary).
 - Related in this repo: [02 Rate limiter](02-rate-limiter.md), [23 RAG knowledge assistant](23-rag-knowledge-assistant.md), [25 AI agent platform](25-ai-agent-platform.md), [28 LLM fine-tuning, evaluation and deployment](28-llm-finetuning-evaluation.md).
 

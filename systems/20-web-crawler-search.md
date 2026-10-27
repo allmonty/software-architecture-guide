@@ -149,7 +149,7 @@ Query ─► front end ─► fan-out to shards ─► merge + rank ─► resul
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the sources. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the sources. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **scalability**, **performance** (fetch throughput, query latency), **fault tolerance** (the web is unreliable), **politeness/ethics** (an unusual non-functional requirement), **extensibility**, **freshness**.
 - **Style (Ch 11, 14):** the crawler is a **pipeline architecture** (fetch → parse → filter → store) over queues, and the whole system is **event-driven** with a batch indexing backend and an online serving tier.

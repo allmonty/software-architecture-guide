@@ -30,7 +30,7 @@ A technique "for making a large-scale change to a software system in gradual way
 | Prove equivalence | Shadow traffic and result comparison before cutover; metrics on both sides (see [P07](P07-slos-and-incidents.md)). |
 | Cut over gradually | Percentage rollouts with a fast rollback, as [C02 Cloudflare 2019](C02-cloudflare-2019.md) and [C05 Knight Capital](C05-knight-capital-2012.md) show when rollouts are not staged or verified. |
 | Retire the old | Remove dead code and flags; Knight's loss involved retired code that remained callable. |
-| Protect the team | Keep the old system's maintainers until the end; communicate the plan and the rollback (see the book summaries on teams and negotiation: [22 Making teams effective](../../fundamentals-of-software-architecture/summaries/22-making-teams-effective.md)). |
+| Protect the team | Keep the old system's maintainers until the end; communicate the plan and the rollback (see the book summaries on teams and negotiation: [22 Making teams effective](https://github.com/allmonty/study/blob/main/architecture/fundamentals-of-software-architecture/summaries/22-making-teams-effective.md)). |
 
 **Atlas examples:** the staged adoption of a new datastore at scale appears in the Discord and Dropbox notes ([09 Discord](../systems/09-discord.md), [06 File sync](../systems/06-file-sync-dropbox.md)); the failover and restore lessons in [C03 GitHub 2018](C03-github-2018.md) apply to any data migration.
 

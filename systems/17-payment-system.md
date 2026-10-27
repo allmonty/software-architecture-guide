@@ -180,7 +180,7 @@ Checkout (browser/app) ──► Order service ──► Payment service ──�
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **data integrity / consistency**, **auditability**, **reliability**, **security**, **availability** of checkout, **recoverability**. Throughput matters less than correctness.
 - **Style (Ch 13/14/17):** **service-based**, with an **event-driven** edge to the PSP (webhooks) and an immutable-log core (the ledger). Event sourcing's ideas (append-only facts, replay) show up in the ledger.
@@ -244,7 +244,7 @@ Record event IDs under a unique constraint, enqueue, return 2xx, and have the wo
 - The sources listed at the top.
 - [Stripe: Scaling your API with rate limiters](https://stripe.com/blog/rate-limiters) (see also [02 Rate limiter](02-rate-limiter.md)).
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary).
-- Related in this repo: [16 Reservation scheduler](16-reservation-scheduler.md), [04 Message queue](04-message-queue-kafka.md), [`neokim-post/12` Airbnb](../../neokim-post/12-how-airbnb-works.md) (payments section and the `Idempotency-Key` discussion).
+- Related in this repo: [16 Reservation scheduler](16-reservation-scheduler.md), [04 Message queue](04-message-queue-kafka.md), [`neokim-post/12` Airbnb](https://github.com/allmonty/study/blob/main/architecture/neokim-post/12-how-airbnb-works.md) (payments section and the `Idempotency-Key` discussion).
 
 ## Sources and provenance
 

@@ -235,7 +235,7 @@ No/low-code integration runtime. **Source connectors** (DB/CDC → Kafka) and **
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Extension. Maps this case study onto Richards & Ford's vocabulary (see [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking)).
+> 🔧 Extension. Maps this case study onto Richards & Ford's vocabulary (see [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking)).
 
 - **Driving characteristics (Ch 4–5):** **scalability** (partitions), **fault tolerance** and **availability** (replication, leader failover), **reliability/recoverability** (durable log, replay), **performance** (throughput), and **evolvability** (new consumers without touching producers).
 - **Style it enables (Ch 14):** Kafka is the **broker** in an *event-driven broker topology*: processors react to topics and "advertise what they did", with no central workflow owner. Retention + replay is the book's extensibility hook ("always advertise, even if no one listens") made durable. For a *mediator* topology you put a workflow engine on top; Kafka itself doesn't orchestrate.
@@ -305,7 +305,7 @@ Kafka's transactions cover Kafka reads and writes only. The database write is an
 ## Sources and provenance
 
 > **Kind:** real-system (open source, so the behaviour is documented).
-> **Basis:** upgraded from [`neokim-post/04`](../../neokim-post/04-how-apache-kafka-works.md), a summary of [How Kafka Works](https://newsletter.systemdesign.one/p/how-kafka-works) (guest author Stanislav Kozlovski). Re-verified on 2026-10-27 against the Apache Kafka docs and release announcements listed in the log at the end.
+> **Basis:** upgraded from [`neokim-post/04`](https://github.com/allmonty/study/blob/main/architecture/neokim-post/04-how-apache-kafka-works.md), a summary of [How Kafka Works](https://newsletter.systemdesign.one/p/how-kafka-works) (guest author Stanislav Kozlovski). Re-verified on 2026-10-27 against the Apache Kafka docs and release announcements listed in the log at the end.
 > **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible choice. Claims about defaults and release status are `[CONFIRMED]` against the linked Kafka page unless marked otherwise. The "author's figure" notes mean the claim comes from the newsletter article and was not independently checked.
 
 ---

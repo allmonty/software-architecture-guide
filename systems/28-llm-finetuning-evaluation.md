@@ -183,7 +183,7 @@ production feedback ─► data pipeline (filter, dedup, quality score, version)
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **quality assurance** (no regressions), **reproducibility**, **agility** (fast iteration), **safety**, **cost efficiency**.
 - **Style (Ch 13):** a **pipeline** (data → train → evaluate → deploy) closed into a loop by production feedback.
@@ -246,7 +246,7 @@ Register the model, pass the gate, run in shadow, then a small canary, ramp whil
 ## 📚 Further reading
 
 - The papers and report listed under Sources and provenance.
-- [`neokim-post/01` How LLMs work](../../neokim-post/01-how-llms-work.md) for the basics of training and tokens.
+- [`neokim-post/01` How LLMs work](https://github.com/allmonty/study/blob/main/architecture/neokim-post/01-how-llms-work.md) for the basics of training and tokens.
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary).
 - Related in this repo: [22 LLM inference serving](22-llm-inference-serving.md), [23 RAG knowledge assistant](23-rag-knowledge-assistant.md), [25 AI agent platform](25-ai-agent-platform.md), and [27 LLM training infrastructure](27-llm-training-infrastructure.md).
 

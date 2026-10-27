@@ -143,7 +143,7 @@ Choices to state: **cursor pagination** (not offset) since new posts arrive cons
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the sources. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the sources. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance** (feed read latency), **scalability**, **elasticity** around events, **availability**, and **cost** (timeline storage and fan-out compute). Consistency is deliberately relaxed.
 - **Style (Ch 14/17):** an **event-driven** write path (post → queue → fan-out workers) and a **service-based / microservices** read path (Timeline Service, hydrators, ranking mixers). Product Mixer's pipeline of sources, scorers and filters is itself a small pipeline architecture (Ch 11).
@@ -206,7 +206,7 @@ Timelines hold IDs only. Hydration checks the post store, so a deleted post drop
 - The three sources listed at the top.
 - [Facebook TAO paper](https://www.usenix.org/conference/atc13/technical-sessions/presentation/bronson) and Raffi Krikorian's *Timelines at Scale* (not read in this session).
 - [System Design Primer: Twitter timeline and search](https://github.com/donnemartin/system-design-primer) (secondary; interview framing).
-- Related in this repo: [`neokim-post/10` Twitter timeline (front-end)](../../neokim-post/10-how-twitter-timeline-works.md) (client side of the same product), [01 URL shortener](01-url-shortener.md) (Snowflake IDs), [03 Distributed KV store](03-distributed-kv-store.md) (consistent hashing, replication).
+- Related in this repo: [`neokim-post/10` Twitter timeline (front-end)](https://github.com/allmonty/study/blob/main/architecture/neokim-post/10-how-twitter-timeline-works.md) (client side of the same product), [01 URL shortener](01-url-shortener.md) (Snowflake IDs), [03 Distributed KV store](03-distributed-kv-store.md) (consistent hashing, replication).
 
 ## Sources and provenance
 

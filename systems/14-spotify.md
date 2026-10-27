@@ -200,7 +200,7 @@ plays(user_id, song_id, played_at, ms_played)          -- → event stream / war
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Extension. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Extension. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance** (time to first audio), **availability**, **scalability** and **elasticity** (midnight album drops are the book's "concert tickets" pattern), plus cost/**feasibility** (egress). Licensing and DRM are **legal** cross-cutting characteristics (Ch 4).
 - **Style for the 500k-user design (Ch 13, 11):** a **service-based architecture** (or even a modular monolith): a stateless API tier over **one SQL database** is the book's pragmatic default when the data fits one store ("don't over-engineer the catalog"). Upload ingest is a **pipeline** (validate → transcode → normalise → publish).
@@ -269,7 +269,7 @@ Measure at upload, store the gain value, and apply it at playback so the audio f
 ## Sources and provenance
 
 > **Kind:** reference design plus a documented history. Spotify has published its **2010 hybrid peer-to-peer streaming design** in an academic paper, plus support pages on audio quality, loudness and stream counting. Its current server-side architecture is **not** published end to end, so the blob-storage + CDN + stateless-API design below is the standard interview design `[INDUSTRY PATTERN]`.
-> **Basis:** upgraded from [`neokim-post/09`](../../neokim-post/09-how-spotify-works.md), a summary of [Spotify System Design](https://newsletter.systemdesign.one/p/spotify-system-design) (guest author Hayk Simonyan) whose paywalled halves were reconstructed. Re-verified on 2026-10-27, see the log.
+> **Basis:** upgraded from [`neokim-post/09`](https://github.com/allmonty/study/blob/main/architecture/neokim-post/09-how-spotify-works.md), a summary of [Spotify System Design](https://newsletter.systemdesign.one/p/spotify-system-design) (guest author Hayk Simonyan) whose paywalled halves were reconstructed. Re-verified on 2026-10-27, see the log.
 > **Primary sources read:** Kreitz & Niemelä, [*Spotify – Large Scale, Low Latency, P2P Music-on-Demand Streaming*, IEEE P2P 2010](https://people.cs.umass.edu/~phillipa/CSE390/spotify-p2p10.pdf) (text extracted locally) · Spotify Support: [Audio quality](https://support.spotify.com/us/article/audio-quality/), [How we count streams](https://support.spotify.com/us/artists/article/how-we-count-streams/), [Loudness normalization](https://support.spotify.com/us/artists/article/loudness-normalization/).
 > **Dated material:** the paper describes Spotify in 2010 (over 8 million tracks). The client has since dropped P2P, so do not present the paper as the current architecture.
 > **Tags:** `[CONFIRMED]` stated by a Spotify primary source · `[INDUSTRY PATTERN]` standard design · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline (content beyond the newsletter's public half).

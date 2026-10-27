@@ -206,7 +206,7 @@ Don't `UPDATE videos SET views = views+1` per view. Instead, emit view events to
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Extension. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Extension. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **scalability** (100:1 reads), **elasticity** (a viral video, upload bursts into the encoder fleet), **performance** (first frame < 500 ms), **availability** (99.9%) and cost/**feasibility**. Deliberately *not* driving: immediate consistency for new uploads.
 - **Styles (Ch 11, 14):** the transcoding path is a **pipeline** (pipes and filters): probe/validate (*tester*) → split → encode (*transformers*) → package → publish (*consumer*). Because each video's DAG needs restart-from-failed-chunk, the orchestrator is an **event-driven mediator** (the book's "persist state, restart at step 3" behaviour), not a broker chain.
@@ -276,7 +276,7 @@ Emit events to a stream, aggregate in windows and flush periodically. Use sharde
 ## Sources and provenance
 
 > **Kind:** reference design with a few documented real-system facts. YouTube does not publish its architecture end to end. What we verified in primary sources: the upload limits (YouTube Help), the resumable-upload protocol (YouTube API docs), the custom transcoding chip (YouTube blog, 2021), Vitess's origin at YouTube (Vitess docs) and the HLS playlist format (RFC 8216). Everything else, including the pipeline stages, store choices and CDN strategy, is the standard interview design `[INDUSTRY PATTERN]`.
-> **Basis:** upgraded from [`neokim-post/03`](../../neokim-post/03-how-youtube-works.md), a summary of [YouTube System Design](https://newsletter.systemdesign.one/p/youtube-system-design) whose paywalled deep dives were reconstructed from public sources. Re-verified on 2026-10-27, see the log.
+> **Basis:** upgraded from [`neokim-post/03`](https://github.com/allmonty/study/blob/main/architecture/neokim-post/03-how-youtube-works.md), a summary of [YouTube System Design](https://newsletter.systemdesign.one/p/youtube-system-design) whose paywalled deep dives were reconstructed from public sources. Re-verified on 2026-10-27, see the log.
 > **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice, not stated for YouTube · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline (content beyond the newsletter's public half).
 
 ---

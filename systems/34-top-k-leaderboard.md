@@ -122,7 +122,7 @@ leaderboard: score updates ─► sharded sorted sets ─► top-N via merge, ra
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the sources. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the sources. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance**, **scalability**, **accuracy (bounded)**, **cost** (memory).
 - **Style (Ch 13):** a **pipeline** of partitioned summarisers feeding a merge service and a read cache.

@@ -168,7 +168,7 @@ stateDiagram-v2
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Extension. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Extension. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance** (local echo, < 200 ms remote visibility), **data consistency** (convergence: every replica ends identical), **availability** (including offline), **scalability** (millions of open docs) and **recoverability** (history, restart from snapshot + log).
 - **Style (Ch 15):** the per-document session server works like a **space-based processing unit**: hot state in memory, requests routed to the owner, and a log behind it. The key departure is **one owner per document** instead of a replicated grid. The book's **data collision** analysis (Ch 15) explains why: a document is a tiny "cache" (small S) with a very high update rate (UR). Active/active replication would collide constantly, so a single writer serialises edits.
@@ -239,7 +239,7 @@ When you need offline or peer-to-peer editing without a central authority, accep
 ## Sources and provenance
 
 > **Kind:** reference design with documented real parts. Google published a short 2010 series on how the new Docs editor syncs edits (operational transformation with a central server) but not a full architecture. The client/server protocol below follows the well-known **Jupiter-style client-server OT** as implemented in open-source `ot.js`, and is a design explanation, not a Google internals document.
-> **Basis:** upgraded from [`neokim-post/11`](../../neokim-post/11-how-google-docs-works.md), a summary of [How Does Google Docs Work](https://newsletter.systemdesign.one/p/how-does-google-docs-work) with reconstructed sections. Re-verified on 2026-10-27, see the log.
+> **Basis:** upgraded from [`neokim-post/11`](https://github.com/allmonty/study/blob/main/architecture/neokim-post/11-how-google-docs-works.md), a summary of [How Does Google Docs Work](https://newsletter.systemdesign.one/p/how-does-google-docs-work) with reconstructed sections. Re-verified on 2026-10-27, see the log.
 > **Primary sources read in this session:** Neil Fraser, [*Differential Synchronization*](https://neil.fraser.name/writing/sync/) · Figma, [*How Figma's multiplayer technology works*](https://www.figma.com/blog/how-figmas-multiplayer-technology-works/) (2019-10-16) · Kleppmann et al., [*Interleaving anomalies in collaborative text editors*](https://martin.kleppmann.com/2019/03/25/papoc-interleaving-anomalies.html) (PaPoC 2019 page).
 > **Re-read on 2026-10-27:** Google's three September 2010 posts (through Internet Archive copies) and the full text of Kleppmann et al. (2019). **Still not re-read:** the Wave OT whitepaper, Ellis & Gibbs and Nichols et al. (Jupiter), and the CRDT paper (HAL returned an access-denied page). Claims that depend on those remain from the earlier pass (see the inherited log) and are marked accordingly.
 > **Tags:** `[CONFIRMED]` stated by a primary source we read now · `[EARLIER PASS]` verified in the neokim-post fact-check but not re-read now · `[INDUSTRY PATTERN]` standard design · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline.

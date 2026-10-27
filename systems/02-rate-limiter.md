@@ -153,7 +153,7 @@ Capacity is not worked out here because it depends entirely on the assumed traff
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from a primary source. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from a primary source. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance** (it sits on every request), **availability** (it must not be the thing that takes the API down), **scalability**. **Accuracy** is a secondary characteristic that you trade against cost.
 - **Style (Ch 9–10):** an **interceptor in the request path** (gateway or sidecar) backed by a **shared state service**. Envoy's local-plus-global split is a concrete example.

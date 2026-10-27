@@ -163,7 +163,7 @@ Deliveries are write-heavy and time-ordered, so a wide-column or time-partitione
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the vendor docs. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the vendor docs. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **reliability**, **availability** of the ingest path, **elasticity** (campaign bursts), **interoperability** (many providers) and **isolation** between priorities.
 - **Style (Ch 14):** **event-driven, broker topology**: producers emit, queues buffer, channel workers react. The orchestrator in the middle is closer to a **mediator** for the per-notification workflow (preferences → render → route). It is a hybrid.

@@ -144,7 +144,7 @@ Each photo was a separate file on NAS appliances over NFS. Reading one needed se
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the papers. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the papers. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **durability/recoverability**, **cost efficiency**, **performance** (single-seek reads, CDN), **scalability**, **security** (unguessable URLs, key-based deletion).
 - **Style (Ch 13/17):** **service-based** at the macro level (web tier, Directory, Cache, Store, later router, transformer and cold tier). Within the store it is a **shared-nothing** cluster of cells.
@@ -207,7 +207,7 @@ f4 encrypts each blob with its own key and deletes the key, which makes the data
 - [Haystack, OSDI '10](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf) · [f4, OSDI '14](https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf)
 - [AWS: presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html)
 - [System Design Primer: scaling to millions of users, CDN and object storage topics](https://github.com/donnemartin/system-design-primer) (secondary)
-- Related in this repo: [05 Object storage](05-object-storage-s3.md) (erasure coding and durability), [06 File sync](06-file-sync-dropbox.md) (content-addressed blocks), [`neokim-post/03` YouTube](../../neokim-post/03-how-youtube-works.md) (a similar upload-then-transcode flow).
+- Related in this repo: [05 Object storage](05-object-storage-s3.md) (erasure coding and durability), [06 File sync](06-file-sync-dropbox.md) (content-addressed blocks), [`neokim-post/03` YouTube](https://github.com/allmonty/study/blob/main/architecture/neokim-post/03-how-youtube-works.md) (a similar upload-then-transcode flow).
 
 ## Sources and provenance
 

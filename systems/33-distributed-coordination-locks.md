@@ -129,7 +129,7 @@ workers ─► coordination cluster (3 or 5 replicas, majority quorum) ◄─ cl
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the papers. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the papers. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **reliability/consistency** of the control plane, **availability**, **simplicity**.
 - **Style (Ch 13):** a small **replicated service** used by many clients as a shared control plane.

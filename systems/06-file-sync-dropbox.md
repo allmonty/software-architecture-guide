@@ -150,7 +150,7 @@ Sync is complete when all three match. The **planner** takes the three trees and
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the posts. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the posts. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **durability/recoverability** (never lose data), **data integrity** (never silently overwrite), **efficiency** (bandwidth), **scalability**, and **testability** (Dropbox's simulation testing is a direct investment here).
 - **Style (Ch 13/17):** a **service-based** split into a content plane (block servers, Magic Pocket), a metadata plane (Edgestore) and a **rich client** with its own engine. The client is as much a part of the architecture as any server.
@@ -212,7 +212,7 @@ It is the last agreed state, so comparing it with each side shows who changed wh
 
 - The Dropbox posts listed at the top. Also [Alki, cold metadata](https://dropbox.tech/infrastructure/alki--or-how-we-learned-to-stop-worrying-and-love-cold-metadata) and [Cross-shard transactions at 10M requests per second](https://dropbox.tech/infrastructure/cross-shard-transactions-at-10-million-requests-per-second) (appear in search, not read here).
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary background on caching, replication and consistency).
-- Related in this repo: [05 Object storage](05-object-storage-s3.md) for erasure coding, and [`neokim-post/11` Google Docs](../../neokim-post/11-how-google-docs-works.md) for real-time merge.
+- Related in this repo: [05 Object storage](05-object-storage-s3.md) for erasure coding, and [`neokim-post/11` Google Docs](https://github.com/allmonty/study/blob/main/architecture/neokim-post/11-how-google-docs-works.md) for real-time merge.
 
 ## Sources and provenance
 

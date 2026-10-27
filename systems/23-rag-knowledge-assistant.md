@@ -152,7 +152,7 @@ user ─► permission scope ─► hybrid retrieve ─► rerank ─► build p
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **security** (permission-correct answers), **accuracy**, **freshness**, **performance** (latency), **cost**.
 - **Style (Ch 13):** two **pipelines**: a batch/stream ingestion pipeline and an online query service sharing the indexes.
@@ -215,7 +215,7 @@ Build a labelled question set. Measure retrieval recall in the top k first, then
 ## 📚 Further reading
 
 - The two sources listed under Sources and provenance.
-- [`neokim-post/01` How LLMs work](../../neokim-post/01-how-llms-work.md) for embeddings and retrieval basics.
+- [`neokim-post/01` How LLMs work](https://github.com/allmonty/study/blob/main/architecture/neokim-post/01-how-llms-work.md) for embeddings and retrieval basics.
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary).
 - Related in this repo: [20 Web crawler and search](20-web-crawler-search.md), [22 LLM inference serving](22-llm-inference-serving.md), [24 Vector / semantic search at scale](24-vector-semantic-search.md), [25 AI agent platform](25-ai-agent-platform.md) and [28 LLM fine-tuning, evaluation and deployment](28-llm-finetuning-evaluation.md).
 

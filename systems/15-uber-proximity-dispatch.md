@@ -172,7 +172,7 @@ Driver location is **ephemeral** state. If a node dies, the index rebuilds withi
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Extension. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Extension. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance** (match in milliseconds), **scalability** (~1M req/s per the article's headline), **elasticity** (stadium and airport surges), **availability** and **fault tolerance**. Durability of the live index is deliberately *not* driving.
 - **Style (Ch 15):** strongly isomorphic to **space-based architecture**. The live supply index sits in in-memory processing units, so the database is off the synchronous path. History flows **asynchronously** (an assumed Kafka → Cassandra path would be the book's *data pump → data writer*), and the index rebuilds from peers or fresh pings, never from the DB. One difference: Ringpop **shards** the grid by cell (one owner per key) instead of **replicating** it. Every unit updating the same cells would hit the book's *data collision* problem (`N × UR² / (S × RL)`) at Uber's update rate (UR).
@@ -242,7 +242,7 @@ The closest driver is not always the quickest, and pairing several riders and dr
 ## Sources and provenance
 
 > **Kind:** reference design with documented real parts. Uber publishes the design of **H3** (its hexagonal spatial index, open source) and a public description of how **batched matching** works. It does not publish its current dispatch and location-storage architecture, so the ingestion, storage and sharding sections are the standard design plus a 2015-era description from a secondary summary `[INDUSTRY PATTERN]`.
-> **Basis:** upgraded from [`neokim-post/06`](../../neokim-post/06-how-uber-finds-nearby-drivers.md), a summary of [How Does Uber Find Nearby Drivers at 1 Million Requests per Second](https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers) (paywalled half reconstructed). Re-verified on 2026-10-27, see the log.
+> **Basis:** upgraded from [`neokim-post/06`](https://github.com/allmonty/study/blob/main/architecture/neokim-post/06-how-uber-finds-nearby-drivers.md), a summary of [How Does Uber Find Nearby Drivers at 1 Million Requests per Second](https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers) (paywalled half reconstructed). Re-verified on 2026-10-27, see the log.
 > **Primary sources read:** [H3 resolution table](https://h3geo.org/docs/core-library/restable/) · [Uber Engineering: H3](https://www.uber.com/blog/h3/) (2018-06-27) · [Uber: how matching works](https://www.uber.com/us/en/marketplace/matching/).
 > **Tags:** `[CONFIRMED]` stated by an Uber or H3 primary source · `[INDUSTRY PATTERN]` standard design or secondary-source claim · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline (content beyond the newsletter's public half).
 

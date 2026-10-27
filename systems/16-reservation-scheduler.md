@@ -199,7 +199,7 @@ search (eventually consistent) ─► choose ─► HOLD (insert row status=HELD
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the cited docs. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the cited docs. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **data integrity** (no double booking), **reliability**, **availability** of search, **performance** of search vs correctness of booking, **auditability**.
 - **Style (Ch 13/17):** a **service-based** split into search, booking (inventory), pricing, payment and notification. The inventory core is deliberately **one strongly consistent, shard-per-property store**, and the rest are event-driven consumers.
@@ -262,14 +262,14 @@ Room types are counted inventory per night. Numbered spaces use a range per unit
 
 - PostgreSQL docs: [Range types](https://www.postgresql.org/docs/current/rangetypes.html), [Exclusion constraints](https://www.postgresql.org/docs/current/ddl-constraints.html), [Transaction isolation](https://www.postgresql.org/docs/current/transaction-iso.html), and the [`btree_gist`](https://www.postgresql.org/docs/current/btree-gist.html) extension (linked from the range-types page, not read separately).
 - [Stripe: Idempotent requests](https://docs.stripe.com/api/idempotent_requests)
-- The earlier [`neokim-post/12` Airbnb / Booking.com note](../../neokim-post/12-how-airbnb-works.md) for the hotel flow, estimates, row-lock and version-check options, and the property-count reviewer notes.
+- The earlier [`neokim-post/12` Airbnb / Booking.com note](https://github.com/allmonty/study/blob/main/architecture/neokim-post/12-how-airbnb-works.md) for the hotel flow, estimates, row-lock and version-check options, and the property-count reviewer notes.
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary).
 - Related in this repo: [17 Payment system](17-payment-system.md), [10 Notification system](10-notification-system.md), [02 Rate limiter](02-rate-limiter.md).
 
 ## Sources and provenance
 
 > **Kind:** reference design, with its key correctness mechanisms sourced to the PostgreSQL and Stripe documentation. Booking.com, Airbnb and parking operators do not publish their reservation internals in enough detail to verify, so the system shape is the standard design `[INDUSTRY PATTERN]`. What **is** verified: how PostgreSQL range types and **exclusion constraints** prevent overlapping bookings, how its isolation levels behave under concurrency, and how payment idempotency keys work.
-> **Basis:** generalises [`neokim-post/12` (Airbnb / Booking.com)](../../neokim-post/12-how-airbnb-works.md), which covers the hotel flow in depth, to a scheduler that also handles **parking spaces**. This note is about the *inventory and concurrency core*. Payments are covered in [17 Payment system](17-payment-system.md).
+> **Basis:** generalises [`neokim-post/12` (Airbnb / Booking.com)](https://github.com/allmonty/study/blob/main/architecture/neokim-post/12-how-airbnb-works.md), which covers the hotel flow in depth, to a scheduler that also handles **parking spaces**. This note is about the *inventory and concurrency core*. Payments are covered in [17 Payment system](17-payment-system.md).
 > **Sources read on 2026-10-27:** PostgreSQL docs: [Range types](https://www.postgresql.org/docs/current/rangetypes.html), [Constraints (exclusion constraints)](https://www.postgresql.org/docs/current/ddl-constraints.html), [Transaction isolation](https://www.postgresql.org/docs/current/transaction-iso.html) · [Stripe: Idempotent requests](https://docs.stripe.com/api/idempotent_requests). The earlier note's PostgreSQL locking and Adyen references were verified in its own log and are not re-read here.
 > **Tags:** `[CONFIRMED]` stated by the PostgreSQL or Stripe docs · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible, or a business policy choice.
 

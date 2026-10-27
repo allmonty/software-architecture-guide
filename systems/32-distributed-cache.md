@@ -138,7 +138,7 @@ app ─► cache client / proxy ─► cache servers (consistent hashing, replic
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the paper. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the paper. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance**, **scalability**, **availability** (of the database behind it), **consistency** (bounded).
 - **Style (Ch 13):** a **service-based** caching tier with stateless proxies and partitioned stateful servers.

@@ -226,7 +226,7 @@ flowchart LR
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Extension. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Extension. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance** (µs latency; "low latency in high-frequency trading" is the book's own example of an *implicit* characteristic, Ch 4), **reliability** (no lost or duplicated orders), **fault tolerance/recoverability** (hot standbys, replay), **availability** in trading hours, and **auditability**. Fairness is domain, but it forces a structural choice: one sequencer.
 - **Styles (Ch 11, 14):** the hot path is a **pipeline** with point-to-point, unidirectional pipes: gateway → sequencer → matching engine → outbound log. LMAX's Disruptor is pipes-and-filters inside one process. Downstream, market data uses the book's **broadcast capability** (Ch 14 §6, whose example is literally a stock ticker): publish once, never know who listens.
@@ -296,7 +296,7 @@ Detect the gap from sequence numbers and send a request to a re-request server, 
 ## Sources and provenance
 
 > **Kind:** reference design with documented real parts. Real exchanges publish **protocol specifications** (Nasdaq ITCH, OUCH, MoldUDP64, FIX) and market-structure rules, and the LMAX team published its **architecture** in detail. They do not publish a full internal design of a production exchange's matching engine, so the diagram below combines the standard design with LMAX's documented approach `[INDUSTRY PATTERN]`.
-> **Basis:** upgraded from [`neokim-post/14`](../../neokim-post/14-how-stock-exchange-works.md), a summary of [Stock Exchange System Design](https://newsletter.systemdesign.one/p/stock-exchange-system-design) with reconstructed sections. Re-verified on 2026-10-27, see the log.
+> **Basis:** upgraded from [`neokim-post/14`](https://github.com/allmonty/study/blob/main/architecture/neokim-post/14-how-stock-exchange-works.md), a summary of [Stock Exchange System Design](https://newsletter.systemdesign.one/p/stock-exchange-system-design) with reconstructed sections. Re-verified on 2026-10-27, see the log.
 > **Primary sources read in this session:** Martin Fowler, [*The LMAX Architecture*](https://martinfowler.com/articles/lmax.html) (2011-07-12) · Thompson et al., [*Disruptor: High performance alternative to bounded queues*](https://lmax-exchange.github.io/disruptor/disruptor.html) · Nasdaq, [MoldUDP64 Protocol Specification V1.00](https://www.nasdaqtrader.com/content/technicalsupport/specifications/dataproducts/moldudp64.pdf) (PDF text extracted locally).
 > **Dated material:** LMAX's figures come from a 2011 benchmark on Nehalem-era hardware, so treat them as design evidence, not current performance.
 > **Tags:** `[CONFIRMED]` stated by a primary source we read now · `[EARLIER PASS]` verified in the neokim-post fact-check but not re-read now · `[INDUSTRY PATTERN]` standard design · `[SPECULATIVE]` plausible. The 🔧 marker is inherited from the baseline.

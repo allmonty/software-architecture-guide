@@ -18,7 +18,7 @@ His format, kept in the repository: a short noun-phrase **Title**; **Context** (
 
 AWS's guidance adds process: an ADR describes a significant choice, "its context, and its consequences"; the collection forms a **decision log**; "when the team accepts an ADR, it becomes immutable", and a new insight means proposing a new ADR that supersedes the old one. It lists what is architecturally significant, citing Richards and Ford: structure, non-functional requirements, dependencies, interfaces and construction techniques. It notes that recording the reason, not the implementation, makes it easier for others to adopt a decision and "prevents other architects who weren't involved in the decision-making process" from overruling it later.
 
-The repo's chapter summary [19 Architecture decisions](../../fundamentals-of-software-architecture/summaries/19-architecture-decisions.md) covers the same ground from the book.
+The repo's chapter summary [19 Architecture decisions](https://github.com/allmonty/study/blob/main/architecture/fundamentals-of-software-architecture/summaries/19-architecture-decisions.md) covers the same ground from the book.
 
 ## 2. Design docs `[CONFIRMED]` (Malte Ubl, "Design Docs at Google")
 
@@ -56,7 +56,7 @@ The essay's model: "every company gets about three innovation tokens"; you can s
 
 Write an ADR for a choice in one atlas system (for example, orchestration versus choreography in a saga, or leveled versus tiered compaction), including two options, the decision, and at least two negative consequences. Then trade ADRs with a colleague and try to overturn the decision by changing one assumption.
 
-**Related:** [P03 Distributed transactions](P03-distributed-transactions.md), [P02 Storage engines](P02-storage-engines.md), [P08 Cost](P08-cost-as-a-design-input.md), the book summaries [19 Architecture decisions](../../fundamentals-of-software-architecture/summaries/19-architecture-decisions.md) and [21 Diagramming and presenting](../../fundamentals-of-software-architecture/summaries/21-diagramming-and-presenting.md).
+**Related:** [P03 Distributed transactions](P03-distributed-transactions.md), [P02 Storage engines](P02-storage-engines.md), [P08 Cost](P08-cost-as-a-design-input.md), the book summaries [19 Architecture decisions](https://github.com/allmonty/study/blob/main/architecture/fundamentals-of-software-architecture/summaries/19-architecture-decisions.md) and [21 Diagramming and presenting](https://github.com/allmonty/study/blob/main/architecture/fundamentals-of-software-architecture/summaries/21-diagramming-and-presenting.md).
 
 ## Sources and provenance
 

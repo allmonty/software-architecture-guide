@@ -158,7 +158,7 @@ After match: result ──► rating service (TrueSkill-style) ──► profile
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the sources. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the sources. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance** (time-to-match, chat latency), **scalability** and **elasticity** (peak hours, new releases), **availability**, **fairness** (a domain-specific quality), and **isolation** between regions.
 - **Style (Ch 13, 14, 17):** **service-based** (frontend, matchmaker, allocation, rating, chat) with an **event-driven** push channel. The Open Match pipeline (frontend → director → match function → evaluator) is itself a small pipeline.

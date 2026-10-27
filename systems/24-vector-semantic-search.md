@@ -157,7 +157,7 @@ source ─► embed ─► fresh-writes index ─► periodic build ─► index
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the papers. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the papers. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance** (latency at a recall target), **scalability** (billions of vectors), **cost** (memory), **availability**, **data freshness**.
 - **Style (Ch 13):** **service-based** with a stateless coordinator over stateful index shards.
@@ -220,7 +220,7 @@ All vectors are incompatible with the new model's query vectors, so you re-embed
 ## 📚 Further reading
 
 - The three papers listed under Sources and provenance.
-- [`neokim-post/01` How LLMs work](../../neokim-post/01-how-llms-work.md) for what embeddings are.
+- [`neokim-post/01` How LLMs work](https://github.com/allmonty/study/blob/main/architecture/neokim-post/01-how-llms-work.md) for what embeddings are.
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary).
 - Related in this repo: [23 RAG knowledge assistant](23-rag-knowledge-assistant.md), [20 Web crawler and search](20-web-crawler-search.md), [03 Distributed key-value store](03-distributed-kv-store.md) for sharding and replication.
 

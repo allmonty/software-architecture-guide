@@ -165,7 +165,7 @@ ad server / browser ─► click collector (assign unique click id, validate) �
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the cited sources. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **data integrity** (billing), **fault tolerance**, **performance** (latency), **scalability**, **auditability**.
 - **Style (Ch 13):** an **event-driven pipeline** with a replayable log as the system of record, plus a batch correction path.

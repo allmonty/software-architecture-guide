@@ -181,7 +181,7 @@ For video distribution mechanics and caches see [12 YouTube](12-youtube.md) and 
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from Twitch's posts. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from Twitch's posts. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **performance** (glass-to-glass delay), **elasticity** (spikes on single channels), **availability**, **cost efficiency** (transcoding and bandwidth), **scalability** of fan-out.
 - **Style (Ch 13):** **service-based** with two very different subsystems, video (a pipeline) and chat (event-driven fan-out), joined by the channel identity.
@@ -243,7 +243,7 @@ Accept messages at edge servers, check rules once, publish to a topic for the ch
 ## 📚 Further reading
 
 - The Twitch posts and specifications listed under Sources and provenance.
-- [`neokim-post`](../../neokim-post/) notes on chat and video for basics.
+- [`neokim-post`](https://github.com/allmonty/study/blob/main/architecture/neokim-post) notes on chat and video for basics.
 - [System Design Primer](https://github.com/donnemartin/system-design-primer) (secondary).
 - Related in this repo: [08 WhatsApp](08-chat-whatsapp.md), [09 Discord](09-discord.md), [12 YouTube](12-youtube.md), [13 Netflix](13-netflix.md), [21 Game matchmaking and lobby chat](21-game-matchmaking-lobby-chat.md).
 

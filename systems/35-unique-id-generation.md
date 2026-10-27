@@ -125,7 +125,7 @@ UUIDs are 128-bit identifiers. The RFC says UUIDv6 is a field-compatible reorder
 
 ## 🏛️ Architecture lens (Fundamentals of Software Architecture)
 
-> 🔧 Our analysis, not from the sources. Vocabulary in [neokim-post/00-fundamentals.md §4](../../neokim-post/00-fundamentals.md#architecture-thinking).
+> 🔧 Our analysis, not from the sources. Vocabulary in [neokim-post/00-fundamentals.md §4](https://github.com/allmonty/study/blob/main/architecture/neokim-post/00-fundamentals.md#architecture-thinking).
 
 - **Driving characteristics (Ch 4–5):** **availability**, **performance**, **scalability**, **data locality** (index friendliness).
 - **Style (Ch 13):** an **embedded library or tiny stateless service**; the only shared state is machine-id assignment.
