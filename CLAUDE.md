@@ -16,6 +16,7 @@ npm run validate   # schema, references, required sections, relative links, sour
 npm test           # validator tests (node:test via tsx); single file: npx tsx --test test/validate.test.ts
 cd site && npm install && npm run dev      # http://localhost:5173
 cd site && npm run build                   # tsc --noEmit + vite build, output in site/dist
+npm run sweep      # needs `vite preview` on :5188 and headless Chrome on :9333 (see scripts/browser-sweep.mjs); checks every page
 ```
 
 Deep links: `site/#07-photo-upload-storage?flow=upload&step=2` opens a flow at a step.

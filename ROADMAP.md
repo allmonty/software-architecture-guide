@@ -4,8 +4,8 @@ What is left after the 35 systems, the toolkit and the site. Each item says what
 
 | # | Item | Status |
 |---|---|---|
-| 1 | Browser testing beyond headless Chrome | Partly done: automated sweep (see below). A real phone, a screen reader and a real print dialog are still untested. |
-| 2 | Check the whole site in the new design | Done by an automated sweep of every page, three themes and two widths. |
+| 1 | Browser testing beyond headless Chrome | Partly done: `npm run sweep` (see below), plus hand checks of the study checkboxes, progress, PNG export and print styles. A real phone, a screen reader and a real print dialog are still untested. |
+| 2 | Check the whole site in the new design | Done: `npm run sweep` opens every page (454 checks across 3 themes and 2 widths) with 0 console errors and 0 failures after the fixes below. |
 | 3 | Fresh independent source review of notes 01-31 and workbook answer keys W01-W04 | Deferred. The last review covered 32-35, the toolkit and the site code. |
 | 4 | Find a primary source for "dispatch optimization" in note 15 | Deferred. It rests on a summary of Uber's talk. |
 | 5 | Confidence tags on diagram edges | Deferred. Needs a schema change and hand-tagging a few hundred edges. |
@@ -15,7 +15,11 @@ What is left after the 35 systems, the toolkit and the site. Each item says what
 
 ## 1 and 2: what the browser sweep covers and what it cannot
 
-`scripts/` has no browser tool, so the sweep drives headless Chrome over its DevTools protocol (the recipe is in the commit that added it). It cannot stand in for a real phone, a screen reader or the print dialog; those stay open.
+`npm run sweep` (`scripts/browser-sweep.mjs`, start instructions in its header) drives headless Chrome over its DevTools protocol. For every system, toolkit page, track, the concept index and the home page it checks console errors, sideways scroll, clipped cards, empty pages, a missing trust card or diagram, one h1 per page, and text contrast (WCAG AA) across light, warm and dark at 1280px and 500px.
+
+It found, and the commits fixed: two h1 headings on every system page (the note's own title is now a second-level heading) and a favicon 404 on every load. The dark-theme "lighter = component" legend chip is flagged by the contrast check but is a false positive (gradient background), and is excluded.
+
+It cannot replace a real phone, a screen reader or the print dialog; those stay open. Print was checked only with print-media emulation, and the PNG export, study checkboxes and progress saved across reloads were checked by hand in headless Chrome.
 
 ## 8. Content not yet written
 

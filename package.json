@@ -9,7 +9,8 @@
     "build": "npm --prefix site run build",
     "verify": "tsx scripts/verify-quotes.ts",
     "links": "tsx scripts/check-links.ts",
-    "freshness": "tsx scripts/freshness.ts"
+    "freshness": "tsx scripts/freshness.ts",
+    "sweep": "node scripts/browser-sweep.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
