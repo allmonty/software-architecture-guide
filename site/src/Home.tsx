@@ -137,6 +137,7 @@ export function Home() {
 
       <section>
         <h2><NamedIcon name="browse" />3. Browse everything</h2>
+        <p className="muted small">Looking for an idea rather than a system? <a href="#concepts">Browse by concept</a>.</p>
         <input className="search" type="search" placeholder="Search systems, primers, incidents and exercises" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search" />
         {needle ? (
           <ul className="steps">{hits.length ? hits.map((i) => <ItemRow key={i.ref} item={i} />) : <li className="muted">No match.</li>}</ul>

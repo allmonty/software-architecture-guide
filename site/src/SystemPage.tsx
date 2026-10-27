@@ -7,6 +7,7 @@ import { DiagramView } from "./DiagramView.tsx";
 import { StudyToggle } from "./StudyToggle.tsx";
 import { rehypeNodeRefs } from "./nodeRefs.ts";
 import { ReadingTools } from "./ReadingTools.tsx";
+import { ConceptChips } from "./ConceptsPage.tsx";
 import { TrustCard } from "./TrustCard.tsx";
 import { Outline, scrollToSection, useHeadingComponents } from "./sections.tsx";
 import { systems, toolkitPages } from "./data.ts";
@@ -130,6 +131,7 @@ export function SystemPage({
         <article className={`notes right${mode === "graph" ? " hidden" : ""}`}>
           <Outline markdown={system.markdown} variant="select" remount={mode} />
           <TrustCard title={system.diagram.title} markdown={system.markdown} claims={system.claims} diagram={system.diagram} />
+          <ConceptChips systemId={system.id} />
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={mode === "split" ? [rehypeRaw, refPlugin] : [rehypeRaw]}

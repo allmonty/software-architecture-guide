@@ -8,6 +8,7 @@ import { TrackPage } from "./TrackPage.tsx";
 import { StudyToggle } from "./StudyToggle.tsx";
 import { SystemPage, components } from "./SystemPage.tsx";
 import { Outline, scrollToSection, useHeadingComponents } from "./sections.tsx";
+import { ConceptsPage } from "./ConceptsPage.tsx";
 import { ReadingTools } from "./ReadingTools.tsx";
 import { TrustCard } from "./TrustCard.tsx";
 import { SettingsMenu } from "./SettingsMenu.tsx";
@@ -37,7 +38,9 @@ export function App() {
         <a href="#" className="brand">System Design Atlas</a>
         <SettingsMenu />
       </header>
-      {trackId ? (
+      {id === "concepts" ? (
+        <ConceptsPage focus={params.get("c")} />
+      ) : trackId ? (
         <TrackPage id={trackId} />
       ) : page ? (
         <ToolkitView key={page.id} page={page} section={params.get("section")} />

@@ -1,3 +1,4 @@
+import { parseConcepts } from "../../schema/concepts.ts";
 import { Diagram } from "../../schema/diagram.schema.ts";
 import { ageInDays, lastReadDate, notVerified, STALE_DAYS, summarizeLedger, type LedgerEntry, type QuoteTally } from "../../schema/trust.ts";
 
@@ -88,3 +89,7 @@ export function trustOf(markdown: string, claims: LedgerEntry[], diagram?: Diagr
     notVerified: notVerified(markdown),
   };
 }
+
+// ---- Concepts (the README matrix) ----------------------------------------------------------------------------
+import readme from "../../README.md?raw";
+export const concepts = parseConcepts(readme);
