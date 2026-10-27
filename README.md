@@ -138,7 +138,7 @@ For interviews, practise each note's **Interview questions**, and walk the **flo
 | Real-time push and WebSockets | 08, 09, 18, 21, 29 |
 | Rate limiting and back-pressure | 02, 10, 17, 20, 22, 25, 29, 30 |
 | Failure handling (fail open, failover, recovery) | 02, 10, 17, 19, 27, 30 |
-| Pre-signed URLs and blob storage | 05, 06, 07, 12, 14 |
+| Pre-signed URLs and blob storage | 05, 07, 08, 12, 14 |
 | Control plane vs data plane, steering | 13, 29 |
 | ID generation | 01, 09, 11, 35 |
 | Geospatial and time-range indexing | 15, 16 |

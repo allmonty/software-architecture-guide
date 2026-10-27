@@ -34,13 +34,13 @@ Try each problem on paper before opening the solution. Assumptions are part of t
 
 ## 3. Photo uploads: 2 million a day at 4 MB
 
-**Problem.** Thumbnails add 10% to storage; keep 3 replicas. Each photo is viewed 20 times a day on average at 0.5 MB per view (served from thumbnails and previews). Estimate daily storage growth, upload bandwidth and view bandwidth.
+**Problem.** Thumbnails add 10% to storage; keep 3 replicas. Each day's views equal 20 times that day's uploads (most views hit recent photos), at 0.5 MB per view (served from thumbnails and previews). Estimate daily storage growth, upload bandwidth and view bandwidth.
 
 <details><summary>Worked solution</summary>
 
 - Daily storage: 2,000,000 x 4 MB = 8 TB; plus 10% = 8.8 TB; with 3 replicas about 26.4 TB per day, about 9.6 PB per year.
 - Upload bandwidth: 8 TB / 86,400 s = about 93 MB/s, about 741 Mbit/s average.
-- Views: assume the stored library is much larger than a day's uploads; take 2,000,000 x 20 = 40 million views a day x 0.5 MB = 20 TB per day, about 1.9 Gbit/s average, several times that at peak.
+- Views: views per day equal 20 times the day's uploads: 2,000,000 x 20 = 40 million views a day x 0.5 MB = 20 TB per day, about 1.9 Gbit/s average, several times that at peak.
 - Implication: delivery bandwidth and storage cost dominate, so a CDN and storage tiering matter more than request rate ([07 Photo storage](../systems/07-photo-upload-storage.md)).
 
 </details>

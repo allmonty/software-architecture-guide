@@ -125,7 +125,7 @@ Each scenario describes a design that sounds reasonable and contains one or more
 
 ## 9. Sizing a KV cache
 
-**Design.** A team sizes GPU memory for serving a 70-billion-parameter model with 80 layers and hidden size 8192 using the formula from a paper on a 13B model: 2 x hidden size x layers x 2 bytes per token. They conclude each token needs about 2.6 MB of cache and plan far fewer concurrent requests than the hardware can hold.
+**Design.** A team sizes GPU memory for serving a 70-billion-parameter model with 80 layers, hidden size 8192, 64 attention heads and 8 key-value heads (grouped-query attention) using the formula from a paper on a 13B model: 2 x hidden size x layers x 2 bytes per token. They conclude each token needs about 2.6 MB of cache and plan far fewer concurrent requests than the hardware can hold.
 
 <details><summary>What is wrong, and what would you change?</summary>
 

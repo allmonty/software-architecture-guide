@@ -29,13 +29,13 @@ An engineer on the firewall team deployed a minor change to XSS detection rules 
 - The rollback plan required running the complete WAF build twice, which took too long.
 - The first alert for the global traffic drop took too long to fire, the status page was not updated quickly enough, and customers could not reach the dashboard or API because they pass through the same edge.
 
-## What the company changed `[CONFIRMED]`
+## What the company did and announced `[CONFIRMED]`
 
 - Stopped all WAF release work; restored the CPU protection; inspected all 3,868 managed rules for similar backtracking.
-- Added performance profiling of every rule to the test suite.
-- Moving to the re2 or Rust regex engines, which have run-time guarantees.
-- Changing the procedure to staged rollouts for rules, while keeping an emergency global path for active attacks.
-- Adding an emergency way to take the dashboard and API off Cloudflare's edge, and automating status page updates.
+- Planned in the post (ETA 19 July 2019): performance profiling of every rule in the test suite.
+- Planned in the post (ETA 31 July 2019): switching to the re2 or Rust regex engine, which both have run-time guarantees.
+- Announced in the post: changing the procedure to staged rollouts for rules, while keeping an emergency global path for active attacks.
+- Announced in the post: an emergency way to take the dashboard and API off Cloudflare's edge, and automated status page updates.
 
 ---
 
@@ -57,7 +57,7 @@ Design a staged rollout for rules that must reach every edge in under a minute d
 ## Sources and provenance
 
 > **Sources read on 2026-10-27:** Cloudflare, [*Details of the Cloudflare outage on July 2, 2019*](https://blog.cloudflare.com/details-of-the-cloudflare-outage-on-july-2-2019/).
-> **Dated material:** 2019. Cloudflare says it has since changed its WAF engine and rollout process; this note describes the post as published.
+> **Dated material:** 2019. the post announces these changes as plans; whether and when they shipped is not claimed here, and this note describes the post as published.
 > **Not read:** Cloudflare's later incident reports and the regex backtracking appendix beyond the points above.
 > **Tags:** `[CONFIRMED]` stated by the primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible or illustrative. Sections marked "Our analysis" are ours.
 
