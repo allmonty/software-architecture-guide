@@ -233,3 +233,22 @@ button.study { margin-left: auto; }
 .settings-pop .small { font-size: 12px; margin: 6px 0 0; }
 /* Steps and progress sit at the bottom of every track card, so they line up across cards of different height. */
 .card-foot { margin-top: auto; padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+
+/* ---- Home: modern look ---- */
+.backdrop { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; color: var(--accent); opacity: .12;
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 75% 15%, #000 0%, transparent 78%); mask-image: radial-gradient(ellipse 80% 70% at 75% 15%, #000 0%, transparent 78%); }
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 380px); gap: 36px; align-items: center; padding: 28px 0 8px; }
+.hero h1 { font-size: 2.3rem; letter-spacing: -.02em; }
+.hero .grad { background: linear-gradient(90deg, var(--accent), var(--c-confirmed)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero-art { width: 100%; height: auto; filter: drop-shadow(0 14px 24px rgb(0 0 0 / .18)); }
+.track-cards, .method { grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); }
+.track-cards a, .cards a, .method li, .step, .legend-box {
+  background: color-mix(in srgb, var(--card) 80%, transparent); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  border-radius: 14px; box-shadow: 0 1px 2px rgb(0 0 0 / .06), 0 10px 24px -14px rgb(0 0 0 / .3);
+}
+.track-cards a, .cards a { transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease; }
+.track-cards a:hover, .cards a:hover { transform: translateY(-2px); box-shadow: 0 1px 2px rgb(0 0 0 / .06), 0 16px 30px -14px rgb(0 0 0 / .4); }
+.button { border-radius: 10px; padding: 9px 16px; }
+@media (prefers-reduced-motion: reduce) { .track-cards a, .cards a { transition: none; } .track-cards a:hover, .cards a:hover { transform: none; } }
+@media (max-width: 760px) { .hero { grid-template-columns: minmax(0, 1fr); } .hero-art { max-width: 300px; margin: 0 auto; order: -1; } }
+@media (max-width: 560px) { .hero h1 { font-size: 1.6rem; } }

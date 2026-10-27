@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { resolveRef, systems, toolkitPages, tracks, type Item } from "./data.ts";
+import { Backdrop, HeroArt } from "./Art.tsx";
 import { resetProgress, toggleDone, useProgress } from "./progress.ts";
 
 // Learning stages (the order in the README learning path). Each entry is a system number.
@@ -67,22 +68,26 @@ export function Home() {
 
   return (
     <main className="home">
+      <Backdrop />
       <section className="hero">
-        <h1>Learn system design by walking through real architectures</h1>
-        <p className="lede">
-          {systems.length} case studies with interactive diagrams, a casebook of real outages, ten primers on the topics
-          that cut across them, and a practice workbook. Every claim names its source and says how well it is supported.
-        </p>
-        <div className="hero-actions">
-          <a className="button primary" href="#track/interview">Start the interview track</a>
-          <a className="button" href="#track/architect">Become an architect</a>
-          {lastItem && <a className="button" href={lastItem.href}>Continue: {lastItem.title}</a>}
+        <div className="hero-text">
+          <h1>Learn system design by walking through <span className="grad">real architectures</span></h1>
+          <p className="lede">
+            {systems.length} case studies with interactive diagrams, a casebook of real outages, ten primers on the topics
+            that cut across them, and a practice workbook. Every claim names its source and says how well it is supported.
+          </p>
+          <div className="hero-actions">
+            <a className="button primary" href="#track/interview">Start the interview track</a>
+            <a className="button" href="#track/architect">Become an architect</a>
+            {lastItem && <a className="button" href={lastItem.href}>Continue: {lastItem.title}</a>}
+          </div>
+          <p className="muted small">
+            {doneCount > 0 ? `${doneCount} of ${total} pages marked as studied. ` : "Tick pages as you finish them to track progress. "}
+            Progress is saved only in this browser.
+            {doneCount > 0 && <> <button className="linkish" onClick={() => { if (confirm("Clear all progress in this browser?")) resetProgress(); }}>Reset</button></>}
+          </p>
         </div>
-        <p className="muted small">
-          {doneCount > 0 ? `${doneCount} of ${total} pages marked as studied. ` : "Tick pages as you finish them to track progress. "}
-          Progress is saved only in this browser.
-          {doneCount > 0 && <> <button className="linkish" onClick={() => { if (confirm("Clear all progress in this browser?")) resetProgress(); }}>Reset</button></>}
-        </p>
+        <HeroArt />
       </section>
 
       <section>
