@@ -29,11 +29,15 @@ const components: Components = {
 export function SystemPage({
   system,
   initialTab,
+  initialLevel,
+  initialFocus,
   initialFlow,
   initialStep,
 }: {
   system: System;
   initialTab: "diagram" | "notes";
+  initialLevel: "context" | "container" | "component";
+  initialFocus: string | null;
   initialFlow: string | null;
   initialStep: number;
 }) {
@@ -54,15 +58,15 @@ export function SystemPage({
       </div>
       {tab === "diagram" && (
         <p className="legend muted">
-          Colour = kind
-          {(["client", "edge", "service", "datastore", "queue", "external"] as const).map((k) => (
-            <span key={k} className={`chip kind-${k}`}>{k}</span>
+          C4:
+          {(["person", "external-system", "container", "component"] as const).map((k) => (
+            <span key={k} className={`chip c4-${k}`}>{k === "external-system" ? "external system" : k}</span>
           ))}
-          · Border: solid = confirmed, dashed = industry pattern, dotted = speculative
+          · Border: solid = confirmed, dashed = industry pattern, dotted = speculative · Lines: dashed = async
         </p>
       )}
       {tab === "diagram" ? (
-        <DiagramView key={system.id} diagram={system.diagram} initialFlow={initialFlow} initialStep={initialStep} />
+        <DiagramView key={system.id} diagram={system.diagram} initialFlow={initialFlow} initialStep={initialStep} initialLevel={initialLevel} initialFocus={initialFocus} />
       ) : (
         <article className="notes">
           <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>{system.markdown}</ReactMarkdown>
