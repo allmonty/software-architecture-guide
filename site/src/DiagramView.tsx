@@ -8,6 +8,7 @@ import type { Diagram } from "../../schema/diagram.schema.ts";
 import { classifySource, type LedgerEntry } from "../../schema/trust.ts";
 import { layout, NODE_H, NODE_W } from "./layout.ts";
 import { mentionsOf, scrollToSection } from "./sections.tsx";
+import { buildSvg, downloadPng, downloadSvg } from "./export.ts";
 import { buildView, containersWithComponents, SYSTEM_ID, typeLine, type Element, type Level } from "./c4.ts";
 
 type C4Data = { el: Element; lit: boolean; dir: "LR" | "TB" };
@@ -58,6 +59,7 @@ export function DiagramView({
   const startFocus = focusable.find((n) => n.id === initialFocus)?.id ?? focusable[0]?.id ?? null;
   const [level, setLevel] = useState<Level>(initialLevel === "component" && !startFocus ? "container" : initialLevel);
   const [focus, setFocus] = useState<string | null>(startFocus);
+  const [labels, setLabels] = useState(true);
   const [sel, setSel] = useState<{ kind: "el" | "rel"; id: string } | null>(null);
   const known = diagram.flows.find((f) => f.id === initialFlow);
   const [flowId, setFlowId] = useState<string | null>(known?.id ?? null);
@@ -148,13 +150,21 @@ export function DiagramView({
     const isCurrent = r.id === activeRel?.id;
     const dim = flow && !isCurrent && !seen.has(r.id);
     return {
-      id: r.id, source: r.from, target: r.to, label: r.label, type: "smoothstep",
+      id: r.id, source: r.from, target: r.to, label: labels ? r.label : undefined, type: "smoothstep",
       animated: isCurrent || r.async,
       markerEnd: { type: MarkerType.ArrowClosed },
       className: `${isCurrent ? "edge-current" : ""} ${dim ? "edge-dim" : ""}`,
       style: r.async && !isCurrent ? { strokeDasharray: "5 4" } : undefined,
     };
   });
+
+  // The view exactly as arranged on screen, including any positions the reader dragged.
+  const exportData = () => {
+    const levelName = LEVELS.find((l) => l.id === level)!.name.replace(/^\d · /, "");
+    const where = level === "component" && focus ? ` · ${levelName}: ${label(focus)}` : ` · ${levelName}`;
+    const built = buildSvg({ title: `${diagram.title}${where}`, elements: view.elements, rels: view.rels, pos, boundary: view.boundary, showLabels: labels });
+    return { ...built, name: `${diagram.id}-${level}${level === "component" && focus ? `-${focus}` : ""}` };
+  };
 
   const selEl = sel?.kind === "el" ? view.elements.find((e) => e.id === sel.id) : undefined;
   const selRel = sel?.kind === "rel" ? view.rels.find((r) => r.id === sel.id) : undefined;
@@ -202,6 +212,11 @@ export function DiagramView({
           <Background />
           <Controls showInteractive={false} />
         </ReactFlow>
+        <div className="tools">
+          <button aria-pressed={labels} onClick={() => setLabels(!labels)} title="Show or hide the text on the lines">Line labels</button>
+          <button onClick={() => { const x = exportData(); downloadSvg(x.name, x.svg); }} title="Download this view as an SVG image">SVG</button>
+          <button onClick={() => { const x = exportData(); downloadPng(x.name, x.svg, x.width, x.height); }} title="Download this view as a PNG image">PNG</button>
+        </div>
         {Object.keys(mv).length > 0 && (
           <button className="reset" onClick={() => setMoved((m) => ({ ...m, [viewKey]: {} }))}>Reset layout</button>
         )}
