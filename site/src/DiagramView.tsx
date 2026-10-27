@@ -4,10 +4,21 @@ import ReactMarkdown from "react-markdown";
 import type { Diagram } from "../../schema/diagram.schema.ts";
 import { layout, NODE_H, NODE_W } from "./layout.ts";
 
-export function DiagramView({ diagram }: { diagram: Diagram }) {
+export function DiagramView({
+  diagram,
+  initialFlow = null,
+  initialStep = 0,
+}: {
+  diagram: Diagram;
+  initialFlow?: string | null;
+  initialStep?: number;
+}) {
   const [selected, setSelected] = useState<string | null>(null);
-  const [flowId, setFlowId] = useState<string | null>(null);
-  const [step, setStep] = useState(0);
+  const known = diagram.flows.find((f) => f.id === initialFlow);
+  const [flowId, setFlowId] = useState<string | null>(known?.id ?? null);
+  const [step, setStep] = useState(
+    known ? Math.min(Math.max(initialStep, 0), known.steps.length - 1) : 0,
+  );
   const flow = diagram.flows.find((f) => f.id === flowId) ?? null;
 
   const pos = useMemo(() => layout(diagram), [diagram]);
@@ -64,6 +75,8 @@ export function DiagramView({ diagram }: { diagram: Diagram }) {
           nodes={nodes}
           edges={edges}
           fitView
+          fitViewOptions={{ padding: 0.12 }}
+          minZoom={0.1}
           nodesDraggable={false}
           nodesConnectable={false}
           onNodeClick={(_, n) => setSelected(n.id)}

@@ -27,9 +27,17 @@ button:disabled { opacity: .4; cursor: default; }
 .cards { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
 .cards a { display: block; padding: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; text-decoration: none; color: var(--fg); }
 .cards .num { color: var(--muted); margin-right: 8px; }
-.cards small { display: block; color: var(--muted); }
+.cards small { display: inline-block; margin-top: 4px; }
 .bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
 .bar h1 { margin: 0; font-size: 1.3rem; }
+.home section h2 { font-size: 1rem; margin: 22px 0 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.kind { font-size: .7rem; font-weight: 500; padding: 1px 8px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); vertical-align: middle; }
+.kind.real-system { color: var(--c-confirmed); border-color: currentColor; }
+.kind.reference-design { color: var(--c-pattern); border-color: currentColor; }
+.legend { font-size: .8rem; margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chip { padding: 1px 8px; border-radius: 6px; border: 1px solid var(--line); color: var(--fg); }
+.chip.kind-client { background: var(--k-client); } .chip.kind-edge { background: var(--k-edge); } .chip.kind-service { background: var(--k-service); }
+.chip.kind-datastore { background: var(--k-datastore); } .chip.kind-queue { background: var(--k-queue); } .chip.kind-external { background: var(--k-external); }
 .diagram { display: grid; grid-template-columns: 1fr 340px; gap: 12px; margin-top: 12px; }
 .canvas { height: calc(100vh - 150px); min-height: 420px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
 .panel { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 12px; overflow: auto; max-height: calc(100vh - 150px); }
@@ -59,4 +67,11 @@ button:disabled { opacity: .4; cursor: default; }
 .react-flow__controls-button { background: var(--card); color: var(--fg); border-color: var(--line); }
 .react-flow__controls-button svg { fill: currentColor; }
 .react-flow__attribution { background: transparent; }
-@media (max-width: 860px) { .diagram { grid-template-columns: 1fr; } .canvas { height: 60vh; } .panel { max-height: none; } }
+html, body { overflow-x: hidden; }
+.diagram > * { min-width: 0; }
+@media (max-width: 860px) {
+  .diagram { grid-template-columns: minmax(0, 1fr); }
+  .canvas { height: 60vh; }
+  .panel { max-height: none; }
+  .home, .system { padding: 12px 16px; }
+}
