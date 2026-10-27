@@ -79,7 +79,7 @@ Picture a **post office that never closes and keeps a phone line open to every c
 | Peak concurrent connections | 50M |
 | Messages/day | 500M × 20 = **10B/day** |
 | Avg msg/s | ~115k/s |
-| Peak msg/s (3–5×) | **350k–500k/s** |
+| Peak msg/s (3–5×) | **350k–580k/s** |
 | Message size | ~1 KB with metadata |
 | Raw write volume | 10 TB/day (~3.6 PB/yr if kept forever) |
 | **Actual active storage** | ~**400–500 TB** (most messages are deleted seconds after delivery). Article's figure: see Reviewer notes for how it can and can't be derived |
