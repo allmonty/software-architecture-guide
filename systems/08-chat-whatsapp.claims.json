@@ -12,9 +12,24 @@
     "status": "confirmed"
   },
   {
+    "quote": "everyone online",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
+  },
+  {
     "quote": "about 32 engineers at the 2014 acquisition",
     "status": "ignored",
     "note": "Secondary-source figure, labelled unverified in the note."
+  },
+  {
+    "quote": "store & deliver",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
+  },
+  {
+    "quote": "require L4 instead of L7",
+    "status": "manual",
+    "note": "Carried from the earlier verification pass; the secondary newsletter page could not be re-read in full on 2026-10-27."
   },
   {
     "quote": "all healthy chat-server instances",
@@ -38,5 +53,11 @@
     "quote": "server doesn't keep messages",
     "status": "ignored",
     "note": "A requirement phrase, not a quotation."
+  },
+  {
+    "quote": "break-in recovery",
+    "url": "https://signal.org/docs/specifications/doubleratchet/",
+    "via": "direct",
+    "status": "confirmed"
   }
 ]

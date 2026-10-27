@@ -12,6 +12,12 @@
     "status": "confirmed"
   },
   {
+    "quote": "linearizability",
+    "url": "https://discord.com/blog/how-discord-scaled-elixir-to-5-000-000-concurrent-users",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "Powers every single Discord guild",
     "url": "https://discord.com/blog/using-rust-to-scale-elixir-for-11-million-concurrent-users",
     "via": "direct",
@@ -24,7 +30,19 @@
     "status": "confirmed"
   },
   {
+    "quote": "tens of millions",
+    "url": "https://discord.com/blog/why-discord-is-switching-from-go-to-rust",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "latency and CPU spikes roughly every 2 minutes",
+    "url": "https://discord.com/blog/why-discord-is-switching-from-go-to-rust",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "had no latency spikes",
     "url": "https://discord.com/blog/why-discord-is-switching-from-go-to-rust",
     "via": "direct",
     "status": "confirmed"
@@ -49,6 +67,12 @@
   },
   {
     "quote": "177 Cassandra nodes to just 72 ScyllaDB nodes",
+    "url": "https://discord.com/blog/how-discord-stores-trillions-of-messages",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a static time window",
     "url": "https://discord.com/blog/how-discord-stores-trillions-of-messages",
     "via": "direct",
     "status": "confirmed"

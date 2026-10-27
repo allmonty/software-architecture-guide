@@ -34,5 +34,22 @@
     "url": "https://www.uber.com/us/en/marketplace/matching/",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "every few seconds",
+    "url": "https://newsletter.systemdesign.one/p/how-does-uber-find-nearby-drivers",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "deleted subsequence",
+    "status": "manual",
+    "note": "Carried from the earlier verification pass; the H3 documentation page could not be re-read in full on 2026-10-27."
+  },
+  {
+    "quote": "dispatch optimization",
+    "url": "https://highscalability.com/how-uber-scales-their-real-time-market-platform/",
+    "via": "direct",
+    "status": "confirmed"
   }
 ]

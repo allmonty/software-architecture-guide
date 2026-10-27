@@ -1,5 +1,10 @@
 [
   {
+    "quote": "which database?",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
+  },
+  {
     "quote": "by default, the CREATE INDEX command creates B-tree indexes, which fit the most common situations",
     "url": "https://www.postgresql.org/docs/current/indexes-types.html",
     "via": "direct",

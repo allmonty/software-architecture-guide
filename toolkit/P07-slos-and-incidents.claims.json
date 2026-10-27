@@ -30,6 +30,12 @@
     "status": "confirmed"
   },
   {
+    "quote": "Service Level Objectives",
+    "url": "https://sre.google/sre-book/embracing-risk/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "Start by thinking about (or finding out!) what your users care about, not what you can measure.",
     "url": "https://sre.google/sre-book/service-level-objectives/",
     "via": "direct",
@@ -43,6 +49,12 @@
   },
   {
     "quote": "if you can't ever win a conversation about priorities by quoting a particular SLO, it's probably not worth having that SLO",
+    "url": "https://sre.google/sre-book/service-level-objectives/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "perfection can wait",
     "url": "https://sre.google/sre-book/service-level-objectives/",
     "via": "direct",
     "status": "confirmed"
@@ -74,6 +86,12 @@
   {
     "quote": "causing a domino effect that takes down all the replicas for a service",
     "url": "https://sre.google/sre-book/addressing-cascading-failures/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Postmortem Culture",
+    "url": "https://sre.google/sre-book/embracing-risk/",
     "via": "direct",
     "status": "confirmed"
   },

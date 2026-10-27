@@ -29,9 +29,16 @@
     "status": "confirmed"
   },
   {
-    "quote": "with a single Master. A cell scales to",
-    "status": "ignored",
-    "note": "Quote-pairing artifact."
+    "quote": "around 50PB of raw data",
+    "url": "https://dropbox.tech/infrastructure/inside-the-magic-pocket",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "around a hundred petabytes",
+    "url": "https://dropbox.tech/infrastructure/inside-the-magic-pocket",
+    "via": "direct",
+    "status": "confirmed"
   },
   {
     "quote": "giant sharded MySQL cluster",
@@ -70,12 +77,31 @@
     "status": "confirmed"
   },
   {
-    "quote": "(Inside the Magic Pocket). Most of Magic Pocket was built by",
-    "status": "ignored",
-    "note": "Quote-pairing artifact."
+    "quote": "around 6 months",
+    "url": "https://dropbox.tech/infrastructure/inside-the-magic-pocket",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "less than half a dozen people",
+    "url": "https://dropbox.tech/infrastructure/inside-the-magic-pocket",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "several trillion entries",
+    "url": "https://dropbox.tech/infrastructure/reintroducing-edgestore",
+    "via": "direct",
+    "status": "confirmed"
   },
   {
     "quote": "millions of queries per second",
+    "url": "https://dropbox.tech/infrastructure/reintroducing-edgestore",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "5–9s of availability",
     "url": "https://dropbox.tech/infrastructure/reintroducing-edgestore",
     "via": "direct",
     "status": "confirmed"
@@ -127,5 +153,10 @@
     "url": "https://dropbox.tech/infrastructure/rewriting-the-heart-of-our-sync-engine",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "conflicted copy",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
   }
 ]

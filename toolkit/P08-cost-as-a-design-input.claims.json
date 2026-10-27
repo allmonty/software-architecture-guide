@@ -25,5 +25,15 @@
     "quote": "from architecture design to ongoing operations",
     "status": "manual",
     "note": "Confirmed on the Internet Archive copy of finops.org/framework/principles/ on 2026-10-27; the script cannot fetch finops.org directly."
+  },
+  {
+    "quote": "much like security",
+    "status": "manual",
+    "note": "Confirmed on the Internet Archive copy of finops.org/framework/principles on 2026-10-27; the script cannot fetch finops.org."
+  },
+  {
+    "quote": "an operational framework and cultural practice which maximizes the business value of cloud",
+    "status": "manual",
+    "note": "Confirmed on the Internet Archive copy of finops.org on 2026-10-27; the script cannot fetch finops.org."
   }
 ]

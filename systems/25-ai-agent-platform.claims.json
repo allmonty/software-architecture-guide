@@ -84,6 +84,18 @@
     "status": "confirmed"
   },
   {
+    "quote": "agent-computer interface",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "spent more time optimizing our tools than the overall prompt",
+    "url": "https://www.anthropic.com/engineering/building-effective-agents",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "human review remains crucial for ensuring solutions align with broader system requirements",
     "url": "https://www.anthropic.com/engineering/building-effective-agents",
     "via": "direct",
@@ -128,6 +140,18 @@
   {
     "quote": "SHOULD establish timeouts for all sent requests",
     "url": "https://modelcontextprotocol.io/specification/2025-06-18/basic/lifecycle",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "model-controlled",
+    "url": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "there SHOULD always be a human in the loop with the ability to deny tool invocations",
+    "url": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools",
     "via": "direct",
     "status": "confirmed"
   },

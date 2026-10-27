@@ -60,6 +60,30 @@
     "status": "confirmed"
   },
   {
+    "quote": "usually 50-100 tokens",
+    "url": "https://www.anthropic.com/news/contextual-retrieval",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "$1.02 per million document tokens",
+    "url": "https://www.anthropic.com/news/contextual-retrieval",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "very limited gains",
+    "url": "https://www.anthropic.com/news/contextual-retrieval",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "always run evals",
+    "url": "https://www.anthropic.com/news/contextual-retrieval",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "can affect retrieval performance",
     "url": "https://www.anthropic.com/news/contextual-retrieval",
     "via": "direct",

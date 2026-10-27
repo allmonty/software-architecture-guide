@@ -100,5 +100,10 @@
     "url": "https://thanos.io/tip/thanos/design.md/",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "dead man's switch",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
   }
 ]

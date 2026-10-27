@@ -18,6 +18,18 @@
     "status": "confirmed"
   },
   {
+    "quote": "they will do so",
+    "url": "https://google.aip.dev/158",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "not a sufficient obfuscation mechanism",
+    "url": "https://google.aip.dev/158",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "allowing the same request to be issued more than once without subsequent calls having any effect",
     "url": "https://google.aip.dev/155",
     "via": "direct",
@@ -32,6 +44,18 @@
   {
     "quote": "if a connection error occurs, you can safely repeat the request without risk of creating a second object or performing the update twice.",
     "url": "https://docs.stripe.com/api/idempotent_requests",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "with no breaking changes",
+    "url": "https://docs.stripe.com/api/versioning",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Stripe can add new values as a backward-compatible change without requiring an API version upgrade",
+    "url": "https://docs.stripe.com/api/versioning",
     "via": "direct",
     "status": "confirmed"
   }

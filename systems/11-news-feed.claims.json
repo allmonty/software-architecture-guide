@@ -59,9 +59,20 @@
     "note": "Describes a common claim, not a source quotation."
   },
   {
+    "quote": "came the closest",
+    "url": "https://instagram-engineering.com/sharding-ids-at-instagram-1cf5a71e5a5c",
+    "via": "archive",
+    "status": "confirmed"
+  },
+  {
     "quote": "several thousand 'logical' shards that are mapped in code to far fewer physical shards",
     "url": "https://instagram-engineering.com/sharding-ids-at-instagram-1cf5a71e5a5c",
     "via": "archive",
     "status": "confirmed"
+  },
+  {
+    "quote": "how the feed works",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
   }
 ]

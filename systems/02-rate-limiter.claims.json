@@ -12,6 +12,23 @@
     "status": "confirmed"
   },
   {
+    "quote": "Final line of defense",
+    "url": "https://stripe.com/blog/rate-limiters",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "design a rate limiter",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
+  },
+  {
+    "quote": "only an approximation",
+    "url": "https://blog.cloudflare.com/counting-things-a-lot-of-different-things/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "In the above code there is a race condition.",
     "url": "https://redis.io/docs/latest/commands/incr/",
     "via": "direct",
@@ -22,5 +39,15 @@
     "url": "https://blog.cloudflare.com/counting-things-a-lot-of-different-things/",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "already blocked",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
+  },
+  {
+    "quote": "interview design",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
   }
 ]

@@ -78,9 +78,16 @@
     "status": "confirmed"
   },
   {
-    "quote": "in collaborative text editors: concurrently inserted text with a well-defined order",
-    "status": "ignored",
-    "note": "Quote-pairing artifact."
+    "quote": "Interleaving anomalies",
+    "url": "https://martin.kleppmann.com/papers/interleaving-papoc19.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "may be randomly interleaved",
+    "url": "https://martin.kleppmann.com/papers/interleaving-papoc19.pdf",
+    "via": "direct",
+    "status": "confirmed"
   },
   {
     "quote": "several published algorithms",
@@ -99,6 +106,16 @@
     "url": "https://martin.kleppmann.com/2019/03/25/papoc-interleaving-anomalies.html",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "See version history",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
+  },
+  {
+    "quote": "one outstanding op",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
   },
   {
     "quote": "we never send more than one pending change at a time",

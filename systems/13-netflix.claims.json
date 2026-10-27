@@ -48,6 +48,30 @@
     "status": "confirmed"
   },
   {
+    "quote": "over a thousand ISPs",
+    "url": "https://openconnect.netflix.com/en/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "60+ global data centers",
+    "url": "https://openconnect.netflix.com/en/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "typically takes 1-2 weeks, depending on catalog size",
+    "url": "https://openconnect.netflix.com/en/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "upwards of 200 TB",
+    "url": "https://netflixtechblog.com/distributing-content-to-open-connect-3e3e391d4dc9",
+    "via": "archive",
+    "status": "confirmed"
+  },
+  {
     "quote": "ordered by network proximity alone",
     "url": "https://netflixtechblog.com/driving-content-delivery-efficiency-through-classifying-cache-misses-ffcf08026b6c",
     "via": "archive",

@@ -24,6 +24,12 @@
     "status": "confirmed"
   },
   {
+    "quote": "takes less than a minute",
+    "url": "https://martinfowler.com/articles/lmax.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "switch between processors in a matter of micro-seconds",
     "url": "https://martinfowler.com/articles/lmax.html",
     "via": "direct",

@@ -87,7 +87,7 @@ export function quotesOf(md: string): string[] {
     if (code) continue;
     if (/^#{1,6} /.test(line)) skip = SKIP_SECTIONS.test(line);
     if (skip) continue;
-    for (const m of line.matchAll(/["“]([^"”\n]{25,320})["”]/g)) {
+    for (const m of line.matchAll(/["“]([^"”\n]{15,320})["”]/g)) {
       const q = m[1].trim();
       // Quote marks that pair across markdown (bold, links, code) produce fragments, not quotations.
       if (/\*\*|\]\(|`|^[),.;:]|\($/.test(q) || /\)\s*$/.test(q) && !/\(/.test(q)) continue;

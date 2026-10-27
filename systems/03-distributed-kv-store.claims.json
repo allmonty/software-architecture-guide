@@ -1,5 +1,17 @@
 [
   {
+    "quote": "always writeable",
+    "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "usually less than 1 MB",
+    "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "Every node in Dynamo should have the same set of responsibilities as its peers",
     "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
     "via": "direct",
@@ -38,6 +50,12 @@
   {
     "quote": "Cassandra uses a simpler last-write-wins model where every mutation is timestamped",
     "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "tens of kilobytes",
+    "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
     "via": "direct",
     "status": "confirmed"
   },

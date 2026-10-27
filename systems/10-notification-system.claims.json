@@ -71,6 +71,11 @@
     "note": "Read on the Firebase message-priority page via WebFetch, 2026-10-27."
   },
   {
+    "quote": "delivery may be delayed",
+    "status": "manual",
+    "note": "Confirmed on the Firebase page (android-message-priority) on 2026-10-27; the script cannot render that page."
+  },
+  {
     "quote": "time sensitive, user visible content",
     "status": "manual",
     "note": "Same page, same date."
@@ -85,6 +90,11 @@
     "url": "https://firebase.google.com/docs/cloud-messaging/manage-tokens",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "your ride is arriving",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
   },
   {
     "quote": "redundantly stores the message in multiple availability zones",

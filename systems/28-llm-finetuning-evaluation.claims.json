@@ -66,6 +66,12 @@
     "status": "confirmed"
   },
   {
+    "quote": "100x fewer parameters",
+    "url": "https://arxiv.org/pdf/2203.02155",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "without compromising labeler preference scores",
     "url": "https://arxiv.org/pdf/2203.02155",
     "via": "direct",
@@ -102,8 +108,14 @@
     "status": "confirmed"
   },
   {
-    "quote": "with human preferences,",
-    "url": "https://arxiv.org/pdf/2305.18290",
+    "quote": "over 80% agreement",
+    "url": "https://arxiv.org/pdf/2306.05685",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "the same level of agreement between humans",
+    "url": "https://arxiv.org/pdf/2306.05685",
     "via": "direct",
     "status": "confirmed"
   },

@@ -6,6 +6,11 @@
     "status": "confirmed"
   },
   {
+    "quote": "pending payment",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
+  },
+  {
     "quote": "saves the status code and body of the first request made with a given idempotency key after endpoint execution begins",
     "url": "https://docs.stripe.com/api/idempotent_requests",
     "via": "direct",
@@ -22,6 +27,11 @@
     "url": "https://docs.stripe.com/api/idempotent_requests",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "response stored",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
   },
   {
     "quote": "verify → record event ID (unique constraint) → enqueue → 2xx",
@@ -69,5 +79,20 @@
     "url": "https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "payment succeeded",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
+  },
+  {
+    "quote": "Pending payment",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
+  },
+  {
+    "quote": "design a payment service",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
   }
 ]

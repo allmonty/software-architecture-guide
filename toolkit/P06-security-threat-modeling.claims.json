@@ -1,5 +1,11 @@
 [
   {
+    "quote": "inside the network",
+    "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-207.pdf",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "analyzing representations of a system to highlight concerns about security and privacy characteristics",
     "url": "https://www.threatmodelingmanifesto.org/",
     "via": "direct",

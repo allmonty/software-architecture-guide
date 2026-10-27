@@ -1,5 +1,11 @@
 [
   {
+    "quote": "within 1 second",
+    "url": "https://www.elastic.co/docs/manage-data/data-store/near-real-time-search",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "gives exponentially small probabilistic bounds on the likelihood of a collision",
     "url": "https://www.cs.cornell.edu/courses/cs685/2002fa/mercator.pdf",
     "via": "direct",

@@ -12,12 +12,6 @@
     "status": "confirmed"
   },
   {
-    "quote": "numbered sequentially and monotonically",
-    "url": "https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
-    "via": "direct",
-    "status": "confirmed"
-  },
-  {
     "quote": "if a decision is reversed, we will keep the old one around, but mark it as superseded",
     "url": "https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
     "via": "direct",
@@ -48,6 +42,12 @@
     "status": "confirmed"
   },
   {
+    "quote": "Design Docs at Google",
+    "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "relatively informal documents",
     "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
     "via": "direct",
@@ -72,8 +72,26 @@
     "status": "confirmed"
   },
   {
+    "quote": "the place to write down the trade-offs you made",
+    "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "one of the most important",
+    "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "A clear indicator that a doc might not be necessary are design docs that are really implementation manuals.",
     "url": "https://www.industrialempathy.com/posts/design-docs-at-google/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Choose Boring Technology",
+    "url": "https://mcfunley.com/choose-boring-technology",
     "via": "direct",
     "status": "confirmed"
   },
@@ -88,5 +106,10 @@
     "url": "https://mcfunley.com/choose-boring-technology",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "we accept X to gain Y",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
   }
 ]

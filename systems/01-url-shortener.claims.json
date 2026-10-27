@@ -1,1 +1,24 @@
-[]
+[
+  {
+    "quote": "Who owns this short URL?",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
+  },
+  {
+    "quote": "definitely never seen",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
+  },
+  {
+    "quote": "accessed only once",
+    "url": "https://systemdesign.one/url-shortening-system-design/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "one-hit wonders",
+    "url": "https://en.wikipedia.org/wiki/Bloom_filter",
+    "via": "direct",
+    "status": "confirmed"
+  }
+]

@@ -66,6 +66,12 @@
     "status": "confirmed"
   },
   {
+    "quote": "as quickly as possible",
+    "url": "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "a network of data centers distributed across the world, which are organized in a directed graph hierarchy we call a Replication Tree",
     "url": "https://blog.twitch.tv/en/2023/09/28/twitch-state-of-engineering-2023/",
     "via": "direct",
@@ -156,6 +162,12 @@
     "status": "confirmed"
   },
   {
+    "quote": "design for up front",
+    "url": "https://blog.twitch.tv/en/2021/10/25/low-latency-high-reach-creating-an-unparalleled-live-video-streaming-network-at-twitch/",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "MUST periodically reload a Media Playlist file to learn what media is currently available",
     "url": "https://www.rfc-editor.org/rfc/rfc8216",
     "via": "direct",
@@ -240,6 +252,12 @@
     "status": "confirmed"
   },
   {
+    "quote": "assume it failed",
+    "url": "https://dev.twitch.tv/docs/api/reference/#create-clip",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "is a highly scalable real-time distributed system written in Go",
     "url": "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
     "via": "archive",
@@ -265,6 +283,12 @@
   },
   {
     "quote": "a hierarchical message distribution system which executes massive fanout",
+    "url": "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
+    "via": "archive",
+    "status": "confirmed"
+  },
+  {
+    "quote": "analysis on user actions",
     "url": "https://medium.com/twitch-engineering/twitch-engineering-an-introduction-and-overview-36ceeb8875de",
     "via": "archive",
     "status": "confirmed"

@@ -52,5 +52,10 @@
     "url": "https://www.postgresql.org/docs/current/transaction-iso.html",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "booking confirmed",
+    "status": "ignored",
+    "note": "Short phrase that is our own wording, a label or a title, not a source quotation."
   }
 ]

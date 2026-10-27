@@ -6,6 +6,12 @@
     "status": "confirmed"
   },
   {
+    "quote": "fully graph-based",
+    "url": "https://arxiv.org/pdf/1603.09320",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
     "quote": "may not be acceptable in many applications",
     "url": "https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf",
     "via": "direct",
