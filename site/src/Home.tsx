@@ -1,23 +1,13 @@
 import { useMemo, useState } from "react";
 import { resolveRef, systems, toolkitPages, tracks, type Item } from "./data.ts";
 import { Backdrop, HeroArt } from "./Art.tsx";
+import stages from "./stages.json";
 import { searchPages, type SearchPage } from "./text.ts";
 import { NamedIcon, TrackIcon } from "./icons.tsx";
 import { resetProgress, toggleDone, useProgress } from "./progress.ts";
 
-// Learning stages (the order in the README learning path). Each entry is a system number.
-const STAGES: { title: string; blurb: string; ids: string[] }[] = [
-  { title: "Foundations", blurb: "Small systems that introduce caching, limits and replication.", ids: ["01", "02", "03"] },
-  { title: "Building blocks", blurb: "Pieces that appear inside every large design.", ids: ["35", "32", "33", "34"] },
-  { title: "Storage and data infrastructure", blurb: "Logs, blobs, files and photos.", ids: ["05", "04", "07", "06"] },
-  { title: "Real-time communication", blurb: "Chat, voice, collaborative editing and games.", ids: ["08", "09", "18", "21"] },
-  { title: "Media delivery", blurb: "Audio and video from upload to playback.", ids: ["14", "12", "13", "29"] },
-  { title: "Feeds and notifications", blurb: "Fan-out and ranking.", ids: ["11", "10"] },
-  { title: "Correctness under contention", blurb: "Money, bookings and exchanges.", ids: ["16", "17", "19"] },
-  { title: "Location and discovery", blurb: "Maps, crawling and search.", ids: ["15", "20"] },
-  { title: "Data pipelines and observability", blurb: "Metrics, alerts and event aggregation.", ids: ["30", "31"] },
-  { title: "AI systems", blurb: "Serving, retrieval, agents, fine-tuning and training.", ids: ["22", "24", "23", "25", "28", "26", "27"] },
-];
+// Learning stages come from stages.json, the one source of the learning order (README and the atlas track are tested against it).
+const STAGES: { title: string; blurb: string; ids: string[] }[] = stages;
 
 const METHOD = [
   ["Read the 60-second summary", "Open a system and read its At a glance box: the key numbers, decisions and common mistakes."],

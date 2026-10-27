@@ -75,15 +75,15 @@ The answer outlines in each note are our own reasoning and are labelled as such.
 ## Suggested learning path
 
 1. **Foundations:** 01 URL shortener → 02 Rate limiter → 03 Key-value store.
-2. **Storage and data infrastructure:** 05 Object storage → 04 Message queue → 07 Photo storage → 06 File sync.
-3. **Real-time communication:** 08 Chat → 09 Discord → 18 Google Docs → 21 Game matchmaking + chat.
-4. **Media delivery:** 14 Spotify → 12 YouTube → 13 Netflix → 29 Live streaming.
-5. **Feeds, notifications and ranking:** 11 News feed → 10 Notification system.
-6. **Correctness under contention:** 16 Reservations → 17 Payments → 19 Stock exchange.
-7. **Location and discovery:** 15 Uber → 20 Web crawler + search.
-   **Building blocks:** 35 Unique IDs → 32 Distributed cache → 33 Coordination and locks → 34 Top-K and leaderboards (read these early or alongside the others; they recur everywhere).
-8. **Data pipelines and observability:** 30 Metrics monitoring → 31 Ad click aggregation.
-9. **AI systems:** 22 LLM inference serving → 24 Vector search → 23 RAG assistant → 25 AI agents → 28 Fine-tuning and evaluation → 26 Recommendations → 27 Training infrastructure.
+2. **Building blocks:** 35 Unique IDs → 32 Distributed cache → 33 Coordination and locks → 34 Top-K and leaderboards (they recur inside every large design, so read them early or alongside the others).
+3. **Storage and data infrastructure:** 05 Object storage → 04 Message queue → 07 Photo storage → 06 File sync.
+4. **Real-time communication:** 08 Chat → 09 Discord → 18 Google Docs → 21 Game matchmaking + chat.
+5. **Media delivery:** 14 Spotify → 12 YouTube → 13 Netflix → 29 Live streaming.
+6. **Feeds, notifications and ranking:** 11 News feed → 10 Notification system.
+7. **Correctness under contention:** 16 Reservations → 17 Payments → 19 Stock exchange.
+8. **Location and discovery:** 15 Uber → 20 Web crawler + search.
+9. **Data pipelines and observability:** 30 Metrics monitoring → 31 Ad click aggregation.
+10. **AI systems:** 22 LLM inference serving → 24 Vector search → 23 RAG assistant → 25 AI agents → 28 Fine-tuning and evaluation → 26 Recommendations → 27 Training infrastructure.
 
 For interviews, practise each note's **Interview questions**, and walk the **flows** in the diagram out loud.
 
