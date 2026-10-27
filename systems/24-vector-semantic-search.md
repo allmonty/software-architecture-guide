@@ -94,7 +94,16 @@ The Hierarchical Navigable Small World index is "fully graph-based", with a mult
 
 **Results.** On SIFT1B with a 16-core machine: over 5,000 queries a second, under 3 ms mean latency, 95%+ 1-recall@1; in the high-recall regime it serves 5–10× more points per node than HNSW and NSG. These are the authors' measurements on one dataset and one machine class.
 
-**What the paper does not give us.** It builds static indexes; we found no discussion of inserts or deletes in the text we read.
+**What the paper does not give us.** It builds static indexes; updates are the subject of the follow-up paper below.
+
+### 3.4 Updates on a graph index: FreshDiskANN `[CONFIRMED]` (Singh et al., 2021)
+
+The follow-up paper starts from exactly the gap above: existing graph indexes "support only static indices that cannot reflect real-time changes to the corpus", so the "current industry practice" is to rebuild periodically, "which can be prohibitively expensive". It also shows that simple update rules degrade the quality of HNSW and NSG graphs over a stream of inserts and deletes. Its design:
+- **FreshVamana**, a graph index with insert and delete rules that stay stable over long update streams. Deletes are **lazy**: a deleted point goes into a DeleteList without changing the graph; during search those nodes are still used for navigation but filtered out of the results. After 1–10% of the index has been deleted, a batch **delete consolidation** repairs the neighbourhoods of the points that pointed at deleted nodes.
+- **System shape:** a long-term SSD-resident index over most points plus a short-term in-memory index for recent updates; a background **StreamingMerge** folds the short-term index into the long-term one, with cost proportional to the change set, not the whole index.
+- **Reported results** (week-long runs on a nearly billion-point SIFT1B subset, 48 cores, 3.2 TB SSD): under 128 GB of DRAM at all times; a steady 1,800 inserts and 1,800 deletes per second (bursts up to 40,000 inserts per second); update latency under 1 ms even during a merge; 1,000 searches per second with 95%+ 5-recall@5 and mean latency well under 20 ms; a merge of a 10% change in about 10% of the time of a rebuild; and a claimed 5–10 times lower cost of keeping the index fresh than rebuilding.
+
+This is the published version of the small-fresh-index-plus-periodic-merge pattern used in section 4. These figures are the authors' on one dataset and machine.
 
 ---
 
@@ -108,8 +117,8 @@ source ─► embed ─► fresh-writes index ─► periodic build ─► index
 
 - **Sharding and fan-out:** split vectors across shards; the coordinator queries all shards (or a chosen subset if the data is partitioned by tenant or category) and merges the top-K lists. The slowest shard sets the latency, so use replicas and timeouts. The Taobao figure in section 3.3 is a published example of this shape.
 - **Replicas:** replicate each shard for availability and throughput; route queries to the least-loaded healthy replica.
-- **Filtering:** apply the filter inside the search (checking each candidate's attributes as the graph is traversed), after it (post-filter and over-fetch), or by partitioning the index by the filter key. Strong filters make post-filtering waste results; tune and measure recall under filters.
-- **Freshness:** write new vectors into a small in-memory index that is queried alongside the main one, and fold them into the main index in periodic builds. Deletes are tombstones applied at query time until the next rebuild.
+- **Filtering:** apply the filter inside the search (checking each candidate's attributes as the graph is traversed), after it (post-filter and over-fetch), or by partitioning the index by the filter key. pgvector's documentation is a concrete example of the trade-off: with approximate indexes, filtering is applied after the index is scanned, so if a condition matches 10% of rows and the HNSW candidate list (`ef_search`) is the default 40, only 4 rows match on average `[CONFIRMED]`. It offers iterative index scans (from version 0.8.0) that keep scanning until enough results are found, partial indexes for a few filter values, and partitioning for many. Strong filters make post-filtering waste results; tune and measure recall under filters.
+- **Freshness:** write new vectors into a small in-memory index that is queried alongside the main one, and fold them into the main index in periodic builds. Deletes are tombstones applied at query time until the next rebuild or consolidation, as in FreshDiskANN's DeleteList.
 - **Embedding model changes:** every vector changes, so build a new index beside the old, validate recall on a labelled set, then switch traffic (blue/green) and keep the old one for rollback.
 - **Hybrid search:** combine with keyword search for exact terms; see [23 RAG knowledge assistant](23-rag-knowledge-assistant.md) for why.
 - **Quality monitoring:** keep a labelled query set, compute recall of the ANN index against exact search on a sample, and alert when it drops.
@@ -141,8 +150,8 @@ source ─► embed ─► fresh-writes index ─► periodic build ─► index
 1. **Recall numbers are not comparable across papers.** They use different datasets, hardware, k and recall definitions. We quote each with its definition.
 2. **The DiskANN comparison with Faiss is from 2019.** The paper says Faiss "supports searching only from RAM" quoting a Faiss blog post at that time; later Faiss versions may differ, and we did not check.
 3. **The Taobao sharding figure is second-hand:** the DiskANN paper reports it citing another paper, and we did not read the original.
-4. **Deletes and updates:** HNSW and DiskANN papers as we read them do not cover them. The freshness design in section 4 is industry practice.
-5. **Not read:** product documentation of vector databases (pgvector, Elasticsearch, Pinecone and others), ScaNN, locality-sensitive hashing papers, filtered-ANN research, FreshDiskANN.
+4. **Deletes and updates:** the HNSW and original DiskANN papers do not cover them; FreshDiskANN (section 3.4) does for the Vamana graph, on one dataset. Whether the same approach suits other index families is not shown by the sources we read.
+5. **Not read:** product documentation of vector databases other than pgvector (Elasticsearch, Pinecone and others), ScaNN, locality-sensitive hashing papers, research on filtered ANN search.
 
 ---
 
@@ -218,9 +227,9 @@ All vectors are incompatible with the new model's query vectors, so you re-embed
 ## Sources and provenance
 
 > **Kind:** reference design with real parts. HNSW, Faiss and DiskANN are published designs. How any vector database vendor builds its product is not covered here, so the platform in section 4 is the standard design `[INDUSTRY PATTERN]`.
-> **Sources read on 2026-10-27 (PDF text extracted locally):** Malkov and Yashunin, [*Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs*](https://arxiv.org/pdf/1603.09320) (arXiv 1603.09320) · Douze et al., [*The Faiss library*](https://arxiv.org/pdf/2401.08281) (arXiv 2401.08281, v4 Oct 2025) · Subramanya et al., [*DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node*](https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf) (NeurIPS 2019).
+> **Sources read on 2026-10-27 (PDF text extracted locally):** Malkov and Yashunin, [*Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs*](https://arxiv.org/pdf/1603.09320) (arXiv 1603.09320) · Douze et al., [*The Faiss library*](https://arxiv.org/pdf/2401.08281) (arXiv 2401.08281, v4 Oct 2025) · Subramanya et al., [*DiskANN: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node*](https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf) (NeurIPS 2019) · Singh et al., [*FreshDiskANN: A Fast and Accurate Graph-Based ANN Index for Streaming Similarity Search*](https://arxiv.org/pdf/2105.09613) (2021) · pgvector [README](https://raw.githubusercontent.com/pgvector/pgvector/master/README.md) (read 2026-10-27).
 > **Dated material:** the HNSW and DiskANN papers are from 2016–2019; Faiss and the field have moved on.
-> **Not read:** vector database product documentation, ScaNN, FreshDiskANN, filtered-ANN papers, and benchmarks such as ANN-Benchmarks.
+> **Not read:** other vector database documentation, ScaNN, filtered-ANN papers, and benchmarks such as ANN-Benchmarks.
 > **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice · `[SPECULATIVE]` plausible or illustrative.
 
 ---
@@ -230,5 +239,7 @@ All vectors are incompatible with the new model's query vectors, so you re-embed
 - Verified in the HNSW paper: multi-layer proximity graphs, random maximum layer with exponentially decaying probability, logarithmic complexity scaling, skip list analogy, neighbour-selection heuristic, M range 5–48 and memory proportional to M, efConstruction guidance (recall near 1 during construction). No deletion procedure found.
 - Verified in the Faiss paper: scope statement (not a service or database), trade-off axes, IVF and nprobe, metadata and filtered-search limits, index updates by id, degradation when the distribution changes.
 - Verified in the DiskANN paper: abstract figures (64 GB RAM, SSD, over 5,000 QPS, under 3 ms, 95%+ 1-recall@1, 5–10× more points per node), the compression-based class at around 0.5 1-recall@1, the 100M-vector NSG footprint of about 75 GB (assuming degree 50), the Taobao sharding example as cited, PQ in memory with graph and full vectors on SSD, BeamSearch with W of 4 or 8, the SSD engineering target, k-means overlapping clusters merged by edge union.
-- Labelled industry pattern, not sourced: sharding and coordinator design, replicas, filtering strategies, freshness design, re-indexing, monitoring, capacity arithmetic.
-- Not claimed: behaviour of any named vector database.
+- Verified in FreshDiskANN: the static-index problem statement, lazy deletion with a DeleteList and batch consolidation, long-term and short-term index design with StreamingMerge, the reported throughput, latency, DRAM and recall figures.
+- Verified in the pgvector README: post-index filtering and the 10% / ef_search 40 / 4 rows example, iterative scans from 0.8.0, partial indexes and partitioning.
+- Labelled industry pattern, not sourced: sharding and coordinator design, replicas, the combined filtering strategy list, re-indexing, monitoring, capacity arithmetic.
+- Not claimed: behaviour of any named vector database other than the pgvector documentation points above.

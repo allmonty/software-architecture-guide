@@ -34,5 +34,23 @@
     "url": "https://papers.nips.cc/paper_files/paper/2019/file/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Paper.pdf",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "support only static indices that cannot reflect real-time changes to the corpus",
+    "url": "https://arxiv.org/pdf/2105.09613",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "current industry practice",
+    "url": "https://arxiv.org/pdf/2105.09613",
+    "via": "direct",
+    "status": "confirmed"
+  },
+  {
+    "quote": "which can be prohibitively expensive",
+    "url": "https://arxiv.org/pdf/2105.09613",
+    "via": "direct",
+    "status": "confirmed"
   }
 ]
