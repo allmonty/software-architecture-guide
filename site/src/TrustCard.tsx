@@ -35,6 +35,15 @@ export function TrustCard({ id, title, markdown, claims, diagram }: { id: string
         </li>
       </ul>
       <p className="muted small">A found quotation means the words appear in the cited page. It does not prove that the claim built on them is right; the tags and the reviewer notes carry that judgement.</p>
+      <details>
+        <summary>What the tags mean</summary>
+        <ul>
+          <li><b>[CONFIRMED]</b> a primary source we read states it.</li>
+          <li><b>[INDUSTRY PATTERN]</b> standard practice that no source states for this system.</li>
+          <li><b>[SPECULATIVE]</b> plausible or illustrative, not backed by a source.</li>
+          <li><b>Real system</b> is described by its own engineers; a <b>reference design</b> is a standard design and not a claim about any company.</li>
+        </ul>
+      </details>
       {t.notVerified.length > 0 && (
         <details>
           <summary>What this page says it did not verify ({t.notVerified.length})</summary>
