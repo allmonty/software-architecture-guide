@@ -97,7 +97,7 @@ For interviews, practise each note's **Interview questions**, and walk the **flo
 | Replication, quorums, erasure coding | 03, 04, 05, 06, 07, 30, 31 |
 | Consistency models and trade-offs | 03, 04, 05, 06, 16, 18, 30 |
 | Queues, logs and event-driven design | 04, 08, 10, 17, 19, 31 |
-| Consensus, leader election and fencing | 33, 04, 03 |
+| Consensus, leader election and fencing | 33, 04 |
 | Approximate counting and top-K | 34, 31 |
 | Cache consistency, stampede protection | 32 |
 | Idempotency and retries | 01, 10, 16, 17, 25, 31, 32 |
@@ -151,7 +151,7 @@ npm run freshness  # notes by the age of their last source read
 
 ## References and relationship to other folders
 
-- **Related:** [`../neokim-post/`](../neokim-post/README.md) is the earlier set of 15 case studies this one upgrades (systems 01, 04, 05, 08, 12, 14, 15, 16, 18, 19) and extends. Systems 22 to 31 are new to this folder. It also holds the shared glossary [`00-fundamentals.md`](../neokim-post/00-fundamentals.md). The architecture-lens sections use vocabulary from [`../fundamentals-of-software-architecture/`](../fundamentals-of-software-architecture/summaries/README.md).
+- **Related:** [`../neokim-post/`](../neokim-post/README.md) is the earlier set of 15 case studies this one upgrades (systems 01, 04, 05, 08, 12, 14, 15, 16, 18, 19) and extends. Systems 22 to 35 are new to this folder. It also holds the shared glossary [`00-fundamentals.md`](../neokim-post/00-fundamentals.md). The architecture-lens sections use vocabulary from [`../fundamentals-of-software-architecture/`](../fundamentals-of-software-architecture/summaries/README.md).
 - **Study resources used as leads (never as proof):** [System Design Primer](https://github.com/donnemartin/system-design-primer) (the interview-questions list was used as a coverage cross-check: Pastebin/Bit.ly, Twitter timeline, web crawler and key-value store are all covered here) and [awesome-software-architecture](https://github.com/mehdihadeli/awesome-software-architecture) (its case-study list confirmed the choice of systems and pointed to primary sources such as Discord's and Instagram's engineering posts).
 - **Sourcing rules and conventions:** see [`CLAUDE.md`](CLAUDE.md).
 

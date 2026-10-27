@@ -210,7 +210,7 @@ An object should become visible only when its data is durable. If metadata were 
 
 <details><summary>How does LIST with prefixes work over a hash-partitioned index?</summary>
 
-A hash-partitioned key-value store cannot range-scan, so keep a separate ordered index per bucket for listing.
+It depends on how the index is partitioned, which S3 does not publish in the sources we read. If keys are hash-partitioned, a range scan needs a separate ordered index per bucket for listing. If the index is partitioned by key range (as per-prefix request limits and the advice to spread keys across prefixes suggest), a prefix listing is a range scan, and the price is hot prefixes. Say which you assume and why.
 
 </details>
 

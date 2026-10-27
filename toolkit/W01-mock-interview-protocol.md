@@ -24,7 +24,7 @@ Reading designs is passive. The skill an interview tests is producing a design u
 | 38 to 43 | Failure and scale | what fails, how you detect and recover; what changes at 10 times load |
 | 43 to 45 | Summary | restate the design, trade-offs and what you would do next |
 
-The atlas notes follow the same six-step outline in their *Interview practice* sections.
+The atlas notes' *Interview practice* sections follow the same outline (their six steps, plus a closing summary here).
 
 ## 4. Challenges a partner can raise
 

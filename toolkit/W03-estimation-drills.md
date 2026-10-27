@@ -80,7 +80,7 @@ Try each problem on paper before opening the solution. Assumptions are part of t
 - KV per token: 2 x 80 x 8 x 128 x 2 bytes = 327,680 B; a 800-token request (500 + 300) holds about 262 MB at its end.
 - If 12 GPUs each have about 20 GB free for KV cache (an assumption), concurrent requests that fit: 20 GB / 262 MB = about 76 per GPU, so about 900 in total, versus the number actually in flight (Little's law below).
 - Concurrency by Little's law: if a request takes about 6 seconds end to end (assumption), in flight = 100 x 6 = 600. So memory fits, but with thin margin.
-- Implication: both compute and KV memory must be checked; see [22 LLM inference serving](../systems/22-llm-inference-serving.md).
+- Caveat: a 70-billion-parameter model in 16-bit precision needs about 140 GB for weights, so it does not fit on one GPU. Read 'per GPU' above as a share of a tensor-parallel group and treat the 2,500 tokens per second and 20 GB figures as placeholders. Implication: both compute and KV memory must be checked; see [22 LLM inference serving](../systems/22-llm-inference-serving.md).
 
 </details>
 

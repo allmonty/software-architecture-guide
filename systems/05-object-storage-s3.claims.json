@@ -1,10 +1,5 @@
 [
   {
-    "quote": "based on research, may differ from real implementation",
-    "status": "ignored",
-    "note": "Quotes the newsletter's own caveat."
-  },
-  {
     "quote": "an algorithm, such as Reed-Solomon",
     "url": "https://www.allthingsdistributed.com/2023/07/building-and-operating-a-pretty-big-storage-system.html",
     "via": "direct",
@@ -15,5 +10,10 @@
     "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/DataDurability.html",
     "via": "direct",
     "status": "confirmed"
+  },
+  {
+    "quote": "based on research, may differ from real implementation",
+    "status": "ignored",
+    "note": "Quotes the newsletter's own caveat."
   }
 ]

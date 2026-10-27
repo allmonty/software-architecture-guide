@@ -18,7 +18,7 @@ OWASP's Threat Modeling Cheat Sheet adds practical points. Proper threat modelin
 
 ## 2. Zero trust `[CONFIRMED]` (NIST SP 800-207)
 
-NIST describes zero trust (ZT) as "an evolving set of cybersecurity paradigms that move defenses from static, network-based perimeters to focus on users, assets, and resources", where trust is not granted "based solely on their physical or network location". Its tenets, in its own words, include:
+NIST describes zero trust (ZT) as "an evolving set of cybersecurity paradigms that move defenses from static, network-based perimeters to focus on users, assets, and resources", where trust is not granted "based solely on their physical or network location". Its tenets, paraphrased here (the quoted fragments are verbatim), include:
 1. All data sources and computing services are considered resources.
 2. All communication is secured regardless of network location; "network location alone does not imply trust".
 3. Access to individual resources is granted on a per-session basis, with the least privileges needed, and access to one resource does not automatically grant access to another.

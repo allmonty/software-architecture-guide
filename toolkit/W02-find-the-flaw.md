@@ -8,7 +8,7 @@ Each scenario describes a design that sounds reasonable and contains one or more
 
 ## 1. The per-server rate limiter
 
-**Design.** A public API runs on 10 identical servers behind a round-robin load balancer. Each server keeps an in-memory token bucket per API key, set to 100 requests per minute. When the team's cache cluster is unavailable the servers refuse all requests, to be safe.
+**Design.** A public API runs on 10 identical servers behind a round-robin load balancer. Each server keeps an in-memory token bucket per API key, set to 100 requests per minute. To fix drift between servers the team later adds a shared counter store that every request consults; when that store is unavailable the servers refuse all requests, to be safe.
 
 <details><summary>What is wrong, and what would you change?</summary>
 
@@ -17,7 +17,7 @@ Each scenario describes a design that sounds reasonable and contains one or more
 - The limit changes when servers are added or removed, so it is not stable.
 - Refusing all traffic when a dependency fails (fail-closed) turns a cache outage into a total API outage; for a rate limiter, failing open (and alerting) is the usual choice because the limiter is a protection, not a core function.
 
-**Fix.** Share the counters (for example atomic increments in a shared store) or route each key to one server, accept small approximation, and decide the failure mode deliberately. See [02 Rate limiter](../systems/02-rate-limiter.md).
+**Fix.** Share the counters (for example atomic increments in a shared store) or route each key to one server, accept small approximation, and decide the failure mode deliberately (in the original design the per-server counters are the flaw; once a shared store is added, its failure mode becomes the next question). See [02 Rate limiter](../systems/02-rate-limiter.md).
 
 </details>
 
@@ -46,7 +46,7 @@ Each scenario describes a design that sounds reasonable and contains one or more
 - A reader can miss the cache, read the old value from the database, and then be slowed; a writer then updates the database and deletes the cache; the reader finally sets the old value into the cache. The cache now holds stale data until the 24-hour TTL expires.
 - Long TTLs turn a rare race into a day-long inconsistency.
 
-**Fix.** Shorten TTLs, store a version with each value and refuse to overwrite with an older one, use leases or tokens on cache fills, or write through the cache for hot data. State what staleness the product can tolerate. This is general practice, not tied to one source `[INDUSTRY PATTERN]`.
+**Fix.** Shorten TTLs, store a version with each value and refuse to overwrite with an older one, or use leases or tokens on cache fills so a delete invalidates a slow reader's later set (the approach in [32 Distributed cache](../systems/32-distributed-cache.md)). Write-through caches have their own ordering races, so they are not a complete fix. State what staleness the product can tolerate. This is general practice, not tied to one source `[INDUSTRY PATTERN]`.
 
 </details>
 

@@ -450,7 +450,7 @@ A WAF regex that backtracked catastrophically; rules were deployed globally in s
 
 <details><summary>Answer</summary>
 
-A 43-second partition caused cross-region MySQL failover and writes on both sides; GitHub chose data integrity over availability, 24h11m degraded. *Source: [C03](C03-github-2018.md).*
+A 43-second partition caused cross-region MySQL failover and writes on both sides; GitHub chose to prioritize data integrity over site usability and time to recovery, 24h11m degraded. *Source: [C03](C03-github-2018.md).*
 
 </details>
 

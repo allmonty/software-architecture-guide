@@ -28,7 +28,7 @@ The pillar is organised around practising cloud financial management, expenditur
 | System type | Usually dominant cost | Levers (and what they give up) | Atlas evidence |
 |---|---|---|---|
 | Blob and media storage | Storage plus egress | Tiering and cooling (slower access), erasure coding (CPU, repair traffic), CDN offload | [05 S3](../systems/05-object-storage-s3.md), [07 Photos](../systems/07-photo-upload-storage.md), [13 Netflix](../systems/13-netflix.md) |
-| Live video | Transcoding compute and bandwidth | Transcode only popular channels, hardware encoders (Twitch reported a hardware transcoder expanding capacity 10 times at two times the cost) | [29 Live streaming](../systems/29-live-streaming-twitch.md) |
+| Live video | Transcoding compute and bandwidth | Transcode only popular channels, hardware encoders (a Twitch engineer said in a 2021 interview that its hardware transcoder work was expanding capacity 10 times at only two times the cost) | [29 Live streaming](../systems/29-live-streaming-twitch.md) |
 | Time-series / observability | Memory | Compression (Gorilla's 12 times reduction), shorter hot window, rollups | [30 Monitoring](../systems/30-metrics-monitoring-alerting.md) |
 | Search and vector indexes | RAM | Compressed vectors, SSD-resident indexes (DiskANN: a billion points on a 64 GB machine) | [24 Vector search](../systems/24-vector-semantic-search.md) |
 | LLM serving | GPU hours | Batching, paged KV cache, smaller models for easy requests, caching | [22 LLM serving](../systems/22-llm-inference-serving.md) |
