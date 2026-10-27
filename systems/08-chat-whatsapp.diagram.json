@@ -1,0 +1,314 @@
+{
+  "id": "08-chat-whatsapp",
+  "title": "Chat (WhatsApp)",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "alice",
+      "label": "Alice's device",
+      "kind": "client",
+      "summary": "Encrypts each message per recipient device with a Signal pairwise session (client-fanout). Holds a local message DB and retries with client-generated IDs.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf",
+        "https://engineering.fb.com/2021/07/14/security/whatsapp-multi-device/"
+      ],
+      "details": "Message key: AES256-CBC + HMAC-SHA256, new key per message via hash ratchet plus DH ratchet. Transport to the server is wrapped in a Noise Pipes channel (Curve25519, AES-GCM, SHA256)."
+    },
+    {
+      "id": "bob",
+      "label": "Bob's device",
+      "kind": "client",
+      "summary": "Receives ciphertext, decrypts locally and sends delivery and read receipts.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf"
+      ]
+    },
+    {
+      "id": "lb",
+      "label": "Load balancer",
+      "kind": "edge",
+      "summary": "Spreads long-lived connections across chat servers. A connection stays on one server.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/whatsapp-system-design"
+      ],
+      "details": "The baseline notes WebSockets in the interview design. Per a secondary source WhatsApp historically used a customised XMPP over long-lived TCP. Not re-verified."
+    },
+    {
+      "id": "chat",
+      "label": "Chat servers",
+      "kind": "service",
+      "summary": "Hold many persistent connections each, route ciphertext to the recipient's server, never see plaintext. A single server was pushed past 2 million TCP connections in 2012 (Erlang on FreeBSD).",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://blog.whatsapp.com/1-million-is-so-2011",
+        "https://newsletter.systemdesign.one/p/whatsapp-system-design"
+      ],
+      "details": "2M connections: WhatsApp blog, 2012-01-06. The routing design here is the standard interview design."
+    },
+    {
+      "id": "registry",
+      "label": "Connection registry (Redis)",
+      "kind": "datastore",
+      "summary": "Maps user/device to the chat server that holds its connection, for microsecond routing lookups. A user's devices each have an entry.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/whatsapp-system-design"
+      ],
+      "details": "Reference-design component. WhatsApp's real implementation is not public."
+    },
+    {
+      "id": "inbox",
+      "label": "Store-and-forward inbox",
+      "kind": "queue",
+      "summary": "Holds encrypted messages for offline devices. Per WhatsApp's privacy policy, undelivered messages are kept encrypted for up to 30 days and deleted once delivered.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.whatsapp.com/legal/privacy-policy",
+        "https://engineering.fb.com/2021/07/14/security/whatsapp-multi-device/"
+      ],
+      "details": "The storage technology (Kafka/Cassandra in the baseline) is an interview-design choice, not stated by WhatsApp."
+    },
+    {
+      "id": "push",
+      "label": "Push (APNs / FCM)",
+      "kind": "external",
+      "summary": "Wakes an offline device so it reconnects and drains its inbox.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/whatsapp-system-design"
+      ]
+    },
+    {
+      "id": "keys",
+      "label": "Key server (public keys)",
+      "kind": "datastore",
+      "summary": "Stores each device's public identity key, signed pre key and one-time pre keys so a sender can start a session while the recipient is offline. Never holds private keys.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf"
+      ]
+    },
+    {
+      "id": "blob",
+      "label": "Blob store + CDN",
+      "kind": "datastore",
+      "summary": "Encrypted media bytes. The sender uploads the encrypted file, then sends a normal message carrying the key, HMAC key, SHA256 hash and pointer.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf"
+      ],
+      "details": "Pre-signed URLs and the CDN are the interview-design mechanics. The whitepaper confirms an encrypted attachment uploaded to a blob store with the keys inside the E2EE message."
+    },
+    {
+      "id": "presence",
+      "label": "Presence service",
+      "kind": "service",
+      "summary": "Heartbeats update online / last-seen state. Can easily dominate chat traffic if every change is broadcast, so fan out only to interested contacts.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://newsletter.systemdesign.one/p/whatsapp-system-design"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "a-lb",
+      "from": "alice",
+      "to": "lb",
+      "label": "connect",
+      "mode": "sync",
+      "protocol": "persistent"
+    },
+    {
+      "id": "lb-chat",
+      "from": "lb",
+      "to": "chat",
+      "label": "route connection",
+      "mode": "sync"
+    },
+    {
+      "id": "a-chat",
+      "from": "alice",
+      "to": "chat",
+      "label": "send ciphertext",
+      "mode": "sync"
+    },
+    {
+      "id": "chat-ack",
+      "from": "chat",
+      "to": "alice",
+      "label": "server ACK (✓)",
+      "mode": "sync"
+    },
+    {
+      "id": "chat-reg",
+      "from": "chat",
+      "to": "registry",
+      "label": "where is Bob?",
+      "mode": "sync"
+    },
+    {
+      "id": "chat-bob",
+      "from": "chat",
+      "to": "bob",
+      "label": "deliver (online)",
+      "mode": "sync"
+    },
+    {
+      "id": "bob-ack",
+      "from": "bob",
+      "to": "chat",
+      "label": "delivery ACK (✓✓)",
+      "mode": "sync"
+    },
+    {
+      "id": "chat-inbox",
+      "from": "chat",
+      "to": "inbox",
+      "label": "store (Bob offline)",
+      "mode": "sync"
+    },
+    {
+      "id": "chat-push",
+      "from": "chat",
+      "to": "push",
+      "label": "wake up",
+      "mode": "async"
+    },
+    {
+      "id": "push-bob",
+      "from": "push",
+      "to": "bob",
+      "label": "push notification",
+      "mode": "async"
+    },
+    {
+      "id": "bob-inbox",
+      "from": "bob",
+      "to": "inbox",
+      "label": "reconnect + drain",
+      "mode": "sync"
+    },
+    {
+      "id": "a-keys",
+      "from": "alice",
+      "to": "keys",
+      "label": "fetch Bob's pre keys",
+      "mode": "sync"
+    },
+    {
+      "id": "a-blob",
+      "from": "alice",
+      "to": "blob",
+      "label": "upload encrypted media",
+      "mode": "sync"
+    },
+    {
+      "id": "blob-bob",
+      "from": "blob",
+      "to": "bob",
+      "label": "download + verify hash",
+      "mode": "sync"
+    },
+    {
+      "id": "pres-reg",
+      "from": "presence",
+      "to": "registry",
+      "label": "heartbeat",
+      "mode": "async"
+    }
+  ],
+  "flows": [
+    {
+      "id": "online",
+      "name": "Send to an online recipient",
+      "steps": [
+        {
+          "edge": "a-chat",
+          "caption": "Alice encrypts the message for each of Bob's devices (client-fanout) and sends ciphertext on her persistent connection. Her client assigned the message ID, so a retry is idempotent."
+        },
+        {
+          "edge": "chat-ack",
+          "caption": "The server acknowledges immediately (single tick), then delivers asynchronously."
+        },
+        {
+          "edge": "chat-reg",
+          "caption": "It looks up which chat server holds Bob's connection. A user can have several devices."
+        },
+        {
+          "edge": "chat-bob",
+          "caption": "The server forwards the same ciphertext. It cannot read it."
+        },
+        {
+          "edge": "bob-ack",
+          "caption": "Bob's device decrypts and acknowledges. On receipt the message is deleted from the server (double tick)."
+        }
+      ]
+    },
+    {
+      "id": "offline",
+      "name": "Recipient is offline",
+      "steps": [
+        {
+          "edge": "a-chat",
+          "caption": "Alice sends as before."
+        },
+        {
+          "edge": "chat-reg",
+          "caption": "The registry shows no live connection for Bob."
+        },
+        {
+          "edge": "chat-inbox",
+          "caption": "The server stores the encrypted message in his inbox. WhatsApp keeps undelivered messages for up to 30 days."
+        },
+        {
+          "edge": "chat-push",
+          "caption": "A push notification wakes his phone."
+        },
+        {
+          "edge": "push-bob",
+          "caption": "The app opens a connection."
+        },
+        {
+          "edge": "bob-inbox",
+          "caption": "Bob's device drains the inbox, decrypts, acknowledges, and the server deletes the delivered messages."
+        }
+      ]
+    },
+    {
+      "id": "first",
+      "name": "First message to a new contact (E2EE setup)",
+      "steps": [
+        {
+          "edge": "a-keys",
+          "caption": "Alice fetches Bob's public identity key, signed pre key and a one-time pre key. This works even while Bob is offline."
+        },
+        {
+          "edge": "a-chat",
+          "caption": "She derives a session (Signal protocol) and sends the first message. Later messages ratchet the keys forward."
+        }
+      ]
+    },
+    {
+      "id": "media",
+      "name": "Send a photo",
+      "steps": [
+        {
+          "edge": "a-blob",
+          "caption": "Alice encrypts the file locally (ephemeral AES-256 and HMAC keys) and uploads it to blob storage."
+        },
+        {
+          "edge": "a-chat",
+          "caption": "She sends a normal encrypted message carrying the keys, the SHA256 hash of the encrypted blob and a pointer."
+        },
+        {
+          "edge": "blob-bob",
+          "caption": "Bob's device downloads the blob, verifies the hash and MAC, and decrypts it."
+        }
+      ]
+    }
+  ]
+}
