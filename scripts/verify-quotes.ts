@@ -23,7 +23,7 @@ mkdirSync(cache, { recursive: true });
 const SKIP_SECTIONS = /interview questions|architecture lens|verification log|non-technical|reviewer notes|further reading/i;
 
 export const norm = (t: string) =>
-  t.toLowerCase().replace(/[’‘]/g, "'").replace(/[“”]/g, '"').replace(/ﬁ/g, "fi").replace(/ﬂ/g, "fl")
+  t.toLowerCase().replace(/[’‘]/g, "'").replace(/[“”]/g, '"').replace(/ﬁ/g, "fi").replace(/ﬂ/g, "fl").replace(/ﬀ/g, "ff").replace(/ﬃ/g, "ffi").replace(/ﬄ/g, "ffl")
     .replace(/-\s+/g, "").replace(/[^a-z0-9% ]+/g, " ").replace(/\s+/g, " ").trim();
 
 const stripHtml = (h: string) =>
