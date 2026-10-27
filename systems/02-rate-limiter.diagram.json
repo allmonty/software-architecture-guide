@@ -1,0 +1,221 @@
+{
+  "id": "02-rate-limiter",
+  "title": "Rate Limiter",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "client",
+      "label": "API client",
+      "kind": "client",
+      "summary": "Sends requests identified by an API key, user or IP.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://stripe.com/blog/rate-limiters"
+      ]
+    },
+    {
+      "id": "gateway",
+      "label": "API gateway / proxy",
+      "kind": "edge",
+      "summary": "Interceptor on the request path. Applies the limiter before any backend work happens.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/other_features/global_rate_limiting",
+        "https://stripe.com/blog/rate-limiters"
+      ],
+      "details": "Envoy runs the limiter as an HTTP filter in front of the services `[CONFIRMED]`."
+    },
+    {
+      "id": "local",
+      "label": "Local token bucket",
+      "kind": "service",
+      "summary": "Per-node in-memory bucket. No network call. Absorbs large bursts so the global service is not overwhelmed.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/other_features/global_rate_limiting"
+      ],
+      "details": "Envoy: a local token bucket \"can absorb very large bursts in load that might otherwise overwhelm a global rate limit service\". The recommended shape is local first, then global."
+    },
+    {
+      "id": "rls",
+      "label": "Global rate-limit service",
+      "kind": "service",
+      "summary": "Called over gRPC for each request on routes that enable it. Returns allow or over-limit for a descriptor.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/other_features/global_rate_limiting",
+        "https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/rate_limit_filter"
+      ],
+      "details": "If the call fails: `failure_mode_deny=true` returns 500, otherwise the request is allowed through (counted as `failure_mode_allowed`). The page does not state the default."
+    },
+    {
+      "id": "store",
+      "label": "Counter store (Redis / memcached)",
+      "kind": "datastore",
+      "summary": "Shared fast counters. The check-and-update must be atomic: INCR with EXPIRE in a Lua script or MULTI/EXEC.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://redis.io/docs/latest/commands/incr/",
+        "https://stripe.com/blog/rate-limiters",
+        "https://blog.cloudflare.com/counting-things-a-lot-of-different-things/"
+      ],
+      "details": "Stripe uses Redis. Cloudflare uses Twemproxy + Twemcache with GET/SET/atomic INCR and avoids compare-and-swap because of contention during attacks. Redis documents the INCR/EXPIRE race and its fixes."
+    },
+    {
+      "id": "shedder",
+      "label": "Load shedders",
+      "kind": "service",
+      "summary": "Stripe's fleet-usage and worker-utilisation shedders: reject non-critical traffic (503) when the fleet is busy, test-mode first.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://stripe.com/blog/rate-limiters"
+      ],
+      "details": "Fleet usage shedder reserves capacity for critical methods using a Redis cluster counting requests of each type. The worker shedder is the \"final line of defense\" during incidents."
+    },
+    {
+      "id": "config",
+      "label": "Limits config + kill switch",
+      "kind": "service",
+      "summary": "Per-key, per-route limits, hot-reloaded. Feature flags let operators disable a limiter that misfires.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://stripe.com/blog/rate-limiters"
+      ],
+      "details": "Stripe: dark-launch each limiter to see what it would block, and keep kill switches and alerting."
+    },
+    {
+      "id": "api",
+      "label": "Upstream API",
+      "kind": "service",
+      "summary": "The protected backend. Only sees traffic that passed the limiter.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://stripe.com/blog/rate-limiters"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "c-gw",
+      "from": "client",
+      "to": "gateway",
+      "label": "request",
+      "mode": "sync",
+      "protocol": "HTTPS"
+    },
+    {
+      "id": "gw-local",
+      "from": "gateway",
+      "to": "local",
+      "label": "1. local bucket",
+      "mode": "sync"
+    },
+    {
+      "id": "gw-rls",
+      "from": "gateway",
+      "to": "rls",
+      "label": "2. global check",
+      "mode": "sync",
+      "protocol": "gRPC"
+    },
+    {
+      "id": "rls-store",
+      "from": "rls",
+      "to": "store",
+      "label": "atomic increment",
+      "mode": "sync"
+    },
+    {
+      "id": "gw-shed",
+      "from": "gateway",
+      "to": "shedder",
+      "label": "fleet load check",
+      "mode": "sync"
+    },
+    {
+      "id": "cfg-gw",
+      "from": "config",
+      "to": "gateway",
+      "label": "limits",
+      "mode": "async"
+    },
+    {
+      "id": "gw-api",
+      "from": "gateway",
+      "to": "api",
+      "label": "allowed request",
+      "mode": "sync"
+    },
+    {
+      "id": "gw-c429",
+      "from": "gateway",
+      "to": "client",
+      "label": "429 + back-off hint",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "allowed",
+      "name": "Request within limits",
+      "steps": [
+        {
+          "edge": "c-gw",
+          "caption": "The request arrives with an API key."
+        },
+        {
+          "edge": "gw-local",
+          "caption": "First stage: a local token bucket takes a token with no network call. It absorbs bursts cheaply."
+        },
+        {
+          "edge": "gw-rls",
+          "caption": "Second stage: the gateway asks the global rate-limit service about this key's descriptor."
+        },
+        {
+          "edge": "rls-store",
+          "caption": "The service updates the shared counter with one atomic operation. Read-then-write would race."
+        },
+        {
+          "edge": "gw-shed",
+          "caption": "Load shedders check fleet health and drop non-critical traffic only when the fleet is saturated."
+        },
+        {
+          "edge": "gw-api",
+          "caption": "Within limits: the request reaches the backend."
+        }
+      ]
+    },
+    {
+      "id": "limited",
+      "name": "Request over the limit",
+      "steps": [
+        {
+          "edge": "c-gw",
+          "caption": "A client that has used its allowance sends another request."
+        },
+        {
+          "edge": "gw-rls",
+          "caption": "The global service reports the descriptor is over limit."
+        },
+        {
+          "edge": "gw-c429",
+          "caption": "The gateway answers 429 and a back-off hint (Retry-After; the IETF RateLimit headers are still a draft)."
+        }
+      ]
+    },
+    {
+      "id": "store-down",
+      "name": "Counter store is down",
+      "steps": [
+        {
+          "edge": "gw-rls",
+          "caption": "The global check fails because its store is unreachable."
+        },
+        {
+          "edge": "gw-api",
+          "caption": "Failing open: errors are caught so the API stays up (Stripe), or Envoy lets the request through when failure_mode_deny is false. Abuse gets through until the store recovers, so alert and keep a kill switch."
+        }
+      ]
+    }
+  ]
+}
