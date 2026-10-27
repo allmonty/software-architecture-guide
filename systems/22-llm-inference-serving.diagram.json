@@ -1,0 +1,311 @@
+{
+  "id": "22-llm-inference-serving",
+  "title": "LLM Inference Serving",
+  "kind": "reference-design",
+  "nodes": [
+    {
+      "id": "user",
+      "label": "API customer",
+      "kind": "client",
+      "c4": "person",
+      "summary": "An application or user sending chat or completion requests and reading the streamed tokens.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2309.06180"
+      ]
+    },
+    {
+      "id": "gateway",
+      "label": "API Gateway",
+      "kind": "edge",
+      "c4": "container",
+      "summary": "Authenticates, applies per-customer token-based limits and quotas, validates the request and streams tokens back (server-sent events). Standard platform design; no vendor publishes theirs.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2309.06180"
+      ],
+      "details": "Rate-limit algorithms and overload behaviour: see note 02. The vLLM paper only describes a serving system behind an API, not a gateway."
+    },
+    {
+      "id": "router",
+      "label": "Request Router",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Chooses a replica by current load, and for long shared prefixes can prefer a replica that already holds that prefix's KV cache. Cross-replica prefix routing is our design extension.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2309.06180"
+      ]
+    },
+    {
+      "id": "replica",
+      "label": "vLLM-style engine replica",
+      "kind": "service",
+      "c4": "container",
+      "summary": "One engine process per GPU group: a centralized scheduler with a KV cache manager coordinates GPU workers that run the model.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2309.06180",
+        "https://www.usenix.org/system/files/osdi22-yu.pdf"
+      ],
+      "technology": "vLLM-style engine",
+      "group": "Inference replica (GPU server)"
+    },
+    {
+      "id": "sched",
+      "label": "Scheduler",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Decides every iteration which requests run: first-come-first-served, finished requests leave and new ones join between iterations, and the latest requests are preempted when GPU memory runs out.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2309.06180",
+        "https://www.usenix.org/system/files/osdi22-yu.pdf"
+      ],
+      "parent": "replica",
+      "group": "Inference replica (GPU server)",
+      "details": "Iteration-level scheduling is Orca's mechanism; vLLM schedules first-come-first-serve and preempts the latest requests, with swap-to-CPU or recomputation."
+    },
+    {
+      "id": "kvmgr",
+      "label": "KV Cache Manager",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Splits each request's KV cache into fixed-size blocks (default 16 tokens), keeps a block table from logical to physical blocks, shares prompt blocks with copy-on-write, and hands out and frees blocks.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2309.06180"
+      ],
+      "parent": "replica",
+      "group": "Inference replica (GPU server)"
+    },
+    {
+      "id": "exec",
+      "label": "GPU Workers (model executor)",
+      "kind": "service",
+      "c4": "component",
+      "summary": "Run one model iteration for the scheduled batch using the paged attention kernel. For large models, tensor model parallelism (Megatron-style SPMD) spreads the model across GPUs.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2309.06180"
+      ],
+      "parent": "replica",
+      "group": "Inference replica (GPU server)"
+    },
+    {
+      "id": "weights",
+      "label": "Model weights store",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "Where model weights are loaded from when a replica starts. Loading is slow, which is why scaling is hard. Weight size is parameters times bytes (about 26 GB for a 13B model in FP16).",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2309.06180"
+      ],
+      "details": "The 26 GB figure for a 13B model is in the vLLM paper; the store itself and its cold-start behaviour are our design reasoning."
+    },
+    {
+      "id": "meter",
+      "label": "Usage metering",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Counts input and output tokens per customer for billing and quotas.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2309.06180"
+      ]
+    },
+    {
+      "id": "metrics",
+      "label": "Metrics and alerts",
+      "kind": "datastore",
+      "c4": "container",
+      "summary": "TTFT, TPOT, queue time, GPU memory, preemptions and error rates per replica. Feeds the autoscaler and on-call.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2401.09670"
+      ],
+      "details": "TTFT and TPOT are defined in the DistServe paper; the monitoring setup is our design."
+    },
+    {
+      "id": "autoscaler",
+      "label": "Autoscaler",
+      "kind": "service",
+      "c4": "container",
+      "summary": "Adds or removes replicas based on queue depth and latency targets, with a warm floor because loading weights is slow and GPUs are scarce.",
+      "confidence": "INDUSTRY PATTERN",
+      "sources": [
+        "https://arxiv.org/pdf/2309.06180",
+        "https://arxiv.org/pdf/2401.09670"
+      ]
+    },
+    {
+      "id": "disagg",
+      "label": "Alternative: separate prefill and decode GPUs",
+      "kind": "service",
+      "c4": "note",
+      "summary": "DistServe assigns prefill and decoding to different GPUs to remove interference and tune parallelism per phase, at the price of moving the KV cache between them. It reports 7.4x more requests or 12.6x tighter SLO.",
+      "confidence": "CONFIRMED",
+      "sources": [
+        "https://arxiv.org/pdf/2401.09670"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "c-gw",
+      "from": "user",
+      "to": "gateway",
+      "label": "chat request",
+      "mode": "sync",
+      "protocol": "HTTPS"
+    },
+    {
+      "id": "gw-router",
+      "from": "gateway",
+      "to": "router",
+      "label": "admitted request",
+      "mode": "sync"
+    },
+    {
+      "id": "router-sched",
+      "from": "router",
+      "to": "sched",
+      "label": "assign to a replica",
+      "mode": "sync"
+    },
+    {
+      "id": "sched-kv",
+      "from": "sched",
+      "to": "kvmgr",
+      "label": "allocate and free blocks",
+      "mode": "sync"
+    },
+    {
+      "id": "sched-exec",
+      "from": "sched",
+      "to": "exec",
+      "label": "run one iteration",
+      "mode": "sync"
+    },
+    {
+      "id": "exec-gw",
+      "from": "exec",
+      "to": "gateway",
+      "label": "stream tokens",
+      "mode": "async",
+      "protocol": "SSE"
+    },
+    {
+      "id": "gw-meter",
+      "from": "gateway",
+      "to": "meter",
+      "label": "report token usage",
+      "mode": "async"
+    },
+    {
+      "id": "weights-exec",
+      "from": "weights",
+      "to": "exec",
+      "label": "load weights at start",
+      "mode": "sync"
+    },
+    {
+      "id": "sched-metrics",
+      "from": "sched",
+      "to": "metrics",
+      "label": "queue depth, TTFT, TPOT",
+      "mode": "async"
+    },
+    {
+      "id": "metrics-auto",
+      "from": "metrics",
+      "to": "autoscaler",
+      "label": "latency and load signals",
+      "mode": "async"
+    },
+    {
+      "id": "auto-replica",
+      "from": "autoscaler",
+      "to": "replica",
+      "label": "add or remove replicas",
+      "mode": "sync"
+    }
+  ],
+  "flows": [
+    {
+      "id": "chat",
+      "name": "A streamed chat request",
+      "steps": [
+        {
+          "edge": "c-gw",
+          "caption": "The request arrives with an API key; the gateway checks the key and the customer's token limits."
+        },
+        {
+          "edge": "gw-router",
+          "caption": "The admitted request is passed to the router."
+        },
+        {
+          "edge": "router-sched",
+          "caption": "The router picks a replica by load (and, in our design, by prefix) and hands the request to its scheduler."
+        },
+        {
+          "edge": "sched-kv",
+          "caption": "The scheduler asks the KV cache manager for blocks for the prompt; more blocks are allocated as tokens are generated."
+        },
+        {
+          "edge": "sched-exec",
+          "caption": "Each iteration the scheduler runs the batch on the GPU workers; the prompt is processed in parallel, then tokens come one per iteration."
+        },
+        {
+          "edge": "exec-gw",
+          "caption": "Tokens are streamed back through the gateway as they are produced."
+        },
+        {
+          "edge": "gw-meter",
+          "caption": "Input and output tokens are counted for the customer."
+        }
+      ]
+    },
+    {
+      "id": "memory-pressure",
+      "name": "GPU memory runs out mid-generation (failure)",
+      "steps": [
+        {
+          "edge": "sched-kv",
+          "caption": "A running request needs a new block and none is free."
+        },
+        {
+          "edge": "sched-kv",
+          "caption": "The scheduler preempts the latest request, evicting all of its blocks (all or nothing). Its state is swapped to CPU memory or recomputed later. The earliest requests keep running."
+        },
+        {
+          "edge": "sched-exec",
+          "caption": "The remaining batch continues; the preempted request resumes when blocks are free again."
+        }
+      ]
+    },
+    {
+      "id": "scale-out",
+      "name": "Load spike and scale-out",
+      "steps": [
+        {
+          "edge": "sched-metrics",
+          "caption": "Queue depth and time to first token rise on the replicas."
+        },
+        {
+          "edge": "metrics-auto",
+          "caption": "The autoscaler sees the signals cross its thresholds."
+        },
+        {
+          "edge": "auto-replica",
+          "caption": "It starts more replicas."
+        },
+        {
+          "edge": "weights-exec",
+          "caption": "Each new replica must first load the model weights, which is slow, so the extra capacity arrives late. A warm floor and scaling ahead of known peaks reduce the gap (our design reasoning)."
+        }
+      ]
+    }
+  ]
+}
