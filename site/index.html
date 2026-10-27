@@ -4,6 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>System Design Atlas</title>
+    <script>
+      // Applies the saved reading settings before first paint. Same cookie format as src/settings-core.ts.
+      try {
+        var m = document.cookie.match(/(?:^|; )atlas-settings=([^;]*)/);
+        var c = m ? JSON.parse(decodeURIComponent(m[1])) : {}, r = document.documentElement;
+        if (c.theme === "light" || c.theme === "warm" || c.theme === "dark") r.dataset.theme = c.theme;
+        if (c.font === "atkinson" || c.font === "lexend" || c.font === "literata") r.dataset.font = c.font;
+        if (typeof c.size === "number" && c.size >= 13 && c.size <= 24) r.style.setProperty("--fs", Math.round(c.size) + "px");
+      } catch (e) { /* defaults */ }
+    </script>
   </head>
   <body>
     <div id="root"></div>

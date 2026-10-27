@@ -7,6 +7,7 @@ import { Home } from "./Home.tsx";
 import { TrackPage } from "./TrackPage.tsx";
 import { StudyToggle } from "./StudyToggle.tsx";
 import { SystemPage, components } from "./SystemPage.tsx";
+import { SettingsMenu } from "./SettingsMenu.tsx";
 
 // Hash routing keeps the build deployable on any static host.
 const useHash = () => {
@@ -31,7 +32,7 @@ export function App() {
     <>
       <header className="top">
         <a href="#" className="brand">System Design Atlas</a>
-        <button onClick={() => toggleTheme()} aria-label="Toggle theme">◐</button>
+        <SettingsMenu />
       </header>
       {trackId ? (
         <TrackPage id={trackId} />
@@ -55,12 +56,4 @@ export function App() {
       )}
     </>
   );
-}
-
-function toggleTheme() {
-  const root = document.documentElement;
-  // Before the first click no explicit theme is set, so start from the OS preference.
-  const current = root.dataset.theme ?? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-  const next = current === "dark" ? "light" : "dark";
-  root.dataset.theme = next;
 }
