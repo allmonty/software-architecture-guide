@@ -68,3 +68,32 @@
   --p-client: #7c3aed; --p-client-t: #ddd6fe;
   --p-person: #4c1d95; --p-system: #0f172a; --p-external: #475569; --p-external-t: #e2e8f0; --p-note: #6b7280;
 }
+
+/* ---- Page frame: one gutter and one vertical rhythm for every page ---- */
+.home, .system, main.toolkit { padding: var(--s-5) var(--page-pad) var(--s-7); }
+.top { position: relative; z-index: var(--z-sticky); }
+
+/* ---- Card grids ---- */
+.cards, .track-cards, .method, .text-hits, .concept-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-4); }
+.text-hits, .concept-list { gap: var(--s-3); }
+.cards { grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); grid-auto-rows: 1fr; }
+.track-cards, .method { grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); }
+.cards li, .track-cards li { display: flex; }
+
+/* ---- Surface: the one card look. Every card-like element on the site is listed here. ---- */
+.cards a, .track-cards a, .method li, .step, .legend-box, .concept-list > li, .text-hits a, .trust {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-1);
+  padding: var(--s-4); color: var(--fg); text-decoration: none;
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+.step, .legend-box, .concept-list > li, .text-hits a { padding: var(--s-3) var(--s-4); }
+
+/* Cards you click: at least 170px tall so text never overflows, one hover for all of them. */
+.cards a, .track-cards a { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-2); width: 100%; min-height: 170px; }
+.cards a, .track-cards a, .text-hits a { transition: transform var(--ease), border-color var(--ease), box-shadow var(--ease); }
+.cards a:hover, .track-cards a:hover, .text-hits a:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-2); }
+.cards .num { color: var(--muted); }
+@media (prefers-reduced-motion: reduce) {
+  .cards a, .track-cards a, .text-hits a { transition: none; }
+  .cards a:hover, .track-cards a:hover, .text-hits a:hover { transform: none; }
+}
