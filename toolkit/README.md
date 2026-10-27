@@ -4,7 +4,7 @@ Material around the 35 system-design notes, for senior engineers preparing for i
 
 ## Casebook: learning from real incidents (`C`)
 
-Each page retells one published incident from the operator's own account, then asks the questions a design review could have asked. Read the incident, close the page, and write your own list of safeguards before you read the analysis.
+Each page retells one published incident from the operator's own account (C05, Knight Capital, is the exception: it is told from the SEC's findings, because Knight published no account of its own that we read), then asks the questions a design review could have asked. Read the incident, close the page, and write your own list of safeguards before you read the analysis.
 
 | # | Incident | Main lessons |
 |---|---|---|

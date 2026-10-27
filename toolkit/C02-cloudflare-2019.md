@@ -11,7 +11,7 @@
 - The outage lasted 27 minutes; WAF rule changes had averaged one every 3 hours over 60 days (476 change requests) `[CONFIRMED]`.
 - Quicksilver distributes about 350 changes per second with a p99 of 2.29 s to every machine worldwide `[CONFIRMED]`.
 
-**Why it matters for architects.** Fast global deployment and safe deployment pull in opposite directions. The incident shows a process (staged rollout) that existed for code but not for this class of change.
+**Why it matters for architects.** (Our reading.) Fast global deployment and safe deployment pull in opposite directions. The incident shows a process (staged rollout) that existed for code but not for this class of change.
 
 ---
 

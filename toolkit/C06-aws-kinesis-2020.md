@@ -4,7 +4,7 @@
 
 ## At a glance
 
-**What happened.** Adding capacity to the Kinesis front-end fleet pushed every server over an operating-system thread limit, because each server keeps a thread per other server. Shard maps could not be built, a slow full restart followed, and services that depended on Kinesis (Cognito, CloudWatch, Lambda, EventBridge, ECS, EKS) failed in turn.
+**What happened.** Adding capacity to the Kinesis front-end fleet pushed every server over an operating-system thread limit, because each server keeps a thread per other server. Shard maps could not be built, a slow full restart followed, and services that depended on Kinesis were hit: Cognito and CloudWatch directly, and others through them (Lambda and AutoScaling through CloudWatch metrics; ECS and EKS through EventBridge).
 
 **Key facts** (as published)
 - Capacity added from 2:44 to 3:47 AM PST; alarms from 5:15 AM; root cause confirmed at 9:39 AM; Kinesis fully normal at 10:23 PM PST `[CONFIRMED]`.
@@ -21,7 +21,7 @@ The trigger, but not the root cause, was a relatively small addition of capacity
 
 ## Contributing factors `[CONFIRMED]`
 
-- Thread count per server grows in proportion to the number of servers in the fleet, and the limit had no fine-grained alarm.
+- Thread count per server grows in proportion to the number of servers in the fleet, and AWS says it is adding fine-grained alarming for thread consumption (our inference: the limit had no such alarm before).
 - Cold-start of the front-end fleet was slow because shard-map population competes with request handling.
 - Several dependent services buffered or blocked in ways that turned a Kinesis problem into their own outage.
 - Status communication tools depended on an affected service.
