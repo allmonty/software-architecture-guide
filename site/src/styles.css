@@ -1,0 +1,59 @@
+:root {
+  --bg: #fafafa; --fg: #1c1c1e; --muted: #6b6b70; --card: #fff; --line: #d8d8de; --accent: #2563eb;
+  --c-confirmed: #15803d; --c-pattern: #b45309; --c-spec: #b91c1c;
+  --k-client: #e0f2fe; --k-edge: #ede9fe; --k-service: #dcfce7; --k-datastore: #fef3c7; --k-queue: #fce7f3; --k-external: #e5e7eb;
+}
+:root[data-theme="dark"] {
+  --bg: #111114; --fg: #ececf0; --muted: #9a9aa3; --card: #1b1b20; --line: #33333b; --accent: #60a5fa;
+  --c-confirmed: #4ade80; --c-pattern: #fbbf24; --c-spec: #f87171;
+  --k-client: #0c4a6e; --k-edge: #3b2a6b; --k-service: #14532d; --k-datastore: #5b3f08; --k-queue: #6b1d44; --k-external: #3a3a42;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111114; --fg: #ececf0; --muted: #9a9aa3; --card: #1b1b20; --line: #33333b; --accent: #60a5fa;
+    --c-confirmed: #4ade80; --c-pattern: #fbbf24; --c-spec: #f87171;
+    --k-client: #0c4a6e; --k-edge: #3b2a6b; --k-service: #14532d; --k-datastore: #5b3f08; --k-queue: #6b1d44; --k-external: #3a3a42;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 system-ui, sans-serif; }
+a { color: var(--accent); }
+button { font: inherit; color: inherit; background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+button[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
+button:disabled { opacity: .4; cursor: default; }
+.top { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+.brand { font-weight: 700; text-decoration: none; color: var(--fg); }
+.home, .system { padding: 16px; max-width: 1400px; margin: 0 auto; }
+.cards { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.cards a { display: block; padding: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; text-decoration: none; color: var(--fg); }
+.cards .num { color: var(--muted); margin-right: 8px; }
+.cards small { display: block; color: var(--muted); }
+.bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
+.bar h1 { margin: 0; font-size: 1.3rem; }
+.diagram { display: grid; grid-template-columns: 1fr 340px; gap: 12px; margin-top: 12px; }
+.canvas { height: calc(100vh - 150px); min-height: 420px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 12px; overflow: auto; max-height: calc(100vh - 150px); }
+.panel h2 { font-size: 1rem; margin: 0 0 8px; }
+.panel section + section { border-top: 1px solid var(--line); margin-top: 12px; padding-top: 12px; }
+.flows { display: flex; flex-wrap: wrap; gap: 6px; }
+.stepper { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.caption { flex-basis: 100%; margin: 0 0 4px; }
+.muted { color: var(--muted); }
+.badge { font-size: .75rem; padding: 1px 8px; border-radius: 99px; border: 1px solid currentColor; }
+.badge.conf-CONFIRMED { color: var(--c-confirmed); } .badge.conf-INDUSTRY-PATTERN { color: var(--c-pattern); } .badge.conf-SPECULATIVE { color: var(--c-spec); }
+.sources { padding-left: 18px; }
+.notes { max-width: 860px; margin-top: 12px; }
+.notes table { border-collapse: collapse; } .notes th, .notes td { border: 1px solid var(--line); padding: 4px 8px; }
+.notes pre { overflow: auto; background: var(--card); padding: 10px; border-radius: 6px; }
+/* React Flow nodes: colour by kind, border by confidence */
+.react-flow__node { border: 2px solid var(--line); border-radius: 8px; color: var(--fg); font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 4px; }
+.kind-client { background: var(--k-client); } .kind-edge { background: var(--k-edge); } .kind-service { background: var(--k-service); }
+.kind-datastore { background: var(--k-datastore); } .kind-queue { background: var(--k-queue); } .kind-external { background: var(--k-external); }
+.conf-INDUSTRY-PATTERN.react-flow__node { border-style: dashed; } .conf-SPECULATIVE.react-flow__node { border-style: dotted; }
+.react-flow__node.lit { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent); }
+.react-flow__node.sel { border-color: var(--fg); }
+.react-flow__edge.edge-dim .react-flow__edge-path { opacity: .2; }
+.react-flow__edge.edge-current .react-flow__edge-path { stroke: var(--accent); stroke-width: 3; }
+.react-flow__edge-text { fill: var(--fg); font-size: 11px; }
+.react-flow__edge-textbg { fill: var(--card); }
+@media (max-width: 860px) { .diagram { grid-template-columns: 1fr; } .canvas { height: 60vh; } .panel { max-height: none; } }
