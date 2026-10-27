@@ -250,5 +250,13 @@ button.study { margin-left: auto; }
 .track-cards a:hover, .cards a:hover { transform: translateY(-2px); box-shadow: 0 1px 2px rgb(0 0 0 / .06), 0 16px 30px -14px rgb(0 0 0 / .4); }
 .button { border-radius: 10px; padding: 9px 16px; }
 @media (prefers-reduced-motion: reduce) { .track-cards a, .cards a { transition: none; } .track-cards a:hover, .cards a:hover { transform: none; } }
-@media (max-width: 760px) { .hero { grid-template-columns: minmax(0, 1fr); } .hero-art { max-width: 300px; margin: 0 auto; order: -1; } }
-@media (max-width: 560px) { .hero h1 { font-size: 1.6rem; } }
+@media (max-width: 760px) { .hero { grid-template-columns: minmax(0, 1fr); } .hero-art { max-width: 300px; margin: 0 auto; } }
+@media (max-width: 560px) { .hero h1 { font-size: 1.6rem; } .hero-art { display: none; } }
+
+/* Icon tiles: hue follows the C4 palette. */
+.tile { display: inline-grid; place-items: center; flex: none; color: #fff; }
+.tile.md { width: 38px; height: 38px; border-radius: 11px; } .tile.sm { width: 26px; height: 26px; border-radius: 8px; }
+.tone-service { background: var(--p-service); } .tone-edge { background: var(--p-edge); } .tone-data { background: var(--p-data); } .tone-queue { background: var(--p-queue); } .tone-client { background: var(--p-client); }
+.card-head { display: flex; align-items: center; gap: 10px; }
+.home section > h2, .home .stage h3, .home .stage h4, .track-title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.home .stage h3 .muted { flex-basis: 100%; margin-left: 36px; }

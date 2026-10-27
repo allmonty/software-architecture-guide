@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { resolveRef, systems, toolkitPages, tracks, type Item } from "./data.ts";
 import { Backdrop, HeroArt } from "./Art.tsx";
+import { NamedIcon, TrackIcon } from "./icons.tsx";
 import { resetProgress, toggleDone, useProgress } from "./progress.ts";
 
 // Learning stages (the order in the README learning path). Each entry is a system number.
@@ -91,7 +92,7 @@ export function Home() {
       </section>
 
       <section>
-        <h2>1. Pick a goal</h2>
+        <h2><NamedIcon name="pick" />1. Pick a goal</h2>
         <p className="muted">Each track is an ordered reading list with a reason for every step. You can switch at any time.</p>
         <ul className="track-cards">
           {tracks.map((t) => {
@@ -101,7 +102,7 @@ export function Home() {
             return (
               <li key={t.id}>
                 <a href={`#track/${t.id}`}>
-                  <strong>{t.title}</strong>
+                  <span className="card-head"><TrackIcon id={t.id} /><strong>{t.title}</strong></span>
                   <span className="muted">{t.audience}</span>
                   <span className="card-foot">
                     <span className="meta">{items.length} steps · about {Math.round(mins / 60)} h of reading</span>
@@ -116,7 +117,7 @@ export function Home() {
       </section>
 
       <section>
-        <h2>2. How to study one system</h2>
+        <h2><NamedIcon name="method" />2. How to study one system</h2>
         <ol className="method">
           {METHOD.map(([t, d], i) => (
             <li key={t}><span className="num">{i + 1}</span><div><strong>{t}</strong><span>{d}</span></div></li>
@@ -135,7 +136,7 @@ export function Home() {
       </section>
 
       <section>
-        <h2>3. Browse everything</h2>
+        <h2><NamedIcon name="browse" />3. Browse everything</h2>
         <input className="search" type="search" placeholder="Search systems, primers, incidents and exercises" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search" />
         {needle ? (
           <ul className="steps">{hits.length ? hits.map((i) => <ItemRow key={i.ref} item={i} />) : <li className="muted">No match.</li>}</ul>
@@ -145,7 +146,7 @@ export function Home() {
               const items = g.ids.map((id) => resolveRef(id)).filter((x): x is Item => !!x);
               return items.length === 0 ? null : (
                 <div key={g.title} className="stage">
-                  <h3>{g.title} <span className="muted">{g.blurb}</span></h3>
+                  <h3><NamedIcon name={g.title} />{g.title} <span className="muted">{g.blurb}</span></h3>
                   <ul className="cards">{items.map((i) => <Card key={i.ref} item={i} />)}</ul>
                 </div>
               );
@@ -154,7 +155,7 @@ export function Home() {
               <h3>Toolkit <span className="muted">Practice material around the systems.</span></h3>
               {(["Incident", "Primer", "Exercise"] as const).map((ty) => (
                 <div key={ty}>
-                  <h4>{ty === "Incident" ? "Casebook: real incidents" : ty === "Primer" ? "Primers: cross-cutting topics" : "Workbook: practice with feedback"}</h4>
+                  <h4><NamedIcon name={ty} />{ty === "Incident" ? "Casebook: real incidents" : ty === "Primer" ? "Primers: cross-cutting topics" : "Workbook: practice with feedback"}</h4>
                   <ul className="cards">{all.filter((i) => i.type === ty).map((i) => <Card key={i.ref} item={i} />)}</ul>
                 </div>
               ))}

@@ -1,6 +1,7 @@
 import { resolveRef, tracks, type Item } from "./data.ts";
 import { useProgress } from "./progress.ts";
 import { ItemRow } from "./Home.tsx";
+import { TrackIcon } from "./icons.tsx";
 
 export function TrackPage({ id }: { id: string }) {
   const { done } = useProgress();
@@ -14,7 +15,7 @@ export function TrackPage({ id }: { id: string }) {
   return (
     <main className="home track">
       <p><a href="#">← All tracks</a></p>
-      <h1>{track.title}</h1>
+      <h1 className="track-title"><TrackIcon id={track.id} />{track.title}</h1>
       <p className="lede">{track.summary}</p>
       <p className="muted">{track.audience}</p>
       <div className="progress-row">
