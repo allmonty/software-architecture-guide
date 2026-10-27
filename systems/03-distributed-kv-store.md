@@ -209,7 +209,7 @@ These outlines are our own reasoning (`[INDUSTRY PATTERN]`), not statements from
 
 **If it grows 10×**
 - More nodes means more gossip state: keep the membership data compact (equal-size partitions did this).
-- Hot keys: tune N, R and W per use and cache reads.
+- Hot keys: a single key's traffic cannot be spread by hashing alone. Common answers (our reasoning, not from the Dynamo paper): split or salt a hot key into several sub-keys and merge on read, serve reads from caches or extra read replicas, and coalesce concurrent identical requests on the client side. Tuning N, R and W changes consistency and latency trade-offs; it does not cure a hot key.
 - Multi-datacenter: spread the preference list across sites.
 
 **Answer outlines** (try the questions above first)
