@@ -2,11 +2,13 @@
 // index.html repeats the cookie parsing in a few lines to apply the settings before the first paint; keep both in step.
 export const THEMES = ["system", "light", "warm", "dark"] as const;
 export const FONTS = ["system", "atkinson", "lexend", "literata"] as const;
+export const LANGS = ["en", "pt-BR"] as const;
+export type Lang = (typeof LANGS)[number];
 export const SIZE = { min: 13, max: 24, default: 15 } as const;
 export const COOKIE = "atlas-settings";
 
-export interface Settings { theme: (typeof THEMES)[number]; font: (typeof FONTS)[number]; size: number }
-export const DEFAULTS: Settings = { theme: "system", font: "system", size: SIZE.default };
+export interface Settings { theme: (typeof THEMES)[number]; font: (typeof FONTS)[number]; size: number; lang: Lang }
+export const DEFAULTS: Settings = { theme: "system", font: "system", size: SIZE.default, lang: "en" };
 
 export const clampSize = (n: unknown) =>
   typeof n === "number" && Number.isFinite(n) ? Math.min(SIZE.max, Math.max(SIZE.min, Math.round(n))) : SIZE.default;
@@ -21,6 +23,7 @@ export function parseSettings(cookie: string): Settings {
       theme: THEMES.find((t) => t === raw?.theme) ?? DEFAULTS.theme,
       font: FONTS.find((f) => f === raw?.font) ?? DEFAULTS.font,
       size: clampSize(raw?.size),
+      lang: LANGS.find((l) => l === raw?.lang) ?? DEFAULTS.lang,
     };
   } catch {
     return { ...DEFAULTS };

@@ -1,5 +1,6 @@
 import { parseConcepts } from "../../schema/concepts.ts";
 import { Diagram } from "../../schema/diagram.schema.ts";
+import type { Lang } from "./settings-core.ts";
 import { ageInDays, lastReadDate, notVerified, STALE_DAYS, summarizeLedger, type LedgerEntry, type QuoteTally } from "../../schema/trust.ts";
 
 export interface System {
@@ -28,6 +29,13 @@ export const systems: System[] = Object.entries(diagrams)
   })
   .sort((a, b) => a.id.localeCompare(b.id));
 
+// Translated notes mirror the originals under locales/pt-BR/{systems,toolkit}/. A note with no translation shows in English.
+const translatedNotes = import.meta.glob("../../locales/pt-BR/**/*.md", { eager: true, query: "?raw", import: "default" }) as Record<string, string>;
+export function noteIn(folder: "systems" | "toolkit", id: string, english: string, lang: Lang): { markdown: string; fallback: boolean } {
+  const md = lang === "pt-BR" ? translatedNotes[`../../locales/pt-BR/${folder}/${id}.md`] : undefined;
+  return { markdown: md ?? english, fallback: lang !== "en" && !md };
+}
+
 // Toolkit pages (primers P, casebook C, workbook W, README) are plain Markdown without a diagram.
 export interface ToolkitPage { id: string; title: string; markdown: string; claims: LedgerEntry[] }
 const toolkit = import.meta.glob("../../toolkit/*.md", { eager: true, query: "?raw", import: "default" });
@@ -46,6 +54,21 @@ import tracksData from "./tracks.json";
 export interface Step { ref: string; why?: string }
 export interface Track { id: string; title: string; audience: string; summary: string; steps: Step[] }
 export const tracks: Track[] = tracksData.tracks as Track[];
+
+// pt-BR text laid over the English: only the prose fields, keyed by track id / step ref / English stage title.
+// Anything missing falls back to the English, so a half-translated overlay still works.
+import trackPt from "./locales/pt-BR/tracks.json";
+import stagePt from "./locales/pt-BR/stages.json";
+type TrackText = { title?: string; audience?: string; summary?: string; why?: Record<string, string> };
+export const trackText = trackPt as Record<string, TrackText>;
+export const stageText = stagePt as Record<string, { title: string; blurb: string }>;
+
+export function trackIn(t: Track, lang: Lang): Track {
+  const o = lang === "pt-BR" ? trackText[t.id] : undefined;
+  return o ? { ...t, title: o.title ?? t.title, audience: o.audience ?? t.audience, summary: o.summary ?? t.summary, steps: t.steps.map((s) => ({ ...s, why: o.why?.[s.ref] ?? s.why })) } : t;
+}
+export const stageIn = <S extends { title: string; blurb: string }>(s: S, lang: Lang): S =>
+  lang === "pt-BR" ? { ...s, ...stageText[s.title] } : s;
 
 export type ItemType = "System" | "Primer" | "Incident" | "Exercise";
 export interface Item {

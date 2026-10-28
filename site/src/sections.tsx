@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Components } from "react-markdown";
 import { sectionsOf, slugify } from "./text.ts";
+import { useT } from "./i18n.tsx";
 export { mentionsOf, sectionsOf, slugify } from "./text.ts";
 export type { Section } from "./text.ts";
 
@@ -27,6 +28,7 @@ export function scrollToSection(slug: string, remember = true) {
 }
 
 function Heading({ level, id, children }: { level: 2 | 3 | 4; id: string; children?: ReactNode }) {
+  const t = useT();
   const [copied, setCopied] = useState(false);
   const Tag = `h${level}` as "h2";
   const copy = async () => {
@@ -36,7 +38,7 @@ function Heading({ level, id, children }: { level: 2 | 3 | 4; id: string; childr
   return (
     <Tag id={id} className="sec">
       {children}
-      <button className="anchor" onClick={copy} aria-label="Copy link to this section" title="Copy link to this section">{copied ? "copied" : "#"}</button>
+      <button className="anchor" onClick={copy} aria-label={t.copyLink} title={t.copyLink}>{copied ? t.copied : "#"}</button>
     </Tag>
   );
 }
@@ -81,6 +83,7 @@ function useActiveSection(slugs: string[], deps: unknown[]) {
 
 /** Compact "jump to" control for the top of a note, and a list that shows the current section. */
 export function Outline({ markdown, variant, remount }: { markdown: string; variant: "select" | "list"; remount?: unknown }) {
+  const t = useT();
   const sections = useMemo(() => sectionsOf(markdown).filter((s) => s.level === 2), [markdown]);
   const active = useActiveSection(sections.map((s) => s.slug), [remount, variant]);
   if (sections.length < 3) return null;
@@ -88,9 +91,9 @@ export function Outline({ markdown, variant, remount }: { markdown: string; vari
     return (
       <div className="outline-select">
         <label>
-          <span className="muted">Jump to</span>
-          <select value={active ?? ""} onChange={(e) => e.target.value && scrollToSection(e.target.value)} aria-label="Jump to section">
-            <option value="" disabled>Section…</option>
+          <span className="muted">{t.jumpTo}</span>
+          <select value={active ?? ""} onChange={(e) => e.target.value && scrollToSection(e.target.value)} aria-label={t.jumpToAria}>
+            <option value="" disabled>{t.sectionPlaceholder}</option>
             {sections.map((s) => <option key={s.slug} value={s.slug}>{s.text}</option>)}
           </select>
         </label>
@@ -98,8 +101,8 @@ export function Outline({ markdown, variant, remount }: { markdown: string; vari
     );
   }
   return (
-    <nav className="outline-list" aria-label="Contents">
-      <b>Contents</b>
+    <nav className="outline-list" aria-label={t.contents}>
+      <b>{t.contents}</b>
       <ol>
         {sections.map((s) => (
           <li key={s.slug} className={s.slug === active ? "current" : ""}>

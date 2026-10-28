@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { FONTS, SIZE, THEMES } from "./settings-core.ts";
+import { FONTS, LANGS, SIZE, THEMES } from "./settings-core.ts";
 import { resetSettings, updateSettings, useSettings } from "./settings.ts";
+import { useT } from "./i18n.tsx";
 
-const THEME_LABEL = { system: "System", light: "Light", warm: "Warm", dark: "Dark" } as const;
-const FONT_LABEL = { system: "System default", atkinson: "Atkinson Hyperlegible", lexend: "Lexend", literata: "Literata" } as const;
+const FONT_NAME = { atkinson: "Atkinson Hyperlegible", lexend: "Lexend", literata: "Literata" } as const; // font names are not translated
+const LANG_LABEL = { en: "English", "pt-BR": "Português (Brasil)" } as const; // each in its own language
 
 export function SettingsMenu() {
   const s = useSettings();
+  const t = useT();
   const [open, setOpen] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
@@ -22,42 +24,53 @@ export function SettingsMenu() {
 
   return (
     <div className="settings" ref={box}>
-      <button ref={button} onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="settings-pop" aria-label="Reading settings">⚙</button>
+      <button ref={button} onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="settings-pop" aria-label={t.readingSettings}>⚙</button>
       {open && (
-        <div id="settings-pop" className="settings-pop" role="dialog" aria-label="Reading settings">
+        <div id="settings-pop" className="settings-pop" role="dialog" aria-label={t.readingSettings}>
           <fieldset>
-            <legend>Theme</legend>
+            <legend>{t.language}</legend>
             <div className="choices">
-              {THEMES.map((t) => (
-                <label key={t} className={`choice swatch-${t}`}>
-                  <input type="radio" name="theme" checked={s.theme === t} onChange={() => updateSettings({ theme: t })} />
-                  <span>{THEME_LABEL[t]}</span>
+              {LANGS.map((l) => (
+                <label key={l} className="choice">
+                  <input type="radio" name="lang" checked={s.lang === l} onChange={() => updateSettings({ lang: l })} />
+                  <span>{LANG_LABEL[l]}</span>
                 </label>
               ))}
             </div>
           </fieldset>
           <fieldset>
-            <legend>Font</legend>
+            <legend>{t.theme}</legend>
+            <div className="choices">
+              {THEMES.map((th) => (
+                <label key={th} className={`choice swatch-${th}`}>
+                  <input type="radio" name="theme" checked={s.theme === th} onChange={() => updateSettings({ theme: th })} />
+                  <span>{t.themes[th]}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>{t.font}</legend>
             <div className="choices fonts">
               {FONTS.map((f) => (
                 <label key={f} className={`choice font-${f}`}>
                   <input type="radio" name="font" checked={s.font === f} onChange={() => updateSettings({ font: f })} />
-                  <span>{FONT_LABEL[f]}</span>
+                  <span>{f === "system" ? t.fontSystem : FONT_NAME[f]}</span>
                 </label>
               ))}
             </div>
           </fieldset>
           <fieldset>
-            <legend>Reading text size</legend>
+            <legend>{t.textSize}</legend>
             <div className="size-row">
-              <button onClick={() => updateSettings({ size: s.size - 1 })} disabled={s.size <= SIZE.min} aria-label="Smaller text">A−</button>
-              <input type="range" min={SIZE.min} max={SIZE.max} step={1} value={s.size} onChange={(e) => updateSettings({ size: Number(e.target.value) })} aria-label="Reading text size in pixels" />
-              <button onClick={() => updateSettings({ size: s.size + 1 })} disabled={s.size >= SIZE.max} aria-label="Larger text">A+</button>
+              <button onClick={() => updateSettings({ size: s.size - 1 })} disabled={s.size <= SIZE.min} aria-label={t.smaller}>A−</button>
+              <input type="range" min={SIZE.min} max={SIZE.max} step={1} value={s.size} onChange={(e) => updateSettings({ size: Number(e.target.value) })} aria-label={t.textSizeAria} />
+              <button onClick={() => updateSettings({ size: s.size + 1 })} disabled={s.size >= SIZE.max} aria-label={t.larger}>A+</button>
               <output>{s.size} px</output>
             </div>
-            <p className="muted small">Diagram labels keep a fixed size.</p>
+            <p className="muted small">{t.diagramFixed}</p>
           </fieldset>
-          <button className="linkish" onClick={resetSettings}>Reset to defaults</button>
+          <button className="linkish" onClick={resetSettings}>{t.reset}</button>
         </div>
       )}
     </div>

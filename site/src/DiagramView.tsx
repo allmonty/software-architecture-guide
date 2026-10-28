@@ -10,6 +10,7 @@ import { layout, NODE_W } from "./layout.ts";
 import { nodeHeight, shortSummary } from "./nodeSize.ts";
 import { mentionsOf, scrollToSection } from "./sections.tsx";
 import { buildSvg, downloadPng, downloadSvg } from "./export.ts";
+import { useT } from "./i18n.tsx";
 import { buildView, containersWithComponents, SYSTEM_ID, typeLine, type Element, type Level } from "./c4.ts";
 
 type C4Data = { el: Element; lit: boolean; dir: "LR" | "TB" };
@@ -56,6 +57,7 @@ export function DiagramView({
   initialLevel?: Level;
   initialFocus?: string | null;
 }) {
+  const t = useT();
   const focusable = useMemo(() => containersWithComponents(diagram), [diagram]);
   const startFocus = focusable.find((n) => n.id === initialFocus)?.id ?? focusable[0]?.id ?? null;
   const [level, setLevel] = useState<Level>(initialLevel === "component" && !startFocus ? "container" : initialLevel);
@@ -187,7 +189,7 @@ export function DiagramView({
               key={l.id}
               aria-pressed={level === l.id}
               disabled={l.id === "component" && focusable.length === 0}
-              title={l.id === "component" && focusable.length === 0 ? "This system has no component view" : undefined}
+              title={l.id === "component" && focusable.length === 0 ? t.noComponentView : undefined}
               onClick={() => { setLevel(l.id); setSel(null); }}
             >
               {l.name}
@@ -218,41 +220,41 @@ export function DiagramView({
           <Controls showInteractive={false} />
         </ReactFlow>
         <div className="tools">
-          <button aria-pressed={labels} onClick={() => setLabels(!labels)} title="Show or hide the text on the lines">Line labels</button>
-          <button onClick={() => { const x = exportData(); downloadSvg(x.name, x.svg); }} title="Download this view as an SVG image">SVG</button>
-          <button onClick={() => { const x = exportData(); downloadPng(x.name, x.svg, x.width, x.height); }} title="Download this view as a PNG image">PNG</button>
+          <button aria-pressed={labels} onClick={() => setLabels(!labels)} title={t.lineLabelsTitle}>{t.lineLabels}</button>
+          <button onClick={() => { const x = exportData(); downloadSvg(x.name, x.svg); }} title={t.svgTitle}>SVG</button>
+          <button onClick={() => { const x = exportData(); downloadPng(x.name, x.svg, x.width, x.height); }} title={t.pngTitle}>PNG</button>
         </div>
         {Object.keys(mv).length > 0 && (
-          <button className="reset" onClick={() => setMoved((m) => ({ ...m, [viewKey]: {} }))}>Reset layout</button>
+          <button className="reset" onClick={() => setMoved((m) => ({ ...m, [viewKey]: {} }))}>{t.resetLayout}</button>
         )}
       </div>
       <aside className="panel">
         <section>
-          <h2>Flows</h2>
+          <h2>{t.flows}</h2>
           <div className="flows">
             {diagram.flows.map((f) => (
               <button
                 key={f.id}
                 aria-pressed={f.id === flowId}
                 className={f.failure ? "flow-failure" : undefined}
-                title={f.failure ? "A failure, overload or other abnormal case" : undefined}
+                title={f.failure ? t.failureTitle : undefined}
                 onClick={() => { setFlowId(f.id === flowId ? null : f.id); setStep(0); }}
               >
                 {f.name}
               </button>
             ))}
-            {diagram.flows.length === 0 && <p className="muted">No flows for this system.</p>}
+            {diagram.flows.length === 0 && <p className="muted">{t.noFlows}</p>}
           </div>
           {flow && current && (
             <div className={`stepper${flow.failure ? " failure" : ""}`}>
               <p className="caption">
-                <b>Step {step + 1}/{flow.steps.length}.</b> {current.caption}
+                <b>{t.step(step + 1, flow.steps.length)}</b> {current.caption}
               </p>
-              {here?.inside && <p className="muted caption">Happens inside <b>{here.inside.label}</b> at this level. Open a lower level to see it.</p>}
-              {!here?.rel && !here?.inside && <p className="muted caption">Not drawn in this view.</p>}
-              <button disabled={step === 0} onClick={() => setStep(step - 1)}>← Back</button>
-              <button disabled={step === flow.steps.length - 1} onClick={() => setStep(step + 1)}>Next →</button>
-              <span className="muted small hint">or press the ← and → keys</span>
+              {here?.inside && <p className="muted caption">{t.happensInside(here.inside.label)}</p>}
+              {!here?.rel && !here?.inside && <p className="muted caption">{t.notDrawn}</p>}
+              <button disabled={step === 0} onClick={() => setStep(step - 1)}>{t.back}</button>
+              <button disabled={step === flow.steps.length - 1} onClick={() => setStep(step + 1)}>{t.next}</button>
+              <span className="muted small hint">{t.arrowKeys}</span>
               <ol className="step-list">
                 {flow.steps.map((st, i) => (
                   <li key={i} className={i === step ? "now" : i < step ? "past" : ""} aria-current={i === step ? "step" : undefined}>
@@ -273,11 +275,11 @@ export function DiagramView({
               )}
               <p>{selEl.summary}</p>
               {selEl.node?.details && <ReactMarkdown>{selEl.node.details}</ReactMarkdown>}
-              {selEl.id === SYSTEM_ID && <button onClick={() => setLevel("container")}>Open the Containers view</button>}
+              {selEl.id === SYSTEM_ID && <button onClick={() => setLevel("container")}>{t.openContainers}</button>}
               {kids.length > 0 && (
                 <>
-                  <p className="muted">Components: {kids.map((k) => k.label).join(", ")}</p>
-                  <button onClick={() => { setFocus(selEl.node!.id); setLevel("component"); setSel(null); }}>Open the Components view</button>
+                  <p className="muted">{t.componentsOf} {kids.map((k) => k.label).join(", ")}</p>
+                  <button onClick={() => { setFocus(selEl.node!.id); setLevel("component"); setSel(null); }}>{t.openComponents}</button>
                 </>
               )}
               {selEl.node && selEl.node.sources.length > 0 && (
@@ -289,19 +291,19 @@ export function DiagramView({
               )}
               {nodeQuotes.length > 0 && (
                 <details>
-                  <summary>Quotations from these sources ({nodeQuotes.length})</summary>
-                  <p className="muted small">Words from this element's sources that the note quotes and the verifier found in the page. They may support nearby claims rather than this element alone.</p>
+                  <summary>{t.quotesFrom(nodeQuotes.length)}</summary>
+                  <p className="muted small">{t.quotesNote}</p>
                   <ul>{nodeQuotes.map((c, i) => <li key={`${i}-${c.quote}`}>“{c.quote}”</li>)}</ul>
                 </details>
               )}
               {mentions.length > 0 && (
-                <p className="small">Discussed in: {mentions.map((m, i) => <span key={m.slug}>{i > 0 && " · "}<button className="linkish" onClick={() => scrollToSection(m.slug)}>{m.text}</button></span>)}</p>
+                <p className="small">{t.discussedIn} {mentions.map((m, i) => <span key={m.slug}>{i > 0 && " · "}<button className="linkish" onClick={() => scrollToSection(m.slug)}>{m.text}</button></span>)}</p>
               )}
             </>
           ) : selRel ? (
             <>
               <h2>{label(selRel.from)} → {label(selRel.to)}</h2>
-              <p className="muted">{selRel.edgeIds.length > 1 ? "Rolled up from these interactions" : "Interaction"}</p>
+              <p className="muted">{selRel.edgeIds.length > 1 ? t.rolledUp : t.interaction}</p>
               <ul>
                 {selRel.edgeIds.map((id) => {
                   const e = diagram.edges.find((x) => x.id === id)!;
@@ -311,7 +313,7 @@ export function DiagramView({
               </ul>
             </>
           ) : (
-            <p className="muted">Click an element or a line for details. Drag elements to untangle.</p>
+            <p className="muted">{t.clickForDetails}</p>
           )}
         </section>
       </aside>

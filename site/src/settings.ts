@@ -13,6 +13,7 @@ export function applySettings(s: Settings) {
   const root = document.documentElement;
   if (s.theme === "system") delete root.dataset.theme; else root.dataset.theme = s.theme;
   root.dataset.font = s.font;
+  root.lang = s.lang;
   root.style.setProperty("--fs", `${s.size}px`);
 }
 

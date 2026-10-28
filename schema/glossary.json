@@ -1,0 +1,10 @@
+[
+  "CAP", "CDN", "CQRS", "CRDT", "DLQ", "ADR", "RTO", "RPO", "SLO", "SLA", "RAG", "KV cache", "LLM",
+  "p50", "p99", "TTL", "gRPC", "WebSocket",
+  "Kafka", "Redis", "Cassandra", "DynamoDB", "Raft", "Paxos", "Snowflake", "UUIDv7",
+  "sharding", "consistent hashing", "quorum", "idempotency", "fan-out", "backpressure", "rate limiting",
+  "load balancer", "leader election", "fencing", "saga", "outbox", "event sourcing", "write-ahead log",
+  "LSM tree", "B-tree", "Bloom filter", "circuit breaker", "dead letter queue", "consumer group",
+  "eventual consistency", "linearizability", "two-phase commit", "failover", "blast radius", "kill switch",
+  "error budget", "multi-tenancy", "zero trust", "threat modeling"
+]

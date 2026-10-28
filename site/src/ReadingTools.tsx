@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useT } from "./i18n.tsx";
 
 // Open every collapsed answer while printing so the page prints whole, then put them back.
 function usePrintOpensDetails() {
@@ -14,6 +15,7 @@ function usePrintOpensDetails() {
 
 /** Focus mode hides the legend and the trust card for undisturbed reading; the top bar stays. */
 export function ReadingTools() {
+  const t = useT();
   const [focus, setFocus] = useState(false);
   usePrintOpensDetails();
   useEffect(() => {
@@ -22,8 +24,8 @@ export function ReadingTools() {
   }, [focus]);
   return (
     <span className="reading-tools">
-      <button aria-pressed={focus} onClick={() => setFocus(!focus)} title="Hide the legend and the summary card">Focus</button>
-      <button onClick={() => print()} title="Print the note, or save it as a PDF from the print dialog">Print / PDF</button>
+      <button aria-pressed={focus} onClick={() => setFocus(!focus)} title={t.focusTitle}>{t.focus}</button>
+      <button onClick={() => print()} title={t.printTitle}>{t.print}</button>
     </span>
   );
 }

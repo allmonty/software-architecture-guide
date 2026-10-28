@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import { systems, toolkitPages, type ToolkitPage } from "./data.ts";
+import { noteIn, systems, toolkitPages, type ToolkitPage } from "./data.ts";
+import { useSettings } from "./settings.ts";
 import { Home } from "./Home.tsx";
 import { TrackPage } from "./TrackPage.tsx";
 import { StudyToggle } from "./StudyToggle.tsx";
@@ -12,6 +13,7 @@ import { ConceptsPage } from "./ConceptsPage.tsx";
 import { ReadingTools } from "./ReadingTools.tsx";
 import { TrustCard } from "./TrustCard.tsx";
 import { SettingsMenu } from "./SettingsMenu.tsx";
+import { useT } from "./i18n.tsx";
 
 // Hash routing keeps the build deployable on any static host.
 const useHash = () => {
@@ -25,6 +27,7 @@ const useHash = () => {
 };
 
 export function App() {
+  const t = useT();
   const hash = useHash();
   // "#07-photo-upload-storage?flow=upload&step=2" deep-links to a flow step.
   const [id, query = ""] = hash.split("?");
@@ -37,8 +40,8 @@ export function App() {
       <header className="top">
         <a href="#" className="brand">System Design Atlas</a>
         <div className="top-actions">
-          <a className="coffee" href="https://buymeacoffee.com/allmonty" target="_blank" rel="noreferrer" title="Support this project on Buy Me a Coffee">
-            <span aria-hidden="true">☕</span> <span className="coffee-text">Buy me a coffee</span>
+          <a className="coffee" href="https://buymeacoffee.com/allmonty" target="_blank" rel="noreferrer" title={t.coffeeTitle}>
+            <span aria-hidden="true">☕</span> <span className="coffee-text">{t.brandCoffee}</span>
           </a>
           <SettingsMenu />
         </div>
@@ -68,14 +71,17 @@ export function App() {
 }
 
 function ToolkitView({ page, section }: { page: ToolkitPage; section: string | null }) {
-  const headings = useHeadingComponents(page.markdown);
+  const t = useT();
+  const note = noteIn("toolkit", page.id, page.markdown, useSettings().lang);
+  const headings = useHeadingComponents(note.markdown);
   useEffect(() => { if (section) scrollToSection(section, false); }, [section]);
   return (
     <main className="notes toolkit">
-      <p className="crumbs"><a href="#">← Home</a> · <a href="#toolkit/README">Toolkit index</a><ReadingTools />{page.id !== "README" && <StudyToggle refId={page.id.slice(0, 3)} />}</p>
-      <Outline markdown={page.markdown} variant="select" />
-      {page.id !== "README" && !page.id.startsWith("W") && <TrustCard id={page.id} title={page.title} markdown={page.markdown} claims={page.claims} />}
-      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={{ ...components, ...headings }}>{page.markdown}</ReactMarkdown>
+      <p className="crumbs"><a href="#">{t.home}</a> · <a href="#toolkit/README">{t.toolkitIndex}</a><ReadingTools />{page.id !== "README" && <StudyToggle refId={page.id.slice(0, 3)} />}</p>
+      {note.fallback && <p className="muted small">{t.notTranslated}</p>}
+      <Outline markdown={note.markdown} variant="select" />
+      {page.id !== "README" && !page.id.startsWith("W") && <TrustCard id={page.id} title={page.title} markdown={note.markdown} claims={page.claims} />}
+      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={{ ...components, ...headings }}>{note.markdown}</ReactMarkdown>
     </main>
   );
 }

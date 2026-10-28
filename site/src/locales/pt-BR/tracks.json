@@ -1,0 +1,98 @@
+{
+  "interview": {
+    "title": "Entrevista em duas semanas",
+    "audience": "Você tem uma entrevista em breve e quer o caminho de maior retorno.",
+    "summary": "Aprenda primeiro o método, depois os designs mais cobrados, depois pratique. O tempo mostrado conta só a leitura; some as sessões de prática.",
+    "why": {
+      "W01": "Aprenda o roteiro de 45 minutos e a rubrica de avaliação antes de ler qualquer design. Você voltará a ele no fim, para três sessões simuladas cronometradas.",
+      "P01": "A estimativa é o passo 2 de toda resposta. Aprenda os números de latência e o método.",
+      "01": "Um aquecimento com caching, geração de chaves e o trade-off entre 301 e 302.",
+      "35": "Geração de IDs únicos: o layout do Snowflake, ticket servers, UUIDv7 e o que acontece quando o relógio volta no tempo. A geração de chaves aparece dentro de muitos designs.",
+      "02": "Rate limiting e a escolha entre fail-open e fail-closed (o Stripe usa fail-open; o Envoy deixa você escolher).",
+      "03": "Replication, quorums e consistent hashing, que se repetem em todo lugar.",
+      "32": "Caching a fundo: stale sets, stampedes e o que acontece quando um servidor de cache morre.",
+      "08": "Mensagens em tempo real, garantias de entrega e fan-out.",
+      "11": "Fan-out on write versus on read, a pergunta clássica de feed.",
+      "10": "Filas, prioridades, retries e deduplicação.",
+      "04": "O message log a fundo: partitions, replication, consumer groups e leader failover (Kafka), o motor por baixo de muitas respostas sobre filas.",
+      "12": "Upload, transcoding e entrega de vídeo.",
+      "15": "Indexação geoespacial e matching.",
+      "17": "Idempotency e correção com dinheiro.",
+      "16": "Contenção e double-booking.",
+      "P03": "Sagas e outbox: a resposta padrão para consistência entre serviços.",
+      "P07": "SLOs, error budgets e como conter uma falha em cascata.",
+      "W03": "Exercícios de estimativa com soluções resolvidas, para a aritmética virar automática.",
+      "W02": "Treine para encontrar falhas em designs plausíveis. Alguns cenários vêm de incidentes (C01 a C03) e de notas de IA fora desta trilha; pule-os ou leia-os antes.",
+      "W05": "Flashcards dos sistemas de IA (22 a 31), dos primers e do casebook de incidentes. Eles acrescentam fatos além dos sistemas acima em vez de repeti-los.",
+      "W04": "Cenários abertos para praticar enunciar uma decisão e seus trade-offs. Termine rodando três sessões simuladas cronometradas a partir do primeiro passo."
+    }
+  },
+  "foundations": {
+    "title": "Building blocks primeiro",
+    "audience": "Você está no início da carreira, ou quer bases sólidas antes dos designs completos.",
+    "summary": "As peças pequenas que aparecem dentro de todo design grande: IDs, caches, locks, contadores, storage engines, load balancers e APIs.",
+    "why": {
+      "P01": "Comece por como estimar, para que todo design seguinte tenha números.",
+      "35": "O building block mais simples: IDs únicos, e o que acontece quando os relógios dão errado.",
+      "01": "Seu primeiro design completo, construído com IDs e caches.",
+      "02": "Contadores, janelas e modos de falha em um sistema pequeno.",
+      "03": "Como os dados são particionados e replicados entre máquinas.",
+      "P02": "B-trees, LSM trees e como escolher um banco de dados.",
+      "32": "Caching em larga escala.",
+      "33": "Leader election, locks e fencing.",
+      "34": "Top-K, contagem aproximada e leaderboards.",
+      "P04": "Como o tráfego é distribuído entre servidores.",
+      "P05": "Paginação, idempotency e evolução de APIs.",
+      "P03": "Consistência entre serviços."
+    }
+  },
+  "architect": {
+    "title": "De engenheiro sênior a arquiteto",
+    "audience": "Você já projeta bem e quer o lado de tomada de decisão, risco e comunicação.",
+    "summary": "Registros de decisão, formato de deploy, falhas reais, migrações, disaster recovery, multi-tenancy, segurança, confiabilidade e custo, depois exercícios que pedem uma decisão justificada.",
+    "why": {
+      "P09": "Como arquitetos decidem, registram e defendem decisões: ADRs, design docs e tecnologia entediante.",
+      "C02": "Um processo de deploy que pulou o staging: leia o incidente, depois escreva suas próprias salvaguardas.",
+      "C03": "Failover automático encontrando escritas divididas: disponibilidade versus integridade.",
+      "P07": "Confiabilidade como entrada do design: SLOs, error budgets e postmortems.",
+      "P10": "Substituir partes de um sistema em funcionamento com segurança.",
+      "P11": "Monolito ou microsserviços: o prêmio que Fowler descreve, o modular monolith da Shopify, a consolidação de um serviço no Prime Video e a lei de Conway.",
+      "P06": "Threat modeling e zero trust na fase de design.",
+      "P08": "O que move o custo e como falar sobre ele.",
+      "P14": "Multi-tenancy: isolamento não é autenticação, silo versus pool e as mitigações de noisy neighbour. Custo e limites por tenant decorrem do primer de custo.",
+      "13": "Um control plane e um data plane em larga escala, com steering.",
+      "17": "Um design em que a correção domina todo o resto.",
+      "P12": "Event sourcing e CQRS: quando um histórico de mudanças compensa o custo, o que ele faz com a consistência e as alternativas mais leves. Compare com como os pagamentos obtêm correção por meio de idempotency.",
+      "33": "O serviço de coordenação compartilhado de que muitos sistemas dependem, e seus riscos.",
+      "C01": "Uma operação de rotina com blast radius grande demais.",
+      "C04": "Ferramentas de recuperação que dependem da coisa que falhou.",
+      "P13": "RTO, RPO e as quatro estratégias de disaster recovery, e por que uma recuperação que depende do sistema em falha, ou que nunca é ensaiada, não funciona.",
+      "C05": "Verificação de deploy, dead code e kill switches.",
+      "C06": "Limites de recursos ocultos e cascatas de dependências.",
+      "W04": "Seis cenários abertos: escreva o registro de decisão, depois compare com o que uma resposta forte cobre.",
+      "W02": "Revise designs com falhas como uma design review faria."
+    }
+  },
+  "ai": {
+    "title": "Engenheiro de sistemas de IA",
+    "audience": "Você constrói ou opera produtos baseados em LLM e quer projetá-los bem.",
+    "summary": "Serving, retrieval, agents, melhoria de modelos e treinamento, seguidos das questões de segurança e custo que toda funcionalidade de IA levanta.",
+    "why": {
+      "22": "Como LLMs são servidos: KV cache, batching e a divisão prefill/decode.",
+      "24": "Busca vetorial: os índices por trás do retrieval.",
+      "23": "Retrieval-augmented generation como sistema: chunking, hybrid search, permissões.",
+      "25": "Agents: workflows versus loops, tools, sandboxes e orçamentos.",
+      "28": "Melhorar um modelo: adapters, preference tuning, evaluation gates e rollout.",
+      "26": "Recomendação em dois estágios e aprendizado a partir de feedback.",
+      "27": "Treinamento em larga escala: paralelismo, checkpoints e falhas.",
+      "P06": "Threat modeling, que importa mais para tools e texto recuperado.",
+      "P08": "Tokens e horas de GPU como os fatores de custo.",
+      "W04": "O cenário 6 pede o design de uma funcionalidade de IA com segurança e avaliação."
+    }
+  },
+  "atlas": {
+    "title": "O atlas inteiro em ordem de aprendizado",
+    "audience": "Você quer estudar de forma sistemática ao longo de várias semanas.",
+    "summary": "Os 35 sistemas, dos fundamentos à IA, na ordem em que os estágios se apoiam uns nos outros."
+  }
+}

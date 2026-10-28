@@ -2,6 +2,7 @@ import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Diagram } from "../schema/diagram.schema.ts";
+import { lastReadDate, notVerified } from "../schema/trust.ts";
 
 // Every system .md must contain these headings (substring match on `##` lines).
 export const REQUIRED_SECTIONS = [
@@ -141,10 +142,43 @@ export function validateTracks(file: string, systemsDir: string, toolkitDir: str
   return errors;
 }
 
+// Translated notes (locales/<lang>/{systems,toolkit}/X.md) may change the prose only. The site, the trust card and the
+// validator match English headings, phrases and tags, and the glossary lists terms that stay English, so a translation
+// must keep: the original's ## headings, its link targets and confidence tags, its source date and "Not ..." list, and
+// every glossary term the original uses.
+export function validateTranslations(localesDir: string, rootDir: string, glossary: string[]): string[] {
+  const errors: string[] = [];
+  if (!existsSync(localesDir)) return errors;
+  const bag = (md: string, re: RegExp) => [...md.matchAll(re)].map((m) => m[1] ?? m[0]).sort().join("\n");
+  const h2 = (md: string) => md.split("\n").filter((l) => l.startsWith("## ")).join("\n");
+  for (const folder of ["systems", "toolkit"]) {
+    const sub = join(localesDir, folder);
+    if (!existsSync(sub)) continue;
+    for (const f of readdirSync(sub).filter((f) => f.endsWith(".md")).sort()) {
+      const err = (m: string) => errors.push(`locales/${folder}/${f}: ${m}`);
+      const original = join(rootDir, folder, f);
+      if (!existsSync(original)) { err("no original note with this name"); continue; }
+      const en = readFileSync(original, "utf8");
+      const tr = readFileSync(join(sub, f), "utf8");
+      if (h2(en) !== h2(tr)) err("the ## headings must be identical to the original (the site and the validator match them)");
+      if (bag(en, /\]\(([^)\s]+)\)/g) !== bag(tr, /\]\(([^)\s]+)\)/g)) err("link targets must be identical to the original");
+      if (bag(en, /\[(CONFIRMED|INDUSTRY PATTERN|SPECULATIVE|EARLIER PASS)\]/g) !== bag(tr, /\[(CONFIRMED|INDUSTRY PATTERN|SPECULATIVE|EARLIER PASS)\]/g)) err("confidence tags must match the original");
+      if (lastReadDate(en) !== lastReadDate(tr)) err("the source date line must keep its English phrasing and date");
+      if (notVerified(en).length !== notVerified(tr).length) err('the verification log must keep the same "- Not ..." bullets');
+      for (const term of glossary) {
+        const re = new RegExp(`(?<![\\p{L}\\p{N}])${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\p{L}\\p{N}])`, "u");
+        if (re.test(en) && !re.test(tr)) err(`glossary term "${term}" is in the original but missing here; technical terms stay in English`);
+      }
+    }
+  }
+  return errors;
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const here = resolve(fileURLToPath(import.meta.url), "../..");
   const dir = join(here, "systems");
-  const errors = [...validateDir(dir), ...validateToolkit(join(here, "toolkit")), ...validateTracks(join(here, "site/src/tracks.json"), dir, join(here, "toolkit"))];
+  const errors = [...validateDir(dir), ...validateToolkit(join(here, "toolkit")), ...validateTracks(join(here, "site/src/tracks.json"), dir, join(here, "toolkit")),
+    ...validateTranslations(join(here, "locales/pt-BR"), here, JSON.parse(readFileSync(join(here, "schema/glossary.json"), "utf8")))];
   if (errors.length) {
     console.error(errors.map((e) => `✗ ${e}`).join("\n"));
     process.exit(1);
