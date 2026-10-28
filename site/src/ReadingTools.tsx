@@ -12,7 +12,7 @@ function usePrintOpensDetails() {
   }, []);
 }
 
-/** Focus mode hides the page chrome (header, legend, trust card, contents bar) for undisturbed reading. */
+/** Focus mode hides the legend and the trust card for undisturbed reading; the top bar stays. */
 export function ReadingTools() {
   const [focus, setFocus] = useState(false);
   usePrintOpensDetails();
@@ -22,7 +22,7 @@ export function ReadingTools() {
   }, [focus]);
   return (
     <span className="reading-tools">
-      <button aria-pressed={focus} onClick={() => setFocus(!focus)} title="Hide the header, legend and summary card">Focus</button>
+      <button aria-pressed={focus} onClick={() => setFocus(!focus)} title="Hide the legend and the summary card">Focus</button>
       <button onClick={() => print()} title="Print the note, or save it as a PDF from the print dialog">Print / PDF</button>
     </span>
   );

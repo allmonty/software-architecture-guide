@@ -53,7 +53,7 @@ button:disabled { opacity: .4; cursor: default; }
 .react-flow__controls-button { background: var(--card); color: var(--fg); border-color: var(--line); }
 .react-flow__controls-button svg { fill: currentColor; }
 .react-flow__attribution { background: transparent; }
-html, body { overflow-x: hidden; }
+html, body { overflow-x: hidden; overflow-x: clip; } /* clip, not hidden: hidden would make body a scroll container and stop the top bar sticking */
 @media (max-width: 860px) {
   .split { grid-template-columns: minmax(0, 1fr); height: auto; }
   .split > .left, .split > .right { overflow: visible; }
@@ -213,7 +213,7 @@ button.study { margin-left: auto; }
 .pill.src-primary { color: var(--c-confirmed); } .pill.src-secondary { color: var(--c-spec); }
 
 /* ---- Section navigation ---- */
-.sec { position: relative; scroll-margin-top: 56px; }
+.sec { position: relative; scroll-margin-top: calc(var(--top-h) + 56px); }
 .anchor { font-size: .7em; margin-left: var(--s-2); padding: 0 var(--s-2); border: 0; background: none; color: var(--muted); opacity: 0; cursor: pointer; vertical-align: middle; }
 .sec:hover .anchor, .anchor:focus-visible { opacity: 1; }
 @media (hover: none) { .anchor { opacity: .5; } }
@@ -258,7 +258,7 @@ button.study { margin-left: auto; }
 .notes blockquote { margin-left: 0; padding-left: var(--s-4); border-left: 3px solid var(--line); color: var(--muted); }
 .reading-tools { display: inline-flex; gap: var(--s-2); }
 .reading-tools button { font-size: var(--t-sm); padding: var(--s-1) var(--s-2); }
-.focus .top, .focus .legend, .focus .trust { border-left: 4px solid var(--c-confirmed); margin: 0 0 var(--s-4); font-size: var(--t-sm); }
+.focus .legend, .focus .trust { display: none; }
 
 /* ---- Print: the note only, in black on white, with every answer open ---- */
 @media print {
@@ -293,3 +293,7 @@ button.study { margin-left: auto; }
 .hit-snippet { font-size: var(--t-sm); color: var(--muted); }
 .hit-snippet mark { background: color-mix(in srgb, var(--accent) 28%, transparent); color: var(--fg); border-radius: var(--r-sm); padding: 0 0; }
 .notes h2.note-title { margin-top: 0; font-size: var(--t-xl); }
+/* Below the top bar: in page-scrolled layouts the contents selector and the margin outline stick under it. */
+.split.mode-text .outline-select, main.toolkit .outline-select { top: var(--top-h); }
+@media (max-width: 860px) { .outline-select { top: var(--top-h); } }
+@media (min-width: 1250px) { .side-outline { top: calc(var(--top-h) + var(--s-3)); max-height: calc(100vh - var(--top-h) - var(--s-5)); } }
