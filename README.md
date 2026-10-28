@@ -183,10 +183,11 @@ One-time setup: **Settings → Pages → Build and deployment → Source: GitHub
 ```sh
 npm install
 npm run validate   # schema, references, required sections, relative links, sources on every non-speculative node
-npm test           # tests for the validator
+npm test           # unit tests: validator, quote and trust helpers, text search, settings, design tokens, learning order
 npm run verify     # re-check every quotation against the sources recorded in systems/*.claims.json
 npm run links      # external link check (separates bot-blocked pages from broken ones)
 npm run freshness  # notes by the age of their last source read
+npm run sweep      # browser check of every page (needs vite preview on :5188 and headless Chrome on :9333, see scripts/browser-sweep.mjs)
 ```
 
 `npm run verify -- --write` fetches each note's cited sources (with an Internet Archive fallback) and updates the claims ledgers. PDFs need Python with `pypdf`: `PYTHON=/path/to/python npm run verify -- --write`.

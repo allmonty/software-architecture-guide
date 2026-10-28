@@ -13,7 +13,7 @@ Run from this folder:
 ```sh
 npm install
 npm run validate   # schema, references, required sections, relative links, sources on non-speculative nodes
-npm test           # validator tests (node:test via tsx); single file: npx tsx --test test/validate.test.ts
+npm test           # unit tests (node:test via tsx): validator, trust helpers, text search, settings, design tokens, learning order; single file: npx tsx --test test/validate.test.ts
 cd site && npm install && npm run dev      # http://localhost:5173
 npm run build      # tsc --noEmit + vite build, output in site/dist (not committed; the Pages workflow builds and deploys it)
 npm run sweep      # needs `vite preview` on :5188 and headless Chrome on :9333 (see scripts/browser-sweep.mjs); checks every page
@@ -35,7 +35,7 @@ The gear menu in the site header sets theme (System, Light, Warm, Dark), font (s
 
 ## Site design system
 
-`site/src/design.css` holds the tokens (4px spacing grid, three radii, type scale, shadows, layers, themes, diagram palette), the page frame and the one card look; its header comment is the guide. `site/src/styles.css` has page-specific rules only and must use the tokens: `test/design.test.ts` fails on raw px in `padding`, `margin`, `gap` or `border-radius` and on rem font sizes outside the scale (a line ending in `/* raw: reason */` is exempt). A new card-like element goes into the surface selector list in `design.css` rather than getting its own border, radius and shadow.
+`site/src/design.css` holds the tokens (4px spacing grid, three radii, type scale, shadows, layers, themes, diagram palette), the page frame and the one card look; its header comment is the guide. `site/src/styles.css` has page-specific rules only and must use the tokens: `test/design.test.ts` fails on raw px in `padding`, `margin`, `gap` or `border-radius` and on rem font sizes outside the scale (a line ending in `/* raw: reason */` is exempt). A new card-like element goes into the surface selector list in `design.css` rather than getting its own border, radius and shadow. The top bar (brand, Buy me a coffee link, settings) is sticky on every page and the browser sweep fails if a page lacks it; anything that sticks below it must use `top: var(--top-h)`, and body overflow-x must stay `clip` (with `hidden`, sticky stops working).
 
 ## Layout and conventions
 

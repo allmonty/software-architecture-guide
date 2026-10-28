@@ -9,7 +9,7 @@
              (section titles) · --t-xl 1.5rem (page titles) · --t-2xl 2.3rem (home headline). Sizes are rem, so
              the reader's size setting scales them. Diagram node text is fixed px on purpose.
    SURFACE   --surface (cards, translucent) · --card (solid: menus, inputs) · --bg (page) · --line (borders)
-   ELEVATION --shadow-1 (card at rest) · --shadow-2 (hovered) · --shadow-pop (menus). Layers: --z-sticky, --z-tools, --z-pop
+   ELEVATION --shadow-1 (card at rest) · --shadow-2 (hovered) · --shadow-pop (menus). Layers: --z-sticky, --z-tools, --z-top (top bar), --z-pop
    COLOUR    text --fg / --muted · action --accent (text on it: --on-accent) · status --c-confirmed, --c-pattern,
              --c-spec · diagram palette --p-* (hue = kind of element, shade = C4 level)
    RULES     one border (1px --line), one card look (.surface selectors below), one hover (border to --accent, lift
