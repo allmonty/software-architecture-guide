@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { FONTS, SIZE, THEMES } from "./settings-core.ts";
+import { FONTS, LANGS, SIZE, THEMES } from "./settings-core.ts";
 import { resetSettings, updateSettings, useSettings } from "./settings.ts";
 
 const THEME_LABEL = { system: "System", light: "Light", warm: "Warm", dark: "Dark" } as const;
 const FONT_LABEL = { system: "System default", atkinson: "Atkinson Hyperlegible", lexend: "Lexend", literata: "Literata" } as const;
+const LANG_LABEL = { en: "English", "pt-BR": "Português (Brasil)" } as const; // each in its own language
 
 export function SettingsMenu() {
   const s = useSettings();
@@ -25,6 +26,17 @@ export function SettingsMenu() {
       <button ref={button} onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="settings-pop" aria-label="Reading settings">⚙</button>
       {open && (
         <div id="settings-pop" className="settings-pop" role="dialog" aria-label="Reading settings">
+          <fieldset>
+            <legend>Language</legend>
+            <div className="choices">
+              {LANGS.map((l) => (
+                <label key={l} className="choice">
+                  <input type="radio" name="lang" checked={s.lang === l} onChange={() => updateSettings({ lang: l })} />
+                  <span>{LANG_LABEL[l]}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
           <fieldset>
             <legend>Theme</legend>
             <div className="choices">

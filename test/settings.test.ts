@@ -6,7 +6,7 @@ import { DEFAULTS, SIZE, clampSize, parseSettings, serializeSettings } from "../
 const sent = (s: Parameters<typeof serializeSettings>[0]) => serializeSettings(s).split(";")[0];
 
 test("settings survive a cookie round trip", () => {
-  const s = { theme: "warm", font: "literata", size: 19 } as const;
+  const s = { theme: "warm", font: "literata", size: 19, lang: "pt-BR" } as const;
   assert.deepEqual(parseSettings(`a=1; ${sent(s)}; b=2`), s);
 });
 
@@ -17,8 +17,8 @@ test("no cookie gives the defaults", () => {
 
 test("a broken or hostile cookie value falls back field by field", () => {
   assert.deepEqual(parseSettings("atlas-settings=%7Bnot json"), DEFAULTS);
-  const partly = `atlas-settings=${encodeURIComponent(JSON.stringify({ theme: "neon", font: "lexend", size: "big" }))}`;
-  assert.deepEqual(parseSettings(partly), { theme: "system", font: "lexend", size: SIZE.default });
+  const partly = `atlas-settings=${encodeURIComponent(JSON.stringify({ theme: "neon", font: "lexend", size: "big", lang: "fr" }))}`;
+  assert.deepEqual(parseSettings(partly), { ...DEFAULTS, font: "lexend" });
 });
 
 test("size is rounded and clamped", () => {

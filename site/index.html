@@ -12,6 +12,7 @@
         var c = m ? JSON.parse(decodeURIComponent(m[1])) : {}, r = document.documentElement;
         if (c.theme === "light" || c.theme === "warm" || c.theme === "dark") r.dataset.theme = c.theme;
         if (c.font === "atkinson" || c.font === "lexend" || c.font === "literata") r.dataset.font = c.font;
+        if (c.lang === "pt-BR") r.lang = "pt-BR";
         if (typeof c.size === "number" && c.size >= 13 && c.size <= 24) r.style.setProperty("--fs", Math.round(c.size) + "px");
       } catch (e) { /* defaults */ }
     </script>
