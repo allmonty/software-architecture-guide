@@ -29,6 +29,13 @@ export const systems: System[] = Object.entries(diagrams)
   })
   .sort((a, b) => a.id.localeCompare(b.id));
 
+// Translated notes mirror the originals under locales/pt-BR/{systems,toolkit}/. A note with no translation shows in English.
+const translatedNotes = import.meta.glob("../../locales/pt-BR/**/*.md", { eager: true, query: "?raw", import: "default" }) as Record<string, string>;
+export function noteIn(folder: "systems" | "toolkit", id: string, english: string, lang: Lang): { markdown: string; fallback: boolean } {
+  const md = lang === "pt-BR" ? translatedNotes[`../../locales/pt-BR/${folder}/${id}.md`] : undefined;
+  return { markdown: md ?? english, fallback: lang !== "en" && !md };
+}
+
 // Toolkit pages (primers P, casebook C, workbook W, README) are plain Markdown without a diagram.
 export interface ToolkitPage { id: string; title: string; markdown: string; claims: LedgerEntry[] }
 const toolkit = import.meta.glob("../../toolkit/*.md", { eager: true, query: "?raw", import: "default" });

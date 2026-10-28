@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import type { System } from "./data.ts";
+import { noteIn, type System } from "./data.ts";
+import { useSettings } from "./settings.ts";
 import { DiagramView } from "./DiagramView.tsx";
 import { StudyToggle } from "./StudyToggle.tsx";
 import { rehypeNodeRefs } from "./nodeRefs.ts";
@@ -60,7 +61,8 @@ export function SystemPage({
   initialSection: string | null;
 }) {
   const t = useT();
-  const headings = useHeadingComponents(system.markdown);
+  const note = noteIn("systems", system.id, system.markdown, useSettings().lang);
+  const headings = useHeadingComponents(note.markdown);
   const [request, setRequest] = useState<{ id: string; n: number } | null>(null);
   // Defined once: a new component type on every render would remount every span in the note and drop keyboard focus.
   const refSpan = useMemo<Components["span"]>(() => {
@@ -126,7 +128,7 @@ export function SystemPage({
               key={system.id}
               diagram={system.diagram}
               claims={system.claims}
-              markdown={system.markdown}
+              markdown={note.markdown}
               selectRequest={request}
               initialFlow={live.get("flow") ?? initialFlow}
               initialStep={Number.isFinite(liveStep) && live.get("step") ? liveStep - 1 : initialStep}
@@ -135,10 +137,11 @@ export function SystemPage({
             />
           </div>
         )}
-        {mode === "text" && <aside className="side-outline"><Outline markdown={system.markdown} variant="list" /></aside>}
+        {mode === "text" && <aside className="side-outline"><Outline markdown={note.markdown} variant="list" /></aside>}
         <article className={`notes right${mode === "graph" ? " hidden" : ""}`}>
-          <Outline markdown={system.markdown} variant="select" remount={mode} />
-          <TrustCard id={system.id} title={system.diagram.title} markdown={system.markdown} claims={system.claims} diagram={system.diagram} />
+          {note.fallback && <p className="muted small">{t.notTranslated}</p>}
+          <Outline markdown={note.markdown} variant="select" remount={mode} />
+          <TrustCard id={system.id} title={system.diagram.title} markdown={note.markdown} claims={system.claims} diagram={system.diagram} />
           <ConceptChips systemId={system.id} />
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
@@ -149,7 +152,7 @@ export function SystemPage({
               h1: ({ children }) => <h2 className="note-title">{children}</h2>,
               span: refSpan,
             }}
-          >{system.markdown}</ReactMarkdown>
+          >{note.markdown}</ReactMarkdown>
         </article>
       </div>
     </main>

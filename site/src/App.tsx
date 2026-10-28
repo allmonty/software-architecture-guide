@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import { systems, toolkitPages, type ToolkitPage } from "./data.ts";
+import { noteIn, systems, toolkitPages, type ToolkitPage } from "./data.ts";
+import { useSettings } from "./settings.ts";
 import { Home } from "./Home.tsx";
 import { TrackPage } from "./TrackPage.tsx";
 import { StudyToggle } from "./StudyToggle.tsx";
@@ -71,14 +72,16 @@ export function App() {
 
 function ToolkitView({ page, section }: { page: ToolkitPage; section: string | null }) {
   const t = useT();
-  const headings = useHeadingComponents(page.markdown);
+  const note = noteIn("toolkit", page.id, page.markdown, useSettings().lang);
+  const headings = useHeadingComponents(note.markdown);
   useEffect(() => { if (section) scrollToSection(section, false); }, [section]);
   return (
     <main className="notes toolkit">
       <p className="crumbs"><a href="#">{t.home}</a> · <a href="#toolkit/README">{t.toolkitIndex}</a><ReadingTools />{page.id !== "README" && <StudyToggle refId={page.id.slice(0, 3)} />}</p>
-      <Outline markdown={page.markdown} variant="select" />
-      {page.id !== "README" && !page.id.startsWith("W") && <TrustCard id={page.id} title={page.title} markdown={page.markdown} claims={page.claims} />}
-      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={{ ...components, ...headings }}>{page.markdown}</ReactMarkdown>
+      {note.fallback && <p className="muted small">{t.notTranslated}</p>}
+      <Outline markdown={note.markdown} variant="select" />
+      {page.id !== "README" && !page.id.startsWith("W") && <TrustCard id={page.id} title={page.title} markdown={note.markdown} claims={page.claims} />}
+      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={{ ...components, ...headings }}>{note.markdown}</ReactMarkdown>
     </main>
   );
 }
