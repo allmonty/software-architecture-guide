@@ -11,8 +11,8 @@ What is left after the 35 systems, the toolkit and the site. Each item says what
 | 5 | Confidence tags on diagram edges | Deferred. Needs a schema change and hand-tagging a few hundred edges. |
 | 6 | Per-element alias for clickable names in the note | Deferred. Names are matched by text, so an ambiguous name can occasionally link to the wrong element. |
 | 7 | One source for the learning order | Done: `site/src/stages.json` is the order; a test checks it against the atlas track and the README. |
-| 9 | Switch Pages to GitHub Actions and delete `docs/` | Open, needs you: set Settings → Pages → Source to GitHub Actions and push; once the first run is green, delete the old `docs/` folder (it is a stale build from before the review fixes and the sticky top bar). |
 | 8 | Content not yet written | Partly done: primers P11 to P14 (monolith vs microservices, event sourcing and CQRS, disaster recovery, multi-tenancy) are written. The rest is below. |
+| 9 | Switch Pages to GitHub Actions and delete `docs/` | Open, needs you: set Settings → Pages → Source to GitHub Actions and push; once the first run is green, delete the old `docs/` folder (it is a stale build from before the review fixes and the sticky top bar). |
 
 ## 1 and 2: what the browser sweep covers and what it cannot
 
