@@ -12,8 +12,8 @@ Run from this folder:
 
 ```sh
 npm install
-npm run validate   # schema, references, required sections, relative links, sources on non-speculative nodes
-npm test           # unit tests (node:test via tsx): validator, trust helpers, text search, settings, design tokens, learning order; single file: npx tsx --test test/validate.test.ts
+npm run validate   # schema, references, required sections, relative links, sources on non-speculative nodes, pt-BR translations against glossary and original
+npm test           # unit tests (node:test via tsx): validator, trust helpers, text search, settings, design tokens, learning order, translation overlays and glossary rules; single file: npx tsx --test test/validate.test.ts
 cd site && npm install && npm run dev      # http://localhost:5173
 npm run build      # tsc --noEmit + vite build, output in site/dist (not committed; the Pages workflow builds and deploys it)
 npm run sweep      # needs `vite preview` on :5188 and headless Chrome on :9333 (see scripts/browser-sweep.mjs); checks every page
@@ -27,7 +27,7 @@ The gear menu in the site header sets theme (System, Light, Warm, Dark), font (s
 
 ## Translations (pt-BR)
 
-The language is a setting (`lang` in the `atlas-settings` cookie). UI text lives in `site/src/i18n.tsx`: add every new string to the English object and to the pt-BR one (typed, so `tsc` fails on a gap), and use `useT()`. Track and stage prose is overlaid from `site/src/locales/pt-BR/{tracks,stages}.json` (keyed by track id, step ref and English stage title; `test/i18n.test.ts` checks the keys). Notes are translated by mirroring them at `locales/pt-BR/systems/NN-slug.md` and `locales/pt-BR/toolkit/XNN-slug.md`; a note with no mirror shows in English with a notice. Diagram JSON is not translated yet.
+The language is a setting (`lang` in the `atlas-settings` cookie). UI text lives in `site/src/i18n.tsx`: add every new string to the English object and to the pt-BR one (typed, so `tsc` fails on a gap), and use `useT()`. Track and stage prose is overlaid from `site/src/locales/pt-BR/{tracks,stages}.json` (keyed by track id, step ref and English stage title; `test/i18n.test.ts` checks the keys). Notes are translated by mirroring them at `locales/pt-BR/systems/NN-slug.md` and `locales/pt-BR/toolkit/XNN-slug.md`; a note with no mirror shows in English with a notice. Systems 01 to 30 are translated; systems 31 to 35 and the toolkit remain (see `ROADMAP.md`). Diagram JSON is not translated yet.
 
 Rules for a translated note, checked by `validateTranslations` in `scripts/validate.ts`: change prose only. Keep every `##` heading, link target, confidence tag, `Sources read on <date>` line and `- Not ...` bullet exactly as in the original (the site, trust card and validator match them), keep quotations in their source language, and keep each term of `schema/glossary.json` that the original uses in English. Run `npm run verify` on the English original only. Commit one translated note per commit.
 

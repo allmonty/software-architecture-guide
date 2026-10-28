@@ -1,6 +1,6 @@
 # System Design Atlas
 
-**35 system-design case studies with interactive diagrams, an incident casebook, primers and a practice workbook, for senior engineers preparing for interviews or an architect role. Every claim says how well it is sourced.**
+**35 system-design case studies with interactive diagrams, an incident casebook, primers and a practice workbook, for senior engineers preparing for interviews or an architect role. Available in English and Brazilian Portuguese (pt-BR). Every claim says how well it is sourced.**
 
 [☕ Buy me a coffee](https://buymeacoffee.com/allmonty) · [Roadmap](ROADMAP.md) · [Report an error](https://github.com/allmonty/system-design-atlas/issues/new) · [**Live site**](https://allmonty.github.io/system-design-atlas/) (or run it locally, see [publishing](#publishing-on-github-pages))
 
@@ -21,6 +21,7 @@ Each system has a deep note (`systems/NN-*.md`) and a structured diagram (`syste
 |---|---|
 | [`systems/`](systems/) | The 35 notes, one diagram (`.diagram.json`) and one quote ledger (`.claims.json`) each |
 | [`toolkit/`](toolkit/README.md) | Casebook of 6 real incidents (`C`), 14 cross-cutting primers (`P`), a workbook of 5 practice pages (`W`) |
+| [`locales/`](locales/pt-BR/) | Brazilian Portuguese (`pt-BR`) translations (systems 01–30 mirrored, remainder in progress) |
 | [`site/`](site/) | The React + React Flow site: home page study tracks, diagrams, search, reading settings |
 | [`.github/workflows/`](.github/workflows/pages.yml) | The workflow that builds and deploys the site |
 | [`schema/`](schema/), [`scripts/`](scripts/), [`test/`](test/) | The diagram schema, the validator, the quote verifier, the freshness and link checks, and their tests |
@@ -162,6 +163,8 @@ For interviews, practise each note's **Interview questions**, and walk the **flo
 
 The home page is a study guide: pick a goal (interview, building blocks, architect, AI, or the whole atlas in order) and follow an ordered track with a reason for each step; tick pages as you finish them (saved only in your browser); or browse by stage and search. Tracks live in `site/src/tracks.json`, and `npm run validate` checks that every step points at a real page.
 
+The top-bar gear menu sets theme, font, reading text size, and language (**English** or **Português do Brasil**). Translated notes mirror under `locales/pt-BR/` (currently systems 01 to 30) and fall back to English with a notice when an individual translation is not yet ready. The UI text, study tracks and stages automatically adapt to the chosen language.
+
 ```sh
 npm install && (cd site && npm install)   # once
 npm run dev      # from the repository root or site/, http://localhost:5173
@@ -182,8 +185,8 @@ One-time setup: **Settings → Pages → Build and deployment → Source: GitHub
 
 ```sh
 npm install
-npm run validate   # schema, references, required sections, relative links, sources on every non-speculative node
-npm test           # unit tests: validator, quote and trust helpers, text search, settings, design tokens, learning order
+npm run validate   # schema, references, required sections, relative links, sources on every non-speculative node, pt-BR translations against glossary and original
+npm test           # unit tests: validator, quote and trust helpers, text search, settings, design tokens, learning order, translation overlays and glossary rules
 npm run verify     # re-check every quotation against the sources recorded in systems/*.claims.json
 npm run links      # external link check (separates bot-blocked pages from broken ones)
 npm run freshness  # notes by the age of their last source read

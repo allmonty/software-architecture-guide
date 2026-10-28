@@ -1,6 +1,6 @@
 # Architect's toolkit
 
-Material around the 35 system-design notes, for senior engineers preparing for interviews or for an architect role. Same rules as the atlas: primary sources only, claims tagged `[CONFIRMED]` / `[INDUSTRY PATTERN]` / `[SPECULATIVE]`, our own analysis labelled, and a verification log in every page. `npm run validate`, `verify`, `links` and `freshness` cover this folder too.
+Material around the 35 system-design notes, for senior engineers preparing for interviews or for an architect role. Same rules as the atlas: primary sources only, claims tagged `[CONFIRMED]` / `[INDUSTRY PATTERN]` / `[SPECULATIVE]`, our own analysis labelled, and a verification log in every page. `npm run validate`, `verify`, `links` and `freshness` cover this folder too. Portuguese (pt-BR) translations for toolkit notes will mirror into `locales/pt-BR/toolkit/` (see [ROADMAP](../ROADMAP.md)).
 
 ## Casebook: learning from real incidents (`C`)
 
