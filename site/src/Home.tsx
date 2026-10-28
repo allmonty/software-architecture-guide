@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
-import { resolveRef, systems, toolkitPages, tracks, type Item } from "./data.ts";
+import { resolveRef, stageIn, systems, toolkitPages, trackIn, tracks, type Item } from "./data.ts";
 import { Backdrop, HeroArt } from "./Art.tsx";
 import stages from "./stages.json";
 import { searchPages, type SearchPage } from "./text.ts";
 import { NamedIcon, TrackIcon } from "./icons.tsx";
 import { resetProgress, toggleDone, useProgress } from "./progress.ts";
 import { useT } from "./i18n.tsx";
+import { useSettings } from "./settings.ts";
 
 // Learning stages come from stages.json, the one source of the learning order (README and the atlas track are tested against it).
 const STAGES: { title: string; blurb: string; ids: string[] }[] = stages;
@@ -33,6 +34,7 @@ export function ItemRow({ item, why, index, next }: { item: Item; why?: string; 
 
 export function Home() {
   const t = useT();
+  const { lang } = useSettings();
   const { done, last } = useProgress();
   const [q, setQ] = useState("");
   const lastItem = last ? resolveRef(last) : undefined;
@@ -79,7 +81,8 @@ export function Home() {
         <h2><NamedIcon name="pick" />{t.pickGoal}</h2>
         <p className="muted">{t.pickGoalNote}</p>
         <ul className="track-cards">
-          {tracks.map((tr) => {
+          {tracks.map((base) => {
+            const tr = trackIn(base, lang);
             const items = tr.steps.map((s) => resolveRef(s.ref)).filter((x): x is Item => !!x);
             const n = items.filter((i) => done.includes(i.ref)).length;
             const mins = items.reduce((a, i) => a + i.minutes, 0);
@@ -149,7 +152,7 @@ export function Home() {
               const items = g.ids.map((id) => resolveRef(id)).filter((x): x is Item => !!x);
               return items.length === 0 ? null : (
                 <div key={g.title} className="stage">
-                  <h3><NamedIcon name={g.title} />{g.title} <span className="muted">{g.blurb}</span></h3>
+                  <h3><NamedIcon name={g.title} />{stageIn(g, lang).title} <span className="muted">{stageIn(g, lang).blurb}</span></h3>
                   <ul className="cards">{items.map((i) => <Card key={i.ref} item={i} />)}</ul>
                 </div>
               );

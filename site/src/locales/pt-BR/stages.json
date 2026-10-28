@@ -1,0 +1,12 @@
+{
+  "Foundations": { "title": "Fundamentos", "blurb": "Sistemas pequenos que introduzem caching, limites e replication." },
+  "Building blocks": { "title": "Building blocks", "blurb": "Peças que aparecem dentro de todo design grande." },
+  "Storage and data infrastructure": { "title": "Storage e infraestrutura de dados", "blurb": "Logs, blobs, arquivos e fotos." },
+  "Real-time communication": { "title": "Comunicação em tempo real", "blurb": "Chat, voz, edição colaborativa e jogos." },
+  "Media delivery": { "title": "Entrega de mídia", "blurb": "Áudio e vídeo, do upload à reprodução." },
+  "Feeds and notifications": { "title": "Feeds e notificações", "blurb": "Fan-out e ranking." },
+  "Correctness under contention": { "title": "Correção sob contenção", "blurb": "Dinheiro, reservas e bolsas de valores." },
+  "Location and discovery": { "title": "Localização e descoberta", "blurb": "Mapas, crawling e busca." },
+  "Data pipelines and observability": { "title": "Data pipelines e observability", "blurb": "Métricas, alertas e agregação de eventos." },
+  "AI systems": { "title": "Sistemas de IA", "blurb": "Serving, retrieval, agents, fine-tuning e treinamento." }
+}

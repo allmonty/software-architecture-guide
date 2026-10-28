@@ -3,10 +3,11 @@
 export const THEMES = ["system", "light", "warm", "dark"] as const;
 export const FONTS = ["system", "atkinson", "lexend", "literata"] as const;
 export const LANGS = ["en", "pt-BR"] as const;
+export type Lang = (typeof LANGS)[number];
 export const SIZE = { min: 13, max: 24, default: 15 } as const;
 export const COOKIE = "atlas-settings";
 
-export interface Settings { theme: (typeof THEMES)[number]; font: (typeof FONTS)[number]; size: number; lang: (typeof LANGS)[number] }
+export interface Settings { theme: (typeof THEMES)[number]; font: (typeof FONTS)[number]; size: number; lang: Lang }
 export const DEFAULTS: Settings = { theme: "system", font: "system", size: SIZE.default, lang: "en" };
 
 export const clampSize = (n: unknown) =>

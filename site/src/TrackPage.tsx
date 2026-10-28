@@ -1,15 +1,18 @@
-import { resolveRef, tracks, type Item } from "./data.ts";
+import { resolveRef, trackIn, tracks, type Item } from "./data.ts";
 import { useProgress } from "./progress.ts";
 import { ItemRow } from "./Home.tsx";
 import { TrackIcon } from "./icons.tsx";
 import { useT } from "./i18n.tsx";
+import { useSettings } from "./settings.ts";
 
 const hours = (minutes: number) => Math.round(minutes / 6) / 10; // one decimal, so "left" can never exceed the total
 
 export function TrackPage({ id }: { id: string }) {
   const { done } = useProgress();
   const t = useT();
-  const track = tracks.find((t) => t.id === id);
+  const { lang } = useSettings();
+  const base = tracks.find((x) => x.id === id);
+  const track = base && trackIn(base, lang);
   if (!track) return <main className="home"><p><a href="#">{t.back}</a></p><p>{t.unknownTrack}</p></main>;
   const steps = track.steps.map((s) => ({ item: resolveRef(s.ref), why: s.why })).filter((x): x is { item: Item; why: string | undefined } => !!x.item);
   const n = steps.filter((s) => done.includes(s.item.ref)).length;

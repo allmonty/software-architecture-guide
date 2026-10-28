@@ -1,5 +1,6 @@
 import { parseConcepts } from "../../schema/concepts.ts";
 import { Diagram } from "../../schema/diagram.schema.ts";
+import type { Lang } from "./settings-core.ts";
 import { ageInDays, lastReadDate, notVerified, STALE_DAYS, summarizeLedger, type LedgerEntry, type QuoteTally } from "../../schema/trust.ts";
 
 export interface System {
@@ -46,6 +47,21 @@ import tracksData from "./tracks.json";
 export interface Step { ref: string; why?: string }
 export interface Track { id: string; title: string; audience: string; summary: string; steps: Step[] }
 export const tracks: Track[] = tracksData.tracks as Track[];
+
+// pt-BR text laid over the English: only the prose fields, keyed by track id / step ref / English stage title.
+// Anything missing falls back to the English, so a half-translated overlay still works.
+import trackPt from "./locales/pt-BR/tracks.json";
+import stagePt from "./locales/pt-BR/stages.json";
+type TrackText = { title?: string; audience?: string; summary?: string; why?: Record<string, string> };
+export const trackText = trackPt as Record<string, TrackText>;
+export const stageText = stagePt as Record<string, { title: string; blurb: string }>;
+
+export function trackIn(t: Track, lang: Lang): Track {
+  const o = lang === "pt-BR" ? trackText[t.id] : undefined;
+  return o ? { ...t, title: o.title ?? t.title, audience: o.audience ?? t.audience, summary: o.summary ?? t.summary, steps: t.steps.map((s) => ({ ...s, why: o.why?.[s.ref] ?? s.why })) } : t;
+}
+export const stageIn = <S extends { title: string; blurb: string }>(s: S, lang: Lang): S =>
+  lang === "pt-BR" ? { ...s, ...stageText[s.title] } : s;
 
 export type ItemType = "System" | "Primer" | "Incident" | "Exercise";
 export interface Item {
