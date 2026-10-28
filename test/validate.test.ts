@@ -1,9 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { REQUIRED_SECTIONS, validateDir, validateToolkit, validateTracks } from "../scripts/validate.ts";
+import { REQUIRED_SECTIONS, validateDir, validateToolkit, validateTracks, validateTranslations } from "../scripts/validate.ts";
 
 const md = `# 99 — Toy System\n\n${REQUIRED_SECTIONS.map((s) => `## ${s}\n`).join("\n")}`;
 const good = () => ({
@@ -93,3 +93,27 @@ function tracks(json: unknown) {
 test("valid tracks pass", () => assert.deepEqual(tracks({ tracks: [{ id: "a", title: "A", steps: [{ ref: "01" }, { ref: "P01" }] }] }), []));
 test("a track step with no page fails", () => assert.match(tracks({ tracks: [{ id: "a", title: "A", steps: [{ ref: "02" }] }] }).join("\n"), /matches no system or toolkit page/));
 test("a track listing a step twice fails", () => assert.match(tracks({ tracks: [{ id: "a", title: "A", steps: [{ ref: "01" }, { ref: "01" }] }] }).join("\n"), /lists 01 twice/));
+
+// Translated notes: prose changes, but headings, links, tags, the source date and glossary terms must survive.
+const enNote = "# 99 — Toy\n\n**Sources read on 2026-01-02**\n\n## At a glance\n\nKafka and sharding. [CONFIRMED] See [x](https://a.org).\n\n## Verification log\n\n- Not checked: the numbers.\n";
+const ptNote = "# 99 — Toy\n\n**Sources read on 2026-01-02**\n\n## At a glance\n\nKafka e sharding. [CONFIRMED] Veja [x](https://a.org).\n\n## Verification log\n\n- Not checked: os números.\n";
+function translated(pt: string | null, glossary = ["Kafka", "sharding"]) {
+  const root = mkdtempSync(join(tmpdir(), "loc-"));
+  mkdirSync(join(root, "systems")); writeFileSync(join(root, "systems", "99-toy.md"), enNote);
+  if (pt !== null) { mkdirSync(join(root, "locales/pt-BR/systems"), { recursive: true }); writeFileSync(join(root, "locales/pt-BR/systems", "99-toy.md"), pt); }
+  return validateTranslations(join(root, "locales/pt-BR"), root, glossary).join("\n");
+}
+test("a faithful translation passes", () => assert.equal(translated(ptNote), ""));
+test("no locales folder passes", () => assert.equal(translated(null), ""));
+test("a translated heading fails", () => assert.match(translated(ptNote.replace("## At a glance", "## Resumo")), /## headings must be identical/));
+test("a dropped glossary term fails", () => assert.match(translated(ptNote.replace("sharding", "particionamento")), /glossary term "sharding"/));
+test("a changed link, tag or source date fails", () => {
+  assert.match(translated(ptNote.replace("https://a.org", "https://b.org")), /link targets/);
+  assert.match(translated(ptNote.replace("[CONFIRMED]", "[CONFIRMADO]")), /confidence tags/);
+  assert.match(translated(ptNote.replace("read on 2026", "lidas em 2026")), /source date/);
+});
+test("a translation with no original fails", () => {
+  const root = mkdtempSync(join(tmpdir(), "loc-"));
+  mkdirSync(join(root, "locales/pt-BR/systems"), { recursive: true }); writeFileSync(join(root, "locales/pt-BR/systems", "99-toy.md"), ptNote);
+  assert.match(validateTranslations(join(root, "locales/pt-BR"), root, []).join("\n"), /no original note/);
+});
