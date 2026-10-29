@@ -82,5 +82,12 @@
     "via": "direct",
     "sourceClass": "primary",
     "status": "confirmed"
+  },
+  {
+    "quote": "After you initiate a multipart upload, there is no expiry",
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
   }
 ]

@@ -192,7 +192,7 @@ Reading a photo needed several disk operations for metadata alone. Packing photo
 
 <details><summary>Design the upload path for 20 MB photos on flaky networks.</summary>
 
-Create a pending record, hand out a set of short-lived pre-signed part URLs (S3 multipart needs one per part, plus initiate and complete calls) or a resumable session URI, let the client resume per part, then process asynchronously. A sweeper cleans up uploads that never complete.
+Create a pending record, hand out a set of short-lived pre-signed part URLs (S3 multipart needs one per part, plus initiate and complete calls) or a resumable session URI, let the client resume per part, then process asynchronously. A sweeper cleans up uploads that never complete. On S3 an incomplete multipart upload does not expire by itself ("After you initiate a multipart upload, there is no expiry") and its stored parts are billed until it is completed or stopped, so add a lifecycle rule that aborts incomplete uploads.
 
 </details>
 
@@ -205,14 +205,14 @@ f4 encrypts each blob with its own key and deletes the key, which makes the data
 ## 📚 Further reading
 
 - [Haystack, OSDI '10](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf) · [f4, OSDI '14](https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf)
-- [AWS: presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html)
+- [AWS: presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html) · [AWS: multipart upload](https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html)
 - [System Design Primer: scaling to millions of users, CDN and object storage topics](https://github.com/donnemartin/system-design-primer) (secondary)
 - Related in this repo: [05 Object storage](05-object-storage-s3.md) (erasure coding and durability), [06 File sync](06-file-sync-dropbox.md) (content-addressed blocks), [`neokim-post/03` YouTube](https://github.com/allmonty/study/blob/main/architecture/neokim-post/03-how-youtube-works.md) (a similar upload-then-transcode flow).
 
 ## Sources and provenance
 
 > **Kind:** real-system for the storage half, reference design for the upload half. Facebook's **Haystack** (OSDI 2010) and **f4** (OSDI 2014) papers describe how a very large photo store was actually built. How a modern app accepts uploads (pre-signed direct upload, derivative pipeline) is a standard pattern, documented by object-store vendors but not by a single "photo app" company, so it is tagged `[INDUSTRY PATTERN]`.
-> **Sources read on 2026-10-29 in full text:** [Beaver et al., *Finding a needle in Haystack: Facebook's photo storage*, OSDI '10](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf) · [Muralidhar et al., *f4: Facebook's Warm BLOB Storage System*, OSDI '14](https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf) · [AWS docs: presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html).
+> **Sources read on 2026-10-29 in full text:** [Beaver et al., *Finding a needle in Haystack: Facebook's photo storage*, OSDI '10](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf) · [Muralidhar et al., *f4: Facebook's Warm BLOB Storage System*, OSDI '14](https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf) · [AWS docs: presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html) · [AWS docs: multipart upload](https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html).
 > **Dated material:** the papers are from 2010 and 2014. The figures describe those years, and Facebook's current system has evolved since. We did not read newer Facebook or Instagram posts for this note.
 > **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice, not stated for a named company · `[SPECULATIVE]` plausible.
 
@@ -229,4 +229,5 @@ f4 encrypts each blob with its own key and deletes the key, which makes the data
 - Not verified: Facebook's current architecture, and what became of the "proactively push new photos into the Cache" optimization the Haystack paper says it planned.
 - Re-checked 2026-10-29 against fresh copies of both papers: every number in the key numbers, the scale paragraph and the f4 table (260 billion, 20 PB, one billion photos and about 60 TB a week, 10 and 40 bytes against 536, 25% deleted a year, 400 billion in February 2014, 65 PB, 3.6, 2.8, 2.1, 14 racks of 15 hosts with 30 4 TB drives, one month and three months thresholds, Profile Photos kept in Haystack, the Tao handle). The one phrase that was in quotation marks but not in the paper ("being deployed") now quotes the paper's own sentence.
 - Quote audit (2026-10-27): restored an omitted phrase in the Haystack inode quote ("one (or typically more) …").
+- Added 2026-10-29 from the AWS multipart page: the three steps (initiate, upload parts, complete), no expiry for an initiated upload, billing of stored parts until completed or stopped, and the lifecycle rule that aborts incomplete uploads. Our inference, not stated there: a presigned multipart flow needs one signed request per part.
 - Corrected (independent review, 2026-10-27): the upload outline now says S3 multipart needs one pre-signed URL per part, as note 12 shows.
