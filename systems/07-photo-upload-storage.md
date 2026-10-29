@@ -137,7 +137,7 @@ Each photo was a separate file on NAS appliances over NFS. Reading one needed se
 1. **Do not present Haystack as "how Instagram stores photos".** The papers are about Facebook, and Instagram's own architecture is not described in the papers we read. Many interview answers blur this.
 2. **"S3 + CDN" is a fine answer, but it hides the real lesson.** Haystack and f4 exist because per-object metadata and replication overhead dominate at billions of small objects. If you propose S3, be ready to say why the same pressures do or do not apply to you.
 3. **Presigned URLs are bearer tokens.** Leaking one grants access until it expires. Short expiry and unique keys matter.
-4. **Numbers age.** The 2010 and 2014 figures (260 B images, 400 B photos, 65 PB in f4, 3.6→2.1) are what the authors reported then. The XOR geo-replication was "being deployed" when f4 was published.
+4. **Numbers age.** The 2010 and 2014 figures (260 B images, 400 B photos, 65 PB in f4, 3.6→2.1) are what the authors reported then. The paper says "We are currently deploying geo-replicated XOR coding", so the 2.1 figure describes a rollout in progress.
 5. **f4's "2.1" is an effective replication factor, not durability.** It says how much raw space is used per logical byte.
 
 ---
@@ -212,7 +212,7 @@ f4 encrypts each blob with its own key and deletes the key, which makes the data
 ## Sources and provenance
 
 > **Kind:** real-system for the storage half, reference design for the upload half. Facebook's **Haystack** (OSDI 2010) and **f4** (OSDI 2014) papers describe how a very large photo store was actually built. How a modern app accepts uploads (pre-signed direct upload, derivative pipeline) is a standard pattern, documented by object-store vendors but not by a single "photo app" company, so it is tagged `[INDUSTRY PATTERN]`.
-> **Sources read on 2026-10-27 in full text:** [Beaver et al., *Finding a needle in Haystack: Facebook's photo storage*, OSDI '10](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf) · [Muralidhar et al., *f4: Facebook's Warm BLOB Storage System*, OSDI '14](https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf) · [AWS docs: presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html).
+> **Sources read on 2026-10-29 in full text:** [Beaver et al., *Finding a needle in Haystack: Facebook's photo storage*, OSDI '10](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf) · [Muralidhar et al., *f4: Facebook's Warm BLOB Storage System*, OSDI '14](https://www.usenix.org/system/files/conference/osdi14/osdi14-paper-muralidhar.pdf) · [AWS docs: presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html).
 > **Dated material:** the papers are from 2010 and 2014. The figures describe those years, and Facebook's current system has evolved since. We did not read newer Facebook or Instagram posts for this note.
 > **Tags:** `[CONFIRMED]` stated by a primary source · `[INDUSTRY PATTERN]` standard practice, not stated for a named company · `[SPECULATIVE]` plausible.
 
@@ -227,5 +227,6 @@ f4 encrypts each blob with its own key and deletes the key, which makes the data
 - Scoped: "Haystack uploads go through a web server" describes the 2010 paper. We do not claim it for any current system.
 - Scoped: the modern upload pipeline and image-serving advice are `[INDUSTRY PATTERN]`, not tied to a company.
 - Not verified: Facebook's current architecture, and what became of the "proactively push new photos into the Cache" optimization the Haystack paper says it planned.
+- Re-checked 2026-10-29 against fresh copies of both papers: every number in the key numbers, the scale paragraph and the f4 table (260 billion, 20 PB, one billion photos and about 60 TB a week, 10 and 40 bytes against 536, 25% deleted a year, 400 billion in February 2014, 65 PB, 3.6, 2.8, 2.1, 14 racks of 15 hosts with 30 4 TB drives, one month and three months thresholds, Profile Photos kept in Haystack, the Tao handle). The one phrase that was in quotation marks but not in the paper ("being deployed") now quotes the paper's own sentence.
 - Quote audit (2026-10-27): restored an omitted phrase in the Haystack inode quote ("one (or typically more) …").
 - Corrected (independent review, 2026-10-27): the upload outline now says S3 multipart needs one pre-signed URL per part, as note 12 shows.
