@@ -13,7 +13,7 @@ What is left after the 35 systems, the toolkit and the site. Each item says what
 | 7 | One source for the learning order | Done: `site/src/stages.json` is the order; a test checks it against the atlas track and the README. |
 | 8 | Content not yet written | Partly done: primers P11 to P14 (monolith vs microservices, event sourcing and CQRS, disaster recovery, multi-tenancy) are written. The rest is below. |
 | 9 | Switch Pages to GitHub Actions and delete `docs/` | Open, needs you: set Settings → Pages → Source to GitHub Actions and push; once the first run is green, delete the old `docs/` folder (it is a stale build from before the review fixes and the sticky top bar). |
-| 10 | Portuguese (pt-BR) translation of notes, toolkit and diagrams | In progress: UI text, track/stage overlays and notes 01 to 30 are done and verified against the glossary; notes 31 to 35, the entire toolkit (25 pages) and diagram JSON remain. |
+| 10 | Portuguese (pt-BR) translation of notes, toolkit and diagrams | In progress: UI text, track/stage overlays and notes 01 to 30, 34 and 35 and toolkit pages P02, P11, P14 and W04 are done and verified against the glossary; notes 31 to 33, the other 21 toolkit pages and diagram JSON remain. |
 
 ## 1 and 2: what the browser sweep covers and what it cannot
 
@@ -40,22 +40,19 @@ Sources that could not be fetched so far: the Count-Min Sketch paper (note 34) a
 
 ## 10. Missing translations (pt-BR)
 
-The site supports English and Brazilian Portuguese (`pt-BR`). UI strings (`site/src/i18n.tsx`), study tracks and stage overlays (`site/src/locales/pt-BR/{tracks,stages}.json`), and 30 of the 35 systems (`locales/pt-BR/systems/01-url-shortener.md` through `30-metrics-monitoring-alerting.md`) are translated, verified against `schema/glossary.json`, and tested by `scripts/validate.ts` and `test/i18n.test.ts`.
+The site supports English and Brazilian Portuguese (`pt-BR`). UI strings (`site/src/i18n.tsx`), study tracks and stage overlays (`site/src/locales/pt-BR/{tracks,stages}.json`), 32 of the 35 systems (`01-url-shortener.md` through `30-metrics-monitoring-alerting.md`, plus `34-top-k-leaderboard.md` and `35-unique-id-generation.md`) and 4 toolkit pages (P02, P11, P14, W04) under `locales/pt-BR/` are translated, verified against `schema/glossary.json`, and tested by `scripts/validate.ts` and `test/i18n.test.ts`.
 
 The following items remain to be translated:
 
-### Systems (5 notes)
+### Systems (3 notes)
 
 - `systems/31-ad-click-aggregation.md` (Ad click aggregation)
 - `systems/32-distributed-cache.md` (Distributed cache / Memcache at Facebook)
 - `systems/33-distributed-coordination-locks.md` (Coordination, locks and leader election)
-- `systems/34-top-k-leaderboard.md` (Top-K, heavy hitters and leaderboards)
-- `systems/35-unique-id-generation.md` (Unique ID generation)
 
-### Toolkit: Primers (14 notes)
+### Toolkit: Primers (11 notes)
 
 - `toolkit/P01-estimation.md` (Back-of-the-envelope estimation)
-- `toolkit/P02-storage-engines.md` (Choosing a storage engine)
 - `toolkit/P03-distributed-transactions.md` (Distributed transactions: 2PC, sagas, outbox)
 - `toolkit/P04-load-balancing.md` (Load balancing)
 - `toolkit/P05-api-design.md` (API design: pagination, idempotency, evolution)
@@ -64,10 +61,8 @@ The following items remain to be translated:
 - `toolkit/P08-cost-as-a-design-input.md` (Cost as a design input)
 - `toolkit/P09-decisions-and-design-docs.md` (Decisions: ADRs, design docs, boring technology)
 - `toolkit/P10-changing-systems-safely.md` (Changing systems safely)
-- `toolkit/P11-monolith-vs-microservices.md` (Monolith or microservices)
 - `toolkit/P12-event-sourcing-cqrs.md` (Event sourcing and CQRS)
 - `toolkit/P13-multi-region-disaster-recovery.md` (Disaster recovery and multi-region design)
-- `toolkit/P14-multi-tenancy.md` (Multi-tenancy)
 
 ### Toolkit: Casebook (6 notes)
 
@@ -78,12 +73,11 @@ The following items remain to be translated:
 - `toolkit/C05-knight-capital-2012.md` (Knight Capital, August 2012)
 - `toolkit/C06-aws-kinesis-2020.md` (AWS Kinesis, November 2020)
 
-### Toolkit: Practice Workbook (5 notes)
+### Toolkit: Practice Workbook (4 notes)
 
 - `toolkit/W01-mock-interview-protocol.md` (Mock interview protocol and rubric)
 - `toolkit/W02-find-the-flaw.md` (Find the flaw)
 - `toolkit/W03-estimation-drills.md` (Estimation drills)
-- `toolkit/W04-decision-exercises.md` (Decision exercises)
 - `toolkit/W05-flashcards.md` (Flashcards)
 
 ### Diagram JSON (35 diagrams)
