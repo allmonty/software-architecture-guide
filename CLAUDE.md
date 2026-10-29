@@ -34,6 +34,7 @@ Rules for a translated note, checked by `validateTranslations` in `scripts/valid
 ## Site features that depend on data conventions
 
 - **Trust card** (`site/src/TrustCard.tsx`, helpers in `schema/trust.ts`): read date from the `Sources read on` / `Fact-check,` / `Re-verification ...,` lines (`lastReadDate`; the freshness script shares it), quote tallies from the `.claims.json` ledger, and the "did not verify" list from the `- Not ...` bullets of the Verification log (`notVerified`). Keep those phrasings, or the card shows nothing for the note. Change history comes from `git log` at build time (`vite.config.ts`).
+- **Confidence markers:** the notes keep the full tags (`[CONFIRMED]`, `[INDUSTRY PATTERN]`, `[SPECULATIVE]`, `[EARLIER PASS]`); the site shows them as `[c]`, `[ip]`, `[s]`, `[ep]` with a tooltip (`site/src/tags.tsx`, texts in `i18n.tsx`). A new tag needs an entry there.
 - **Failure flows:** every diagram needs at least one flow with `"failure": true` (validator). Use it for faults, overloads and other abnormal cases, not the normal path.
 - **Section links and search** use heading slugs from `site/src/text.ts` (`slugify`, same suffixing as the rendered ids). Do not rename a heading without expecting old `?section=` links to break.
 - **Concept index** is parsed from the README's `Concept → systems matrix` table (`schema/concepts.ts`): one row per concept, system numbers separated by commas.
