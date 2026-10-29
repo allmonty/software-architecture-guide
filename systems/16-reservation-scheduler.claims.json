@@ -3,64 +3,85 @@
     "quote": "is usually unsuitable for range types. Instead, an exclusion constraint is often more appropriate",
     "url": "https://www.postgresql.org/docs/current/rangetypes.html",
     "via": "direct",
-    "status": "confirmed",
-    "sourceClass": "primary"
+    "sourceClass": "primary",
+    "status": "confirmed"
   },
   {
     "quote": "will reject overlapping ranges only if the meeting room numbers are equal",
     "url": "https://www.postgresql.org/docs/current/rangetypes.html",
     "via": "direct",
-    "status": "confirmed",
-    "sourceClass": "primary"
+    "sourceClass": "primary",
+    "status": "confirmed"
   },
   {
     "quote": "if any two rows are compared on the specified columns or expressions using the specified operators, at least one of these operator comparisons will return false or null",
     "url": "https://www.postgresql.org/docs/current/ddl-constraints.html",
     "via": "direct",
-    "status": "confirmed",
-    "sourceClass": "primary"
+    "sourceClass": "primary",
+    "status": "confirmed"
   },
   {
     "quote": "will automatically create an index of the type specified",
     "url": "https://www.postgresql.org/docs/current/ddl-constraints.html",
     "via": "direct",
-    "status": "confirmed",
-    "sourceClass": "primary"
+    "sourceClass": "primary",
+    "status": "confirmed"
   },
   {
     "quote": "in standard form (lower bound inclusive, upper bound exclusive)",
     "url": "https://www.postgresql.org/docs/current/rangetypes.html",
     "via": "direct",
-    "status": "confirmed",
-    "sourceClass": "primary"
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "A constraint that is not deferrable will be checked immediately after every command",
+    "url": "https://www.postgresql.org/docs/current/sql-createtable.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "The predicate allows you to specify an exclusion constraint on a subset of the table; internally this creates a partial index",
+    "url": "https://www.postgresql.org/docs/current/sql-createtable.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
   },
   {
     "quote": "the search condition of the command (the WHERE clause) is re-evaluated to see if the updated version of the row still matches",
     "url": "https://www.postgresql.org/docs/current/transaction-iso.html",
     "via": "direct",
-    "status": "confirmed",
-    "sourceClass": "primary"
+    "sourceClass": "primary",
+    "status": "confirmed"
   },
   {
     "quote": "applications using this level must be prepared to retry transactions due to serialization failures",
     "url": "https://www.postgresql.org/docs/current/transaction-iso.html",
     "via": "direct",
-    "status": "confirmed",
-    "sourceClass": "primary"
+    "sourceClass": "primary",
+    "status": "confirmed"
   },
   {
     "quote": "because it will be very hard to predict exactly which transactions might contribute to the read/write dependencies and need to be rolled back",
     "url": "https://www.postgresql.org/docs/current/transaction-iso.html",
     "via": "direct",
-    "status": "confirmed",
-    "sourceClass": "primary"
+    "sourceClass": "primary",
+    "status": "confirmed"
   },
   {
     "quote": "should abort the current transaction and retry the whole transaction from the beginning",
     "url": "https://www.postgresql.org/docs/current/transaction-iso.html",
     "via": "direct",
-    "status": "confirmed",
-    "sourceClass": "primary"
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Only set the key if it does not already exist.",
+    "url": "https://redis.io/docs/latest/commands/set/",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
   },
   {
     "quote": "booking confirmed",
