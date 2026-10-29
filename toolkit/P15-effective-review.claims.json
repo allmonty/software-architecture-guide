@@ -1,0 +1,212 @@
+[
+  {
+    "quote": "In general, reviewers should favor approving a CL once it is in a state where it definitely improves the overall code health of the system being worked on, even if the CL isn't perfect",
+    "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "definitely worsen the overall code health",
+    "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "there is only better code",
+    "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Technical facts and data overrule opinions and personal preferences.",
+    "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "almost never a pure style issue",
+    "url": "https://google.github.io/eng-practices/review/reviewer/standard.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "One business day is the maximum time it should take to respond to a code review request.",
+    "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Look at the most important part of the change first.",
+    "url": "https://google.github.io/eng-practices/review/reviewer/navigate.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "read the tests first before you read the main code",
+    "url": "https://google.github.io/eng-practices/review/reviewer/navigate.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "one self-contained change",
+    "url": "https://google.github.io/eng-practices/review/developer/small-cls.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Tests do not test themselves",
+    "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "look at every line of code that you have been assigned to review",
+    "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Don't accept CLs that degrade the code health of the system",
+    "url": "https://google.github.io/eng-practices/review/reviewer/looking-for.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Be kind. Explain your reasoning.",
+    "url": "https://google.github.io/eng-practices/review/reviewer/comments.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Why did you use threads here when there's obviously no benefit to be gained from concurrency?",
+    "url": "https://google.github.io/eng-practices/review/reviewer/comments.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "making comments about the code and never making comments about the developer",
+    "url": "https://google.github.io/eng-practices/review/reviewer/comments.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "without comment labels, authors may interpret all comments as mandatory",
+    "url": "https://google.github.io/eng-practices/review/reviewer/comments.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "In general it is the developer's responsibility to fix a CL, not the reviewer's.",
+    "url": "https://google.github.io/eng-practices/review/reviewer/comments.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "people learn from reinforcement of what they are doing well and not just what they could do better",
+    "url": "https://google.github.io/eng-practices/review/reviewer/comments.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "participants who had access to an AI assistant based on OpenAI's codex-davinci-002 model wrote significantly less secure code than those without access",
+    "url": "https://arxiv.org/abs/2211.03622",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "were more likely to believe they wrote secure code than those without access to the AI assistant",
+    "url": "https://arxiv.org/abs/2211.03622",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Our analysis identified 733 snippets, revealing a high likelihood of security weaknesses, with 29.5% of Python and 24.2% of JavaScript snippets affected",
+    "url": "https://arxiv.org/abs/2310.02059",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Review AI-generated code",
+    "url": "https://docs.github.com/en/copilot/tutorials/review-ai-generated-code",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Always run automated tests and static analysis tools first.",
+    "url": "https://docs.github.com/en/copilot/tutorials/review-ai-generated-code",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "solve the right problem",
+    "url": "https://docs.github.com/en/copilot/tutorials/review-ai-generated-code",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a theoretical attack on LLMs using fake or malicious packages",
+    "url": "https://docs.github.com/en/copilot/tutorials/review-ai-generated-code",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "it is good practice to always verify suggested packages yourself",
+    "url": "https://docs.github.com/en/copilot/tutorials/review-ai-generated-code",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Look for hallucinated APIs, ignored constraints, or incorrect logic. Watch for tests that are deleted or skipped, instead of fixed.",
+    "url": "https://docs.github.com/en/copilot/tutorials/review-ai-generated-code",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "tests that are deleted or skipped, instead of fixed",
+    "url": "https://docs.github.com/en/copilot/tutorials/review-ai-generated-code",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Always verify suggested packages yourself.",
+    "url": "https://docs.github.com/en/copilot/tutorials/review-ai-generated-code",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "this code meets our standards",
+    "url": "https://google.github.io/eng-practices/review/reviewer/speed.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  }
+]
