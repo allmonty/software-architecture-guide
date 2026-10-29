@@ -51,7 +51,7 @@ const en = {
   heroA: "Learn system design by walking through ",
   heroB: "worked architectures",
   lede: (n: number) =>
-    `${n} case studies with interactive diagrams, a casebook of real outages, fourteen primers on the topics that cut across them, and a practice workbook. Every factual claim is tagged by how well it is supported, and sourced claims link to their source.`,
+    `${n} case studies with interactive diagrams, a casebook of real outages, fifteen primers on the topics that cut across them, and a practice workbook. Every factual claim is tagged by how well it is supported, and sourced claims link to their source.`,
   startInterview: "Start the interview track",
   becomeArchitect: "Become an architect",
   progressSome: (done: number, total: number) => `${done} of ${total} pages marked as studied. `,
@@ -240,7 +240,7 @@ const ptBR: Dict = {
   heroA: "Aprenda system design percorrendo ",
   heroB: "arquiteturas resolvidas",
   lede: (n) =>
-    `${n} estudos de caso com diagramas interativos, um casebook de quedas reais, catorze primers sobre os temas que atravessam todos eles e um workbook de prática. Toda afirmação factual é marcada pelo quanto está sustentada, e as afirmações com fonte apontam para ela.`,
+    `${n} estudos de caso com diagramas interativos, um casebook de quedas reais, quinze primers sobre os temas que atravessam todos eles e um workbook de prática. Toda afirmação factual é marcada pelo quanto está sustentada, e as afirmações com fonte apontam para ela.`,
   startInterview: "Começar a trilha de entrevista",
   becomeArchitect: "Tornar-se arquiteto",
   progressSome: (done, total) => `${done} de ${total} páginas marcadas como estudadas. `,

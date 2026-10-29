@@ -152,11 +152,15 @@
       "id": "architect",
       "title": "Senior engineer to architect",
       "audience": "You design well already and want the decision-making, risk and communication side.",
-      "summary": "Records of decisions, deployment shape, real failures, migrations, disaster recovery, multi-tenancy, security, reliability and cost, then exercises that ask for a justified decision.",
+      "summary": "Records of decisions, how to review, deployment shape, real failures, migrations, disaster recovery, multi-tenancy, security, reliability and cost, then exercises that ask for a justified decision.",
       "steps": [
         {
           "ref": "P09",
           "why": "How architects decide, record and defend decisions: ADRs, design docs and boring technology."
+        },
+        {
+          "ref": "P15",
+          "why": "How to review a change or a design: reading order, comment labels, and a separate routine for AI-generated code."
         },
         {
           "ref": "C02",
@@ -233,6 +237,10 @@
         {
           "ref": "W02",
           "why": "Review flawed designs the way a design review would."
+        },
+        {
+          "ref": "W06",
+          "why": "Review a flawed API spec, then check yourself against the key: authorisation first, compatibility last."
         }
       ]
     },

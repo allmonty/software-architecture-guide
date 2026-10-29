@@ -49,7 +49,7 @@
   "architect": {
     "title": "De engenheiro sênior a arquiteto",
     "audience": "Você já projeta bem e quer o lado de tomada de decisão, risco e comunicação.",
-    "summary": "Registros de decisão, formato de deploy, falhas reais, migrações, disaster recovery, multi-tenancy, segurança, confiabilidade e custo, depois exercícios que pedem uma decisão justificada.",
+    "summary": "Registros de decisão, como revisar, formato de deploy, falhas reais, migrações, disaster recovery, multi-tenancy, segurança, confiabilidade e custo, depois exercícios que pedem uma decisão justificada.",
     "why": {
       "P09": "Como arquitetos decidem, registram e defendem decisões: ADRs, design docs e tecnologia entediante.",
       "C02": "Um processo de deploy que pulou o staging: leia o incidente, depois escreva suas próprias salvaguardas.",
@@ -70,7 +70,9 @@
       "C05": "Verificação de deploy, dead code e kill switches.",
       "C06": "Limites de recursos ocultos e cascatas de dependências.",
       "W04": "Seis cenários abertos: escreva o registro de decisão, depois compare com o que uma resposta forte cobre.",
-      "W02": "Revise designs com falhas como uma design review faria."
+      "W02": "Revise designs com falhas como uma design review faria.",
+      "P15": "Como revisar uma mudança ou um design: a ordem de leitura, os rótulos dos comentários e uma rotina à parte para código gerado por IA.",
+      "W06": "Revise a spec de uma API com falhas e depois confira com o gabarito: autorização primeiro, compatibilidade por último."
     }
   },
   "ai": {

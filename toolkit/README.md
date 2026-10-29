@@ -35,6 +35,7 @@ Short sourced explainers for topics that recur across the atlas. Each ends with 
 | P12 | [Event sourcing and CQRS](P12-event-sourcing-cqrs.md) | Fowler, Azure Architecture Center, Young |
 | P13 | [Disaster recovery and multi-region design](P13-multi-region-disaster-recovery.md) | AWS, Google Cloud, Azure Well-Architected |
 | P14 | [Multi-tenancy](P14-multi-tenancy.md) | AWS, Azure Architecture Center, Salesforce |
+| P15 | [Reviewing code and designs effectively](P15-effective-review.md) | Google engineering practices, GitHub Docs, Perry et al., Fu et al. |
 
 ## Workbook: practice with feedback (`W`)
 
@@ -47,10 +48,11 @@ Our own exercises, with answer keys that cite the sourced notes. Work them in th
 | W03 | [Estimation drills](W03-estimation-drills.md) | Eight capacity problems with worked solutions |
 | W04 | [Decision exercises](W04-decision-exercises.md) | Six scenarios that ask for an ADR |
 | W05 | [Flashcards](W05-flashcards.md) | 58 cards for spaced repetition |
+| W06 | [Review an API](W06-review-an-api.md) | A flawed API spec with eleven planted problems, five planned changes to classify, and an answer key |
 
 ## Suggested order
 
 1. Skim the primers you are weakest on (P01, P02, P03 and P07 are asked most).
 2. Read two casebook incidents and write your own safeguard lists before reading ours.
 3. Alternate atlas systems with W01 mock sessions, scoring each one.
-4. Use W02 and W04 weekly; use W05 daily.
+4. Use W02, W04 and W06 weekly; use W05 daily. Read P15 before your first review round.
