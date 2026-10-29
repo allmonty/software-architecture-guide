@@ -10,6 +10,7 @@ import { rehypeNodeRefs } from "./nodeRefs.ts";
 import { ReadingTools } from "./ReadingTools.tsx";
 import { ConceptChips } from "./ConceptsPage.tsx";
 import { TrustCard } from "./TrustCard.tsx";
+import { rehypeTags, tagComponents } from "./tags.tsx";
 import { Outline, scrollToSection, useHeadingComponents } from "./sections.tsx";
 import { systems, toolkitPages } from "./data.ts";
 import type { Components } from "react-markdown";
@@ -145,9 +146,9 @@ export function SystemPage({
           <ConceptChips systemId={system.id} />
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            rehypePlugins={mode === "split" ? [rehypeRaw, refPlugin] : [rehypeRaw]}
+            rehypePlugins={mode === "split" ? [rehypeRaw, rehypeTags, refPlugin] : [rehypeRaw, rehypeTags]}
             components={{
-              ...components, ...headings,
+              ...components, ...tagComponents, ...headings,
               // The page title above is the h1; the note's own title becomes a second-level heading.
               h1: ({ children }) => <h2 className="note-title">{children}</h2>,
               span: refSpan,

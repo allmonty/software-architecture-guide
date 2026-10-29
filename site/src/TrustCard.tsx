@@ -45,9 +45,9 @@ export function TrustCard({ id, title, markdown, claims, diagram }: { id: string
       <details>
         <summary>{i.tagsMeaning}</summary>
         <ul>
-          <li><b>[CONFIRMED]</b>{i.tagConfirmed}</li>
-          <li><b>[INDUSTRY PATTERN]</b>{i.tagPattern}</li>
-          <li><b>[SPECULATIVE]</b>{i.tagSpeculative}</li>
+          <li><b>[c] CONFIRMED</b>{i.tagConfirmed}</li>
+          <li><b>[ip] INDUSTRY PATTERN</b>{i.tagPattern}</li>
+          <li><b>[s] SPECULATIVE</b>{i.tagSpeculative}</li>
           <li>{i.tagKinds}</li>
         </ul>
       </details>

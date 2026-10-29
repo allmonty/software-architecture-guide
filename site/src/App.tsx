@@ -8,6 +8,7 @@ import { Home } from "./Home.tsx";
 import { TrackPage } from "./TrackPage.tsx";
 import { StudyToggle } from "./StudyToggle.tsx";
 import { SystemPage, components } from "./SystemPage.tsx";
+import { rehypeTags, tagComponents } from "./tags.tsx";
 import { Outline, scrollToSection, useHeadingComponents } from "./sections.tsx";
 import { ConceptsPage } from "./ConceptsPage.tsx";
 import { ReadingTools } from "./ReadingTools.tsx";
@@ -81,7 +82,7 @@ function ToolkitView({ page, section }: { page: ToolkitPage; section: string | n
       {note.fallback && <p className="muted small">{t.notTranslated}</p>}
       <Outline markdown={note.markdown} variant="select" />
       {page.id !== "README" && !page.id.startsWith("W") && <TrustCard id={page.id} title={page.title} markdown={note.markdown} claims={page.claims} />}
-      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={{ ...components, ...headings }}>{note.markdown}</ReactMarkdown>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw, rehypeTags]} components={{ ...components, ...tagComponents, ...headings }}>{note.markdown}</ReactMarkdown>
     </main>
   );
 }
