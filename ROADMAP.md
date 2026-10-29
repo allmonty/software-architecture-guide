@@ -13,7 +13,7 @@ What is left after the 35 systems, the toolkit and the site. Each item says what
 | 7 | One source for the learning order | Done: `site/src/stages.json` is the order; a test checks it against the atlas track and the README. |
 | 8 | Content not yet written | Partly done: primers P11 to P14 (monolith vs microservices, event sourcing and CQRS, disaster recovery, multi-tenancy) are written. The rest is below. |
 | 9 | Switch Pages to GitHub Actions and delete `docs/` | Open, needs you: set Settings → Pages → Source to GitHub Actions and push; once the first run is green, delete the old `docs/` folder (it is a stale build from before the review fixes and the sticky top bar). |
-| 10 | Portuguese (pt-BR) translation of notes, toolkit and diagrams | In progress: UI text, track/stage overlays and notes 01 to 30, 34 and 35 and toolkit pages P02, P11, P14 and W04 are done and verified against the glossary; notes 31 to 33, the other 21 toolkit pages and diagram JSON remain. |
+| 10 | Portuguese (pt-BR) translation of notes, toolkit and diagrams | In progress: UI text, track/stage overlays and notes 01 to 30, 34 and 35 and toolkit pages P02, P11, P14 and W04 are done and verified against the glossary; notes 31 to 33, the other 23 toolkit pages (including the new P15 and W06) and diagram JSON remain. |
 
 ## 1 and 2: what the browser sweep covers and what it cannot
 
@@ -50,7 +50,7 @@ The following items remain to be translated:
 - `systems/32-distributed-cache.md` (Distributed cache / Memcache at Facebook)
 - `systems/33-distributed-coordination-locks.md` (Coordination, locks and leader election)
 
-### Toolkit: Primers (11 notes)
+### Toolkit: Primers (12 notes)
 
 - `toolkit/P01-estimation.md` (Back-of-the-envelope estimation)
 - `toolkit/P03-distributed-transactions.md` (Distributed transactions: 2PC, sagas, outbox)
@@ -63,6 +63,7 @@ The following items remain to be translated:
 - `toolkit/P10-changing-systems-safely.md` (Changing systems safely)
 - `toolkit/P12-event-sourcing-cqrs.md` (Event sourcing and CQRS)
 - `toolkit/P13-multi-region-disaster-recovery.md` (Disaster recovery and multi-region design)
+- `toolkit/P15-effective-review.md` (Reviewing code and designs effectively)
 
 ### Toolkit: Casebook (6 notes)
 
@@ -73,16 +74,21 @@ The following items remain to be translated:
 - `toolkit/C05-knight-capital-2012.md` (Knight Capital, August 2012)
 - `toolkit/C06-aws-kinesis-2020.md` (AWS Kinesis, November 2020)
 
-### Toolkit: Practice Workbook (4 notes)
+### Toolkit: Practice Workbook (5 notes)
 
 - `toolkit/W01-mock-interview-protocol.md` (Mock interview protocol and rubric)
 - `toolkit/W02-find-the-flaw.md` (Find the flaw)
 - `toolkit/W03-estimation-drills.md` (Estimation drills)
 - `toolkit/W05-flashcards.md` (Flashcards)
+- `toolkit/W06-review-an-api.md` (Review an API)
 
 ### Diagram JSON (35 diagrams)
 
 - Diagram nodes, labels, and flow step text in `systems/*.diagram.json` currently remain in English. Localizing diagrams will require schema support or localized JSON files so node labels, descriptions, and flow step text can be presented in Portuguese.
+
+## Review of notes 16 and 07 (2026-10-29)
+
+Both notes were re-read against fresh copies of their primary sources. Note 16: the `CREATE TABLE ... EXCLUDE` page is now read (partial constraint syntax and constraint timing quoted), PostgreSQL 18's `UNIQUE ... WITHOUT OVERLAPS` added, the parking example now names its `btree_gist` prerequisite, Stripe rules scoped to API v1, Redis `SET NX PX` quoted. Note 07: a quotation that was not verbatim now quotes the f4 paper, the presigned-URL expiry follows the current AWS page, and the abandoned multipart upload advice cites S3's lifecycle rule. Every number in note 07 was re-checked. Still open for both: how a concurrent insert behaves while the first transaction is uncommitted (note 16, not stated in the pages read), and Facebook's current photo architecture (note 07).
 
 ## Review follow-ups (2026-10-27)
 
