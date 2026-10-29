@@ -49,6 +49,13 @@
     "status": "confirmed"
   },
   {
+    "quote": "If the WITHOUT OVERLAPS option is specified for the last column, then that column is checked for overlaps instead of equality",
+    "url": "https://www.postgresql.org/docs/current/sql-createtable.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
     "quote": "the search condition of the command (the WHERE clause) is re-evaluated to see if the updated version of the row still matches",
     "url": "https://www.postgresql.org/docs/current/transaction-iso.html",
     "via": "direct",

@@ -101,7 +101,7 @@ CREATE TABLE room_reservation (
 
 An overlapping insert fails with `conflicting key value violates exclusion constraint`. The docs define an exclusion constraint as ensuring that "if any two rows are compared on the specified columns or expressions using the specified operators, at least one of these operator comparisons will return false or null", and note that adding one "will automatically create an index of the type specified".
 
-Our adaptation for parking (illustrative, not from the docs):
+Our adaptation for parking (illustrative, not from the docs). It needs `CREATE EXTENSION btree_gist;` first, because `space_id` is a scalar compared with `=` (the btree_gist page lists GiST operator classes for `bigint`, `text` and other scalar types):
 
 ```sql
 CREATE TABLE booking (
@@ -118,6 +118,7 @@ CREATE TABLE booking (
 - **Bounds matter.** Back-to-back bookings (10:00–12:00 then 12:00–14:00) must not conflict, so use half-open ranges `[)`. The docs say the two-argument constructor builds a range "in standard form (lower bound inclusive, upper bound exclusive)", and that `daterange` canonicalises to `[)`. **`tstzrange` is not canonicalised**, so its bounds keep whatever inclusivity you give it. Always pass `'[)'` explicitly for time ranges. This is a subtlety of the docs' text, so state the bounds yourself.
 - **Why the database, not the app:** an application check-then-insert has a race window. A constraint that is not deferrable (the default) is checked right away, not at commit: the CREATE TABLE page says "A constraint that is not deferrable will be checked immediately after every command", and only a `DEFERRABLE` one can be postponed to the end of the transaction. The database enforces it regardless of which service writes, so it also protects against bugs and back-office tools. The pages we read do not say how a second insert behaves while the first transaction is still uncommitted, so test that on your version `[INDUSTRY PATTERN]`.
 - **A conditional (partial) constraint**, as in the `WHERE` clause above, lets cancelled rows stay for audit without blocking. The CREATE TABLE page documents it: `EXCLUDE [ USING index_method ] ( exclude_element WITH operator [, ... ] ) index_parameters [ WHERE ( predicate ) ]`, and "The predicate allows you to specify an exclusion constraint on a subset of the table; internally this creates a partial index", with parentheses required around the predicate.
+- **Newer syntax (PostgreSQL 18 docs).** A `UNIQUE` constraint can take `WITHOUT OVERLAPS` on its last column: "If the WITHOUT OVERLAPS option is specified for the last column, then that column is checked for overlaps instead of equality", and the docs say `UNIQUE (id, valid_at WITHOUT OVERLAPS)` behaves like `EXCLUDE USING GIST (id WITH =, valid_at WITH &&)`. So the warning about `UNIQUE` applies to an ordinary unique index on a range or a start column, not to this form. The `UNIQUE` synopsis has no `WHERE` clause, so the partial form above, which lets cancelled rows stay, still needs `EXCLUDE` `[INDUSTRY PATTERN]` (our reading of the synopsis). We did not check in which release it appeared; test it on yours.
 
 ### Option B: counted inventory (room type per night) `[INDUSTRY PATTERN]` with documented database behaviour
 
@@ -305,6 +306,7 @@ Room types are counted inventory per night. Numbered spaces use a range per unit
 - Re-read 2026-10-29 in the CREATE TABLE page: the `EXCLUDE ... [ WHERE ( predicate ) ]` syntax and its partial-index wording, and that a non-deferrable constraint is checked immediately after every command. In the btree_gist page: its GiST operator classes cover `bigint` and `text` equality. In the Redis page: `NX` and `PX` as described above.
 - Verified in the isolation docs: serializable retry requirement and SQLSTATE `40001`; the repeatable-read "could not serialize access due to concurrent update" error and the retry-whole-transaction advice; read-committed re-evaluation of the `WHERE` clause.
 - Verified in Stripe's docs: idempotency key behaviour for API v1 (saved status and body including 500s, key length 255, pruning after at least 24 hours, parameter mismatch error, validation and concurrency conflicts not saved, GET and DELETE need no key).
+- Re-read 2026-10-29 in the CREATE TABLE page: `UNIQUE ... WITHOUT OVERLAPS` and the sentence that it is enforced like an `EXCLUDE` constraint.
 - Not read: how a concurrent insert behaves while the first transaction is uncommitted (not stated in the pages above), Redis eviction and restart behaviour, any hotel or parking operator documentation.
 - Labelled as industry pattern, not sourced: overbooking practice, hold and sweeper design, search/booking split, parking extension, overstay and no-show behaviour, dynamic pricing, time-zone handling.
 - Derived by us from documented behaviour: the "idempotency key = booking id + attempt number" advice follows from Stripe's rule that a changed-parameter retry on the same key errors.
