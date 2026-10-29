@@ -29,7 +29,7 @@
       "id": "booking",
       "label": "Booking service",
       "kind": "service",
-      "summary": "Runs hold, confirm, extend and cancel. Retries on serialization failures (SQLSTATE 40001) and on exclusion-constraint conflicts.",
+      "summary": "Runs hold, confirm, extend and cancel. Cancels expired holds on the same range in the same transaction before inserting, and retries on serialization failures (SQLSTATE 40001) and on exclusion-constraint conflicts.",
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.postgresql.org/docs/current/transaction-iso.html"
@@ -45,9 +45,10 @@
       "confidence": "INDUSTRY PATTERN",
       "sources": [
         "https://www.postgresql.org/docs/current/rangetypes.html",
-        "https://www.postgresql.org/docs/current/ddl-constraints.html"
+        "https://www.postgresql.org/docs/current/ddl-constraints.html",
+        "https://www.postgresql.org/docs/current/sql-createtable.html"
       ],
-      "details": "UNIQUE is usually unsuitable for ranges. Exclusion constraints need btree_gist for scalar equality. tstzrange bounds are not canonicalised, so pass '[)' explicitly.",
+      "details": "UNIQUE is usually unsuitable for ranges (PostgreSQL 18 adds UNIQUE ... WITHOUT OVERLAPS, enforced like an exclusion constraint). The constraint can be partial with WHERE (predicate), so cancelled bookings stop blocking. Exclusion constraints need btree_gist for scalar equality. tstzrange bounds are not canonicalised, so pass '[)' explicitly.",
       "c4": "container",
       "technology": "PostgreSQL"
     },
