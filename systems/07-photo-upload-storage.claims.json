@@ -42,6 +42,13 @@
     "status": "confirmed"
   },
   {
+    "quote": "Can't be valid for longer than the credentials themselves",
+    "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
     "quote": "one (or typically more) to translate the filename to an inode number, another to read the inode from disk, and a final one to read the file itself",
     "url": "https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf",
     "via": "direct",
