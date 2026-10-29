@@ -7,12 +7,18 @@ interface Hast { type: string; tagName?: string; value?: string; properties?: Re
 const SHORT = { CONFIRMED: "c", "INDUSTRY PATTERN": "ip", SPECULATIVE: "s", "EARLIER PASS": "ep" } as const;
 type Tag = keyof typeof SHORT;
 const RE = /\[(CONFIRMED|INDUSTRY PATTERN|SPECULATIVE|EARLIER PASS)\]/g;
-const SKIP = new Set(["code", "pre"]);
+const SKIP = new Set(["pre"]);
 
 export function rehypeTags() {
   return (tree: Hast) => {
     const walk = (node: Hast) => {
       if (!node.children || (node.tagName && SKIP.has(node.tagName))) return;
+      // A code span holding only a tag (the notes write them as `[CONFIRMED]`) is a tag; any other code is left alone.
+      if (node.tagName === "code") {
+        const only = node.children.length === 1 && node.children[0].type === "text" ? node.children[0].value?.match(new RegExp(`^${RE.source}$`)) : null;
+        if (only) { node.tagName = "conf-tag"; node.properties = { dataTag: only[1] }; node.children = []; }
+        return;
+      }
       const out: Hast[] = [];
       for (const child of node.children) {
         if (child.type !== "text" || !child.value) { walk(child); out.push(child); continue; }

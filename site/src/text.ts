@@ -1,5 +1,9 @@
 // Pure text helpers for notes: heading slugs, sections and searching. No DOM, so they can be tested directly.
 
+const TAG_SHORT: Record<string, string> = { CONFIRMED: "c", "INDUSTRY PATTERN": "ip", SPECULATIVE: "s", "EARLIER PASS": "ep" };
+/** Plain-text form of the markers the site shows in notes: [CONFIRMED] becomes [c]. */
+export const shortTags = (t: string) => t.replace(/`?\[(CONFIRMED|INDUSTRY PATTERN|SPECULATIVE|EARLIER PASS)\]`?/g, (_, k) => `[${TAG_SHORT[k]}]`);
+
 export const slugify = (t: string) =>
   t.toLowerCase().replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[`*_]/g, "").replace(/[^\p{L}\p{N}\s-]/gu, "").trim().replace(/\s+/g, "-");
 
@@ -20,7 +24,7 @@ export function sectionsOf(md: string): Section[] {
     if (line.startsWith("```")) { code = !code; return; }
     const m = !code && line.match(/^(#{2,4}) (.+)/);
     if (!m) return;
-    const text = m[2].replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[`*]/g, "").trim();
+    const text = shortTags(m[2]).replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[`*]/g, "").trim();
     out.push({ slug: unique(slugify(m[2])), text, level: m[1].length, line: i + 1 });
   });
   return out;
@@ -38,7 +42,7 @@ export function splitSections(md: string): Chunk[] {
     const m = !code && line.match(/^(#{2,4}) (.+)/);
     if (m) {
       const slug = unique(slugify(m[2])); // every level takes a slug, so suffixes match the rendered ids
-      if (m[1].length === 2) { out.push({ slug, heading: m[2].replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[`*]/g, "").trim(), body: "" }); continue; }
+      if (m[1].length === 2) { out.push({ slug, heading: shortTags(m[2]).replace(/\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[`*]/g, "").trim(), body: "" }); continue; }
     }
     out[out.length - 1].body += line + "\n";
   }
@@ -87,7 +91,7 @@ export function searchPages(pages: SearchPage[], query: string, limit = 30, perP
       if (!words.every((w) => all.includes(w))) continue;
       const score = words.reduce((s, w) => s + count(c.lowHeading, w) * 6 + count(c.low, w), 0) + (words.every((w) => page.title.toLowerCase().includes(w)) ? 8 : 0);
       const at = Math.max(0, c.low.indexOf(words[0]) - 70);
-      found.push({ page, slug: c.slug, heading: c.heading, snippet: (at > 0 ? "…" : "") + c.text.slice(at, at + 190) + (at + 190 < c.text.length ? "…" : ""), score });
+      found.push({ page, slug: c.slug, heading: c.heading, snippet: shortTags((at > 0 ? "…" : "") + c.text.slice(at, at + 190) + (at + 190 < c.text.length ? "…" : "")), score });
     }
     hits.push(...found.sort((a, b) => b.score - a.score).slice(0, perPage));
   }

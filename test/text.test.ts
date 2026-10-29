@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mentionsOf, searchPages, sectionsOf, splitSections } from "../site/src/text.ts";
+import { shortTags, mentionsOf, searchPages, sectionsOf, splitSections } from "../site/src/text.ts";
 
 const md = "# Title\n\nIntro about leases.\n\n## One\n\nThe cache uses a lease token.\n\n### Detail\n\nMore on the cache.\n\n```\n## not a heading\n```\n\n## One\n\nA second section also on the cache cache cache.\n";
 
@@ -26,4 +26,8 @@ test("search needs every word and ranks heading and title matches higher", () =>
   assert.ok(hits[0].snippet.includes("ten seconds"));
   assert.deepEqual(searchPages(pages, "x"), []);
   assert.deepEqual(searchPages(pages, "zebra"), []);
+});
+
+test("shortTags turns written tags, with or without backticks, into the short markers", () => {
+  assert.equal(shortTags("Option A `[CONFIRMED]` and [INDUSTRY PATTERN] and `[SPECULATIVE]`"), "Option A [c] and [ip] and [s]");
 });

@@ -4,6 +4,7 @@ import {
   type Edge, type Node, type NodeChange, type NodeProps,
 } from "@xyflow/react";
 import ReactMarkdown from "react-markdown";
+import { rehypeTags, tagComponents } from "./tags.tsx";
 import type { Diagram } from "../../schema/diagram.schema.ts";
 import { classifySource, type LedgerEntry } from "../../schema/trust.ts";
 import { layout, NODE_W } from "./layout.ts";
@@ -274,7 +275,7 @@ export function DiagramView({
                 <span className={`badge conf-${selEl.confidence.replace(" ", "-")}`}>{selEl.confidence}</span>
               )}
               <p>{selEl.summary}</p>
-              {selEl.node?.details && <ReactMarkdown>{selEl.node.details}</ReactMarkdown>}
+              {selEl.node?.details && <ReactMarkdown rehypePlugins={[rehypeTags]} components={tagComponents}>{selEl.node.details}</ReactMarkdown>}
               {selEl.id === SYSTEM_ID && <button onClick={() => setLevel("container")}>{t.openContainers}</button>}
               {kids.length > 0 && (
                 <>
