@@ -165,7 +165,7 @@ A short procedure: (1) ask what was requested and read that first; (2) run tests
 
 ## 6. Reviewing a design or an API
 
-The same order works: does it need to exist, what is the main decision, then the details. For an API, the details are the choices that are hard to undo: pagination from the first version, safe retries, compatibility rules, authorisation on each object and field, and limits on what one call may cost. [P05](P05-api-design.md) holds the rules, [P06](P06-security-threat-modeling.md) the threat view, and W06 (a worked review with an answer key, in the next commit) is planned.
+The same order works: does it need to exist, what is the main decision, then the details. For an API, the details are the choices that are hard to undo: pagination from the first version, safe retries, compatibility rules, authorisation on each object and field, and limits on what one call may cost. [P05](P05-api-design.md) holds the rules, [P06](P06-security-threat-modeling.md) the threat view, and [W06](W06-review-an-api.md) is a worked review with an answer key.
 
 ## 7. Review habits that fail `[INDUSTRY PATTERN]`
 
@@ -185,7 +185,7 @@ Our list, each the reverse of something the sources ask for: approving without r
 
 Take one open pull request in a repository you know, or a change you made last month. Read it in the order of section 2.1, write the comments with labels, and decide approve or request changes. Then take a change an assistant produced for you and run the procedure in 5.3; list what you would not have caught by skimming.
 
-**Related:** [P05 API design](P05-api-design.md), [P06 Security for architects](P06-security-threat-modeling.md), [P09 Decisions and design docs](P09-decisions-and-design-docs.md), [W02 Find the flaw](W02-find-the-flaw.md), W06 Review an API, [C02 Cloudflare, July 2019](C02-cloudflare-2019.md) (a change that passed code review and CI and still caused an outage).
+**Related:** [P05 API design](P05-api-design.md), [P06 Security for architects](P06-security-threat-modeling.md), [P09 Decisions and design docs](P09-decisions-and-design-docs.md), [W02 Find the flaw](W02-find-the-flaw.md), [W06 Review an API](W06-review-an-api.md), [C02 Cloudflare, July 2019](C02-cloudflare-2019.md) (a change that passed code review and CI and still caused an outage).
 
 ## Sources and provenance
 
