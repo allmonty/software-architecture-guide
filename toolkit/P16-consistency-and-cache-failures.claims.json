@@ -1,0 +1,58 @@
+[
+  {
+    "quote": "formulation was always misleading because it tended to oversimplify the tensions among properties.",
+    "url": "https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "because partitions are rare, there is little reason to forfeit C or A when the system is not partitioned.",
+    "url": "https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "a strict subset of ACID consistency",
+    "url": "https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "only applies to systems that replicate data",
+    "url": "https://www.cs.umd.edu/~abadi/papers/abadi-pacelc.pdf",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "cannot achieve full consistency as defined by Gilbert and Lynch, even if R + W > N",
+    "url": "https://www.cs.umd.edu/~abadi/papers/abadi-pacelc.pdf",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "Essentially everyone, when they first build a distributed application, makes the following eight assumptions.",
+    "url": "https://nighthacks.com/jag/res/Fallacies.html",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "An unanticipated shift in the distribution of this modal behavior can potentially lead to disaster.",
+    "url": "https://builder.aws.com/content/3K9TeXp6strMiJ4vhakpRD7BQWO/caching-challenges-and-strategies",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  },
+  {
+    "quote": "can lead to mass refreshes of caches",
+    "url": "https://builder.aws.com/content/3K9TeXp6strMiJ4vhakpRD7BQWO/caching-challenges-and-strategies",
+    "via": "direct",
+    "sourceClass": "primary",
+    "status": "confirmed"
+  }
+]
