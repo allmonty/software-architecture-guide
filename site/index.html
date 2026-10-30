@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>System Design Atlas</title>
+    <meta name="description" content="A system-design study set: 35 systems and a toolkit, each with a sourced Markdown note and an interactive C4 diagram." />
+    <meta property="og:title" content="System Design Atlas" />
+    <meta property="og:description" content="35 sourced system-design notes with interactive diagrams, plus casebook, primers and a workbook." />
+    <meta property="og:type" content="website" />
     <link rel="icon" href="data:," /> <!-- no icon file yet; stops a 404 on every load -->
     <script>
       // Applies the saved reading settings before first paint. Same cookie format as src/settings-core.ts.
@@ -19,6 +23,10 @@
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <h1>System Design Atlas</h1>
+      <p>This site needs JavaScript. The notes are plain Markdown: see <a href="llms.txt">llms.txt</a> for an index, or the <a href="https://github.com/allmonty/system-design-atlas">repository</a>.</p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

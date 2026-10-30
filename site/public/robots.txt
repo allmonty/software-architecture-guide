@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+# No sitemap: pages are hash routes (#07-photo-upload-storage), which search engines do not index separately.
+# llms.txt lists every note as plain Markdown.
