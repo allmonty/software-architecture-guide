@@ -1,3 +1,6 @@
 node_modules/
 dist/
 .cache/
+site/public/llms.txt
+site/public/llms-full.txt
+site/public/md/
