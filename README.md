@@ -210,3 +210,7 @@ npm run sweep      # browser check of every page (needs vite preview on :5188 an
 ## Support
 
 This is a free, unpaid project. If it helped you prepare, [buying me a coffee](https://buymeacoffee.com/allmonty) is appreciated and never expected. Corrections matter more: if a claim is wrong or out of date, [open an issue](https://github.com/allmonty/system-design-atlas/issues/new) with the page and the source that says otherwise.
+
+## License
+
+Code (`scripts/`, `schema/`, `test/`, `site/`) is under the [MIT License](LICENSE). The written content (notes, toolkit, translations, diagram JSON) is under [CC BY 4.0](LICENSE-CONTENT): reuse it with credit to Allan Monteiro.
