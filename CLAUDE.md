@@ -21,6 +21,10 @@ npm run sweep      # needs `vite preview` on :5188 and headless Chrome on :9333 
 
 Deep links: `site/#07-photo-upload-storage?flow=upload&step=2` opens a flow at a step.
 
+## Licenses
+
+Code (`scripts/`, `schema/`, `test/`, `site/`) is MIT (`LICENSE`); notes, toolkit, translations and diagram JSON are CC BY 4.0 (`LICENSE-CONTENT`). New files follow the same split.
+
 ## Site reading settings
 
 The gear menu in the site header sets theme (System, Light, Warm, Dark), font (system, Atkinson Hyperlegible, Lexend, Literata, self-hosted through Fontsource) reading text size (13 to 24 px) and language (English or Português do Brasil; sets `<html lang>`). They are stored in one cookie, `atlas-settings` (`site/src/settings-core.ts` holds the format and its tests; study progress stays in localStorage). `site/index.html` repeats the cookie parsing in a small inline script so the choice applies before first paint; change both together. Theme tokens are CSS variables on `:root[data-theme]`; the OS dark rule applies only when no theme is set. Diagram text is in px on purpose (nodes have fixed sizes), so it does not follow the reading size or font. Home artwork (`site/src/Art.tsx`, `icons.tsx`) is inline SVG and lucide icons, with no image files.

@@ -1,6 +1,6 @@
 # Roadmap
 
-What is left after the 35 systems, the toolkit and the site. Each item says what is missing and why it was not done. Status is as of 2026-10-27.
+What is left after the 35 systems, the toolkit and the site. Each item says what is missing and why it was not done. Status is as of 2026-10-29.
 
 | # | Item | Status |
 |---|---|---|
@@ -11,9 +11,10 @@ What is left after the 35 systems, the toolkit and the site. Each item says what
 | 5 | Confidence tags on diagram edges | Deferred. Needs a schema change and hand-tagging a few hundred edges. |
 | 6 | Per-element alias for clickable names in the note | Deferred. Names are matched by text, so an ambiguous name can occasionally link to the wrong element. |
 | 7 | One source for the learning order | Done: `site/src/stages.json` is the order; a test checks it against the atlas track and the README. |
-| 8 | Content not yet written | Partly done: primers P11 to P14 (monolith vs microservices, event sourcing and CQRS, disaster recovery, multi-tenancy) are written. The rest is below. |
+| 8 | Content not yet written | Partly done: primers P11 to P16 (monolith vs microservices, event sourcing and CQRS, disaster recovery, multi-tenancy, reviewing, consistency and cache failures) are written. The rest is below. |
 | 9 | Switch Pages to GitHub Actions and delete `docs/` | Open, needs you: set Settings → Pages → Source to GitHub Actions and push; once the first run is green, delete the old `docs/` folder (it is a stale build from before the review fixes and the sticky top bar). |
-| 10 | Portuguese (pt-BR) translation of notes, toolkit and diagrams | In progress: UI text, track/stage overlays and notes 01 to 30, 34 and 35 and toolkit pages P02, P11, P14 and W04 are done and verified against the glossary; notes 31 to 33, the other 23 toolkit pages (including the new P15 and W06) and diagram JSON remain. |
+| 10 | Portuguese (pt-BR) translation of notes, toolkit and diagrams | In progress: UI text, track/stage overlays and notes 01 to 30, 34 and 35 and toolkit pages P02, P11, P14 and W04 are done and verified against the glossary; notes 31 to 33, the other 24 toolkit pages (including the new P15, P16 and W06) and diagram JSON remain. |
+| 11 | Agent and crawler access | Done: `llms.txt`, `llms-full.txt` and raw Markdown copies are generated at build (`scripts/build-llms.ts`), plus meta tags, `robots.txt` and the MIT / CC BY 4.0 licenses. Not done: static pre-rendering (routes are hash-based, so each page has no URL of its own), an MCP server, a `SKILL.md`, and a PR-review rules layer. They came from an external review and were judged out of scope for now. |
 
 ## 1 and 2: what the browser sweep covers and what it cannot
 
