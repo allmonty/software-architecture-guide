@@ -36,6 +36,7 @@ Short sourced explainers for topics that recur across the atlas. Each ends with 
 | P13 | [Disaster recovery and multi-region design](P13-multi-region-disaster-recovery.md) | AWS, Google Cloud, Azure Well-Architected |
 | P14 | [Multi-tenancy](P14-multi-tenancy.md) | AWS, Azure Architecture Center, Salesforce |
 | P15 | [Reviewing code and designs effectively](P15-effective-review.md) | Google engineering practices, GitHub Docs, Perry et al., Fu et al. |
+| P16 | [Consistency claims done right, and how caches fail](P16-consistency-and-cache-failures.md) | Brewer, Abadi, the Dynamo paper, Deutsch, AWS Builders' Library |
 
 ## Workbook: practice with feedback (`W`)
 

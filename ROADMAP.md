@@ -50,7 +50,7 @@ The following items remain to be translated:
 - `systems/32-distributed-cache.md` (Distributed cache / Memcache at Facebook)
 - `systems/33-distributed-coordination-locks.md` (Coordination, locks and leader election)
 
-### Toolkit: Primers (12 notes)
+### Toolkit: Primers (13 notes)
 
 - `toolkit/P01-estimation.md` (Back-of-the-envelope estimation)
 - `toolkit/P03-distributed-transactions.md` (Distributed transactions: 2PC, sagas, outbox)
@@ -64,6 +64,7 @@ The following items remain to be translated:
 - `toolkit/P12-event-sourcing-cqrs.md` (Event sourcing and CQRS)
 - `toolkit/P13-multi-region-disaster-recovery.md` (Disaster recovery and multi-region design)
 - `toolkit/P15-effective-review.md` (Reviewing code and designs effectively)
+- `toolkit/P16-consistency-and-cache-failures.md` (CAP, PACELC, quorums, fallacies, cache failure modes)
 
 ### Toolkit: Casebook (6 notes)
 

@@ -43,7 +43,8 @@
       "34": "Top-K, contagem aproximada e leaderboards.",
       "P04": "Como o tráfego é distribuído entre servidores.",
       "P05": "Paginação, idempotency e evolução de APIs.",
-      "P03": "Consistência entre serviços."
+      "P03": "Consistência entre serviços.",
+      "P16": "CAP e PACELC sem o atalho de escolher dois, por que R + W > N não é linearizável e como os caches falham."
     }
   },
   "architect": {

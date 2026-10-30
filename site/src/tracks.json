@@ -145,6 +145,10 @@
         {
           "ref": "P03",
           "why": "Consistency across services."
+        },
+        {
+          "ref": "P16",
+          "why": "CAP and PACELC without the pick-two shortcut, why R + W > N is not linearizable, and how caches fail."
         }
       ]
     },

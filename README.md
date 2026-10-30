@@ -20,7 +20,7 @@ Each system has a deep note (`systems/NN-*.md`) and a structured diagram (`syste
 | Path | What it holds |
 |---|---|
 | [`systems/`](systems/) | The 35 notes, one diagram (`.diagram.json`) and one quote ledger (`.claims.json`) each |
-| [`toolkit/`](toolkit/README.md) | Casebook of 6 real incidents (`C`), 15 cross-cutting primers (`P`), a workbook of 6 practice pages (`W`) |
+| [`toolkit/`](toolkit/README.md) | Casebook of 6 real incidents (`C`), 16 cross-cutting primers (`P`), a workbook of 6 practice pages (`W`) |
 | [`locales/`](locales/pt-BR/) | Brazilian Portuguese (`pt-BR`) translations (systems 01–30, 34, 35 and four toolkit pages mirrored, remainder in progress) |
 | [`site/`](site/) | The React + React Flow site: home page study tracks, diagrams, search, reading settings |
 | [`.github/workflows/`](.github/workflows/pages.yml) | The workflow that builds and deploys the site |
