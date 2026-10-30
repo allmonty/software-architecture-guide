@@ -15,7 +15,7 @@ npm install
 npm run validate   # schema, references, required sections, relative links, sources on non-speculative nodes, pt-BR translations against glossary and original
 npm test           # unit tests (node:test via tsx): validator, trust helpers, text search, settings, design tokens, learning order, translation overlays and glossary rules; single file: npx tsx --test test/validate.test.ts
 cd site && npm install && npm run dev      # http://localhost:5173
-npm run build      # tsc --noEmit + vite build, output in site/dist (not committed; the Pages workflow builds and deploys it)
+npm run build      # writes llms.txt, llms-full.txt and md/ note copies (scripts/build-llms.ts, gitignored in site/public), then tsc --noEmit + vite build, output in site/dist (not committed; the Pages workflow builds and deploys it)
 npm run sweep      # needs `vite preview` on :5188 and headless Chrome on :9333 (see scripts/browser-sweep.mjs); checks every page
 ```
 
